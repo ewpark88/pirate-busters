@@ -16,6 +16,11 @@
 
 - **설계서는 직접 고치지 않는다.** 오류·누락은 사용자에게 알리고 수정을 제안한다.
 - 설계서와 구현이 어긋나면 코드로 우회하지 말고 먼저 사용자에게 묻는다.
+- **설계서가 바뀌면 개발 계획서도 같이 고친다 (ADR-008).** 설계서는 계속 갱신된다. 변경을 발견하면(`tool/check_doc_sync.dart` 실패, 사용자 알림, git diff) 다른 작업보다 먼저:
+  1. `git diff` 로 설계서의 바뀐 절을 확인한다.
+  2. 계획서에서 그 절(§)을 참조하는 작업·완료 조건·수치·범위를 고친다. 새 기능은 알맞은 단계에 넣고, 빠진 기능은 지운다.
+  3. 이미 끝난 단계나 현재 단계에 영향이 있으면 사용자에게 알리고, 코드 수정이 필요하면 할 일로 제안한다.
+  4. 계획서 머리의 `설계서 동기화:` 해시와 날짜를 갱신하고, 계획 변경이 크면 ADR 을 남긴다.
 
 ## 저장소 구조와 의존 방향 (ADR-001, ADR-002)
 ```
@@ -47,8 +52,9 @@ tool/              검사·훅 스크립트
 ## 자주 쓰는 명령
 ```bash
 flutter pub get                          # 루트에서 한 번 (workspace)
-bash tool/verify.sh                      # 품질 게이트: format / analyze / architecture·결정론 / test
+bash tool/verify.sh                      # 품질 게이트: format / analyze / architecture·결정론 / doc sync / test
 dart run tool/check_architecture.dart    # 의존 방향·결정론 규칙만 검사
+dart run tool/check_doc_sync.dart        # 설계서 변경이 계획서에 반영됐는지 검사
 dart run tool/gen_trig_table.dart        # pb_sim 정수 sin 테이블 재생성
 (cd packages/pb_sim && dart test)        # 패키지 하나만 테스트
 (cd app && flutter run)                  # 앱 실행

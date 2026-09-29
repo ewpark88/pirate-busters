@@ -4,6 +4,7 @@ argument-hint: <단계 ID, 예: M1>
 ---
 단계 $ARGUMENTS 를 시작한다. 아래 순서를 지킨다.
 
+0. `dart run tool/check_doc_sync.dart` 를 실행한다. 실패하면 CLAUDE.md “설계서가 바뀌면” 절차로 계획서를 먼저 갱신한다.
 1. `Pirate Busters 개발 계획서.md` 에서 $ARGUMENTS 섹션(목표, 작업 체크리스트, 완료 조건, 설계서 참조 절)을 읽는다.
 2. 참조된 `Pirate Busters 게임 설계서.md` 절과 `docs/MOZZI_REUSE.md` 에서 이번 단계에 가져올 코드를 확인한다.
 3. `docs/PROGRESS.md` 에 선행 단계가 완료로 기록돼 있는지 확인한다. 아니면 멈추고 보고한다.
