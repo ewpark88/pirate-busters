@@ -22,10 +22,11 @@ const List<CabinCell> sampleCabins = [
   CabinCell(8, 2),
 ];
 
-/// 테스트용 해적. 일반 등급 투척(반경 1칸 폭발) 계열 기본값.
+/// 테스트용 해적. 일반 등급 투척(반경 1칸 폭발, 사거리 긺) 계열 기본값 (설계서 §2.8).
 PirateSpec testPirate(
   String id, {
   Rarity rarity = Rarity.common,
+  RangeGrade range = RangeGrade.long,
   int hp = 300,
   int cooldownTurns = 0,
   int blockDamage = 60,
@@ -39,6 +40,7 @@ PirateSpec testPirate(
   blockDamage: blockDamage,
   pirateDamage: pirateDamage,
   blastRadius: blastRadius,
+  range: range,
 );
 
 /// 샘플 덱에 나오는 해적. 쿨다운·피해를 조금씩 다르게 둔다.

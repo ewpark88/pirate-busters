@@ -10,18 +10,18 @@ import 'package:pb_sim/src/match/rules.dart';
 /// 1칸의 월드 단위.
 const int cellUnit = 1000;
 
-/// 판 시작 때 두 선체 끝(뱃머리) 사이 간격: 16칸 (설계서 §2.6).
-const int startGap = 16 * cellUnit;
+/// 판 시작 때 두 선체 끝(뱃머리) 사이 간격: 28칸 (설계서 §2.6, 범위 8~48칸).
+const int startGap = 28 * cellUnit;
 
-/// 배마다 시작 위치에서 전진·후퇴할 수 있는 거리: 4칸 (설계서 §2.6, 이동은 M3).
-const int moveRange = 4 * cellUnit;
+/// 배마다 시작 위치에서 전진·후퇴할 수 있는 거리: 10칸 (설계서 §2.6, 이동은 M3).
+const int moveRange = 10 * cellUnit;
 
-/// 중력: 36칸/초² → 틱당 속도 변화(1/1000칸/틱²). 최대 탄속 40칸/초와 함께, 45° 로
-/// 30칸을 쏘면 약 1.3초 날아간다(ADR-010 임시 값).
+/// 중력: 36칸/초² → 틱당 속도 변화(1/1000칸/틱²). 사거리 등급의 탄속 표가 이 값으로
+/// 계산돼 있다 (설계서 §2.8, `RangeGrade`). 값 자체는 ADR-010 임시 값.
 const int gravityPerTick = 36 * cellUnit ~/ (simTickHz * simTickHz);
 
-/// 투사체가 사라지는 월드 가로 경계(±60칸).
-const int worldHalfWidth = 60 * cellUnit;
+/// 투사체가 사라지는 월드 가로 경계: ±100칸 (설계서 §2.1).
+const int worldHalfWidth = 100 * cellUnit;
 
 /// 투사체 최대 수명: 10초.
 const int projectileMaxTicks = 10 * simTickHz;

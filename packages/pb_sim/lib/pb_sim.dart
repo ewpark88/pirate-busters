@@ -18,6 +18,7 @@ export 'src/math/int_math.dart';
 export 'src/math/trig.dart';
 export 'src/pirate/crew.dart';
 export 'src/pirate/pirate_spec.dart';
+export 'src/pirate/range_grade.dart';
 export 'src/projectile/grid_trace.dart';
 export 'src/projectile/projectile.dart';
 export 'src/random/xorshift32.dart';

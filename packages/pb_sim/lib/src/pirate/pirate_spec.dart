@@ -1,4 +1,5 @@
 import 'package:pb_sim/src/match/rules.dart';
+import 'package:pb_sim/src/pirate/range_grade.dart';
 import 'package:pb_sim/src/ship/hull.dart';
 
 /// 해적 등급과 출전 코스트 (설계서 §4.2, §4.5). 순서는 해시에 들어가므로 바꾸지 않는다.
@@ -36,11 +37,8 @@ class PirateSpec {
     required this.blockDamage,
     required this.pirateDamage,
     this.blastRadius = 0,
-    this.launchSpeed = defaultLaunchSpeed,
+    this.range = RangeGrade.medium,
   });
-
-  /// 힘 10000 으로 쐈을 때 탄 속도 기본값: 40칸/초 (1/1000칸/초).
-  static const int defaultLaunchSpeed = 40000;
 
   final String id;
   final Rarity rarity;
@@ -60,8 +58,11 @@ class PirateSpec {
   /// 폭발 반경(칸). 0 이면 착탄 칸만.
   final int blastRadius;
 
+  /// 최대 사거리 등급 (설계서 §2.8). 탄 속도를 정한다.
+  final RangeGrade range;
+
   /// 힘 10000 일 때 탄 속도(1/1000칸/초).
-  final int launchSpeed;
+  int get launchSpeed => range.launchSpeed;
 
   int get cost => rarity.cost;
 }
