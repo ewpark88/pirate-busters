@@ -1,0 +1,159 @@
+{
+  "id": "bones",
+  "team": "blue",
+  "scale": 2,
+  "canvas": [
+    480.0,
+    648.0
+  ],
+  "anchor": [
+    240,
+    630
+  ],
+  "parts": [
+    {
+      "id": "shadow",
+      "anim": "shadow",
+      "z": 0,
+      "file": "shadow.png",
+      "offset": [
+        140,
+        616
+      ],
+      "size": [
+        200,
+        28
+      ],
+      "pivot": [
+        100.0,
+        14.0
+      ]
+    },
+    {
+      "id": "back",
+      "anim": "back",
+      "z": 1,
+      "file": "back.png",
+      "offset": [
+        113,
+        344
+      ],
+      "size": [
+        75,
+        296
+      ],
+      "pivot": [
+        55.0,
+        12.0
+      ]
+    },
+    {
+      "id": "legs",
+      "anim": "body",
+      "z": 2,
+      "file": "legs.png",
+      "offset": [
+        167,
+        568
+      ],
+      "size": [
+        146,
+        67
+      ],
+      "pivot": [
+        73.0,
+        62.0
+      ]
+    },
+    {
+      "id": "body",
+      "anim": "body",
+      "z": 3,
+      "file": "body.png",
+      "offset": [
+        127,
+        337
+      ],
+      "size": [
+        226,
+        288
+      ],
+      "pivot": [
+        113.0,
+        259.0
+      ]
+    },
+    {
+      "id": "arm",
+      "anim": "arm",
+      "z": 4,
+      "file": "arm.png",
+      "offset": [
+        74,
+        273
+      ],
+      "size": [
+        349,
+        301
+      ],
+      "pivot": [
+        166.0,
+        107.0
+      ]
+    },
+    {
+      "id": "head",
+      "anim": "head",
+      "z": 5,
+      "file": "head.png",
+      "offset": [
+        62,
+        76
+      ],
+      "size": [
+        381,
+        286
+      ],
+      "pivot": [
+        178.0,
+        269.6
+      ]
+    },
+    {
+      "id": "eyes",
+      "anim": "eyes",
+      "z": 6,
+      "file": "eyes.png",
+      "offset": [
+        182,
+        244
+      ],
+      "size": [
+        121,
+        42
+      ],
+      "pivot": [
+        21.6,
+        21.0
+      ]
+    },
+    {
+      "id": "fx",
+      "anim": "fx",
+      "z": 7,
+      "file": "fx.png",
+      "offset": [
+        410,
+        246
+      ],
+      "size": [
+        68,
+        84
+      ],
+      "pivot": [
+        10.0,
+        30.0
+      ]
+    }
+  ]
+}

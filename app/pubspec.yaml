@@ -27,3 +27,55 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  # 아트 에셋 v0.15 (docs/ASSETS.md). 폴더를 바꾸면 dart run tool/import_assets.dart --check
+  assets:
+    - assets/data/
+    - assets/images/characters/bones/
+    - assets/images/characters/bones/parts_battle_blue/
+    - assets/images/characters/bones/parts_battle_red/
+    - assets/images/characters/bones/parts_blue/
+    - assets/images/characters/bones/parts_red/
+    - assets/images/characters/gull/
+    - assets/images/characters/gull/parts_battle_blue/
+    - assets/images/characters/gull/parts_battle_red/
+    - assets/images/characters/gull/parts_blue/
+    - assets/images/characters/gull/parts_red/
+    - assets/images/characters/octo/
+    - assets/images/characters/octo/parts_battle_blue/
+    - assets/images/characters/octo/parts_battle_red/
+    - assets/images/characters/octo/parts_blue/
+    - assets/images/characters/octo/parts_red/
+    - assets/images/characters/otter/
+    - assets/images/characters/otter/parts_battle_blue/
+    - assets/images/characters/otter/parts_battle_red/
+    - assets/images/characters/otter/parts_blue/
+    - assets/images/characters/otter/parts_red/
+    - assets/images/characters/puffer/
+    - assets/images/characters/puffer/parts_battle_blue/
+    - assets/images/characters/puffer/parts_battle_red/
+    - assets/images/characters/puffer/parts_blue/
+    - assets/images/characters/puffer/parts_red/
+    - assets/images/characters/shark/
+    - assets/images/characters/shark/parts_battle_blue/
+    - assets/images/characters/shark/parts_battle_red/
+    - assets/images/characters/shark/parts_blue/
+    - assets/images/characters/shark/parts_red/
+    - assets/images/characters/sword/
+    - assets/images/characters/sword/parts_battle_blue/
+    - assets/images/characters/sword/parts_battle_red/
+    - assets/images/characters/sword/parts_blue/
+    - assets/images/characters/sword/parts_red/
+    - assets/images/characters/turtle/
+    - assets/images/characters/turtle/parts_battle_blue/
+    - assets/images/characters/turtle/parts_battle_red/
+    - assets/images/characters/turtle/parts_blue/
+    - assets/images/characters/turtle/parts_red/
+    - assets/images/fx/
+    - assets/images/fx/collapse/
+    - assets/images/fx/impact/
+    - assets/images/ship/rig/
+    - assets/images/ship/rooms/
+    - assets/images/ship/tiles/
+    - assets/images/ui/icons/
+    - assets/images/ui/kit/
+    - assets/images/ui/portraits/

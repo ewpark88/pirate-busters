@@ -39,3 +39,6 @@ GoogleService-Info.plist
 .env*
 # 로컬 Claude 설정
 .claude/settings.local.json
+
+# 아트 원본 패키지 (docs/ASSETS.md, ADR-026)
+art/
