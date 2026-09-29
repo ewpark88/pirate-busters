@@ -11,4 +11,6 @@ argument-hint: <단계 ID, 예: M1>
    - 개발 계획서의 해당 체크박스에 체크한다.
    - `docs/PROGRESS.md` 에 날짜, 완료 항목, 남은 이슈, 결정 사항을 추가한다.
    - `CLAUDE.md` 의 “현재 단계” 줄을 다음 단계로 바꾼다.
-5. 커밋(Conventional Commits)은 사용자가 요청하면 한다.
+   - `CHANGELOG.md` 의 `[Unreleased]` 에 사용자 관점 변경을 적는다.
+5. `rules-reviewer` 에이전트로 변경분을 검토하고 차단 항목을 고친다.
+6. 커밋(Conventional Commits)은 사용자가 요청하면 한다. 버전·태그는 `/release` 로 한다.

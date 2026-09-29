@@ -98,6 +98,22 @@ void main() {
       );
     });
 
+    test('상대 턴에 바다에 빠진 해적은 내 턴이 시작될 때 배로 돌아온다', () {
+      final m = newSampleMatch(1);
+      final me = m.state.activeSide;
+      _play(m, const [EndTurnCommand(t: 100)]);
+      // 상대 턴 중 내 해적이 바다에 빠졌다.
+      final crew = m.state.sides[me].crew..fall(0, me, m.state.events);
+      _play(m, const [EndTurnCommand(t: 100)]);
+      expect(crew.pirates[0].status, PirateStatus.swimming);
+      m.apply(const EndTurnCommand(t: 100)); // 내 턴 시작 → 복귀
+      expect(crew.pirates[0].status, PirateStatus.aboard);
+      expect(
+        m.state.events.map((e) => e.kind),
+        contains(SimEventKind.pirateReturned),
+      );
+    });
+
     test('각도·힘이 범위를 벗어난 발사는 무시한다', () {
       final m = newSampleMatch(1);
       final side = m.state.activeSide;

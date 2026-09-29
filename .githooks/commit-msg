@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+# Conventional Commits 검사 (tool/check_commit_msg.dart). 설치: bash tool/install_hooks.sh
+set -euo pipefail
+cd "$(git rev-parse --show-toplevel)"
+dart run tool/check_commit_msg.dart "$1"

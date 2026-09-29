@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+# push 전 전체 품질 게이트 (tool/verify.sh). main·태그 push 는 CI 와 같은 수준으로 막는다.
+# 급할 때 우회하지 않는다(CLAUDE.md 절대 규칙 6). 설치: bash tool/install_hooks.sh
+set -euo pipefail
+cd "$(git rev-parse --show-toplevel)"
+
+while read -r local_ref local_sha remote_ref remote_sha; do
+  case "$remote_ref" in
+    refs/tags/v*)
+      tag="${remote_ref#refs/tags/}"
+      dart run tool/release.dart check "$tag"
+      ;;
+  esac
+done
+
+bash tool/verify.sh

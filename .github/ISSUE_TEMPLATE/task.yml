@@ -1,0 +1,22 @@
+name: 작업
+description: 개발 계획서 단계에 속한 작업이나 설계서 수정 제안
+labels: [task]
+body:
+  - type: input
+    id: stage
+    attributes:
+      label: 단계
+      placeholder: M3
+    validations:
+      required: true
+  - type: input
+    id: ref
+    attributes:
+      label: 설계서 참조 절
+      placeholder: §2.6
+  - type: textarea
+    id: what
+    attributes:
+      label: 내용과 완료 조건
+    validations:
+      required: true

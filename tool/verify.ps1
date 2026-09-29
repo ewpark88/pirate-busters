@@ -9,16 +9,19 @@ function Invoke-Step([string]$name, [scriptblock]$block) {
   if ($LASTEXITCODE -ne 0) { throw "$name 실패 (exit $LASTEXITCODE)" }
 }
 
-Invoke-Step '1/5 format' { dart format --output=none --set-exit-if-changed app/lib packages tools tool }
-Invoke-Step '2/5 analyze' { flutter analyze --fatal-infos --fatal-warnings }
-Invoke-Step '3/5 architecture · determinism' { dart run tool/check_architecture.dart }
-Invoke-Step '4/5 doc sync' { dart run tool/check_doc_sync.dart }
+Invoke-Step '1/7 format' { dart format --output=none --set-exit-if-changed app/lib packages tools tool }
+Invoke-Step '2/7 analyze' { flutter analyze --fatal-infos --fatal-warnings }
+Invoke-Step '3/7 architecture · determinism' { dart run tool/check_architecture.dart }
+Invoke-Step '4/7 doc sync' { dart run tool/check_doc_sync.dart }
+Invoke-Step '5/7 l10n' { dart run tool/check_l10n.dart }
+Invoke-Step '6/7 secrets' { dart run tool/check_secrets.dart }
+Invoke-Step '7/7 test tool' { dart test tool/test }
 foreach ($pkg in 'packages/pb_sim', 'packages/pb_ai', 'packages/pb_data', 'tools/sim_runner') {
   if (Test-Path "$pkg/test") {
-    Invoke-Step "5/5 test $pkg" { Push-Location $pkg; try { dart test } finally { Pop-Location } }
+    Invoke-Step "7/7 test $pkg" { Push-Location $pkg; try { dart test } finally { Pop-Location } }
   }
 }
 if (Test-Path 'app/test') {
-  Invoke-Step '4/4 test app' { Push-Location app; try { flutter test } finally { Pop-Location } }
+  Invoke-Step '7/7 test app' { Push-Location app; try { flutter test } finally { Pop-Location } }
 }
 Write-Output "`nverify PASSED"

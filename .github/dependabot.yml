@@ -1,0 +1,22 @@
+# 의존성 갱신 알림. 새 의존성 추가는 해당 마일스톤에서만 한다(CLAUDE.md 절대 규칙 1).
+# 갱신 PR 도 verify 통과 후에만 머지하고, pb_sim 골든 해시가 바뀌면 거절한다.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    commit-message:
+      prefix: ci
+      include: scope
+    labels: [dependencies]
+
+  - package-ecosystem: pub
+    directory: /
+    schedule:
+      interval: monthly
+    open-pull-requests-limit: 3
+    commit-message:
+      prefix: build
+      include: scope
+    labels: [dependencies]
