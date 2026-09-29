@@ -1,0 +1,2243 @@
+{
+ "version": "0.14",
+ "coordSpace": "character canvas 240x324, anchor 120,315",
+ "phases": [
+  {
+   "name": "idle",
+   "ko": "대기",
+   "en": "Idle",
+   "start": 0,
+   "end": 0.5
+  },
+  {
+   "name": "aim",
+   "ko": "조준",
+   "en": "Aim",
+   "start": 0.5,
+   "end": 1.3
+  },
+  {
+   "name": "attack",
+   "ko": "공격",
+   "en": "Attack",
+   "start": 1.3,
+   "end": 1.6
+  },
+  {
+   "name": "recover",
+   "ko": "복귀",
+   "en": "Recover",
+   "start": 1.6,
+   "end": 2.4
+  },
+  {
+   "name": "idle",
+   "ko": "대기",
+   "en": "Idle",
+   "start": 2.4,
+   "end": 3.0
+  }
+ ],
+ "loop": 3.0,
+ "attacks": {
+  "octo": {
+   "duration": 3.0,
+   "tracks": {
+    "root": [
+     {
+      "t": 0,
+      "ease": "io",
+      "dx": 0
+     },
+     {
+      "t": 0.5,
+      "ease": "io",
+      "dx": 0,
+      "sy": 1
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "dx": -5,
+      "sy": 1.03
+     },
+     {
+      "t": 1.45,
+      "ease": "out",
+      "dx": 7,
+      "sy": 0.97
+     },
+     {
+      "t": 1.8,
+      "ease": "io",
+      "dx": 2,
+      "sy": 1
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "dx": 0
+     }
+    ],
+    "head": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "rot": -5
+     },
+     {
+      "t": 1.45,
+      "ease": "io",
+      "rot": 5
+     },
+     {
+      "t": 2.2,
+      "ease": "io",
+      "rot": 0
+     }
+    ],
+    "arm": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0
+     },
+     {
+      "t": 0.5,
+      "ease": "io",
+      "rot": 0
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "rot": -32
+     },
+     {
+      "t": 1.45,
+      "ease": "out",
+      "rot": 70
+     },
+     {
+      "t": 1.6,
+      "ease": "io",
+      "rot": 62
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "rot": 0
+     }
+    ],
+    "held": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0
+     },
+     {
+      "t": 0,
+      "ease": "step",
+      "op": 1
+     },
+     {
+      "t": 0.5,
+      "ease": "io",
+      "rot": 0
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "rot": -32
+     },
+     {
+      "t": 1.45,
+      "ease": "out",
+      "rot": 70
+     },
+     {
+      "t": 1.45,
+      "ease": "step",
+      "op": 0
+     },
+     {
+      "t": 1.6,
+      "ease": "io",
+      "rot": 62
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "rot": 0
+     },
+     {
+      "t": 2.4,
+      "ease": "step",
+      "op": 1
+     }
+    ],
+    "arm_back": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "rot": 10
+     },
+     {
+      "t": 1.45,
+      "ease": "io",
+      "rot": -12
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "rot": 0
+     }
+    ],
+    "fx": [
+     {
+      "t": 0,
+      "ease": "step",
+      "op": 0
+     },
+     {
+      "t": 1.45,
+      "ease": "step",
+      "op": 1
+     },
+     {
+      "t": 1.75,
+      "ease": "step",
+      "op": 0
+     }
+    ]
+   },
+   "events": [
+    {
+     "t": 1.45,
+     "type": "spawn",
+     "projectile": "bomb",
+     "part": "held",
+     "point": [
+      54,
+      140
+     ]
+    }
+   ]
+  },
+  "bones": {
+   "duration": 3.0,
+   "tracks": {
+    "root": [
+     {
+      "t": 0,
+      "ease": "io",
+      "dx": 0
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "dx": -2
+     },
+     {
+      "t": 1.4,
+      "ease": "step",
+      "dx": -2
+     },
+     {
+      "t": 1.43,
+      "ease": "out",
+      "dx": -8
+     },
+     {
+      "t": 1.8,
+      "ease": "io",
+      "dx": 0
+     }
+    ],
+    "arm": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0,
+      "dx": 0
+     },
+     {
+      "t": 0.5,
+      "ease": "io",
+      "rot": 0
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "rot": -7
+     },
+     {
+      "t": 1.4,
+      "ease": "step",
+      "rot": -7,
+      "dx": 0
+     },
+     {
+      "t": 1.43,
+      "ease": "out",
+      "rot": -2,
+      "dx": -10
+     },
+     {
+      "t": 1.75,
+      "ease": "io",
+      "rot": -7,
+      "dx": 0
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "rot": 0
+     }
+    ],
+    "head": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "rot": 4,
+      "dy": 2
+     },
+     {
+      "t": 1.43,
+      "ease": "io",
+      "rot": -3,
+      "dy": 0
+     },
+     {
+      "t": 2.2,
+      "ease": "io",
+      "rot": 0
+     }
+    ],
+    "eyes": [
+     {
+      "t": 0,
+      "ease": "io",
+      "sx": 1
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "sx": 1.25,
+      "sy": 0.7
+     },
+     {
+      "t": 1.45,
+      "ease": "io",
+      "sx": 1,
+      "sy": 1
+     }
+    ],
+    "fx": [
+     {
+      "t": 0,
+      "ease": "step",
+      "op": 0
+     },
+     {
+      "t": 1.4,
+      "ease": "step",
+      "op": 1
+     },
+     {
+      "t": 1.52,
+      "ease": "step",
+      "op": 0
+     }
+    ]
+   },
+   "events": [
+    {
+     "t": 1.4,
+     "type": "spawn",
+     "projectile": "bullet",
+     "part": "arm",
+     "point": [
+      206,
+      142
+     ]
+    },
+    {
+     "t": 1.4,
+     "type": "shake",
+     "amp": 2,
+     "dur": 0.12
+    }
+   ]
+  },
+  "sword": {
+   "duration": 3.0,
+   "tracks": {
+    "root": [
+     {
+      "t": 0,
+      "ease": "io",
+      "dx": 0
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "dx": -5
+     },
+     {
+      "t": 1.42,
+      "ease": "out",
+      "dx": 12
+     },
+     {
+      "t": 1.9,
+      "ease": "io",
+      "dx": 4
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "dx": 0
+     }
+    ],
+    "arm": [
+     {
+      "t": 0,
+      "ease": "io",
+      "dx": 0,
+      "rot": 0
+     },
+     {
+      "t": 0.5,
+      "ease": "io",
+      "dx": 0
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "dx": -18,
+      "rot": -5
+     },
+     {
+      "t": 1.42,
+      "ease": "out",
+      "dx": 26,
+      "rot": 2
+     },
+     {
+      "t": 1.7,
+      "ease": "io",
+      "dx": 18
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "dx": 0,
+      "rot": 0
+     }
+    ],
+    "held": [
+     {
+      "t": 0,
+      "ease": "io",
+      "dx": 0,
+      "rot": 0
+     },
+     {
+      "t": 0,
+      "ease": "step",
+      "op": 1
+     },
+     {
+      "t": 0.5,
+      "ease": "io",
+      "dx": 0
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "dx": -18,
+      "rot": -5
+     },
+     {
+      "t": 1.42,
+      "ease": "out",
+      "dx": 26,
+      "rot": 2
+     },
+     {
+      "t": 1.43,
+      "ease": "step",
+      "op": 0
+     },
+     {
+      "t": 1.7,
+      "ease": "io",
+      "dx": 18
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "dx": 0,
+      "rot": 0
+     },
+     {
+      "t": 2.4,
+      "ease": "step",
+      "op": 1
+     }
+    ],
+    "arm_back": [
+     {
+      "t": 0,
+      "ease": "io",
+      "dx": 0,
+      "rot": 0
+     },
+     {
+      "t": 0.5,
+      "ease": "io",
+      "dx": 0
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "dx": -18,
+      "rot": -5
+     },
+     {
+      "t": 1.42,
+      "ease": "out",
+      "dx": 26,
+      "rot": 2
+     },
+     {
+      "t": 1.7,
+      "ease": "io",
+      "dx": 18
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "dx": 0,
+      "rot": 0
+     }
+    ],
+    "head": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "rot": -4
+     },
+     {
+      "t": 1.42,
+      "ease": "io",
+      "rot": 6
+     },
+     {
+      "t": 2.2,
+      "ease": "io",
+      "rot": 0
+     }
+    ],
+    "fx": [
+     {
+      "t": 0,
+      "ease": "step",
+      "op": 0
+     },
+     {
+      "t": 1.42,
+      "ease": "step",
+      "op": 1
+     },
+     {
+      "t": 1.62,
+      "ease": "step",
+      "op": 0
+     }
+    ]
+   },
+   "events": [
+    {
+     "t": 1.42,
+     "type": "spawn",
+     "projectile": "harpoon",
+     "part": "held",
+     "point": [
+      218,
+      180
+     ]
+    }
+   ]
+  },
+  "otter": {
+   "duration": 3.0,
+   "tracks": {
+    "root": [
+     {
+      "t": 0,
+      "ease": "io",
+      "dx": 0
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "dx": -4
+     },
+     {
+      "t": 1.4,
+      "ease": "out",
+      "dx": 6
+     },
+     {
+      "t": 2.0,
+      "ease": "io",
+      "dx": 0
+     }
+    ],
+    "arm": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0
+     },
+     {
+      "t": 0.5,
+      "ease": "io",
+      "rot": 0
+     },
+     {
+      "t": 0.7,
+      "ease": "io",
+      "rot": -20
+     },
+     {
+      "t": 0.9,
+      "ease": "io",
+      "rot": 12
+     },
+     {
+      "t": 1.1,
+      "ease": "io",
+      "rot": -20
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "rot": 14
+     },
+     {
+      "t": 1.4,
+      "ease": "out",
+      "rot": 34
+     },
+     {
+      "t": 1.7,
+      "ease": "io",
+      "rot": 28
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "rot": 0
+     }
+    ],
+    "held": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0
+     },
+     {
+      "t": 0,
+      "ease": "step",
+      "op": 1
+     },
+     {
+      "t": 0.5,
+      "ease": "io",
+      "rot": 0
+     },
+     {
+      "t": 0.7,
+      "ease": "io",
+      "rot": -20
+     },
+     {
+      "t": 0.9,
+      "ease": "io",
+      "rot": 12
+     },
+     {
+      "t": 1.1,
+      "ease": "io",
+      "rot": -20
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "rot": 14
+     },
+     {
+      "t": 1.4,
+      "ease": "out",
+      "rot": 34
+     },
+     {
+      "t": 1.41,
+      "ease": "step",
+      "op": 0
+     },
+     {
+      "t": 1.7,
+      "ease": "io",
+      "rot": 28
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "rot": 0
+     },
+     {
+      "t": 2.4,
+      "ease": "step",
+      "op": 1
+     }
+    ],
+    "head": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "rot": -3
+     },
+     {
+      "t": 1.4,
+      "ease": "io",
+      "rot": 4
+     },
+     {
+      "t": 2.2,
+      "ease": "io",
+      "rot": 0
+     }
+    ],
+    "fx": [
+     {
+      "t": 0,
+      "ease": "step",
+      "op": 0
+     },
+     {
+      "t": 0.6,
+      "ease": "step",
+      "op": 1
+     },
+     {
+      "t": 1.4,
+      "ease": "step",
+      "op": 0
+     }
+    ]
+   },
+   "events": [
+    {
+     "t": 1.4,
+     "type": "spawn",
+     "projectile": "stone",
+     "part": "held",
+     "point": [
+      144,
+      74
+     ]
+    }
+   ]
+  },
+  "puffer": {
+   "duration": 3.0,
+   "tracks": {
+    "body": [
+     {
+      "t": 0,
+      "ease": "io",
+      "sx": 1,
+      "sy": 1
+     },
+     {
+      "t": 0.5,
+      "ease": "io",
+      "sx": 1,
+      "sy": 1
+     },
+     {
+      "t": 1.2,
+      "ease": "io",
+      "sx": 1.12,
+      "sy": 1.12
+     },
+     {
+      "t": 1.4,
+      "ease": "io",
+      "sx": 1.12,
+      "sy": 1.12
+     },
+     {
+      "t": 1.55,
+      "ease": "out",
+      "sx": 0.96,
+      "sy": 0.96
+     },
+     {
+      "t": 1.9,
+      "ease": "io",
+      "sx": 1,
+      "sy": 1
+     }
+    ],
+    "back": [
+     {
+      "t": 0,
+      "ease": "io",
+      "sx": 1,
+      "sy": 1
+     },
+     {
+      "t": 0.5,
+      "ease": "io",
+      "sx": 1,
+      "sy": 1
+     },
+     {
+      "t": 1.2,
+      "ease": "io",
+      "sx": 1.12,
+      "sy": 1.12
+     },
+     {
+      "t": 1.4,
+      "ease": "io",
+      "sx": 1.12,
+      "sy": 1.12
+     },
+     {
+      "t": 1.55,
+      "ease": "io",
+      "sx": 0.96,
+      "sy": 0.96
+     },
+     {
+      "t": 1.9,
+      "ease": "io",
+      "sx": 1,
+      "sy": 1
+     }
+    ],
+    "head": [
+     {
+      "t": 0,
+      "ease": "io",
+      "dy": 0
+     },
+     {
+      "t": 1.2,
+      "ease": "io",
+      "dy": -10
+     },
+     {
+      "t": 1.4,
+      "ease": "io",
+      "dy": -10
+     },
+     {
+      "t": 1.55,
+      "ease": "io",
+      "dy": 2
+     },
+     {
+      "t": 1.9,
+      "ease": "io",
+      "dy": 0
+     }
+    ],
+    "eyes": [
+     {
+      "t": 0,
+      "ease": "io",
+      "dy": 0,
+      "sx": 1,
+      "sy": 1
+     },
+     {
+      "t": 1.2,
+      "ease": "io",
+      "dy": -10,
+      "sx": 1.2,
+      "sy": 1.2
+     },
+     {
+      "t": 1.4,
+      "ease": "io",
+      "dy": -10
+     },
+     {
+      "t": 1.55,
+      "ease": "io",
+      "dy": 2,
+      "sx": 1,
+      "sy": 1
+     },
+     {
+      "t": 1.9,
+      "ease": "io",
+      "dy": 0
+     }
+    ],
+    "arm": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0
+     },
+     {
+      "t": 0.5,
+      "ease": "io",
+      "rot": 0
+     },
+     {
+      "t": 1.2,
+      "ease": "io",
+      "rot": -22
+     },
+     {
+      "t": 1.4,
+      "ease": "out",
+      "rot": 48
+     },
+     {
+      "t": 1.7,
+      "ease": "io",
+      "rot": 40
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "rot": 0
+     }
+    ],
+    "held": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0
+     },
+     {
+      "t": 0,
+      "ease": "step",
+      "op": 1
+     },
+     {
+      "t": 0.5,
+      "ease": "io",
+      "rot": 0
+     },
+     {
+      "t": 1.2,
+      "ease": "io",
+      "rot": -22
+     },
+     {
+      "t": 1.4,
+      "ease": "out",
+      "rot": 48
+     },
+     {
+      "t": 1.41,
+      "ease": "step",
+      "op": 0
+     },
+     {
+      "t": 1.7,
+      "ease": "io",
+      "rot": 40
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "rot": 0
+     },
+     {
+      "t": 2.4,
+      "ease": "step",
+      "op": 1
+     }
+    ],
+    "arm_back": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0
+     },
+     {
+      "t": 1.2,
+      "ease": "io",
+      "rot": -14
+     },
+     {
+      "t": 1.4,
+      "ease": "io",
+      "rot": 8
+     },
+     {
+      "t": 2.0,
+      "ease": "io",
+      "rot": 0
+     }
+    ],
+    "fx": [
+     {
+      "t": 0,
+      "ease": "step",
+      "op": 0
+     },
+     {
+      "t": 0.8,
+      "ease": "step",
+      "op": 1
+     },
+     {
+      "t": 1.4,
+      "ease": "step",
+      "op": 0
+     }
+    ]
+   },
+   "events": [
+    {
+     "t": 1.4,
+     "type": "spawn",
+     "projectile": "dynamite",
+     "part": "held",
+     "point": [
+      205,
+      124
+     ]
+    }
+   ]
+  },
+  "gull": {
+   "duration": 3.0,
+   "tracks": {
+    "root": [
+     {
+      "t": 0,
+      "ease": "io",
+      "dy": 0,
+      "sy": 1
+     },
+     {
+      "t": 0.5,
+      "ease": "io",
+      "dy": 0
+     },
+     {
+      "t": 0.7,
+      "ease": "io",
+      "dy": 6,
+      "sy": 0.94
+     },
+     {
+      "t": 1.05,
+      "ease": "out",
+      "dy": -48,
+      "sy": 1.04
+     },
+     {
+      "t": 1.5,
+      "ease": "io",
+      "dy": -54,
+      "sy": 1
+     },
+     {
+      "t": 2.0,
+      "ease": "io",
+      "dy": -18
+     },
+     {
+      "t": 2.4,
+      "ease": "in",
+      "dy": 0
+     }
+    ],
+    "arm_back": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0
+     },
+     {
+      "t": 0.7,
+      "ease": "io",
+      "rot": 0
+     },
+     {
+      "t": 0.85,
+      "ease": "io",
+      "rot": -26
+     },
+     {
+      "t": 1.0,
+      "ease": "io",
+      "rot": 10
+     },
+     {
+      "t": 1.15,
+      "ease": "io",
+      "rot": -26
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "rot": 10
+     },
+     {
+      "t": 1.45,
+      "ease": "io",
+      "rot": -26
+     },
+     {
+      "t": 1.6,
+      "ease": "io",
+      "rot": 10
+     },
+     {
+      "t": 1.75,
+      "ease": "io",
+      "rot": -20
+     },
+     {
+      "t": 2.0,
+      "ease": "io",
+      "rot": 4
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "rot": 0
+     }
+    ],
+    "back": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0
+     },
+     {
+      "t": 0.7,
+      "ease": "io",
+      "rot": 0
+     },
+     {
+      "t": 1.05,
+      "ease": "io",
+      "rot": -10
+     },
+     {
+      "t": 1.5,
+      "ease": "io",
+      "rot": 6
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "rot": 0
+     }
+    ],
+    "arm": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "rot": -12
+     },
+     {
+      "t": 1.45,
+      "ease": "out",
+      "rot": 22
+     },
+     {
+      "t": 1.8,
+      "ease": "io",
+      "rot": 14
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "rot": 0
+     }
+    ],
+    "held": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0
+     },
+     {
+      "t": 0,
+      "ease": "step",
+      "op": 1
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "rot": -12
+     },
+     {
+      "t": 1.45,
+      "ease": "io",
+      "rot": 0
+     },
+     {
+      "t": 1.46,
+      "ease": "step",
+      "op": 0
+     },
+     {
+      "t": 2.4,
+      "ease": "step",
+      "op": 1
+     }
+    ],
+    "legs": [
+     {
+      "t": 0,
+      "ease": "io",
+      "dy": 0
+     },
+     {
+      "t": 0.9,
+      "ease": "io",
+      "dy": 0
+     },
+     {
+      "t": 1.1,
+      "ease": "io",
+      "dy": -4
+     },
+     {
+      "t": 2.2,
+      "ease": "io",
+      "dy": 0
+     }
+    ],
+    "fx": [
+     {
+      "t": 0,
+      "ease": "step",
+      "op": 0
+     },
+     {
+      "t": 0.9,
+      "ease": "step",
+      "op": 1
+     },
+     {
+      "t": 1.6,
+      "ease": "step",
+      "op": 0
+     }
+    ]
+   },
+   "events": [
+    {
+     "t": 1.45,
+     "type": "spawn",
+     "projectile": "bomb_drop",
+     "part": "held",
+     "point": [
+      180,
+      290
+     ]
+    }
+   ]
+  },
+  "shark": {
+   "duration": 3.0,
+   "tracks": {
+    "root": [
+     {
+      "t": 0,
+      "ease": "io",
+      "dx": 0
+     },
+     {
+      "t": 0.5,
+      "ease": "io",
+      "dx": 0
+     },
+     {
+      "t": 1.2,
+      "ease": "io",
+      "dx": -8,
+      "sy": 1.02
+     },
+     {
+      "t": 1.4,
+      "ease": "out",
+      "dx": 60,
+      "sy": 0.98
+     },
+     {
+      "t": 1.8,
+      "ease": "io",
+      "dx": 56,
+      "sy": 1
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "dx": 0
+     }
+    ],
+    "arm": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0
+     },
+     {
+      "t": 0.5,
+      "ease": "io",
+      "rot": 0
+     },
+     {
+      "t": 1.2,
+      "ease": "io",
+      "rot": -140
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "rot": -146
+     },
+     {
+      "t": 1.42,
+      "ease": "out",
+      "rot": 12
+     },
+     {
+      "t": 1.8,
+      "ease": "io",
+      "rot": 8
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "rot": 0
+     }
+    ],
+    "arm_back": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0
+     },
+     {
+      "t": 1.2,
+      "ease": "io",
+      "rot": 22
+     },
+     {
+      "t": 1.42,
+      "ease": "io",
+      "rot": -10
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "rot": 0
+     }
+    ],
+    "head": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0
+     },
+     {
+      "t": 1.2,
+      "ease": "io",
+      "rot": -6
+     },
+     {
+      "t": 1.42,
+      "ease": "io",
+      "rot": 8
+     },
+     {
+      "t": 2.2,
+      "ease": "io",
+      "rot": 0
+     }
+    ],
+    "back": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0
+     },
+     {
+      "t": 1.2,
+      "ease": "io",
+      "rot": -6
+     },
+     {
+      "t": 1.42,
+      "ease": "io",
+      "rot": 8
+     },
+     {
+      "t": 2.2,
+      "ease": "io",
+      "rot": 0
+     }
+    ],
+    "fx": [
+     {
+      "t": 0,
+      "ease": "step",
+      "op": 0
+     },
+     {
+      "t": 1.38,
+      "ease": "step",
+      "op": 1
+     },
+     {
+      "t": 1.6,
+      "ease": "step",
+      "op": 0
+     }
+    ]
+   },
+   "events": [
+    {
+     "t": 1.42,
+     "type": "slash",
+     "point": [
+      236,
+      250
+     ]
+    },
+    {
+     "t": 1.42,
+     "type": "shake",
+     "amp": 3,
+     "dur": 0.15
+    }
+   ]
+  },
+  "turtle": {
+   "duration": 3.0,
+   "tracks": {
+    "root": [
+     {
+      "t": 0,
+      "ease": "io",
+      "dy": 0,
+      "sy": 1
+     },
+     {
+      "t": 1.1,
+      "ease": "io",
+      "dy": 0,
+      "sy": 1.02
+     },
+     {
+      "t": 1.35,
+      "ease": "out",
+      "dy": 2,
+      "sy": 0.96
+     },
+     {
+      "t": 1.7,
+      "ease": "io",
+      "dy": 0,
+      "sy": 1
+     }
+    ],
+    "arm": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0
+     },
+     {
+      "t": 0.5,
+      "ease": "io",
+      "rot": 0
+     },
+     {
+      "t": 1.1,
+      "ease": "io",
+      "rot": -42
+     },
+     {
+      "t": 1.35,
+      "ease": "out",
+      "rot": 58
+     },
+     {
+      "t": 1.7,
+      "ease": "io",
+      "rot": 50
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "rot": 0
+     }
+    ],
+    "arm_back": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0
+     },
+     {
+      "t": 1.1,
+      "ease": "io",
+      "rot": -10
+     },
+     {
+      "t": 1.35,
+      "ease": "io",
+      "rot": 6
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "rot": 0
+     }
+    ],
+    "head": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0
+     },
+     {
+      "t": 1.1,
+      "ease": "io",
+      "rot": -5
+     },
+     {
+      "t": 1.35,
+      "ease": "io",
+      "rot": 6
+     },
+     {
+      "t": 2.2,
+      "ease": "io",
+      "rot": 0
+     }
+    ],
+    "fx": [
+     {
+      "t": 0,
+      "ease": "step",
+      "op": 0
+     },
+     {
+      "t": 1.35,
+      "ease": "step",
+      "op": 1
+     },
+     {
+      "t": 1.7,
+      "ease": "step",
+      "op": 0
+     }
+    ]
+   },
+   "events": [
+    {
+     "t": 1.35,
+     "type": "repair",
+     "part": "arm",
+     "point": [
+      200,
+      96
+     ],
+     "amount": 12
+    },
+    {
+     "t": 1.35,
+     "type": "shake",
+     "amp": 2,
+     "dur": 0.1
+    }
+   ]
+  }
+ },
+ "hit": {
+  "duration": 0.6,
+  "tracks": {
+   "root": [
+    {
+     "t": 0,
+     "ease": "io",
+     "dx": 0
+    },
+    {
+     "t": 0.05,
+     "ease": "out",
+     "dx": -9
+    },
+    {
+     "t": 0.12,
+     "ease": "io",
+     "dx": 5
+    },
+    {
+     "t": 0.2,
+     "ease": "io",
+     "dx": -3
+    },
+    {
+     "t": 0.3,
+     "ease": "io",
+     "dx": 0
+    }
+   ],
+   "head": [
+    {
+     "t": 0,
+     "ease": "io",
+     "rot": 0
+    },
+    {
+     "t": 0.05,
+     "ease": "out",
+     "rot": -12
+    },
+    {
+     "t": 0.4,
+     "ease": "io",
+     "rot": 0
+    }
+   ],
+   "eyes": [
+    {
+     "t": 0,
+     "ease": "io",
+     "sy": 1
+    },
+    {
+     "t": 0.05,
+     "ease": "step",
+     "sy": 0.2
+    },
+    {
+     "t": 0.3,
+     "ease": "io",
+     "sy": 1
+    }
+   ],
+   "back": [
+    {
+     "t": 0,
+     "ease": "io",
+     "rot": 0
+    },
+    {
+     "t": 0.05,
+     "ease": "io",
+     "rot": 6
+    },
+    {
+     "t": 0.4,
+     "ease": "io",
+     "rot": 0
+    }
+   ]
+  },
+  "events": [
+   {
+    "t": 0,
+    "type": "flash",
+    "color": "#ffffff",
+    "dur": 0.12
+   },
+   {
+    "t": 0,
+    "type": "shake",
+    "amp": 3,
+    "dur": 0.2
+   }
+  ]
+ },
+ "projectiles": {
+  "bomb": {
+   "path": "arc",
+   "sprite": "fx/bomb.svg",
+   "apex": 110,
+   "dur": 0.8,
+   "spin": 540,
+   "impact": "explosion"
+  },
+  "bullet": {
+   "path": "straight",
+   "sprite": null,
+   "draw": "tracer",
+   "color": "#ffd24a",
+   "speed": 1600,
+   "impact": "explosion_small"
+  },
+  "harpoon": {
+   "path": "straight",
+   "sprite": null,
+   "draw": "harpoon",
+   "speed": 900,
+   "rope": true,
+   "impact": "pierce",
+   "note": "관통: 첫 블록을 지나 한 칸 더"
+  },
+  "stone": {
+   "path": "skip",
+   "sprite": null,
+   "draw": "stone",
+   "bounces": 3,
+   "bounceDecay": 0.55,
+   "dur": 1.0,
+   "impact": "explosion_small"
+  },
+  "dynamite": {
+   "path": "dive",
+   "sprite": null,
+   "draw": "dynamite",
+   "dur": 1.1,
+   "splash": true,
+   "impact": "explosion",
+   "note": "물에 들어간 뒤 흘수선 아래로 이동"
+  },
+  "bomb_drop": {
+   "path": "drop",
+   "sprite": "fx/bomb.svg",
+   "riseTo": 30,
+   "dur": 0.9,
+   "impact": "explosion"
+  }
+ },
+ "impacts": {
+  "explosion": {
+   "sprite": "fx/explosion.svg",
+   "dur": 0.35,
+   "scale": [
+    0.4,
+    1.25
+   ],
+   "op": [
+    1,
+    0
+   ]
+  },
+  "explosion_small": {
+   "sprite": "fx/explosion.svg",
+   "dur": 0.25,
+   "scale": [
+    0.3,
+    0.8
+   ],
+   "op": [
+    1,
+    0
+   ]
+  },
+  "pierce": {
+   "sprite": "fx/stars.svg",
+   "dur": 0.3,
+   "scale": [
+    0.6,
+    1
+   ],
+   "op": [
+    1,
+    0
+   ]
+  },
+  "splash": {
+   "sprite": "fx/splash.svg",
+   "dur": 0.4,
+   "scale": [
+    0.5,
+    1
+   ],
+   "op": [
+    1,
+    0
+   ]
+  },
+  "bomb_v2": {
+   "note": "11단계 폭탄 명중. 모든 값은 명중 후 경과 시간(te) 기준. 스프라이트는 fx/impact/",
+   "hitStop": 0.07,
+   "layers": [
+    {
+     "id": "flash",
+     "sprite": "flash.svg",
+     "t": [
+      0,
+      0.17
+     ],
+     "scale": [
+      0.5,
+      1.17
+     ],
+     "op": [
+      0.9,
+      0
+     ],
+     "note": "히트스톱 동안 최대 밝기"
+    },
+    {
+     "id": "burst",
+     "sprite": "burst.svg",
+     "t": [
+      0.07,
+      0.29
+     ],
+     "scale": [
+      0.2,
+      1.35
+     ],
+     "op": [
+      1,
+      0
+     ]
+    },
+    {
+     "id": "fireball",
+     "sprite": "puff_0..6.svg",
+     "count": 12,
+     "life": 1.0,
+     "grow": 0.2,
+     "radius": [
+      14,
+      25
+     ],
+     "spread": [
+      6,
+      36
+     ],
+     "rise": [
+      30,
+      60
+     ],
+     "colorSteps": "puff_0(흰) → 1 → 2 → 3 → 4 → 5 → 6(연기). 바깥 불덩이일수록 1.3배 빨리 진행",
+     "outline": "puff_0~5는 외곽선 포함. 모든 불덩이의 외곽선을 먼저, 색을 그 위에 그려 하나의 덩어리로 보이게"
+    },
+    {
+     "id": "shockwave",
+     "sprite": "shockwave.svg",
+     "t": [
+      0.07,
+      0.42
+     ],
+     "radius": [
+      18,
+      150
+     ],
+     "op": [
+      1,
+      0
+     ]
+    },
+    {
+     "id": "sparks",
+     "sprite": "spark.svg",
+     "count": 26,
+     "speed": [
+      260,
+      560
+     ],
+     "gravity": 760,
+     "life": [
+      0.3,
+      0.6
+     ],
+     "note": "진행 방향으로 회전"
+    },
+    {
+     "id": "debris",
+     "sprite": "debris_0..5.svg + debris_plank.svg",
+     "count": 14,
+     "speed": [
+      180,
+      560
+     ],
+     "gravity": 1100,
+     "spin": [
+      -700,
+      700
+     ],
+     "onWater": "splash_small.svg 0.5초 후 제거"
+    },
+    {
+     "id": "hole",
+     "sprite": "hole_burnt.svg + scorch.svg + cracks.svg",
+     "t": [
+      0.07,
+      "계속"
+     ],
+     "note": "칸 가운데에 배 좌표로 붙임(배와 같이 흔들림)"
+    },
+    {
+     "id": "flames",
+     "sprite": "flame.svg",
+     "count": 3,
+     "t": [
+      0.27,
+      "계속"
+     ],
+     "flicker": "세로 0.85~1.05, 17rad/s"
+    },
+    {
+     "id": "smoke",
+     "sprite": "smoke.svg",
+     "start": 0.42,
+     "every": 0.14,
+     "count": 12,
+     "rise": 46,
+     "radius": [
+      8,
+      26
+     ]
+    },
+    {
+     "id": "embers",
+     "sprite": "ember.svg",
+     "count": 14,
+     "rise": [
+      30,
+      60
+     ],
+     "life": [
+      1.2,
+      2.1
+     ]
+    },
+    {
+     "id": "number",
+     "style": "Black Han Sans 34, 채움 #fff2c8, 외곽선 #14161c 6 + #b3302b 12",
+     "pop": [
+      0,
+      1.55,
+      1
+     ],
+     "popSec": [
+      0.08,
+      0.2
+     ],
+     "fade": [
+      1.1,
+      1.45
+     ],
+     "label": "블록 파괴! BLOCK BROKEN (#ffd24a 13)"
+    },
+    {
+     "id": "crew",
+     "hit": "hit 클립 + 흰 번쩍 0.07초 + dizzy_star 3개 머리 위 궤도 1.4초"
+    }
+   ],
+   "camera": {
+    "shake": 9,
+    "shakeDecay": 6,
+    "punch": 0.07,
+    "punchDecay": 7,
+    "note": "흔들림 = 9·e^(-6t), 줌 = 1 - 0.07·e^(-7t)"
+   },
+   "shipRock": {
+    "deg": 2.2,
+    "decay": 2.5,
+    "freq": 9,
+    "dy": 5,
+    "note": "맞은 반대쪽으로 기울며 감쇠 진동"
+   }
+  },
+  "collapse": {
+   "note": "12단계 블록 붕괴. tc = 붕괴 시작 후 경과 시간(= 마지막 받침이 부서진 명중 후 0.3초). 스프라이트는 fx/collapse/",
+   "input": "덩어리 경계 box, 기우는 축 pivot(바깥쪽 아래 모서리), 방향 dir(-1 왼쪽/1 오른쪽), 떨어져 나갈 모서리 칸 목록, 수면 y",
+   "creak": {
+    "when": "명중 후 0.07~0.3초",
+    "deg": 1.5,
+    "hz": 70
+   },
+   "tip": {
+    "deg": 95,
+    "sec": 0.8,
+    "formula": "각도 = dir·95·(tc/0.8)², 0.8초 뒤에는 같은 각속도 유지"
+   },
+   "slide": {
+    "vx": 110,
+    "ax": 170,
+    "g": 760,
+    "delay": 0.12,
+    "formula": "축 x = x0 + dir·(110·tc + 170·tc²), 축 y = y0 + 760·max(0, tc-0.12)²"
+   },
+   "waterEntry": "네 모서리 중 가장 낮은 점이 수면+4px에 닿는 순간(미리 계산)",
+   "sink": {
+    "damp": 2.5,
+    "speed": 50,
+    "extraDeg": 15
+   },
+   "loose": {
+    "detachAt": [
+     0.45,
+     0.55
+    ],
+    "kick": [
+     -70,
+     -130
+    ],
+    "spin": 520,
+    "gravity": 1100,
+    "note": "떨어져 나갈 때 덩어리의 속도를 이어받음"
+   },
+   "dust": {
+    "sprite": "dust.svg",
+    "count": 9,
+    "life": 0.7,
+    "note": "이음새를 따라 퍼짐"
+   },
+   "brokenEdge": {
+    "sprite": "broken_edge.svg",
+    "note": "덩어리가 떨어진 갑판 윗면에 남김"
+   },
+   "splash": {
+    "sprite": "water_spike.svg ×9, water_drop.svg ×24, foam_ring.svg ×2, mist.svg ×5",
+    "height": 130,
+    "dur": 1.1
+   },
+   "bubbles": {
+    "sprite": "bubble.svg",
+    "count": 10,
+    "from": 0.3,
+    "life": 1.4,
+    "total": 3.2
+   },
+   "camera": {
+    "amp": 12,
+    "decay": 5,
+    "pan": "붕괴 중 화면 중심을 입수 지점 쪽으로 25% 이동"
+   },
+   "shipRock": {
+    "deg": 2.0,
+    "decay": 2,
+    "freq": 6,
+    "dy": 4,
+    "note": "무게가 빠진 배가 반대쪽으로 튐"
+   },
+   "text": [
+    "성루 붕괴! TOWER COLLAPSED (붕괴 0.75초 뒤)",
+    "선원 이탈! CREW OVERBOARD (입수 0.15초 뒤, 덩어리에 선원이 있을 때)"
+   ],
+   "detectionSuggestion": "연출용 제안: 칸이 부서질 때마다 용골(맨 아래 줄)에서 4방향 연결을 채워 보고, 연결되지 않은 칸 묶음을 덩어리 하나로 넘김. 규칙 확정은 게임 설계서에서."
+  },
+  "kinds": {
+   "note": "14단계 공격 방식별 명중. 구현 tools/impact_kinds.js (SPEC 값)",
+   "underwater": {
+    "glow": "수중 주황 섬광 0.3초",
+    "bulge": "수면 불룩 0.4초, 높이 34",
+    "column": {
+     "spikes": 7,
+     "height": 190,
+     "dur": 1.3,
+     "drops": 18
+    },
+    "breach": "흘수선 아래 파공 + 물 들어오는 흐름선 + 거품(계속)",
+    "shipLift": {
+     "dy": -9,
+     "decay": 3
+    },
+    "camera": {
+     "shake": 7,
+     "punch": 0.05
+    },
+    "text": "-피해 + 침수 +N% FLOOD (파란 숫자)"
+   },
+   "pierce": {
+    "secondCellDelay": 0.06,
+    "chips": [
+     10,
+     7
+    ],
+    "stuckHarpoon": {
+     "wobbleDeg": 6,
+     "hz": 38,
+     "decay": 5
+    },
+    "camera": {
+     "shake": 5
+    },
+    "text": "칸마다 숫자, 둘째에 관통 ×2 PIERCE"
+   },
+   "direct": {
+    "burst": 0.16,
+    "sparks": 14,
+    "chips": 6,
+    "hole": "r5 + 금 4줄",
+    "camera": {
+     "shake": 3
+    }
+   },
+   "skip": {
+    "dustRing": 0.45,
+    "cracks": "거미줄 8줄 0.12초에 퍼짐",
+    "chips": 8,
+    "stoneDrops": true,
+    "camera": {
+     "shake": 6,
+     "punch": 0.03
+    },
+    "text": "쿵! THUD"
+   }
+  },
+  "bomb_v3": {
+   "note": "폭탄 명중 v3 (bomb_v2를 대체). 구현 tools/impact_fx.js",
+   "hitStop": 0.07,
+   "impactFrame": "히트스톱 동안 흰(#ffffff) 가시 별, 외곽선 5px, 1.25배",
+   "burst": {
+    "dur": 0.14,
+    "scale": [
+     1.25,
+     1.7
+    ],
+    "note": "주황 가시 별로 바뀌며 커지고 사라짐",
+    "colors": [
+     "#e8203a",
+     "#fff27a"
+    ]
+   },
+   "fireball": {
+    "puffs": 16,
+    "radius": 46,
+    "life": 1.25,
+    "expandTau": 0.035,
+    "breakAt": 0.35,
+    "rise": 70,
+    "spread": 60,
+    "layers": "외곽선(r+4) → 바깥색(r) → 중간색(0.74r, 위왼쪽 0.12·0.16r) → 안쪽색(0.46r, 0.2·0.28r) → 심지(0.24r). 모든 불덩이를 층별로 한꺼번에 그려 하나의 덩어리로 보이게",
+    "palette": [
+     [
+      "~12%",
+      "#e8203a",
+      "#ffb000",
+      "#fff27a",
+      "#ffffff"
+     ],
+     [
+      "~30%",
+      "#b0102e",
+      "#ff6a00",
+      "#ffd23a",
+      "#fff6c8"
+     ],
+     [
+      "~44%",
+      "#7a0f2a",
+      "#d83a1a",
+      "#ff9a2a",
+      "#ffe07a"
+     ],
+     [
+      "~58%",
+      "#231c28",
+      "#3a2a33",
+      "#ff5a1a (아래로 이동하며 줄어듦)"
+     ],
+     [
+      "~100%",
+      "#18141e",
+      "#2c2632",
+      "#7a2a1a"
+     ]
+    ],
+    "sprites": "fx/impact/fireball_0~4_*.svg (한 불덩이의 층 모양 참고)"
+   },
+   "pops": [
+    {
+     "t": 0.16,
+     "offset": [
+      52,
+      -34
+     ],
+     "radius": 21
+    },
+    {
+     "t": 0.26,
+     "offset": [
+      -46,
+      24
+     ],
+     "radius": 18
+    }
+   ],
+   "hullLight": {
+    "radius": 230,
+    "dur": 0.6,
+    "blend": "screen",
+    "color": "#fff6d0 → #ff4a2a → 투명"
+   },
+   "shock": {
+    "dur": 0.3,
+    "r": [
+     24,
+     190
+    ]
+   },
+   "smoke": {
+    "start": 0.6,
+    "every": 0.16,
+    "count": 10
+   },
+   "rest": "불꽃·파편·구멍·잔불·불씨·배 반동·카메라·피해 숫자·선원 반응은 bomb_v2와 같음",
+   "final": {
+    "palette": "B 고대비 진홍 Crimson",
+    "scale": 1.0,
+    "reason": "주황(A)은 노을 배경·갈색 선체에 묻힘. 흰·노랑 심지 + 진홍 테두리 + 더 어두운 연기로 대비 확보. 크게(1.35)는 옆 선실 선원을 가림"
+   },
+   "smokeColumn": {
+    "fill": "#3a3440",
+    "highlight": "#565060"
+   },
+   "alternatives": "tools/impact_fx.js PALETTES: A 주황, C 화약 흰 연기, D 만화 원색 — make({pal, scale})로 바꿔 볼 수 있음"
+  }
+ }
+}

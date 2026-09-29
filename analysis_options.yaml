@@ -16,6 +16,8 @@ analyzer:
   exclude:
     - "**/build/**"
     - "**/*.g.dart"
+    # 아트 패키지 원본(git 제외). 안의 Dart 는 검증 전 참고 구현이다 (docs/ASSETS.md, ADR-026).
+    - "art/**"
 
 linter:
   rules:
