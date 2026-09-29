@@ -1,64 +1,45 @@
 import 'package:pb_sim/src/json_read.dart';
 
-/// 플레이어가 할 수 있는 모든 행동 (설계서 §7.2).
+/// 턴 안의 행동 하나 (설계서 §7.2).
 ///
-/// 사람·AI·네트워크 컨트롤러가 모두 이 커맨드만 낸다. 전투 엔진은 커맨드를
-/// 누가 냈는지 모른다.
+/// 사람·AI·네트워크 컨트롤러가 모두 이 커맨드만 낸다. 전투 엔진은 커맨드를 누가
+/// 냈는지 모른다. [t] 는 턴 시작 기준 밀리초로, 턴 제한 시간 판정과 상대 화면
+/// 재생에 쓴다.
 sealed class Command {
-  const Command({required this.tick, required this.side});
+  const Command({required this.t});
 
-  /// JSON 한 줄(§7.2 형식)에서 읽는다. 형식 오류는 [FormatException].
+  /// JSON 한 개(§7.2 `cmds` 원소)에서 읽는다. 형식 오류는 [FormatException].
   factory Command.fromJson(Map<String, Object?> json) {
-    final tick = readInt(json, 'tick');
-    final side = readInt(json, 'side');
-    if (tick < 0) throw FormatException('tick 은 0 이상: $tick');
-    if (side != 0 && side != 1) throw FormatException('side 는 0 또는 1: $side');
+    final t = readInt(json, 't');
+    if (t < 0) throw FormatException('t 는 0 이상: $t');
     return switch (readString(json, 'type')) {
       FireCommand.type => FireCommand(
-        tick: tick,
-        side: side,
+        t: t,
         slot: readInt(json, 'slot'),
         angle: readInt(json, 'angle'),
         power: readInt(json, 'power'),
       ),
       TapCommand.type => TapCommand(
-        tick: tick,
-        side: side,
+        t: t,
         slot: readInt(json, 'slot'),
+        tick: readInt(json, 'tick'),
       ),
-      SurrenderCommand.type => SurrenderCommand(tick: tick, side: side),
+      EndTurnCommand.type => EndTurnCommand(t: t),
+      SurrenderCommand.type => SurrenderCommand(t: t),
       final other => throw FormatException('알 수 없는 커맨드: $other'),
     };
   }
 
-  /// 실행할 틱 번호.
-  final int tick;
-
-  /// 0 = 왼쪽(내 배), 1 = 오른쪽.
-  final int side;
-
-  /// 같은 틱 안의 적용 순서(FIRE → TAP → SURRENDER).
-  int get kindOrder;
-
-  /// 같은 틱·같은 종류 안의 정렬용 슬롯. 슬롯이 없으면 0.
-  int get sortSlot;
+  /// 턴 시작 기준 밀리초.
+  final int t;
 
   Map<String, Object?> toJson();
-
-  /// 적용 순서: tick → side → 종류 → slot. 같은 입력이면 항상 같은 순서가 된다.
-  static int compare(Command a, Command b) {
-    if (a.tick != b.tick) return a.tick - b.tick;
-    if (a.side != b.side) return a.side - b.side;
-    if (a.kindOrder != b.kindOrder) return a.kindOrder - b.kindOrder;
-    return a.sortSlot - b.sortSlot;
-  }
 }
 
-/// 슬롯의 해적을 발사한다. [angle] 은 밀리도, [power] 는 ×1000 정수.
+/// 슬롯의 해적을 발사한다. [angle] 은 상대 쪽 수평이 0 인 밀리도, [power] 는 0~10000.
 final class FireCommand extends Command {
   const FireCommand({
-    required super.tick,
-    required super.side,
+    required super.t,
     required this.slot,
     required this.angle,
     required this.power,
@@ -71,15 +52,8 @@ final class FireCommand extends Command {
   final int power;
 
   @override
-  int get kindOrder => 0;
-
-  @override
-  int get sortSlot => slot;
-
-  @override
   Map<String, Object?> toJson() => {
-    'tick': tick,
-    'side': side,
+    't': t,
     'type': type,
     'slot': slot,
     'angle': angle,
@@ -87,45 +61,104 @@ final class FireCommand extends Command {
   };
 }
 
-/// 비행 중 2단 동작 (분열, 급강하 등).
+/// 비행 중 2단 동작. 판정은 [t] 가 아니라 발사로부터의 [tick] 으로 한다.
+/// MVP 에서는 효과가 없다(onTap 은 R1).
 final class TapCommand extends Command {
-  const TapCommand({
-    required super.tick,
-    required super.side,
-    required this.slot,
-  });
+  const TapCommand({required super.t, required this.slot, required this.tick});
 
   static const String type = 'TAP';
 
   final int slot;
-
-  @override
-  int get kindOrder => 1;
-
-  @override
-  int get sortSlot => slot;
+  final int tick;
 
   @override
   Map<String, Object?> toJson() => {
-    'tick': tick,
-    'side': side,
+    't': t,
     'type': type,
     'slot': slot,
+    'tick': tick,
   };
+}
+
+/// 턴 종료.
+final class EndTurnCommand extends Command {
+  const EndTurnCommand({required super.t});
+
+  static const String type = 'END_TURN';
+
+  @override
+  Map<String, Object?> toJson() => {'t': t, 'type': type};
 }
 
 /// 항복.
 final class SurrenderCommand extends Command {
-  const SurrenderCommand({required super.tick, required super.side});
+  const SurrenderCommand({required super.t});
 
   static const String type = 'SURRENDER';
 
   @override
-  int get kindOrder => 2;
+  Map<String, Object?> toJson() => {'t': t, 'type': type};
+}
 
-  @override
-  int get sortSlot => 0;
+/// 한 턴의 커맨드 묶음 (설계서 §7.2). 네트워크로는 이 단위로 오간다.
+class TurnBundle {
+  /// [commands] 의 `t` 가 줄어들면 [ArgumentError].
+  TurnBundle({
+    required this.turn,
+    required this.side,
+    required List<Command> commands,
+    this.hash,
+  }) : commands = List.unmodifiable(commands) {
+    if (turn < 1) throw ArgumentError('turn 은 1 이상: $turn');
+    if (side != 0 && side != 1) throw ArgumentError('side 는 0 또는 1: $side');
+    for (var i = 1; i < commands.length; i++) {
+      if (commands[i].t < commands[i - 1].t) {
+        throw ArgumentError(
+          't 가 줄어든다: ${commands[i - 1].t} → ${commands[i].t}',
+        );
+      }
+    }
+  }
 
-  @override
-  Map<String, Object?> toJson() => {'tick': tick, 'side': side, 'type': type};
+  /// 형식 오류는 [FormatException].
+  factory TurnBundle.fromJson(Map<String, Object?> json) {
+    final raw = json['hash'];
+    if (raw != null && raw is! String) {
+      throw FormatException('"hash" 는 문자열이어야 한다: $raw');
+    }
+    final turn = readInt(json, 'turn');
+    final side = readInt(json, 'side');
+    final commands = [
+      for (final c in readList(json, 'cmds')) Command.fromJson(asMap(c, '커맨드')),
+    ];
+    if (turn < 1 || (side != 0 && side != 1)) {
+      throw FormatException('turn·side 가 범위 밖: $turn, $side');
+    }
+    for (var i = 1; i < commands.length; i++) {
+      if (commands[i].t < commands[i - 1].t) {
+        throw const FormatException('cmds 의 t 가 줄어든다');
+      }
+    }
+    return TurnBundle(
+      turn: turn,
+      side: side,
+      commands: commands,
+      hash: raw == null ? null : int.parse(raw as String, radix: 16),
+    );
+  }
+
+  /// 1부터 세는 턴 번호(양쪽 합산).
+  final int turn;
+  final int side;
+  final List<Command> commands;
+
+  /// 턴이 끝난 뒤 상태 해시. 재생 결과와 비교한다. 아직 모르면 null.
+  final int? hash;
+
+  Map<String, Object?> toJson() => {
+    'turn': turn,
+    'side': side,
+    'cmds': [for (final c in commands) c.toJson()],
+    if (hash != null) 'hash': hash!.toRadixString(16).padLeft(8, '0'),
+  };
 }

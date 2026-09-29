@@ -3,95 +3,123 @@ import 'dart:convert';
 import 'package:pb_sim/pb_sim.dart';
 import 'package:test/test.dart';
 
+import 'aim.dart';
 import 'fixtures.dart';
 
-/// 샘플 매치(시드 20260929, 1,000틱)의 기대 해시. 의도한 규칙 변경일 때만 갱신하고
+/// 샘플 매치(시드 20260929, 끝까지)의 기대 해시. 의도한 규칙 변경일 때만 갱신하고
 /// 커밋 메시지에 이유를 적는다 (개발 계획서 §2.4 DoD 2).
-const int _goldenHash = 2447913407;
+const int _goldenHash = 1686798692;
 
 int _hash(Match m) => hashMatchState(m.state);
 
+Match _runSample(int seed) {
+  final match = newSampleMatch(seed);
+  runMatch(match, RandomController(7), RandomController(8));
+  return match;
+}
+
+Replay _replayOf(Match m) => Replay.fromMatch(
+  blueprints: [sampleBlueprint(), sampleBlueprint()],
+  decks: sampleDecks,
+  costLimits: sampleCostLimits,
+  match: m,
+);
+
 void main() {
-  test('같은 시드와 커맨드로 1,000틱을 돌리면 해시가 매번 같다', () {
+  test('같은 턴 묶음 목록이면 최종 해시가 100번 모두 같다', () {
     final first = runSampleHash(seed: 20260929);
-    for (var i = 0; i < 20; i++) {
+    for (var i = 0; i < 100; i++) {
       expect(runSampleHash(seed: 20260929), first);
     }
   });
 
-  test('1,000틱 해시는 기록해 둔 골든 값과 같다', () {
+  test('최종 해시는 기록해 둔 골든 값과 같다', () {
     expect(runSampleHash(seed: 20260929), _goldenHash);
+  });
+
+  test('샘플 매치는 발사·착탄·블록 파괴가 실제로 일어난다', () {
+    final m = newSampleMatch(20260929);
+    final kinds = <SimEventKind>{};
+    for (var i = 0; i < 30 && !m.isOver; i++) {
+      final s = m.state;
+      final c = RandomController(s.activeSide == 0 ? 7 : 8);
+      m.playTurn(c.turnFor(s));
+      kinds.addAll([for (final e in s.events) e.kind]);
+    }
+    expect(
+      kinds,
+      containsAll([
+        SimEventKind.fire,
+        SimEventKind.impact,
+        SimEventKind.splash,
+        SimEventKind.blockDestroyed,
+      ]),
+    );
   });
 
   test('시드가 다르면 해시가 달라진다', () {
     expect(runSampleHash(seed: 1), isNot(runSampleHash(seed: 2)));
   });
 
-  test('커맨드가 하나라도 다르면 해시가 달라진다', () {
-    Match run(int angle) {
-      final m = newSampleMatch(5);
-      runMatch(
-        m,
-        ScriptedController([
-          FireCommand(tick: 10, side: 0, slot: 0, angle: angle, power: 5000),
-        ]),
-        ScriptedController(const []),
-        ticks: 100,
+  test('착탄 칸이 달라지면 해시가 달라진다', () {
+    final base = aimAt(newSampleMatch(5).state, slot: 0, tx: 11, ty: 1);
+    int run(int angle) {
+      final m = newSampleMatch(5)
+        ..apply(FireCommand(t: 10, slot: 0, angle: angle, power: base.power));
+      expect(
+        m.state.events.where((e) => e.kind == SimEventKind.impact),
+        hasLength(1),
       );
-      return m;
+      return _hash(m);
     }
 
-    expect(_hash(run(45000)), isNot(_hash(run(45001))));
+    expect(run(base.angle), isNot(run(base.angle + 5000)));
   });
 
-  test('리플레이를 JSON 으로 저장했다 다시 읽어 돌려도 해시가 같다', () {
-    const seed = 424242;
-    final match = newSampleMatch(seed);
-    final script = ScriptedController(sampleScript());
-    runMatch(match, script, script, ticks: 1000);
-    expect(match.state.sides[0].shots, isNotEmpty);
-    expect(match.state.sides[1].shots, isNotEmpty);
-    final replay = Replay.fromMatch(
-      seed: seed,
-      blueprints: [sampleBlueprint(), sampleBlueprint()],
-      decks: sampleDecks,
-      match: match,
-    );
+  test('턴 묶음마다 턴 끝 해시가 기록된다', () {
+    final m = _runSample(424242);
+    expect(m.turnLog, isNotEmpty);
+    expect(m.turnLog.every((b) => b.hash != null), isTrue);
+    expect(m.turnLog.last.hash, _hash(m));
+  });
 
+  test('리플레이를 JSON 으로 저장했다 다시 읽어 돌려도 모든 턴 해시가 같다', () {
+    final match = _runSample(424242);
+    final replay = _replayOf(match);
     final text = jsonEncode(replay.toJson());
     final loaded = Replay.fromJson(jsonDecode(text) as Map<String, Object?>);
 
     expect(jsonEncode(loaded.toJson()), text);
-    expect(_hash(loaded.play(ticks: 1000)), _hash(match));
-    expect(_hash(replay.play(ticks: 1000)), _hash(match));
+    expect(_hash(loaded.play(pirates: sampleCatalog)), _hash(match));
+    expect(_hash(replay.play(pirates: sampleCatalog)), _hash(match));
   });
 
-  test('항복으로 끝난 판은 리플레이를 끝까지 돌려도 같은 곳에서 끝난다', () {
-    final match = newSampleMatch(9);
-    final script = ScriptedController([
-      ...sampleScript(ticks: 300),
-      const SurrenderCommand(tick: 300, side: 0),
-    ]);
-    runMatch(match, script, script, ticks: matchDurationTicks);
-    final replay = Replay.fromMatch(
-      seed: 9,
-      blueprints: [sampleBlueprint(), sampleBlueprint()],
-      decks: sampleDecks,
-      match: match,
+  test('턴 해시가 다른 리플레이는 재생할 때 잡아낸다', () {
+    final replay = _replayOf(_runSample(9));
+    final t = replay.turns;
+    final forged = Replay(
+      seed: replay.seed,
+      blueprints: replay.blueprints,
+      decks: replay.decks,
+      costLimits: replay.costLimits,
+      turns: [
+        TurnBundle(
+          turn: t[0].turn,
+          side: t[0].side,
+          commands: t[0].commands,
+          hash: (t[0].hash! + 1) & 0xFFFFFFFF,
+        ),
+        ...t.skip(1),
+      ],
     );
-    final again = replay.play();
-    expect(again.state.tick, 301);
-    expect(again.state.winner, 1);
-    expect(_hash(again), _hash(match));
+    expect(
+      () => forged.play(pirates: sampleCatalog),
+      throwsA(isA<TurnHashMismatch>()),
+    );
   });
 
   test('지원하지 않는 리플레이 버전은 거부한다', () {
-    final json = Replay(
-      seed: 1,
-      blueprints: [sampleBlueprint(), sampleBlueprint()],
-      decks: sampleDecks,
-      commands: const [],
-    ).toJson()..['version'] = 99;
+    final json = _replayOf(newSampleMatch(1)).toJson()..['version'] = 2;
     expect(() => Replay.fromJson(json), throwsFormatException);
   });
 }

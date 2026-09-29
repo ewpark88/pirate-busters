@@ -1,0 +1,5 @@
+# 릴리스 서명 설정 예시 (docs/RELEASE.md §4). 복사해서 key.properties 로 저장한다. 커밋하지 않는다.
+storeFile=C:/Users/<you>/keys/pirate-busters-upload.jks
+storePassword=<비밀번호>
+keyAlias=upload
+keyPassword=<비밀번호>

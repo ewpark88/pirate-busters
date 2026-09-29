@@ -16,7 +16,7 @@
 | `lib/game/viewport/virtual_viewport.dart`, `lib/ui/play/hud_scale.dart` | `app/lib/render` | M4 | 가로 고정 반응형 가상 화면 그대로 |
 | `lib/game/effects/particle_effects.dart`, `run_fx.dart` | `app/lib/render` | M4 | 파편·물보라·화면 흔들림·햅틱 |
 | `lib/game/render/palette.dart` | `app/lib/render` | M4 | 구조만. 색은 해적·바다 팔레트로 새로 정한다 |
-| `모찌 런처 2.5D.html` (2.5D 렌더 규칙, 합성음) | `app/lib/render`, 효과음 | M4 | 그림자·림라이트·하이라이트·말랑 변형 규칙. 합성음은 샘플 JS 를 Dart 로 옮긴다 |
+| `모찌 런처 2.5D.html` (합성음) | 효과음 | M4 | 합성음만 샘플 JS 를 Dart 로 옮긴다. 2.5D 렌더 규칙은 아트 방향이 플랫 2D 벡터로 바뀌어 가져오지 않는다 (설계서 §10, ADR-014) |
 | `lib/core/json/json_reader.dart` | `pb_data` | M5 | 정수 필드 읽기를 기본으로 한다. 실수 값이 오면 오류로 처리한다 |
 | `lib/domain/balance/stage_spec.dart`, `lib/domain/run/star_rules.dart` | `pb_data`, `app/lib/meta` | M7 | 스테이지 JSON 구조(`stage_table`)와 별 3개 미션 판정 |
 | 연패 보정 로직(보스 레이스) | `pb_ai` | M6 | 3연패마다 각도 오차 +1°, 최대 +3° |

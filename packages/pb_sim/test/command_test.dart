@@ -3,73 +3,65 @@ import 'dart:convert';
 import 'package:pb_sim/pb_sim.dart';
 import 'package:test/test.dart';
 
-Command _parse(String s) =>
-    Command.fromJson(jsonDecode(s) as Map<String, Object?>);
+Map<String, Object?> _map(String s) => jsonDecode(s) as Map<String, Object?>;
 
 void main() {
-  test('설계서 §7.2 의 커맨드 JSON 을 그대로 읽는다', () {
-    final fire = _parse(
-      '{ "tick": 1842, "side": 0, "type": "FIRE", "slot": 3, '
-      '"angle": 41250, "power": 7800 }',
+  test('설계서 §7.2 의 턴 묶음 JSON 을 읽는다 (MOVE 는 M3)', () {
+    final b = TurnBundle.fromJson(
+      _map('''
+{ "turn": 7, "side": 0, "cmds": [
+  { "t": 9800,  "type": "FIRE", "slot": 3, "angle": 41250, "power": 7800 },
+  { "t": 10900, "type": "TAP",  "slot": 3, "tick": 25 },
+  { "t": 16400, "type": "FIRE", "slot": 1, "angle": 30500, "power": 6100 },
+  { "t": 21000, "type": "END_TURN" }
+], "hash": "9f3a1c07" }'''),
     );
-    expect(fire, isA<FireCommand>());
-    fire as FireCommand;
+    expect([b.turn, b.side, b.hash], [7, 0, 0x9f3a1c07]);
     expect(
-      [fire.tick, fire.side, fire.slot, fire.angle, fire.power],
-      [1842, 0, 3, 41250, 7800],
-    );
-    final tap = _parse(
-      '{ "tick": 1901, "side": 0, "type": "TAP",  "slot": 3 }',
-    );
-    expect(tap, isA<TapCommand>());
-    expect(
-      _parse('{"tick": 5, "side": 1, "type": "SURRENDER"}'),
-      isA<SurrenderCommand>(),
-    );
-  });
-
-  test('커맨드는 JSON 으로 저장했다 읽어도 같다', () {
-    const cmds = <Command>[
-      FireCommand(tick: 1, side: 1, slot: 2, angle: 1000, power: 5000),
-      TapCommand(tick: 2, side: 0, slot: 1),
-      SurrenderCommand(tick: 3, side: 1),
-    ];
-    for (final c in cmds) {
-      final text = jsonEncode(c.toJson());
-      expect(jsonEncode(_parse(text).toJson()), text);
-    }
-  });
-
-  test('형식이 틀린 커맨드는 FormatException 을 낸다', () {
-    for (final bad in [
-      '{"tick":1,"side":2,"type":"TAP","slot":0}',
-      '{"tick":-1,"side":0,"type":"TAP","slot":0}',
-      '{"tick":1,"side":0,"type":"JUMP"}',
-      '{"tick":1,"side":0,"type":"FIRE","slot":0,"angle":1.5,"power":1}',
-    ]) {
-      expect(() => _parse(bad), throwsFormatException, reason: bad);
-    }
-  });
-
-  test('커맨드는 tick → side → 종류 → slot 순으로 정렬된다', () {
-    final cmds = <Command>[
-      const SurrenderCommand(tick: 1, side: 0),
-      const TapCommand(tick: 1, side: 0, slot: 0),
-      const FireCommand(tick: 1, side: 1, slot: 0, angle: 0, power: 0),
-      const FireCommand(tick: 1, side: 0, slot: 2, angle: 0, power: 0),
-      const FireCommand(tick: 1, side: 0, slot: 1, angle: 0, power: 0),
-      const TapCommand(tick: 0, side: 1, slot: 3),
-    ]..sort(Command.compare);
-    expect(
-      [for (final c in cmds) jsonEncode(c.toJson())],
+      [for (final c in b.commands) c.runtimeType],
       [
-        '{"tick":0,"side":1,"type":"TAP","slot":3}',
-        '{"tick":1,"side":0,"type":"FIRE","slot":1,"angle":0,"power":0}',
-        '{"tick":1,"side":0,"type":"FIRE","slot":2,"angle":0,"power":0}',
-        '{"tick":1,"side":0,"type":"TAP","slot":0}',
-        '{"tick":1,"side":0,"type":"SURRENDER"}',
-        '{"tick":1,"side":1,"type":"FIRE","slot":0,"angle":0,"power":0}',
+        FireCommand,
+        TapCommand,
+        FireCommand,
+        EndTurnCommand,
       ],
     );
+    final fire = b.commands.first as FireCommand;
+    expect([fire.t, fire.slot, fire.angle, fire.power], [9800, 3, 41250, 7800]);
+    expect((b.commands[1] as TapCommand).tick, 25);
+  });
+
+  test('턴 묶음은 JSON 으로 저장했다 읽어도 같다', () {
+    final b = TurnBundle(
+      turn: 2,
+      side: 1,
+      commands: const [
+        FireCommand(t: 100, slot: 2, angle: 1000, power: 5000),
+        TapCommand(t: 200, slot: 2, tick: 3),
+        SurrenderCommand(t: 300),
+      ],
+      hash: 0x0000abcd,
+    );
+    final text = jsonEncode(b.toJson());
+    expect(text, contains('"hash":"0000abcd"'));
+    expect(jsonEncode(TurnBundle.fromJson(_map(text)).toJson()), text);
+  });
+
+  test('형식이 틀린 턴 묶음은 FormatException 을 낸다', () {
+    for (final bad in [
+      '{"turn":0,"side":0,"cmds":[]}',
+      '{"turn":1,"side":2,"cmds":[]}',
+      '{"turn":1,"side":0,"cmds":[{"t":-1,"type":"END_TURN"}]}',
+      '{"turn":1,"side":0,"cmds":[{"t":1,"type":"JUMP"}]}',
+      '{"turn":1,"side":0,"cmds":[{"t":1,"type":"FIRE","slot":0,"angle":1.5,"power":1}]}',
+      '{"turn":1,"side":0,"cmds":[{"t":5,"type":"END_TURN"},{"t":4,"type":"END_TURN"}]}',
+      '{"turn":1,"side":0,"cmds":[],"hash":7}',
+    ]) {
+      expect(
+        () => TurnBundle.fromJson(_map(bad)),
+        throwsFormatException,
+        reason: bad,
+      );
+    }
   });
 }

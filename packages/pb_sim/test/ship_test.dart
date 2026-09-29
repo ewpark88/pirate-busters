@@ -34,13 +34,36 @@ void main() {
   });
 
   test('설계도는 비용을 합산하고 칸을 (y, x) 순으로 정렬한다', () {
-    final b = Blueprint(HullSpec.sloop, const [
-      BlockCell(3, 1, BlockMaterial.iron),
-      BlockCell(0, 0, BlockMaterial.oak),
-      BlockCell(5, 0, BlockMaterial.pine),
-    ]);
-    expect(b.cost, 7);
-    expect([for (final c in b.cells) '${c.x},${c.y}'], ['0,0', '5,0', '3,1']);
+    final b = Blueprint(
+      HullSpec.sloop,
+      const [
+        BlockCell(3, 1, BlockMaterial.iron),
+        BlockCell(0, 0, BlockMaterial.oak),
+        BlockCell(5, 0, BlockMaterial.pine),
+        BlockCell(6, 0, BlockMaterial.pine),
+      ],
+      cabins: const [
+        CabinCell(3, 1),
+        CabinCell(0, 0),
+        CabinCell(5, 0),
+        CabinCell(6, 0),
+      ],
+    );
+    expect(b.cost, 8);
+    expect(
+      [for (final c in b.cells) '${c.x},${c.y}'],
+      ['0,0', '5,0', '6,0', '3,1'],
+    );
+    // 선실은 입력 순서가 슬롯 번호다.
+    expect(
+      [for (final c in b.cabins) '${c.x},${c.y}'],
+      [
+        '3,1',
+        '0,0',
+        '5,0',
+        '6,0',
+      ],
+    );
     expect(sampleBlueprint().cost, 57);
   });
 
@@ -48,20 +71,48 @@ void main() {
     expect(
       () => Blueprint(HullSpec.sloop, const [
         BlockCell(12, 0, BlockMaterial.oak),
-      ]),
+      ], cabins: const []),
       throwsArgumentError,
     );
     expect(
       () => Blueprint(HullSpec.sloop, const [
         BlockCell(1, 1, BlockMaterial.oak),
         BlockCell(1, 1, BlockMaterial.pine),
-      ]),
+      ], cabins: const []),
       throwsArgumentError,
     );
     expect(
       () => Blueprint(HullSpec.sloop, [
         for (var x = 0; x < 12; x++) BlockCell(x, 0, BlockMaterial.iron),
         for (var x = 0; x < 4; x++) BlockCell(x, 1, BlockMaterial.iron),
+      ], cabins: const []),
+      throwsArgumentError,
+    );
+  });
+
+  test('선실은 선실 슬롯 수만큼, 블록 위에, 서로 다른 칸에 있어야 한다', () {
+    Blueprint build(List<CabinCell> cabins) => Blueprint(HullSpec.sloop, [
+      for (var x = 0; x < 12; x++) BlockCell(x, 0, BlockMaterial.oak),
+    ], cabins: cabins);
+    expect(
+      () => build(const [CabinCell(0, 0), CabinCell(1, 0), CabinCell(2, 0)]),
+      throwsArgumentError,
+    );
+    expect(
+      () => build(const [
+        CabinCell(0, 0),
+        CabinCell(1, 0),
+        CabinCell(2, 0),
+        CabinCell(2, 1),
+      ]),
+      throwsArgumentError,
+    );
+    expect(
+      () => build(const [
+        CabinCell(0, 0),
+        CabinCell(1, 0),
+        CabinCell(2, 0),
+        CabinCell(2, 0),
       ]),
       throwsArgumentError,
     );
@@ -77,9 +128,11 @@ void main() {
 
   test('설계도 JSON 의 형식이 틀리면 FormatException 을 낸다', () {
     for (final bad in [
-      '{"hull":"sloop","cells":[[1,2]]}',
-      '{"hull":"sloop","cells":[[1.5,2,"oak"]]}',
-      '{"hull":"sloop","cells":[[1,2,"gold"]]}',
+      '{"hull":"sloop","cells":[[1,2]],"cabins":[]}',
+      '{"hull":"sloop","cells":[],"cabins":[[1]]}',
+      '{"hull":"sloop","cells":[]}',
+      '{"hull":"sloop","cells":[[1.5,2,"oak"]],"cabins":[]}',
+      '{"hull":"sloop","cells":[[1,2,"gold"]],"cabins":[]}',
       '{"hull":"sloop"}',
     ]) {
       expect(() => Blueprint.fromJson(_parse(bad)), throwsFormatException);

@@ -5,17 +5,26 @@
 /// (`tool/check_architecture.dart` 가 검사한다).
 library;
 
+export 'src/combat/impact.dart';
 export 'src/command/command.dart';
 export 'src/hash/state_hasher.dart';
 export 'src/match/controller.dart';
 export 'src/match/match.dart';
 export 'src/match/match_state.dart';
+export 'src/match/rules.dart';
+export 'src/match/sim_event.dart';
 export 'src/math/fx.dart';
 export 'src/math/int_math.dart';
 export 'src/math/trig.dart';
+export 'src/pirate/crew.dart';
+export 'src/pirate/pirate_spec.dart';
+export 'src/projectile/grid_trace.dart';
+export 'src/projectile/projectile.dart';
 export 'src/random/xorshift32.dart';
 export 'src/replay/replay.dart';
 export 'src/ship/blueprint.dart';
 export 'src/ship/hull.dart';
 export 'src/ship/material.dart';
 export 'src/ship/ship_grid.dart';
+export 'src/ship/support.dart';
+export 'src/world/world.dart';

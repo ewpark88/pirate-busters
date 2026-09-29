@@ -1,98 +1,226 @@
+import 'package:pb_sim/src/combat/flight.dart';
 import 'package:pb_sim/src/command/command.dart';
+import 'package:pb_sim/src/hash/state_hasher.dart';
 import 'package:pb_sim/src/match/match_state.dart';
+import 'package:pb_sim/src/match/rules.dart';
+import 'package:pb_sim/src/match/sim_event.dart';
+import 'package:pb_sim/src/math/fx.dart';
 import 'package:pb_sim/src/math/trig.dart';
+import 'package:pb_sim/src/pirate/pirate_spec.dart';
+import 'package:pb_sim/src/projectile/projectile.dart';
 import 'package:pb_sim/src/ship/blueprint.dart';
-import 'package:pb_sim/src/ship/ship_grid.dart';
 
-/// M1 임시 재장전: 3초. 해적별 재장전(설계서 §2.3)은 M5 에서 데이터로 바뀐다.
-const int defaultReloadTicks = 3 * simTickHz;
+/// 턴 묶음 해시가 재생 결과와 다르다(부정 또는 버그, 설계서 §7.2).
+class TurnHashMismatch implements Exception {
+  const TurnHashMismatch(this.turn, this.expected, this.actual);
 
-/// FIRE 힘의 상한(×1000).
-const int maxFirePower = 10000;
+  final int turn;
+  final int expected;
+  final int actual;
 
-/// 결정론 전투 엔진 (설계서 §7). 같은 시드와 같은 커맨드면 같은 결과를 낸다.
+  @override
+  String toString() => 'TurnHashMismatch(turn $turn: $expected != $actual)';
+}
+
+/// 결정론 턴제 전투 엔진 (설계서 §2.3, §7). 같은 입력이면 같은 결과를 낸다.
+///
+/// 커맨드는 [apply] 로 하나씩(사람 조작) 넣거나 [playTurn] 으로 턴 묶음째(AI·재생)
+/// 넣는다. 탄은 발사 커맨드 안에서 떨어질 때까지 한 번에 계산한다.
 class Match {
   Match._(this.state);
 
-  /// [blueprints] 와 [decks] 는 [0] = 왼쪽, [1] = 오른쪽.
+  /// [blueprints]·[decks]·[costLimits] 는 [0] = 왼쪽, [1] = 오른쪽. 덱은 선실
+  /// 슬롯 순서의 출전 해적 id 이고 [pirates] 에서 찾는다. [costLimits] 는 플레이어
+  /// 레벨로 정해지는 출전 코스트 한도(설계서 §4.5). 명단 규칙 위반은 [ArgumentError].
   factory Match.start({
     required int seed,
     required List<Blueprint> blueprints,
     required List<List<String>> decks,
+    required List<int> costLimits,
+    required PirateCatalog pirates,
+    MatchRules rules = const MatchRules(),
   }) {
-    if (blueprints.length != 2 || decks.length != 2) {
-      throw ArgumentError('설계도와 덱은 진영마다 하나씩 2개여야 한다');
+    if (blueprints.length != 2 || decks.length != 2 || costLimits.length != 2) {
+      throw ArgumentError('설계도·덱·코스트 한도는 진영마다 하나씩 2개여야 한다');
     }
-    return Match._(
-      MatchState(
-        seed: seed,
-        sides: [
-          for (var i = 0; i < 2; i++)
-            SideState(ShipGrid.fromBlueprint(blueprints[i]), decks[i]),
-        ],
-      ),
-    );
+    final sides = <SideState>[];
+    for (var i = 0; i < 2; i++) {
+      final lineup = [for (final id in decks[i]) pirates.byId(id)];
+      checkLineup(blueprints[i].hull, lineup, costLimits[i]);
+      sides.add(SideState(side: i, blueprint: blueprints[i], lineup: lineup));
+    }
+    return Match._(MatchState(seed: seed, rules: rules, sides: sides));
   }
 
   final MatchState state;
 
-  final List<Command> _log = [];
+  final List<TurnBundle> _log = [];
+  final List<Command> _current = [];
+  bool _turnOpen = false;
 
-  /// 지금까지 [step] 에 들어온 현재 틱 커맨드(적용 순서). 리플레이 저장용.
-  List<Command> get commandLog => List.unmodifiable(_log);
+  /// 끝난 턴 묶음(턴 끝 해시 포함). 리플레이 저장·네트워크 전송용.
+  List<TurnBundle> get turnLog => List.unmodifiable(_log);
 
   bool get isOver => state.isOver;
 
-  /// 한 틱 진행한다. [commands] 중 현재 틱이 아닌 것은 무시한다.
+  /// 지금 턴의 커맨드 하나를 적용한다. 판이 끝났으면 무시한다.
   ///
-  /// 순서: 커맨드 정렬(tick → side → 종류 → slot) → 적용 → 재장전 감소 → 틱 증가.
-  void step([List<Command> commands = const []]) {
+  /// 턴 제한 시간이 지난 커맨드는 버리고 턴을 넘긴다. 발사는 탄이 떨어질 때까지
+  /// 계산하고, 그 시간만큼 턴 타이머를 멈춘다.
+  void apply(Command c) {
     if (state.isOver) return;
-    final now = [
-      for (final c in commands)
-        if (c.tick == state.tick) c,
-    ]..sort(Command.compare);
-    for (final c in now) {
-      _log.add(c);
-      if (state.isOver) break;
-      _apply(c);
+    if (!_turnOpen) _beginTurn();
+    _current.add(c);
+    if (c.t - state.pausedMs > state.rules.turnTimeMs) {
+      _endTurn(TurnEndReason.timeout);
+      return;
     }
-    for (final side in state.sides) {
-      final reload = side.reloadTicks;
-      for (var i = 0; i < reload.length; i++) {
-        if (reload[i] > 0) reload[i]--;
-      }
-    }
-    state.tick++;
-    if (!state.isOver && state.tick >= matchDurationTicks) {
-      state.outcome = MatchOutcome.timeUp;
-    }
-  }
-
-  void _apply(Command c) {
-    final side = state.sides[c.side];
     switch (c) {
       case FireCommand():
-        if (!side.isSlotOccupied(c.slot)) return;
-        if (side.reloadTicks[c.slot] > 0) return;
-        if (c.angle < 0 || c.angle >= fullTurnMdeg) return;
-        if (c.power < 0 || c.power > maxFirePower) return;
-        side.shots.add(
-          FiredShot(
-            tick: c.tick,
-            slot: c.slot,
-            angle: c.angle,
-            power: c.power,
-          ),
-        );
-        side.reloadTicks[c.slot] = defaultReloadTicks;
+        _fire(c);
       case TapCommand():
-        // 비행 중 2단 동작은 투사체가 생기는 M2 에서 연결한다.
+        // 비행 중 2단 동작(onTap)은 MVP 에서 쓰지 않는다 (개발 계획서 M5, R1).
         break;
+      case EndTurnCommand():
+        _endTurn(TurnEndReason.endTurn);
       case SurrenderCommand():
         state
           ..outcome = MatchOutcome.surrender
-          ..winner = 1 - c.side;
+          ..winner = 1 - state.activeSide;
+        _endTurn(TurnEndReason.matchOver);
+    }
+  }
+
+  /// 턴 묶음 하나를 재생한다. 묶음이 `END_TURN` 없이 끝나면 시간 초과로 넘긴다.
+  /// 묶음에 해시가 있으면 결과와 비교해 다르면 [TurnHashMismatch].
+  void playTurn(TurnBundle bundle) {
+    if (state.isOver) return;
+    if (bundle.turn != state.turn || bundle.side != state.activeSide) {
+      throw ArgumentError(
+        '턴 순서가 다르다: ${bundle.turn}/${bundle.side}, '
+        '지금 ${state.turn}/${state.activeSide}',
+      );
+    }
+    final turn = state.turn;
+    for (final c in bundle.commands) {
+      if (state.turn != turn || state.isOver) break;
+      apply(c);
+    }
+    if (state.turn == turn && !state.isOver) {
+      if (!_turnOpen) _beginTurn();
+      _endTurn(TurnEndReason.timeout);
+    }
+    final expected = bundle.hash;
+    final actual = _log.last.hash!;
+    if (expected != null && expected != actual) {
+      throw TurnHashMismatch(turn, expected, actual);
+    }
+  }
+
+  void _beginTurn() {
+    _turnOpen = true;
+    final side = state.activeSide;
+    state.events
+      ..clear()
+      ..add(SimEvent(SimEventKind.turnStart, side: side, value: state.turn));
+    state.sides[side].crew.startOwnTurn(side, state.events);
+  }
+
+  void _fire(FireCommand c) {
+    final active = state.activeSide;
+    final side = state.sides[active];
+    if (state.firesThisTurn >= state.rules.firesPerTurn) return;
+    if (!side.crew.canFire(c.slot)) return;
+    if (c.angle < 0 || c.angle >= fullTurnMdeg) return;
+    if (c.power < 0 || c.power > maxFirePower) return;
+    final cabin = side.cabins[c.slot];
+    final (x, y) = side.frame.cellCenter(cabin.x, cabin.y);
+    final id = state.nextProjectileId++;
+    final shot = Projectile.launch(
+      id: id,
+      side: active,
+      slot: c.slot,
+      spec: side.crew.pirates[c.slot].spec,
+      x: x,
+      y: y,
+      angle: c.angle,
+      power: c.power,
+    );
+    side.crew.markFired(c.slot);
+    side.shotsFired++;
+    state
+      ..firesThisTurn += 1
+      ..events.add(
+        SimEvent(
+          SimEventKind.fire,
+          side: active,
+          slot: c.slot,
+          x: x,
+          y: y,
+          value: id,
+        ),
+      );
+    final ticks = resolveShot(state, shot);
+    state.pausedMs += roundDiv(ticks * 1000, simTickHz);
+    _judge();
+    if (state.isOver) {
+      _endTurn(TurnEndReason.matchOver);
+    } else if (state.firesThisTurn >= state.rules.firesPerTurn) {
+      _endTurn(TurnEndReason.firesUsed);
+    }
+  }
+
+  /// 턴 끝 처리 (설계서 §2.3): 화재(M5) → 침수(M3) → 수리·펌프(M5) → 쿨다운 → 바람.
+  void _endTurn(TurnEndReason reason) {
+    final side = state.activeSide;
+    final turn = state.turn;
+    state.sides[side].crew.endOwnTurn();
+    state.events.add(
+      SimEvent(
+        SimEventKind.turnEnd,
+        side: side,
+        cell: reason.index,
+        value: turn,
+      ),
+    );
+    if (!state.isOver && turn >= state.rules.maxTurns) {
+      state.outcome = MatchOutcome.turnLimit;
+    }
+    state
+      ..turn = turn + 1
+      ..wind = state.rules.windForTurn(state.seed, turn + 1)
+      ..firesThisTurn = 0
+      ..pausedMs = 0;
+    _log.add(
+      TurnBundle(
+        turn: turn,
+        side: side,
+        commands: List.of(_current),
+        hash: hashMatchState(state),
+      ),
+    );
+    _current.clear();
+    _turnOpen = false;
+  }
+
+  /// 전멸 → 격침 순으로 본다. 두 배가 같은 탄에 끝나면 무승부(winner −1).
+  void _judge() {
+    final percent = state.rules.sunkHullPercent;
+    for (final outcome in const [
+      MatchOutcome.annihilation,
+      MatchOutcome.sunk,
+    ]) {
+      final lost = [
+        for (final s in state.sides)
+          outcome == MatchOutcome.annihilation
+              ? s.crew.allDown
+              : s.grid.totalHp * 100 < s.grid.initialTotalHp * percent,
+      ];
+      if (!lost[0] && !lost[1]) continue;
+      state
+        ..outcome = outcome
+        ..winner = lost[0] && lost[1] ? -1 : (lost[0] ? 1 : 0);
+      return;
     }
   }
 }
