@@ -75,7 +75,7 @@ void main() {
       final side = SideState(
         side: 1,
         blueprint: sampleBlueprint(),
-        deck: [testPirate('a')],
+        lineup: [testPirate('a')],
       );
       final events = <SimEvent>[];
       resolveImpact(
@@ -114,7 +114,7 @@ void main() {
       final side = SideState(
         side: 1,
         blueprint: _pillarBlueprint(),
-        deck: [testPirate('a')],
+        lineup: [testPirate('a')],
       );
       final events = <SimEvent>[];
       resolveImpact(

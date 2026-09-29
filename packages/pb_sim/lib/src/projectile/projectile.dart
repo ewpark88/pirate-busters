@@ -1,4 +1,4 @@
-import 'package:pb_sim/src/match/match_state.dart';
+import 'package:pb_sim/src/match/rules.dart';
 import 'package:pb_sim/src/math/fx.dart';
 import 'package:pb_sim/src/math/trig.dart';
 import 'package:pb_sim/src/pirate/pirate_spec.dart';

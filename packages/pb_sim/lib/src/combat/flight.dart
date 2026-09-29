@@ -5,25 +5,23 @@ import 'package:pb_sim/src/math/fx.dart';
 import 'package:pb_sim/src/projectile/grid_trace.dart';
 import 'package:pb_sim/src/projectile/projectile.dart';
 
-/// 모든 투사체를 id 순으로 한 틱 진행하고, 배·바다에 닿은 탄을 처리한다.
+/// 탄 하나를 떨어질 때까지 틱 단위로 진행하고 날아간 틱 수를 돌려준다.
 ///
-/// 탄은 쏜 진영의 배에는 닿지 않는다(아군 지원 사격은 M5). 틱 사이 구간을 상대 배
-/// 로컬 격자에서 DDA 로 훑고, 해수면(y = 0) 아래로 내려가면 물보라로 끝난다.
-void advanceProjectiles(MatchState state) {
-  final survivors = <Projectile>[];
-  for (final p in state.projectiles) {
-    if (!_advanceOne(state, p)) survivors.add(p);
+/// 턴제라 한 번에 탄 하나만 난다. 탄은 쏜 진영의 배에는 닿지 않는다(아군 지원
+/// 사격은 M5). 틱 사이 구간을 상대 배 로컬 격자에서 DDA 로 훑고, 해수면(y = 0)
+/// 아래로 내려가면 물보라로 끝난다. 이벤트의 [SimEvent.value] 에 착탄 틱을 넣는다.
+int resolveShot(MatchState state, Projectile p) {
+  final wind = state.wind * state.rules.windAccel;
+  while (true) {
+    if (_advanceOne(state, p, wind)) return p.age;
   }
-  state.projectiles
-    ..clear()
-    ..addAll(survivors);
 }
 
 /// 탄이 끝났으면 true.
-bool _advanceOne(MatchState state, Projectile p) {
+bool _advanceOne(MatchState state, Projectile p, int wind) {
   final x0 = p.x;
   final y0 = p.y;
-  p.advance(state.wind);
+  p.advance(wind);
   var x1 = p.x;
   var y1 = p.y;
   final hitsSea = y1 < 0;
@@ -49,9 +47,10 @@ bool _advanceOne(MatchState state, Projectile p) {
       SimEvent(
         SimEventKind.impact,
         side: target.side,
-        cell: grid.inBounds(hit.cx, hit.cy) ? grid.indexOf(hit.cx, hit.cy) : -1,
+        cell: grid.indexOf(hit.cx, hit.cy),
         x: wx,
         y: hit.y,
+        value: p.age,
       ),
     );
     resolveImpact(
@@ -67,7 +66,7 @@ bool _advanceOne(MatchState state, Projectile p) {
   }
   if (hitsSea) {
     state.events.add(
-      SimEvent(SimEventKind.splash, side: target.side, x: x1),
+      SimEvent(SimEventKind.splash, side: target.side, x: x1, value: p.age),
     );
     resolveSplash(target, spec: p.spec, x: x1, events: state.events);
     return true;

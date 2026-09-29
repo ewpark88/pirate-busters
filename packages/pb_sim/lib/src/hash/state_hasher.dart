@@ -37,58 +37,38 @@ class Fnv1a32 {
   }
 }
 
-/// 매치 상태 전체를 정해진 순서로 직렬화한 해시 (설계서 §7.1 검증, §8.2 동기 확인).
+/// 매치 상태 전체를 정해진 순서로 직렬화한 해시 (설계서 §7.1 검증, §7.2 턴 해시).
 ///
 /// 상태에 필드를 추가하면 여기에도 추가한다. 순서를 바꾸면 골든 해시가 바뀐다.
 /// 렌더용 이벤트([MatchState.events])는 넣지 않는다.
 int hashMatchState(MatchState state) {
   final h = Fnv1a32()
-    ..addInt(state.tick)
+    ..addInt(state.seed)
     ..addInt(state.rng.state)
-    ..addInt(state.outcome.index)
-    ..addInt(state.winner)
+    ..addInt(state.firstSide)
+    ..addInt(state.turn)
     ..addInt(state.wind)
-    ..addInt(state.nextProjectileId);
+    ..addInt(state.firesThisTurn)
+    ..addInt(state.pausedMs)
+    ..addInt(state.nextProjectileId)
+    ..addInt(state.outcome.index)
+    ..addInt(state.winner);
   for (final side in state.sides) {
     final grid = side.grid;
-    final motion = side.motion;
     h
       ..addString(grid.hull.id)
       ..addInts(grid.rawMaterials)
       ..addInts(grid.rawHp)
-      ..addInt(motion.offset)
-      ..addInt(motion.velocity)
-      ..addInt(motion.dir)
-      ..addInt(motion.backLimit)
-      ..addInt(motion.frontLimit)
-      ..addInt(side.shotsFired);
-    final crew = side.crew;
-    for (var slot = 0; slot < crew.slotCount; slot++) {
-      h.addInt(crew.pirateIndexAt(slot));
-    }
-    h.addInt(crew.pirates.length);
-    for (final p in crew.pirates) {
+      ..addInt(side.bowX)
+      ..addInt(side.shotsFired)
+      ..addInt(side.crew.size);
+    for (final p in side.crew.pirates) {
       h
         ..addString(p.spec.id)
         ..addInt(p.hp)
         ..addInt(p.status.index)
-        ..addInt(p.slot)
-        ..addInt(p.reload)
-        ..addInt(p.swim);
+        ..addInt(p.cooldown);
     }
-  }
-  h.addInt(state.projectiles.length);
-  for (final p in state.projectiles) {
-    h
-      ..addInt(p.id)
-      ..addInt(p.side)
-      ..addInt(p.slot)
-      ..addString(p.spec.id)
-      ..addInt(p.x)
-      ..addInt(p.y)
-      ..addInt(p.vx)
-      ..addInt(p.vy)
-      ..addInt(p.age);
   }
   return h.value;
 }

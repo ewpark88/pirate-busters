@@ -9,7 +9,7 @@ import 'package:pb_sim/src/world/world.dart';
 /// 착탄 칸 밖 폭발 피해 비율(%). 착탄 칸은 100%.
 const int blastEdgePercent = 50;
 
-/// 헤엄치는 해적이 폭발·물보라에 맞는 최소 거리: 1칸.
+/// 바다에 빠진 해적이 폭발·물보라에 맞는 최소 거리: 1칸.
 const int swimmerHitRange = cellUnit;
 
 /// [target] 배의 로컬 칸 ([cx], [cy]) 에 착탄했다. 월드 착탄 지점은 ([x], [y]).
@@ -50,15 +50,15 @@ void resolveImpact(
   }
 
   final crew = target.crew;
-  for (var slot = 0; slot < target.cabins.length; slot++) {
+  for (var slot = 0; slot < crew.size; slot++) {
     final c = target.cabins[slot];
-    if (crew.pirateAt(slot)?.status != PirateStatus.aboard) continue;
+    if (crew.pirates[slot].status != PirateStatus.aboard) continue;
     if (!_inBlast(c.x - cx, c.y - cy, r)) continue;
     final dmg = _falloff(spec.pirateDamage, c.x == cx && c.y == cy);
     crew.damage(slot, dmg, side, events);
   }
   _hitSwimmers(target, x, y, r, events);
-  for (var slot = 0; slot < target.cabins.length; slot++) {
+  for (var slot = 0; slot < crew.size; slot++) {
     final c = target.cabins[slot];
     if (hadCabin[slot] && !grid.hasBlock(c.x, c.y)) {
       crew.fall(slot, side, events);
@@ -92,8 +92,8 @@ void _hitSwimmers(
   final dy = sy - y;
   if (dx * dx + dy * dy > range * range) return;
   final crew = target.crew;
-  for (var slot = 0; slot < crew.slotCount; slot++) {
-    if (crew.pirateAt(slot)?.status == PirateStatus.swimming) {
+  for (var slot = 0; slot < crew.size; slot++) {
+    if (crew.pirates[slot].status == PirateStatus.swimming) {
       crew.damage(slot, 1, target.side, events);
     }
   }

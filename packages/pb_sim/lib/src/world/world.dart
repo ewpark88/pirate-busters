@@ -5,19 +5,19 @@
 /// 해수면에 닿아 있다. 흘수선은 M3 에서 붙인다.
 library;
 
-import 'package:pb_sim/src/match/match_state.dart';
+import 'package:pb_sim/src/match/rules.dart';
 
 /// 1칸의 월드 단위.
 const int cellUnit = 1000;
 
-/// 판 시작 때 두 뱃머리 사이 간격: 24칸 (설계서 §2.6).
-const int startGap = 24 * cellUnit;
+/// 판 시작 때 두 선체 끝(뱃머리) 사이 간격: 16칸 (설계서 §2.6).
+const int startGap = 16 * cellUnit;
 
-/// 배마다 시작 위치에서 전진·후퇴할 수 있는 거리: 4칸 (설계서 §2.6).
+/// 배마다 시작 위치에서 전진·후퇴할 수 있는 거리: 4칸 (설계서 §2.6, 이동은 M3).
 const int moveRange = 4 * cellUnit;
 
 /// 중력: 36칸/초² → 틱당 속도 변화(1/1000칸/틱²). 최대 탄속 40칸/초와 함께, 45° 로
-/// 30칸(시작 거리 근처)을 쏘면 약 1.3초 날아가게 맞춘 값이다(§2.6 투척 체공 1.2~1.4초).
+/// 30칸을 쏘면 약 1.3초 날아간다(ADR-010 임시 값).
 const int gravityPerTick = 36 * cellUnit ~/ (simTickHz * simTickHz);
 
 /// 투사체가 사라지는 월드 가로 경계(±60칸).

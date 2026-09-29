@@ -85,18 +85,37 @@ void main() {
     expect(slow.isExpired, isTrue);
   });
 
-  test('바다에 떨어진 탄은 물보라를 내고 사라진다', () {
-    final m = newSampleMatch(3)
-      ..step(const [
-        FireCommand(tick: 0, side: 0, slot: 0, angle: 80000, power: 2000),
-      ]);
-    var splashed = false;
-    for (var i = 0; i < 120 && m.state.projectiles.isNotEmpty; i++) {
-      m.step();
-      splashed |= m.state.events.any((e) => e.kind == SimEventKind.splash);
+  test('바다에 떨어진 탄은 물보라를 내고 블록을 다치게 하지 않는다', () {
+    final m = newSampleMatch(3);
+    final me = m.state.activeSide;
+    m.apply(const FireCommand(t: 10, slot: 0, angle: 80000, power: 2000));
+    final splash = m.state.events.where((e) => e.kind == SimEventKind.splash);
+    expect(splash, hasLength(1));
+    expect(splash.first.value, greaterThan(0)); // 착탄 틱
+    final enemy = m.state.sides[1 - me].grid;
+    expect(enemy.totalHp, enemy.initialTotalHp);
+  });
+
+  test('바람은 탄을 바람 방향으로 민다', () {
+    int landX(int seed) {
+      final m = newSampleMatch(seed)
+        ..apply(const FireCommand(t: 10, slot: 0, angle: 85000, power: 3000));
+      final e = m.state.events.firstWhere(
+        (e) => e.kind == SimEventKind.splash || e.kind == SimEventKind.impact,
+      );
+      return e.x;
     }
-    expect(splashed, isTrue);
-    expect(m.state.projectiles, isEmpty);
-    expect(m.state.sides[1].grid.totalHp, m.state.sides[1].grid.initialTotalHp);
+
+    // 같은 진영이 선공인 시드끼리 바람 부호에 따라 착탄 x 의 순서가 같다.
+    const rules = MatchRules();
+    final seeds = [
+      for (var s = 0; s < 200; s++)
+        if (newSampleMatch(s).state.firstSide == 0) s,
+    ];
+    final strong = seeds.firstWhere((s) => rules.windForTurn(s, 1) == 3);
+    final calm = seeds.firstWhere((s) => rules.windForTurn(s, 1) == 0);
+    final against = seeds.firstWhere((s) => rules.windForTurn(s, 1) == -3);
+    expect(landX(strong), greaterThan(landX(calm)));
+    expect(landX(calm), greaterThan(landX(against)));
   });
 }
