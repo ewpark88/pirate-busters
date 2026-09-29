@@ -4,7 +4,7 @@ publish_to: 'none'
 resolution: workspace
 
 # 버전 규칙: MVP 기간은 0.x (CLAUDE.md 「브랜치·커밋·버전」).
-version: 0.0.1+1
+version: 0.1.0+1
 
 environment:
   sdk: ^3.12.0

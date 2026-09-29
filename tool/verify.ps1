@@ -9,12 +9,13 @@ function Invoke-Step([string]$name, [scriptblock]$block) {
   if ($LASTEXITCODE -ne 0) { throw "$name 실패 (exit $LASTEXITCODE)" }
 }
 
-Invoke-Step '1/4 format' { dart format --output=none --set-exit-if-changed app/lib packages tools tool }
-Invoke-Step '2/4 analyze' { flutter analyze --fatal-infos --fatal-warnings }
-Invoke-Step '3/4 architecture · determinism' { dart run tool/check_architecture.dart }
+Invoke-Step '1/5 format' { dart format --output=none --set-exit-if-changed app/lib packages tools tool }
+Invoke-Step '2/5 analyze' { flutter analyze --fatal-infos --fatal-warnings }
+Invoke-Step '3/5 architecture · determinism' { dart run tool/check_architecture.dart }
+Invoke-Step '4/5 doc sync' { dart run tool/check_doc_sync.dart }
 foreach ($pkg in 'packages/pb_sim', 'packages/pb_ai', 'packages/pb_data', 'tools/sim_runner') {
   if (Test-Path "$pkg/test") {
-    Invoke-Step "4/4 test $pkg" { Push-Location $pkg; try { dart test } finally { Pop-Location } }
+    Invoke-Step "5/5 test $pkg" { Push-Location $pkg; try { dart test } finally { Pop-Location } }
   }
 }
 if (Test-Path 'app/test') {
