@@ -5,5 +5,17 @@
 /// (`tool/check_architecture.dart` 가 검사한다).
 library;
 
-/// 시뮬레이션 고정 틱 속도(Hz). 렌더는 두 틱 사이를 보간한다 (설계서 §7.1).
-const int simTickHz = 30;
+export 'src/command/command.dart';
+export 'src/hash/state_hasher.dart';
+export 'src/match/controller.dart';
+export 'src/match/match.dart';
+export 'src/match/match_state.dart';
+export 'src/math/fx.dart';
+export 'src/math/int_math.dart';
+export 'src/math/trig.dart';
+export 'src/random/xorshift32.dart';
+export 'src/replay/replay.dart';
+export 'src/ship/blueprint.dart';
+export 'src/ship/hull.dart';
+export 'src/ship/material.dart';
+export 'src/ship/ship_grid.dart';
