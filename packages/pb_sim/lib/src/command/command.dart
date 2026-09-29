@@ -26,6 +26,11 @@ sealed class Command {
         side: side,
         slot: readInt(json, 'slot'),
       ),
+      MoveCommand.type => MoveCommand(
+        tick: tick,
+        side: side,
+        dir: readInt(json, 'dir'),
+      ),
       SurrenderCommand.type => SurrenderCommand(tick: tick, side: side),
       final other => throw FormatException('알 수 없는 커맨드: $other'),
     };
@@ -37,7 +42,7 @@ sealed class Command {
   /// 0 = 왼쪽(내 배), 1 = 오른쪽.
   final int side;
 
-  /// 같은 틱 안의 적용 순서(FIRE → TAP → SURRENDER).
+  /// 같은 틱 안의 적용 순서(FIRE → TAP → MOVE → SURRENDER).
   int get kindOrder;
 
   /// 같은 틱·같은 종류 안의 정렬용 슬롯. 슬롯이 없으면 0.
@@ -114,6 +119,35 @@ final class TapCommand extends Command {
   };
 }
 
+/// 전진·후퇴 버튼을 누르거나 뗐다 (설계서 §2.6, §7.2). 위치는 보내지 않고
+/// 시뮬레이션이 방향으로부터 적분한다. [dir]: −1 후퇴, 0 정지(뗌), 1 전진.
+final class MoveCommand extends Command {
+  const MoveCommand({
+    required super.tick,
+    required super.side,
+    required this.dir,
+  });
+
+  static const String type = 'MOVE';
+
+  final int dir;
+
+  @override
+  int get kindOrder => 2;
+
+  /// 같은 틱에 MOVE 가 여럿이면 dir 순으로 적용해 마지막(가장 큰 dir)이 남는다.
+  @override
+  int get sortSlot => dir;
+
+  @override
+  Map<String, Object?> toJson() => {
+    'tick': tick,
+    'side': side,
+    'type': type,
+    'dir': dir,
+  };
+}
+
 /// 항복.
 final class SurrenderCommand extends Command {
   const SurrenderCommand({required super.tick, required super.side});
@@ -121,7 +155,7 @@ final class SurrenderCommand extends Command {
   static const String type = 'SURRENDER';
 
   @override
-  int get kindOrder => 2;
+  int get kindOrder => 3;
 
   @override
   int get sortSlot => 0;

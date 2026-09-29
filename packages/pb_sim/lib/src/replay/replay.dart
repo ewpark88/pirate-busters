@@ -3,15 +3,19 @@ import 'package:pb_sim/src/json_read.dart';
 import 'package:pb_sim/src/match/controller.dart';
 import 'package:pb_sim/src/match/match.dart';
 import 'package:pb_sim/src/match/match_state.dart';
+import 'package:pb_sim/src/pirate/pirate_spec.dart';
 import 'package:pb_sim/src/ship/blueprint.dart';
 
-/// 리플레이 = 시드 + 양쪽 설계도 + 덱 + 커맨드 목록 (설계서 §7.2, ADR-007).
+/// 리플레이 = 시드 + 바람 + 양쪽 설계도 + 덱 + 커맨드 목록 (설계서 §7.2, ADR-007).
+///
+/// 덱은 해적 id 만 담는다. 재생할 때 같은 해적 정의([PirateCatalog])가 필요하다.
 class Replay {
   Replay({
     required this.seed,
     required List<Blueprint> blueprints,
     required List<List<String>> decks,
     required List<Command> commands,
+    this.wind = 0,
   }) : blueprints = List.unmodifiable(blueprints),
        decks = List<List<String>>.unmodifiable([
          for (final d in decks) List<String>.unmodifiable(d),
@@ -30,6 +34,7 @@ class Replay {
     }
     return Replay(
       seed: readInt(json, 'seed'),
+      wind: readInt(json, 'wind'),
       blueprints: [
         for (final b in readList(json, 'blueprints'))
           Blueprint.fromJson(asMap(b, '설계도')),
@@ -55,15 +60,20 @@ class Replay {
     required Match match,
   }) => Replay(
     seed: seed,
+    wind: match.state.wind,
     blueprints: blueprints,
     decks: decks,
     commands: match.commandLog,
   );
 
   /// 리플레이 JSON 형식 버전. 형식을 바꾸면 올린다.
-  static const int formatVersion = 1;
+  /// v2 (M2): 설계도에 선실, 바람, MOVE 커맨드가 들어갔다. v1 은 읽지 않는다.
+  static const int formatVersion = 2;
 
   final int seed;
+
+  /// 스테이지 바람 (1/1000칸/틱²).
+  final int wind;
   final List<Blueprint> blueprints;
   final List<List<String>> decks;
 
@@ -73,14 +83,24 @@ class Replay {
   Map<String, Object?> toJson() => {
     'version': formatVersion,
     'seed': seed,
+    'wind': wind,
     'blueprints': [for (final b in blueprints) b.toJson()],
     'decks': decks,
     'commands': [for (final c in commands) c.toJson()],
   };
 
   /// 처음부터 다시 돌린다. [ticks] 를 주지 않으면 판이 끝날 때까지 돌린다.
-  Match play({int ticks = matchDurationTicks}) {
-    final match = Match.start(seed: seed, blueprints: blueprints, decks: decks);
+  Match play({
+    required PirateCatalog pirates,
+    int ticks = matchDurationTicks,
+  }) {
+    final match = Match.start(
+      seed: seed,
+      blueprints: blueprints,
+      decks: decks,
+      pirates: pirates,
+      wind: wind,
+    );
     final script = ScriptedController(commands);
     runMatch(match, script, script, ticks: ticks);
     return match;

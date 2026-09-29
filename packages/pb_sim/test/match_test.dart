@@ -17,19 +17,30 @@ void main() {
   test('덱 앞에서부터 선실 슬롯 수만큼만 발사할 수 있다', () {
     final m = newSampleMatch(1)
       ..step([_fire(0, 0, 3), _fire(0, 0, 4), _fire(0, 1, 3)]);
-    expect([for (final s in m.state.sides[0].shots) s.slot], [3]);
-    expect(m.state.sides[0].reloadTicks, [0, 0, 0, defaultReloadTicks - 1]);
-    expect(m.state.sides[1].shots, hasLength(1));
+    final crew = m.state.sides[0].crew;
+    expect(m.state.sides[0].shotsFired, 1);
+    expect(
+      [for (var s = 0; s < 4; s++) crew.pirateAt(s)!.reload],
+      [
+        0,
+        0,
+        0,
+        sampleCatalog.byId('p16').reloadTicks - 1,
+      ],
+    );
+    expect(crew.pirates[4].status, PirateStatus.queued);
+    expect(m.state.sides[1].shotsFired, 1);
   });
 
   test('재장전 중 발사는 무시하고 재장전이 끝나면 다시 쏜다', () {
+    final reload = sampleCatalog.byId('p01').reloadTicks;
     final m = newSampleMatch(1)..step([_fire(0, 0, 0)]);
-    for (var t = 1; t < defaultReloadTicks; t++) {
+    for (var t = 1; t < reload; t++) {
       m.step([_fire(t, 0, 0)]);
     }
-    expect(m.state.sides[0].shots, hasLength(1));
-    m.step([_fire(defaultReloadTicks, 0, 0)]);
-    expect(m.state.sides[0].shots, hasLength(2));
+    expect(m.state.sides[0].shotsFired, 1);
+    m.step([_fire(reload, 0, 0)]);
+    expect(m.state.sides[0].shotsFired, 2);
   });
 
   test('각도·힘이 범위를 벗어난 발사는 무시한다', () {
@@ -39,12 +50,12 @@ void main() {
         FireCommand(tick: 0, side: 0, slot: 1, angle: 360000, power: 10),
         FireCommand(tick: 0, side: 0, slot: 2, angle: 0, power: 10001),
       ]);
-    expect(m.state.sides[0].shots, isEmpty);
+    expect(m.state.sides[0].shotsFired, 0);
   });
 
   test('현재 틱이 아닌 커맨드는 무시한다', () {
     final m = newSampleMatch(1)..step([_fire(5, 0, 0)]);
-    expect(m.state.sides[0].shots, isEmpty);
+    expect(m.state.sides[0].shotsFired, 0);
     expect(m.commandLog, isEmpty);
     expect(m.state.tick, 1);
   });
@@ -55,10 +66,10 @@ void main() {
     expect(m.state.outcome, MatchOutcome.surrender);
     expect(m.state.winner, 0);
     // 같은 틱에서는 FIRE 가 SURRENDER 보다 먼저 적용된다.
-    expect(m.state.sides[1].shots, hasLength(1));
+    expect(m.state.sides[1].shotsFired, 1);
     m.step([_fire(1, 0, 0)]);
     expect(m.state.tick, 1);
-    expect(m.state.sides[0].shots, isEmpty);
+    expect(m.state.sides[0].shotsFired, 0);
   });
 
   test('3분(5400틱)이 지나면 시간 종료로 끝난다', () {
@@ -72,6 +83,6 @@ void main() {
   test('컨트롤러는 자기 진영 커맨드만 낼 수 있다', () {
     final m = newSampleMatch(1);
     runMatch(m, ScriptedController([_fire(0, 1, 0)]), _idle, ticks: 1);
-    expect(m.state.sides[1].shots, isEmpty);
+    expect(m.state.sides[1].shotsFired, 0);
   });
 }

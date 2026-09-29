@@ -11,13 +11,25 @@ class BlockCell {
   final BlockMaterial material;
 }
 
-/// 배 설계도: 선형 + 블록 배치 (설계서 §3.4).
+/// 선실 위치 (설계서 §3.3). 블록이 있는 칸 위에 둔다. 해적은 이 칸 안에 탄다.
+class CabinCell {
+  const CabinCell(this.x, this.y);
+
+  final int x;
+  final int y;
+}
+
+/// 배 설계도: 선형 + 블록 배치 + 선실 (설계서 §3.4).
 ///
-/// 만들 때 격자 범위, 칸 중복, 건조 포인트 상한을 검사한다. 칸은 (y, x) 순으로
-/// 정렬해 보관하므로 입력 순서와 무관하게 같은 설계도는 같은 값이 된다.
+/// 만들 때 격자 범위, 칸 중복, 건조 포인트 상한, 선실 수와 위치를 검사한다. 블록은
+/// (y, x) 순으로 정렬해 보관한다. 선실은 입력 순서가 곧 선실 슬롯 번호다.
 class Blueprint {
   /// 검사에 실패하면 [ArgumentError].
-  factory Blueprint(HullSpec hull, Iterable<BlockCell> cells) {
+  factory Blueprint(
+    HullSpec hull,
+    Iterable<BlockCell> cells, {
+    required List<CabinCell> cabins,
+  }) {
     final sorted = cells.toList()
       ..sort((a, b) => a.y != b.y ? a.y - b.y : a.x - b.x);
     var cost = 0;
@@ -34,10 +46,16 @@ class Blueprint {
     if (cost > hull.buildPoints) {
       throw ArgumentError('건조 포인트 초과: $cost > ${hull.buildPoints}');
     }
-    return Blueprint._(hull, List.unmodifiable(sorted), cost);
+    _checkCabins(hull, sorted, cabins);
+    return Blueprint._(
+      hull,
+      List.unmodifiable(sorted),
+      List.unmodifiable(cabins),
+      cost,
+    );
   }
 
-  Blueprint._(this.hull, this.cells, this.cost);
+  Blueprint._(this.hull, this.cells, this.cabins, this.cost);
 
   /// JSON 에서 읽는다. 형식 오류는 [FormatException], 규칙 위반은 [ArgumentError].
   factory Blueprint.fromJson(Map<String, Object?> json) {
@@ -45,7 +63,10 @@ class Blueprint {
     final cells = [
       for (final raw in readList(json, 'cells')) _cellFromJson(raw),
     ];
-    return Blueprint(hull, cells);
+    final cabins = [
+      for (final raw in readList(json, 'cabins')) _cabinFromJson(raw),
+    ];
+    return Blueprint(hull, cells, cabins: cabins);
   }
 
   final HullSpec hull;
@@ -53,16 +74,45 @@ class Blueprint {
   /// (y, x) 순으로 정렬된 블록.
   final List<BlockCell> cells;
 
+  /// 선실 슬롯 순서의 선실 위치. 개수는 선형의 선실 슬롯 수와 같다.
+  final List<CabinCell> cabins;
+
   /// 총 건조 비용.
   final int cost;
 
-  /// `{"hull": "sloop", "cells": [[x, y, "oak"], ...]}`
+  /// `{"hull": "sloop", "cells": [[x, y, "oak"], ...], "cabins": [[x, y], ...]}`
   Map<String, Object?> toJson() => {
     'hull': hull.id,
     'cells': [
       for (final c in cells) [c.x, c.y, c.material.name],
     ],
+    'cabins': [
+      for (final c in cabins) [c.x, c.y],
+    ],
   };
+
+  static void _checkCabins(
+    HullSpec hull,
+    List<BlockCell> sorted,
+    List<CabinCell> cabins,
+  ) {
+    if (cabins.length != hull.cabinSlots) {
+      throw ArgumentError(
+        '선실 수는 ${hull.cabinSlots} 이어야 한다: ${cabins.length}',
+      );
+    }
+    for (var i = 0; i < cabins.length; i++) {
+      final c = cabins[i];
+      if (!sorted.any((b) => b.x == c.x && b.y == c.y)) {
+        throw ArgumentError('선실은 블록 위에 있어야 한다: (${c.x}, ${c.y})');
+      }
+      for (var j = 0; j < i; j++) {
+        if (cabins[j].x == c.x && cabins[j].y == c.y) {
+          throw ArgumentError('같은 칸에 선실이 둘: (${c.x}, ${c.y})');
+        }
+      }
+    }
+  }
 
   static BlockCell _cellFromJson(Object? raw) {
     if (raw is! List<Object?> || raw.length != 3) {
@@ -73,5 +123,12 @@ class Blueprint {
       asInt(raw[1], 'y'),
       BlockMaterial.byName(asString(raw[2], '재질')),
     );
+  }
+
+  static CabinCell _cabinFromJson(Object? raw) {
+    if (raw is! List<Object?> || raw.length != 2) {
+      throw FormatException('선실은 [x, y] 여야 한다: $raw');
+    }
+    return CabinCell(asInt(raw[0], 'x'), asInt(raw[1], 'y'));
   }
 }

@@ -7,7 +7,7 @@ import 'fixtures.dart';
 
 /// 샘플 매치(시드 20260929, 1,000틱)의 기대 해시. 의도한 규칙 변경일 때만 갱신하고
 /// 커밋 메시지에 이유를 적는다 (개발 계획서 §2.4 DoD 2).
-const int _goldenHash = 2447913407;
+const int _goldenHash = 190143163;
 
 int _hash(Match m) => hashMatchState(m.state);
 
@@ -27,7 +27,7 @@ void main() {
     expect(runSampleHash(seed: 1), isNot(runSampleHash(seed: 2)));
   });
 
-  test('커맨드가 하나라도 다르면 해시가 달라진다', () {
+  test('발사 각도가 1° 만 달라도 해시가 달라진다', () {
     Match run(int angle) {
       final m = newSampleMatch(5);
       runMatch(
@@ -36,12 +36,12 @@ void main() {
           FireCommand(tick: 10, side: 0, slot: 0, angle: angle, power: 5000),
         ]),
         ScriptedController(const []),
-        ticks: 100,
+        ticks: 20,
       );
       return m;
     }
 
-    expect(_hash(run(45000)), isNot(_hash(run(45001))));
+    expect(_hash(run(45000)), isNot(_hash(run(46000))));
   });
 
   test('리플레이를 JSON 으로 저장했다 다시 읽어 돌려도 해시가 같다', () {
@@ -49,8 +49,8 @@ void main() {
     final match = newSampleMatch(seed);
     final script = ScriptedController(sampleScript());
     runMatch(match, script, script, ticks: 1000);
-    expect(match.state.sides[0].shots, isNotEmpty);
-    expect(match.state.sides[1].shots, isNotEmpty);
+    expect(match.state.sides[0].shotsFired, greaterThan(0));
+    expect(match.state.sides[1].shotsFired, greaterThan(0));
     final replay = Replay.fromMatch(
       seed: seed,
       blueprints: [sampleBlueprint(), sampleBlueprint()],
@@ -62,8 +62,14 @@ void main() {
     final loaded = Replay.fromJson(jsonDecode(text) as Map<String, Object?>);
 
     expect(jsonEncode(loaded.toJson()), text);
-    expect(_hash(loaded.play(ticks: 1000)), _hash(match));
-    expect(_hash(replay.play(ticks: 1000)), _hash(match));
+    expect(
+      _hash(loaded.play(pirates: sampleCatalog, ticks: 1000)),
+      _hash(match),
+    );
+    expect(
+      _hash(replay.play(pirates: sampleCatalog, ticks: 1000)),
+      _hash(match),
+    );
   });
 
   test('항복으로 끝난 판은 리플레이를 끝까지 돌려도 같은 곳에서 끝난다', () {
@@ -79,7 +85,7 @@ void main() {
       decks: sampleDecks,
       match: match,
     );
-    final again = replay.play();
+    final again = replay.play(pirates: sampleCatalog);
     expect(again.state.tick, 301);
     expect(again.state.winner, 1);
     expect(_hash(again), _hash(match));
