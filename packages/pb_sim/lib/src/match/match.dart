@@ -144,7 +144,12 @@ class Match {
       ..add(SimEvent(SimEventKind.turnStart, side: side, value: turn));
     if (turn == rules.stormStartTurn) {
       for (final s in state.sides) {
-        startStorm(s, rules, turn);
+        final moved = startStorm(s, rules, turn);
+        if (moved != 0) {
+          state.events.add(
+            SimEvent(SimEventKind.move, side: s.side, x: s.bowX, value: moved),
+          );
+        }
       }
       state.events.add(
         SimEvent(SimEventKind.stormStart, side: side, value: turn),
@@ -175,7 +180,7 @@ class Match {
     final active = state.activeSide;
     final side = state.sides[active];
     if (state.firesThisTurn >= state.rules.firesPerTurn) return;
-    if (!side.crew.canFire(c.slot)) return;
+    if (!side.canFire(c.slot)) return;
     if (c.angle < 0 || c.angle >= fullTurnMdeg) return;
     if (c.power < 0 || c.power > maxFirePower) return;
     final ms = realMs(state, at);

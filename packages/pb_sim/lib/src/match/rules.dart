@@ -1,5 +1,6 @@
 import 'package:pb_sim/src/json_read.dart';
 import 'package:pb_sim/src/random/xorshift32.dart';
+import 'package:pb_sim/src/world/world.dart';
 
 /// 시뮬레이션 고정 틱 속도(Hz). 턴 안의 탄 비행·붕괴는 틱으로 계산하고,
 /// 렌더는 두 틱 사이를 보간한다 (설계서 §7.1).
@@ -108,6 +109,31 @@ class MatchRules {
     need(ok: wavePeriodMs > 0, what: 'wavePeriodMs $wavePeriodMs');
     need(ok: waterlineDivisor > 0, what: 'waterlineDivisor $waterlineDivisor');
     need(ok: maxTilt >= 0, what: 'maxTilt $maxTilt');
+    need(ok: windAccel >= 0, what: 'windAccel $windAccel');
+    need(
+      ok: sunkHullPercent >= 0 && sunkHullPercent <= 100,
+      what: 'sunkHullPercent $sunkHullPercent',
+    );
+    // 후퇴 한계를 당겨도 전진 한계를 넘지 않는다 (폭풍 타임, 설계서 §2.6).
+    need(
+      ok: stormRetreatPull >= 0 && stormRetreatPull <= 2 * moveRange,
+      what: 'stormRetreatPull $stormRetreatPull',
+    );
+    need(
+      ok:
+          stormWindPercent >= 0 &&
+          stormWavePercent >= 0 &&
+          stormFloodPercent >= 0,
+      what: '폭풍 배율',
+    );
+    need(
+      ok:
+          sinkAtFullFlood >= 0 &&
+          waveHeavePerLevel >= 0 &&
+          waveRollPerLevel >= 0 &&
+          tiltPerCell >= 0,
+      what: '파도·내려앉기·기울기 값',
+    );
     need(
       ok:
           fuelPerTurn >= 0 &&

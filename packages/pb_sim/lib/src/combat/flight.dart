@@ -28,8 +28,9 @@ bool _advanceOne(MatchState state, Projectile p, int wind, int ms) {
   var y1 = p.y;
   final hitsSea = y1 < 0;
   if (hitsSea) {
-    // 해수면과 만나는 지점까지만 배를 훑는다.
-    x1 = x0 + roundDiv((x1 - x0) * y0, y0 - y1);
+    // 해수면과 만나는 지점까지만 배를 훑는다. 발사는 해수면 위에서만 하므로
+    // y0 ≥ 0 > y1 이라 나누는 수가 0 이 아니다.
+    x1 = y0 <= 0 ? x0 : x0 + roundDiv((x1 - x0) * y0, y0 - y1);
     y1 = 0;
   }
 

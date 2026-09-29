@@ -69,9 +69,12 @@ void refuel(SideState side, int amount) {
 }
 
 /// 폭풍 타임 시작 (설계서 §2.4, §2.6, §2.7): 연료를 채우고, 당겨진 후퇴 한계 밖에
-/// 있는 배는 한계선으로 옮긴다(연료 없이).
-void startStorm(SideState side, MatchRules rules, int turn) {
+/// 있는 배는 한계선으로 옮긴다(연료·시간 없이). 옮긴 거리(전진 +)를 돌려준다.
+int startStorm(SideState side, MatchRules rules, int turn) {
   refuel(side, rules.stormFuel);
   final (lo, _) = moveLimits(rules, turn);
-  if (side.offset < lo) side.offset = lo;
+  if (side.offset >= lo) return 0;
+  final moved = lo - side.offset;
+  side.offset = lo;
+  return moved;
 }

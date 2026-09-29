@@ -44,7 +44,10 @@ void main() {
   group('흘수선과 침수 (설계서 §2.5, §3.4)', () {
     test('흘수선 = (총무게 − 부력재) ÷ (선형 폭 × 4): 샘플 슬루프는 약 1.04칸', () {
       final side = newSampleMatch(1).state.sides[0];
-      expect(side.grid.builtWeight, 50000);
+      expect(
+        SideState.waterlineOf(sampleBlueprint(), const MatchRules()),
+        1041,
+      );
       expect(side.waterline, 1041);
       expect(side.frame.baseY, -1041);
     });
@@ -132,6 +135,63 @@ void main() {
       m.apply(const EndTurnCommand(t: 10));
       expect(m.state.outcome, MatchOutcome.floodSunk);
       expect(m.state.winner, 1 - me);
+    });
+  });
+
+  group('물에 잠긴 선실 (ADR-027)', () {
+    test('배가 내려앉아 선실이 흘수선 아래로 잠기면 그 해적은 쏠 수 없다', () {
+      final m = newSampleMatch(1);
+      final me = m.state.sides[m.state.activeSide];
+      expect(me.canFire(0), isTrue);
+      me.flood = fullFlood; // 잠긴 깊이 3.04칸 > 3층 선실 중심 2.5칸
+      expect(me.isCabinFlooded(0), isTrue);
+      m.apply(const FireCommand(t: 100, slot: 0, angle: 30000, power: 8000));
+      expect(me.shotsFired, 0);
+      expect(m.state.nextProjectileId, 0);
+    });
+
+    test('맨 아래 줄 선실은 처음부터 잠겨 있어, 낮은 각도로 쏴도 멈추지 않고 무시된다', () {
+      final keelCabins = Blueprint(
+        HullSpec.sloop,
+        [for (var x = 0; x < 12; x++) BlockCell(x, 0, BlockMaterial.oak)],
+        cabins: const [
+          CabinCell(3, 0),
+          CabinCell(5, 0),
+          CabinCell(6, 0),
+          CabinCell(8, 0),
+        ],
+      );
+      final m = Match.start(
+        seed: 2,
+        blueprints: [keelCabins, keelCabins],
+        decks: const [
+          ['p01', 'p06'],
+          ['p01', 'p06'],
+        ],
+        costLimits: sampleCostLimits,
+        pirates: sampleCatalog,
+      );
+      final me = m.state.sides[m.state.activeSide];
+      expect(me.isCabinFlooded(0), isTrue);
+      // 옛 버그: 수직 속도가 중력과 같은 각도에서 0 으로 나눴다.
+      m.apply(const FireCommand(t: 100, slot: 0, angle: 1600, power: 10000));
+      expect(me.shotsFired, 0);
+    });
+
+    test('파도가 선실 중심을 물 아래로 내려도 발사는 해수면 위에서 한다', () {
+      final m = newSampleMatch(1);
+      final me = m.state.sides[m.state.activeSide]..flood = 700; // 잠긴 깊이 2.44칸
+      expect(me.isCabinFlooded(0), isFalse);
+      for (var ms = 0; ms < 4000; ms += 100) {
+        final p = launchShot(
+          m.state,
+          slot: 0,
+          angle: 1600,
+          power: 10000,
+          ms: ms,
+        );
+        expect(p.y, greaterThanOrEqualTo(0), reason: 'ms $ms');
+      }
     });
   });
 }

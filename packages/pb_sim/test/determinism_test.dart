@@ -123,10 +123,19 @@ void main() {
     expect(() => Replay.fromJson(json), throwsFormatException);
   });
 
-  test('규칙 값이 범위 밖인 리플레이는 거부한다(0 나눗셈 방지)', () {
-    for (final key in ['wavePeriodMs', 'waterlineDivisor', 'maxTurns']) {
+  test('규칙 값이 범위 밖인 리플레이는 거부한다(0 나눗셈·한계선 역전·음수 침수 방지)', () {
+    const bad = {
+      'wavePeriodMs': 0,
+      'waterlineDivisor': 0,
+      'maxTurns': 0,
+      'stormRetreatPull': 25000,
+      'stormFloodPercent': -1,
+      'sinkAtFullFlood': -1,
+      'sunkHullPercent': 101,
+    };
+    for (final key in bad.keys) {
       final json = _replayOf(newSampleMatch(1)).toJson();
-      (json['rules']! as Map<String, Object?>)[key] = 0;
+      (json['rules']! as Map<String, Object?>)[key] = bad[key];
       expect(() => Replay.fromJson(json), throwsFormatException, reason: key);
     }
   });

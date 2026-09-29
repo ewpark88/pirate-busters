@@ -27,21 +27,28 @@ Submersion submersionOf(int y, int draft) {
   return Submersion.dry;
 }
 
-/// [side] 배의 이번 턴 끝 침수 증가(0.1%p). 칸 인덱스 순으로 센다.
-int floodGain(SideState side, MatchRules rules, int turn) {
+/// 물에 잠긴 새는 칸을 칸 인덱스 순으로 돈다. 침수 증가와 기울기가 같은 칸을 본다.
+void forEachSubmergedLeak(
+  SideState side,
+  void Function(int x, int y, Submersion sub) visit,
+) {
   final grid = side.grid;
   final draft = side.draft;
-  var gain = 0;
   for (var y = 0; y < grid.height; y++) {
     final sub = submersionOf(y, draft);
-    if (sub == Submersion.dry) break;
+    if (sub == Submersion.dry) return;
     for (var x = 0; x < grid.width; x++) {
-      if (!isLeak(grid, x, y)) continue;
-      gain += sub == Submersion.full
-          ? rules.floodFullCell
-          : rules.floodHalfCell;
+      if (isLeak(grid, x, y)) visit(x, y, sub);
     }
   }
+}
+
+/// [side] 배의 이번 턴 끝 침수 증가(0.1%p).
+int floodGain(SideState side, MatchRules rules, int turn) {
+  var gain = 0;
+  forEachSubmergedLeak(side, (x, y, sub) {
+    gain += sub == Submersion.full ? rules.floodFullCell : rules.floodHalfCell;
+  });
   // 폭풍 배율은 합계에 곱하고 버린다(값이 늘 0 이상이라 기기마다 같다, ADR-025).
   return rules.isStorm(turn) ? gain * rules.stormFloodPercent ~/ 100 : gain;
 }
@@ -59,17 +66,9 @@ int applyFlood(SideState side, MatchRules rules, int turn) {
 /// 물에 잠긴 새는 칸이 뱃머리 쪽 절반에 많으면 뱃머리가 내려간다. 차이 1칸당
 /// [MatchRules.tiltPerCell], 최대 [MatchRules.maxTilt].
 int floodTilt(SideState side, MatchRules rules) {
-  final grid = side.grid;
-  final draft = side.draft;
-  final half = grid.width ~/ 2;
+  final half = side.grid.width ~/ 2;
   var diff = 0;
-  for (var y = 0; y < grid.height; y++) {
-    if (submersionOf(y, draft) == Submersion.dry) break;
-    for (var x = 0; x < grid.width; x++) {
-      if (!isLeak(grid, x, y)) continue;
-      diff += x >= half ? 1 : -1;
-    }
-  }
+  forEachSubmergedLeak(side, (x, y, sub) => diff += x >= half ? 1 : -1);
   final tilt = -diff * rules.tiltPerCell;
   if (tilt > rules.maxTilt) return rules.maxTilt;
   if (tilt < -rules.maxTilt) return -rules.maxTilt;
