@@ -1,0 +1,20 @@
+# AI vs AI 대량 시뮬레이션 CLI (밸런스 검증). 설계서 §7.3.
+name: sim_runner
+description: Pirate Busters AI 대 AI 밸런스 시뮬레이터.
+publish_to: none
+resolution: workspace
+
+environment:
+  sdk: ^3.12.0
+
+dependencies:
+  pb_ai:
+    path: ../../packages/pb_ai
+  pb_data:
+    path: ../../packages/pb_data
+  pb_sim:
+    path: ../../packages/pb_sim
+
+dev_dependencies:
+  test: ^1.25.6
+  very_good_analysis: ^10.3.0

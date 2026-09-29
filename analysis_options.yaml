@@ -1,0 +1,25 @@
+# 정적 분석 규칙 (워크스페이스 공통). mozzi 규칙과 같다.
+# 규칙을 끄려면 docs/DECISIONS.md 에 사유를 남기고 여기서만 끈다.
+include: package:very_good_analysis/analysis_options.yaml
+
+analyzer:
+  language:
+    strict-casts: true
+    strict-inference: true
+    strict-raw-types: true
+  errors:
+    missing_return: error
+    missing_required_param: error
+    unused_import: error
+    dead_code: warning
+    todo: ignore
+  exclude:
+    - "**/build/**"
+    - "**/*.g.dart"
+
+linter:
+  rules:
+    # 공개 API 문서화는 pb_sim/pb_ai 에서만 리뷰로 강제한다.
+    public_member_api_docs: false
+    # 한국어 주석·문자열 때문에 끈다.
+    lines_longer_than_80_chars: false

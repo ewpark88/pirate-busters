@@ -1,0 +1,29 @@
+name: pirate_busters
+description: "Pirate Busters — 내가 지은 해적선으로 겨루는 1:1 해상 포격전"
+publish_to: 'none'
+resolution: workspace
+
+# 버전 규칙: MVP 기간은 0.x (CLAUDE.md 「브랜치·커밋·버전」).
+version: 0.0.1+1
+
+environment:
+  sdk: ^3.12.0
+
+# 의존성은 필요한 마일스톤에서만 추가한다 (flame·riverpod 은 M4, hive_ce 는 M7).
+dependencies:
+  flutter:
+    sdk: flutter
+  pb_ai:
+    path: ../packages/pb_ai
+  pb_data:
+    path: ../packages/pb_data
+  pb_sim:
+    path: ../packages/pb_sim
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  very_good_analysis: ^10.3.0
+
+flutter:
+  uses-material-design: true

@@ -1,0 +1,16 @@
+# 순수 Dart AI. pb_sim 커맨드만 낸다. pb_sim 과 같은 결정론 규칙을 따른다.
+name: pb_ai
+description: Pirate Busters AI 조준 솔버·난이도·성격.
+publish_to: none
+resolution: workspace
+
+environment:
+  sdk: ^3.12.0
+
+dependencies:
+  pb_sim:
+    path: ../pb_sim
+
+dev_dependencies:
+  test: ^1.25.6
+  very_good_analysis: ^10.3.0

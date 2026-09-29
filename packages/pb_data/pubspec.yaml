@@ -1,0 +1,16 @@
+# 해적·블록·선형·스테이지 JSON 로드와 검증. JSON 을 pb_sim 의 정수 정의로 바꾼다.
+name: pb_data
+description: Pirate Busters 게임 데이터 정의와 스키마 검증.
+publish_to: none
+resolution: workspace
+
+environment:
+  sdk: ^3.12.0
+
+dependencies:
+  pb_sim:
+    path: ../pb_sim
+
+dev_dependencies:
+  test: ^1.25.6
+  very_good_analysis: ^10.3.0

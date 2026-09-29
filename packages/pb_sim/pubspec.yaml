@@ -1,0 +1,12 @@
+# 순수 Dart 결정론 전투 엔진. Flutter·Flame·dart:math·double 금지 (개발 계획서 §2.2).
+name: pb_sim
+description: Pirate Busters 결정론 전투 시뮬레이션.
+publish_to: none
+resolution: workspace
+
+environment:
+  sdk: ^3.12.0
+
+dev_dependencies:
+  test: ^1.25.6
+  very_good_analysis: ^10.3.0

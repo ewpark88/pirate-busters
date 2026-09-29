@@ -1,0 +1,17 @@
+# pub workspace 루트. 멤버 패키지는 lock 파일 하나를 공유한다 (docs/DECISIONS.md ADR-001).
+# 의존 방향: pb_sim ← pb_ai, pb_sim ← pb_data, 전부 ← app / tools (개발 계획서 §2.1).
+name: pirate_busters_workspace
+publish_to: none
+
+environment:
+  sdk: ^3.12.0
+
+workspace:
+  - app
+  - packages/pb_sim
+  - packages/pb_ai
+  - packages/pb_data
+  - tools/sim_runner
+
+dev_dependencies:
+  very_good_analysis: ^10.3.0
