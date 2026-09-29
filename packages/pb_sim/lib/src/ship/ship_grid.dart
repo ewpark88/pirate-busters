@@ -84,15 +84,6 @@ class ShipGrid {
     return _built[i] != emptyCell && _materials[i] == emptyCell;
   }
 
-  /// 판 시작 때 블록 무게 합(×1000, 부력재는 음수) (설계서 §3.4).
-  int get builtWeight {
-    var sum = 0;
-    for (final m in _built) {
-      if (m != emptyCell) sum += BlockMaterial.values[m].weight;
-    }
-    return sum;
-  }
-
   /// 칸의 손상 단계. 3등분 경계는 정수 곱셈으로 비교한다.
   DamageStage stageAt(int x, int y) {
     final m = materialAt(x, y);

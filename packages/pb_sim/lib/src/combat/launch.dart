@@ -25,7 +25,9 @@ ShipFrame frameAtMs(MatchState state, int side, int ms) {
 /// 지금 턴 진영의 [slot] 해적이 [ms](실제 시각)에 [angle]·[power] 로 쏜 탄.
 ///
 /// 발사 위치는 파도에 흔들린 선실 중심, 각도에는 파도 기울기와 침수 기울기를
-/// 더한다 (설계서 §2.5). 사람·AI·재생 모두 이 계산을 쓴다.
+/// 더한다 (설계서 §2.5). 사람·AI·재생 모두 이 계산을 쓴다. 쏠 수 있는지(물에 잠긴
+/// 선실 등)는 [SideState.canFire] 로 먼저 본다. 파도가 선실 중심을 잠깐 물 아래로
+/// 내리면 해수면에서 쏜다.
 Projectile launchShot(
   MatchState state, {
   required int slot,
@@ -36,18 +38,18 @@ Projectile launchShot(
 }) {
   final active = state.activeSide;
   final side = state.sides[active];
+  final wave = Wave(state.rules, state.turn);
   final cabin = side.cabins[slot];
-  final (x, y) = frameAtMs(state, active, ms).cellCenter(cabin.x, cabin.y);
-  final tilt =
-      Wave(state.rules, state.turn).roll(active, ms) +
-      floodTilt(side, state.rules);
+  final frame = side.frameAt(wave.heave(active, ms));
+  final (x, y) = frame.cellCenter(cabin.x, cabin.y);
+  final tilt = wave.roll(active, ms) + floodTilt(side, state.rules);
   return Projectile.launch(
     id: id,
     side: active,
     slot: slot,
     spec: side.crew.pirates[slot].spec,
     x: x,
-    y: y,
+    y: y < 0 ? 0 : y,
     angle: angle + tilt,
     power: power,
   );

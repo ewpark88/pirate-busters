@@ -38,28 +38,35 @@ class SideState {
     required this.side,
     required Blueprint blueprint,
     required List<PirateSpec> lineup,
-    required MatchRules rules,
+    required this.rules,
   }) : grid = ShipGrid.fromBlueprint(blueprint),
        cabins = blueprint.cabins,
        crew = Crew(lineup),
-       fuel = blueprint.hull.fuelTank * fuelUnit {
-    final w = grid.builtWeight * cellUnit ~/ 1000;
-    final h = w ~/ (grid.width * rules.waterlineDivisor);
-    waterline = h < 0 ? 0 : h;
-    sinkAtFullFlood = rules.sinkAtFullFlood;
-  }
+       fuel = blueprint.hull.fuelTank * fuelUnit,
+       waterline = waterlineOf(blueprint, rules);
 
   /// 연료 1 의 내부 단위. 1/10칸 이동의 연료도 정수로 셈한다.
   static const int fuelUnit = 1000;
 
+  /// 설계도의 흘수선 높이(1/1000칸, 용골 바닥 기준): (총무게 − 부력재) ÷ (선형 폭 ×
+  /// [MatchRules.waterlineDivisor]) (설계서 §3.4). 무게는 ×1000 이라 그대로 1/1000칸이다.
+  static int waterlineOf(Blueprint blueprint, MatchRules rules) {
+    var weight = 0;
+    for (final c in blueprint.cells) {
+      weight += c.material.weight;
+    }
+    final h = weight ~/ (blueprint.hull.width * rules.waterlineDivisor);
+    return h < 0 ? 0 : h;
+  }
+
   final int side;
   final ShipGrid grid;
 
-  /// 판 시작 흘수선 높이(1/1000칸, 용골 바닥 기준) (설계서 §3.4).
-  late final int waterline;
+  /// 판 규칙 (내려앉기 수치).
+  final MatchRules rules;
 
-  /// 침수량 100% 일 때 내려앉는 깊이(1/1000칸).
-  late final int sinkAtFullFlood;
+  /// 판 시작 흘수선 높이(1/1000칸, 용골 바닥 기준) (설계서 §3.4).
+  final int waterline;
 
   /// 시작 위치에서 전진한 거리(1/1000칸, 후퇴면 음수) (설계서 §2.6).
   int offset = 0;
@@ -71,7 +78,15 @@ class SideState {
   int flood = 0;
 
   /// 지금 물에 잠긴 깊이: 흘수선 + 내려앉기(1/1000칸).
-  int get draft => waterline + flood * sinkAtFullFlood ~/ fullFlood;
+  int get draft => waterline + flood * rules.sinkAtFullFlood ~/ fullFlood;
+
+  /// [slot] 선실이 흘수선 아래에 잠겼는가: 선실 칸 중심이 잠긴 깊이보다 낮다.
+  /// 잠긴 선실의 해적은 쏠 수 없다 (ADR-027).
+  bool isCabinFlooded(int slot) =>
+      cabins[slot].y * cellUnit + cellUnit ~/ 2 <= draft;
+
+  /// [slot] 해적이 지금 쏠 수 있는가: 쿨다운·상태(배 위) + 선실이 물 위.
+  bool canFire(int slot) => crew.canFire(slot) && !isCabinFlooded(slot);
 
   /// 선실 슬롯 순서의 선실 칸. 출전 해적은 앞에서부터 탄다.
   final List<CabinCell> cabins;

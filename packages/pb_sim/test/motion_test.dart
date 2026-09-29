@@ -113,7 +113,7 @@ void main() {
   group('폭풍 타임 (설계서 §2.4, §2.6)', () {
     const rules = MatchRules(waveLevel: 0, maxTurns: 8);
 
-    test('폭풍 타임이 시작되면 양쪽 연료 +30, 후퇴 한계 밖의 배는 한계선으로 온다', () {
+    test('폭풍 타임이 시작되면 양쪽 연료 +30, 후퇴 한계 밖의 배는 한계선으로 오고 이동 이벤트가 나온다', () {
       final m = _calm(rules: rules);
       final a = m.state.sides[m.state.activeSide];
       m.apply(const MoveCommand(t: 10, dx: -100));
@@ -134,6 +134,10 @@ void main() {
         contains(SimEventKind.stormStart),
       );
       expect(a.offset, -4 * cellUnit);
+      final snap = m.state.events.firstWhere(
+        (e) => e.kind == SimEventKind.move && e.side == a.side,
+      );
+      expect([snap.value, snap.x], [6 * cellUnit, a.bowX]);
       expect(a.fuel, 60 * _fuel, reason: '폭풍 +30, 내 턴 시작 +30');
       expect(b.fuel, 30 * _fuel, reason: '폭풍 +30');
     });

@@ -29,7 +29,7 @@ Controller shooter(
   final cell = target(s);
   final out = <Command>[];
   for (var slot = 0; slot < crew.size && cell != null; slot++) {
-    if (!crew.canFire(slot) || out.length == 2) continue;
+    if (!s.sides[s.activeSide].canFire(slot) || out.length == 2) continue;
     out.add(
       aimAt(
         s,
