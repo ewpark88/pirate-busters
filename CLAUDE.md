@@ -3,7 +3,7 @@
 내가 지은 해적선으로 겨루는 1:1 실시간 해상 포격전. Flutter + Flame, Android 먼저, 1인 개발.
 **`Pirate Busters 개발 계획서.md` 의 단계 순서대로만** 진행한다.
 
-**현재 단계: M1 — 시뮬레이션 코어 (`pb_sim`)** (Phase 0 완료. 진행 기록: docs/PROGRESS.md)
+**현재 단계: M2 — 탄도·타격·붕괴 (`pb_sim`)** (M1 완료. 진행 기록: docs/PROGRESS.md)
 
 ## 기준 문서
 | 문서 | 역할 |
@@ -49,6 +49,7 @@ tool/              검사·훅 스크립트
 flutter pub get                          # 루트에서 한 번 (workspace)
 bash tool/verify.sh                      # 품질 게이트: format / analyze / architecture·결정론 / test
 dart run tool/check_architecture.dart    # 의존 방향·결정론 규칙만 검사
+dart run tool/gen_trig_table.dart        # pb_sim 정수 sin 테이블 재생성
 (cd packages/pb_sim && dart test)        # 패키지 하나만 테스트
 (cd app && flutter run)                  # 앱 실행
 ```
