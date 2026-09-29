@@ -30,10 +30,16 @@ class ShipGrid {
       materials[i] = c.material.index;
       hp[i] = c.material.durability;
     }
-    return ShipGrid._(hull, materials, hp, _sumOf(hp));
+    return ShipGrid._(hull, materials, hp, _sumOf(hp), List.of(materials));
   }
 
-  ShipGrid._(this.hull, this._materials, this._hp, this.initialTotalHp);
+  ShipGrid._(
+    this.hull,
+    this._materials,
+    this._hp,
+    this.initialTotalHp,
+    this._built,
+  );
 
   /// 빈 칸의 재질 값.
   static const int emptyCell = -1;
@@ -41,6 +47,9 @@ class ShipGrid {
   final HullSpec hull;
   final List<int> _materials;
   final List<int> _hp;
+
+  /// 판 시작 때의 재질. 부서진 칸(구멍, 설계서 §2.5)을 가려낸다.
+  final List<int> _built;
 
   int get width => hull.width;
   int get height => hull.height;
@@ -68,6 +77,21 @@ class ShipGrid {
 
   /// 인덱스로 블록이 있는가.
   bool hasBlockAt(int index) => _materials[index] != emptyCell;
+
+  /// 설계도에 블록이 있었는데 지금 없는 칸인가 (설계서 §2.5 부서진 칸).
+  bool isBroken(int x, int y) {
+    final i = indexOf(x, y);
+    return _built[i] != emptyCell && _materials[i] == emptyCell;
+  }
+
+  /// 판 시작 때 블록 무게 합(×1000, 부력재는 음수) (설계서 §3.4).
+  int get builtWeight {
+    var sum = 0;
+    for (final m in _built) {
+      if (m != emptyCell) sum += BlockMaterial.values[m].weight;
+    }
+    return sum;
+  }
 
   /// 칸의 손상 단계. 3등분 경계는 정수 곱셈으로 비교한다.
   DamageStage stageAt(int x, int y) {

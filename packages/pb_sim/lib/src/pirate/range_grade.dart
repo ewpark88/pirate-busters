@@ -1,0 +1,26 @@
+/// 해적 최대 사거리 등급 (설계서 §2.8). 순서는 바꾸지 않는다.
+///
+/// 사거리는 최대 힘·45° 로 쐈을 때 발사 높이에서 해수면까지의 가로 거리(바람 없음)다.
+/// 최대 탄속 = √(사거리 × 중력 36칸/초²) 을 미리 계산한 정수 표로 둔다 (§7.1).
+enum RangeGrade {
+  short(22, 28142),
+  medium(36, 36000),
+  long(50, 42426),
+  veryLong(66, 48744);
+
+  const RangeGrade(this.cells, this.launchSpeed);
+
+  /// 사거리(칸).
+  final int cells;
+
+  /// 힘 10000 일 때 탄 속도(1/1000칸/초).
+  final int launchSpeed;
+
+  /// 데이터 이름(`short`·`medium`·`long`·`veryLong`)으로 찾는다. 없으면 [FormatException].
+  static RangeGrade byName(String name) {
+    for (final r in values) {
+      if (r.name == name) return r;
+    }
+    throw FormatException('알 수 없는 사거리 등급: $name');
+  }
+}

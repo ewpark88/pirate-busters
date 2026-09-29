@@ -126,11 +126,15 @@ void main() {
       expect(m.state.sides[side].shotsFired, 0);
     });
 
-    test('바람은 시드와 턴 번호로만 정해지고 −3~+3 이다', () {
-      const rules = MatchRules();
+    test('바람은 시드와 턴 번호로만 정해지고 −3~+3, 폭풍 타임에는 2배다', () {
+      const rules = MatchRules(maxTurns: 1000, stormTurns: 100);
       final winds = [for (var t = 1; t <= 200; t++) rules.windForTurn(99, t)];
       expect(winds.every((w) => w >= -3 && w <= 3), isTrue);
       expect(winds.toSet(), hasLength(7));
+      final storm = [
+        for (var t = 901; t <= 1000; t++) rules.windForTurn(99, t),
+      ];
+      expect(storm.every((w) => w.isEven && w >= -6 && w <= 6), isTrue);
       final m = newSampleMatch(99);
       expect(m.state.wind, rules.windForTurn(99, 1));
       _play(m, const [EndTurnCommand(t: 1)]);
@@ -150,10 +154,11 @@ void main() {
       expect(m.state.turn, turn);
     });
 
-    test('양쪽 합쳐 최대 턴 수가 끝나면 턴 제한으로 끝난다', () {
+    test('양쪽 합쳐 최대 턴 수가 끝나면 시간 판정으로 끝난다', () {
       final m = newSampleMatch(1);
       runMatch(m, passController, passController);
-      expect(m.state.outcome, MatchOutcome.turnLimit);
+      expect(m.state.outcome, MatchOutcome.timeDecision);
+      expect(m.state.winner, -1);
       expect(m.turnLog, hasLength(30));
       expect(m.turnLog.where((b) => b.side == 0), hasLength(15));
 

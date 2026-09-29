@@ -8,7 +8,7 @@ import 'fixtures.dart';
 
 /// 샘플 매치(시드 20260929, 끝까지)의 기대 해시. 의도한 규칙 변경일 때만 갱신하고
 /// 커밋 메시지에 이유를 적는다 (개발 계획서 §2.4 DoD 2).
-const int _goldenHash = 1686798692;
+const int _goldenHash = 3424264738;
 
 int _hash(Match m) => hashMatchState(m.state);
 
@@ -26,7 +26,7 @@ Replay _replayOf(Match m) => Replay.fromMatch(
 );
 
 void main() {
-  test('같은 턴 묶음 목록이면 최종 해시가 100번 모두 같다', () {
+  test('같은 턴 묶음 목록(이동 포함)이면 연료·위치까지 최종 해시가 100번 모두 같다', () {
     final first = runSampleHash(seed: 20260929);
     for (var i = 0; i < 100; i++) {
       expect(runSampleHash(seed: 20260929), first);
@@ -62,7 +62,7 @@ void main() {
   });
 
   test('착탄 칸이 달라지면 해시가 달라진다', () {
-    final base = aimAt(newSampleMatch(5).state, slot: 0, tx: 11, ty: 1);
+    final base = aimAt(newSampleMatch(5).state, slot: 0, tx: 11, ty: 2, t: 10);
     int run(int angle) {
       final m = newSampleMatch(5)
         ..apply(FireCommand(t: 10, slot: 0, angle: angle, power: base.power));
@@ -121,5 +121,13 @@ void main() {
   test('지원하지 않는 리플레이 버전은 거부한다', () {
     final json = _replayOf(newSampleMatch(1)).toJson()..['version'] = 2;
     expect(() => Replay.fromJson(json), throwsFormatException);
+  });
+
+  test('규칙 값이 범위 밖인 리플레이는 거부한다(0 나눗셈 방지)', () {
+    for (final key in ['wavePeriodMs', 'waterlineDivisor', 'maxTurns']) {
+      final json = _replayOf(newSampleMatch(1)).toJson();
+      (json['rules']! as Map<String, Object?>)[key] = 0;
+      expect(() => Replay.fromJson(json), throwsFormatException, reason: key);
+    }
   });
 }

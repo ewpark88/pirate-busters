@@ -22,10 +22,11 @@ const List<CabinCell> sampleCabins = [
   CabinCell(8, 2),
 ];
 
-/// 테스트용 해적. 일반 등급 투척(반경 1칸 폭발) 계열 기본값.
+/// 테스트용 해적. 일반 등급 투척(반경 1칸 폭발, 사거리 긺) 계열 기본값 (설계서 §2.8).
 PirateSpec testPirate(
   String id, {
   Rarity rarity = Rarity.common,
+  RangeGrade range = RangeGrade.long,
   int hp = 300,
   int cooldownTurns = 0,
   int blockDamage = 60,
@@ -39,10 +40,11 @@ PirateSpec testPirate(
   blockDamage: blockDamage,
   pirateDamage: pirateDamage,
   blastRadius: blastRadius,
+  range: range,
 );
 
 /// 샘플 덱에 나오는 해적. 쿨다운·피해를 조금씩 다르게 둔다.
-final PirateCatalog sampleCatalog = PirateCatalog([
+final List<PirateSpec> samplePirates = [
   testPirate('p01'),
   testPirate('p06', blastRadius: 0, pirateDamage: 150, cooldownTurns: 1),
   testPirate('p11', blastRadius: 0, blockDamage: 100),
@@ -50,7 +52,9 @@ final PirateCatalog sampleCatalog = PirateCatalog([
   testPirate('p26', hp: 150, blastRadius: 0),
   testPirate('p31', hp: 400, cooldownTurns: 2, rarity: Rarity.rare),
   testPirate('p36', blockDamage: 20, pirateDamage: 20),
-]);
+];
+
+final PirateCatalog sampleCatalog = PirateCatalog(samplePirates);
 
 /// 코스트: 왼쪽 일반 4명 = 12, 오른쪽 일반 2 + 희귀 1 = 10. 한도는 15.
 const List<List<String>> sampleDecks = [
@@ -70,8 +74,8 @@ Match newSampleMatch(int seed, {MatchRules rules = const MatchRules()}) =>
       pirates: sampleCatalog,
     );
 
-/// 턴마다 스크립트 시드와 턴 번호로 커맨드를 섞어 내는 컨트롤러. 쿨다운 중 발사,
-/// 범위 밖 값, 시간 초과, 빈 턴도 섞는다.
+/// 턴마다 스크립트 시드와 턴 번호로 커맨드를 섞어 내는 컨트롤러. 이동, 쿨다운 중
+/// 발사, 범위 밖 값, 시간 초과, 빈 턴도 섞는다.
 class RandomController implements Controller {
   RandomController(this.scriptSeed);
 
@@ -87,6 +91,8 @@ class RandomController implements Controller {
       final slot = rng.nextInt(5);
       if (rng.nextChance(1, 5)) {
         commands.add(TapCommand(t: t, slot: slot, tick: rng.nextInt(40)));
+      } else if (rng.nextChance(1, 3)) {
+        commands.add(MoveCommand(t: t, dx: rng.nextRange(-60, 61)));
       } else {
         commands.add(
           FireCommand(

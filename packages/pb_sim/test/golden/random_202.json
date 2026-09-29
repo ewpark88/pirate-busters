@@ -1,0 +1,1168 @@
+{
+ "name": "random_202",
+ "expect": {
+  "outcome": "timeDecision",
+  "winner": 0,
+  "turns": 30,
+  "hash": "75d9c5ed"
+ },
+ "replay": {
+  "version": 4,
+  "seed": 202,
+  "rules": {
+   "maxTurns": 30,
+   "turnTimeMs": 25000,
+   "firesPerTurn": 2,
+   "maxWind": 3,
+   "windAccel": 1,
+   "sunkHullPercent": 20,
+   "fuelPerTurn": 30,
+   "stormTurns": 4,
+   "stormTurnTimeMs": 20000,
+   "stormRetreatPull": 6000,
+   "stormFuel": 30,
+   "stormWindPercent": 200,
+   "stormWavePercent": 150,
+   "stormFloodPercent": 150,
+   "waveLevel": 1,
+   "wavePeriodMs": 4000,
+   "waveHeavePerLevel": 150,
+   "waveRollPerLevel": 1000,
+   "floodFullCell": 30,
+   "floodHalfCell": 15,
+   "waterlineDivisor": 4,
+   "sinkAtFullFlood": 2000,
+   "tiltPerCell": 1000,
+   "maxTilt": 6000
+  },
+  "blueprints": [
+   {
+    "hull": "sloop",
+    "cells": [
+     [
+      0,
+      0,
+      "oak"
+     ],
+     [
+      1,
+      0,
+      "oak"
+     ],
+     [
+      2,
+      0,
+      "oak"
+     ],
+     [
+      3,
+      0,
+      "oak"
+     ],
+     [
+      4,
+      0,
+      "oak"
+     ],
+     [
+      5,
+      0,
+      "oak"
+     ],
+     [
+      6,
+      0,
+      "oak"
+     ],
+     [
+      7,
+      0,
+      "oak"
+     ],
+     [
+      8,
+      0,
+      "oak"
+     ],
+     [
+      9,
+      0,
+      "oak"
+     ],
+     [
+      10,
+      0,
+      "oak"
+     ],
+     [
+      11,
+      0,
+      "oak"
+     ],
+     [
+      0,
+      1,
+      "pine"
+     ],
+     [
+      1,
+      1,
+      "pine"
+     ],
+     [
+      2,
+      1,
+      "pine"
+     ],
+     [
+      3,
+      1,
+      "pine"
+     ],
+     [
+      4,
+      1,
+      "pine"
+     ],
+     [
+      5,
+      1,
+      "pine"
+     ],
+     [
+      6,
+      1,
+      "pine"
+     ],
+     [
+      7,
+      1,
+      "pine"
+     ],
+     [
+      8,
+      1,
+      "pine"
+     ],
+     [
+      9,
+      1,
+      "pine"
+     ],
+     [
+      10,
+      1,
+      "pine"
+     ],
+     [
+      11,
+      1,
+      "pine"
+     ],
+     [
+      1,
+      2,
+      "cork"
+     ],
+     [
+      2,
+      2,
+      "iron"
+     ],
+     [
+      3,
+      2,
+      "pine"
+     ],
+     [
+      4,
+      2,
+      "pine"
+     ],
+     [
+      5,
+      2,
+      "pine"
+     ],
+     [
+      6,
+      2,
+      "pine"
+     ],
+     [
+      7,
+      2,
+      "pine"
+     ],
+     [
+      8,
+      2,
+      "pine"
+     ],
+     [
+      9,
+      2,
+      "iron"
+     ],
+     [
+      4,
+      3,
+      "net"
+     ],
+     [
+      5,
+      3,
+      "net"
+     ],
+     [
+      6,
+      3,
+      "net"
+     ],
+     [
+      7,
+      3,
+      "net"
+     ]
+    ],
+    "cabins": [
+     [
+      3,
+      2
+     ],
+     [
+      5,
+      2
+     ],
+     [
+      6,
+      2
+     ],
+     [
+      8,
+      2
+     ]
+    ]
+   },
+   {
+    "hull": "sloop",
+    "cells": [
+     [
+      0,
+      0,
+      "oak"
+     ],
+     [
+      1,
+      0,
+      "oak"
+     ],
+     [
+      2,
+      0,
+      "oak"
+     ],
+     [
+      3,
+      0,
+      "oak"
+     ],
+     [
+      4,
+      0,
+      "oak"
+     ],
+     [
+      5,
+      0,
+      "oak"
+     ],
+     [
+      6,
+      0,
+      "oak"
+     ],
+     [
+      7,
+      0,
+      "oak"
+     ],
+     [
+      8,
+      0,
+      "oak"
+     ],
+     [
+      9,
+      0,
+      "oak"
+     ],
+     [
+      10,
+      0,
+      "oak"
+     ],
+     [
+      11,
+      0,
+      "oak"
+     ],
+     [
+      0,
+      1,
+      "pine"
+     ],
+     [
+      1,
+      1,
+      "pine"
+     ],
+     [
+      2,
+      1,
+      "pine"
+     ],
+     [
+      3,
+      1,
+      "pine"
+     ],
+     [
+      4,
+      1,
+      "pine"
+     ],
+     [
+      5,
+      1,
+      "pine"
+     ],
+     [
+      6,
+      1,
+      "pine"
+     ],
+     [
+      7,
+      1,
+      "pine"
+     ],
+     [
+      8,
+      1,
+      "pine"
+     ],
+     [
+      9,
+      1,
+      "pine"
+     ],
+     [
+      10,
+      1,
+      "pine"
+     ],
+     [
+      11,
+      1,
+      "pine"
+     ],
+     [
+      1,
+      2,
+      "cork"
+     ],
+     [
+      2,
+      2,
+      "iron"
+     ],
+     [
+      3,
+      2,
+      "pine"
+     ],
+     [
+      4,
+      2,
+      "pine"
+     ],
+     [
+      5,
+      2,
+      "pine"
+     ],
+     [
+      6,
+      2,
+      "pine"
+     ],
+     [
+      7,
+      2,
+      "pine"
+     ],
+     [
+      8,
+      2,
+      "pine"
+     ],
+     [
+      9,
+      2,
+      "iron"
+     ],
+     [
+      4,
+      3,
+      "net"
+     ],
+     [
+      5,
+      3,
+      "net"
+     ],
+     [
+      6,
+      3,
+      "net"
+     ],
+     [
+      7,
+      3,
+      "net"
+     ]
+    ],
+    "cabins": [
+     [
+      3,
+      2
+     ],
+     [
+      5,
+      2
+     ],
+     [
+      6,
+      2
+     ],
+     [
+      8,
+      2
+     ]
+    ]
+   }
+  ],
+  "decks": [
+   [
+    "p01",
+    "p06",
+    "p11",
+    "p16"
+   ],
+   [
+    "p26",
+    "p31",
+    "p36"
+   ]
+  ],
+  "costLimits": [
+   15,
+   15
+  ],
+  "turns": [
+   {
+    "turn": 1,
+    "side": 1,
+    "cmds": [
+     {
+      "t": 3196,
+      "type": "END_TURN"
+     }
+    ],
+    "hash": "0476c945"
+   },
+   {
+    "turn": 2,
+    "side": 0,
+    "cmds": [
+     {
+      "t": 870,
+      "type": "MOVE",
+      "dx": 27
+     },
+     {
+      "t": 3669,
+      "type": "FIRE",
+      "slot": 4,
+      "angle": 61292,
+      "power": 8517
+     }
+    ],
+    "hash": "504f0aba"
+   },
+   {
+    "turn": 3,
+    "side": 1,
+    "cmds": [
+     {
+      "t": 3598,
+      "type": "MOVE",
+      "dx": -55
+     },
+     {
+      "t": 8042,
+      "type": "FIRE",
+      "slot": 4,
+      "angle": 65079,
+      "power": 9798
+     },
+     {
+      "t": 13688,
+      "type": "FIRE",
+      "slot": 2,
+      "angle": 60778,
+      "power": 8179
+     },
+     {
+      "t": 17665,
+      "type": "END_TURN"
+     }
+    ],
+    "hash": "5efc4d67"
+   },
+   {
+    "turn": 4,
+    "side": 0,
+    "cmds": [
+     {
+      "t": 3695,
+      "type": "MOVE",
+      "dx": -30
+     },
+     {
+      "t": 7553,
+      "type": "FIRE",
+      "slot": 1,
+      "angle": 61825,
+      "power": 8160
+     },
+     {
+      "t": 13533,
+      "type": "MOVE",
+      "dx": -53
+     },
+     {
+      "t": 19438,
+      "type": "TAP",
+      "slot": 2,
+      "tick": 35
+     }
+    ],
+    "hash": "6651d42f"
+   },
+   {
+    "turn": 5,
+    "side": 1,
+    "cmds": [
+     {
+      "t": 508,
+      "type": "FIRE",
+      "slot": 1,
+      "angle": 27296,
+      "power": 6421
+     },
+     {
+      "t": 3305,
+      "type": "TAP",
+      "slot": 3,
+      "tick": 24
+     },
+     {
+      "t": 11338,
+      "type": "FIRE",
+      "slot": 0,
+      "angle": 20004,
+      "power": 6851
+     }
+    ],
+    "hash": "6747a5a4"
+   },
+   {
+    "turn": 6,
+    "side": 0,
+    "cmds": [
+     {
+      "t": 3224,
+      "type": "MOVE",
+      "dx": -8
+     },
+     {
+      "t": 10821,
+      "type": "FIRE",
+      "slot": 3,
+      "angle": 22585,
+      "power": 6532
+     },
+     {
+      "t": 17821,
+      "type": "MOVE",
+      "dx": -3
+     },
+     {
+      "t": 24915,
+      "type": "END_TURN"
+     }
+    ],
+    "hash": "f7179a55"
+   },
+   {
+    "turn": 7,
+    "side": 1,
+    "cmds": [
+     {
+      "t": 2884,
+      "type": "FIRE",
+      "slot": 3,
+      "angle": 40280,
+      "power": 6048
+     },
+     {
+      "t": 11736,
+      "type": "FIRE",
+      "slot": 0,
+      "angle": 21198,
+      "power": 5249
+     },
+     {
+      "t": 18375,
+      "type": "FIRE",
+      "slot": 3,
+      "angle": 33021,
+      "power": 6365
+     },
+     {
+      "t": 23231,
+      "type": "FIRE",
+      "slot": 1,
+      "angle": 53375,
+      "power": 5015
+     },
+     {
+      "t": 28628,
+      "type": "END_TURN"
+     }
+    ],
+    "hash": "ffd3d455"
+   },
+   {
+    "turn": 8,
+    "side": 0,
+    "cmds": [
+     {
+      "t": 1919,
+      "type": "FIRE",
+      "slot": 1,
+      "angle": 25341,
+      "power": 8231
+     },
+     {
+      "t": 8308,
+      "type": "END_TURN"
+     }
+    ],
+    "hash": "779e1cee"
+   },
+   {
+    "turn": 9,
+    "side": 1,
+    "cmds": [
+     {
+      "t": 2198,
+      "type": "FIRE",
+      "slot": 3,
+      "angle": 32554,
+      "power": 6273
+     }
+    ],
+    "hash": "735b4175"
+   },
+   {
+    "turn": 10,
+    "side": 0,
+    "cmds": [
+     {
+      "t": 2346,
+      "type": "FIRE",
+      "slot": 4,
+      "angle": 57750,
+      "power": 10456
+     },
+     {
+      "t": 3897,
+      "type": "FIRE",
+      "slot": 4,
+      "angle": 64891,
+      "power": 6347
+     },
+     {
+      "t": 7007,
+      "type": "MOVE",
+      "dx": -21
+     },
+     {
+      "t": 13783,
+      "type": "TAP",
+      "slot": 4,
+      "tick": 29
+     },
+     {
+      "t": 17122,
+      "type": "END_TURN"
+     }
+    ],
+    "hash": "97451e3c"
+   },
+   {
+    "turn": 11,
+    "side": 1,
+    "cmds": [],
+    "hash": "ecd49f46"
+   },
+   {
+    "turn": 12,
+    "side": 0,
+    "cmds": [],
+    "hash": "4769263e"
+   },
+   {
+    "turn": 13,
+    "side": 1,
+    "cmds": [
+     {
+      "t": 2620,
+      "type": "FIRE",
+      "slot": 4,
+      "angle": 41434,
+      "power": 6429
+     },
+     {
+      "t": 7600,
+      "type": "FIRE",
+      "slot": 1,
+      "angle": 47497,
+      "power": 7536
+     },
+     {
+      "t": 10375,
+      "type": "FIRE",
+      "slot": 0,
+      "angle": 52193,
+      "power": 8754
+     }
+    ],
+    "hash": "47aa930d"
+   },
+   {
+    "turn": 14,
+    "side": 0,
+    "cmds": [
+     {
+      "t": 3163,
+      "type": "FIRE",
+      "slot": 2,
+      "angle": 67835,
+      "power": 7399
+     },
+     {
+      "t": 11938,
+      "type": "END_TURN"
+     }
+    ],
+    "hash": "f9cfe249"
+   },
+   {
+    "turn": 15,
+    "side": 1,
+    "cmds": [
+     {
+      "t": 3865,
+      "type": "TAP",
+      "slot": 2,
+      "tick": 9
+     },
+     {
+      "t": 11596,
+      "type": "FIRE",
+      "slot": 3,
+      "angle": 37041,
+      "power": 6843
+     },
+     {
+      "t": 18802,
+      "type": "FIRE",
+      "slot": 0,
+      "angle": 61520,
+      "power": 5394
+     },
+     {
+      "t": 25186,
+      "type": "END_TURN"
+     }
+    ],
+    "hash": "83255d3d"
+   },
+   {
+    "turn": 16,
+    "side": 0,
+    "cmds": [
+     {
+      "t": 3368,
+      "type": "FIRE",
+      "slot": 0,
+      "angle": 23155,
+      "power": 6677
+     },
+     {
+      "t": 7306,
+      "type": "MOVE",
+      "dx": 37
+     },
+     {
+      "t": 7889,
+      "type": "END_TURN"
+     }
+    ],
+    "hash": "725d2dbf"
+   },
+   {
+    "turn": 17,
+    "side": 1,
+    "cmds": [
+     {
+      "t": 3025,
+      "type": "FIRE",
+      "slot": 4,
+      "angle": 41882,
+      "power": 6785
+     },
+     {
+      "t": 8642,
+      "type": "FIRE",
+      "slot": 0,
+      "angle": 52161,
+      "power": 5959
+     },
+     {
+      "t": 10563,
+      "type": "TAP",
+      "slot": 1,
+      "tick": 7
+     },
+     {
+      "t": 13408,
+      "type": "TAP",
+      "slot": 0,
+      "tick": 26
+     },
+     {
+      "t": 14042,
+      "type": "END_TURN"
+     }
+    ],
+    "hash": "ff6ba695"
+   },
+   {
+    "turn": 18,
+    "side": 0,
+    "cmds": [
+     {
+      "t": 752,
+      "type": "MOVE",
+      "dx": -21
+     },
+     {
+      "t": 7356,
+      "type": "FIRE",
+      "slot": 4,
+      "angle": 64985,
+      "power": 6817
+     },
+     {
+      "t": 15442,
+      "type": "MOVE",
+      "dx": -48
+     },
+     {
+      "t": 21590,
+      "type": "FIRE",
+      "slot": 2,
+      "angle": 52737,
+      "power": 6260
+     },
+     {
+      "t": 28597,
+      "type": "END_TURN"
+     }
+    ],
+    "hash": "df29486b"
+   },
+   {
+    "turn": 19,
+    "side": 1,
+    "cmds": [
+     {
+      "t": 1537,
+      "type": "TAP",
+      "slot": 0,
+      "tick": 16
+     },
+     {
+      "t": 7160,
+      "type": "MOVE",
+      "dx": 40
+     },
+     {
+      "t": 12815,
+      "type": "END_TURN"
+     }
+    ],
+    "hash": "0d1abbf4"
+   },
+   {
+    "turn": 20,
+    "side": 0,
+    "cmds": [
+     {
+      "t": 2124,
+      "type": "FIRE",
+      "slot": 3,
+      "angle": 53241,
+      "power": 9841
+     },
+     {
+      "t": 9266,
+      "type": "END_TURN"
+     }
+    ],
+    "hash": "5c8f3e7f"
+   },
+   {
+    "turn": 21,
+    "side": 1,
+    "cmds": [
+     {
+      "t": 936,
+      "type": "END_TURN"
+     }
+    ],
+    "hash": "33172880"
+   },
+   {
+    "turn": 22,
+    "side": 0,
+    "cmds": [
+     {
+      "t": 1260,
+      "type": "FIRE",
+      "slot": 1,
+      "angle": 23872,
+      "power": 7827
+     },
+     {
+      "t": 6159,
+      "type": "MOVE",
+      "dx": -38
+     },
+     {
+      "t": 8948,
+      "type": "END_TURN"
+     }
+    ],
+    "hash": "1331d956"
+   },
+   {
+    "turn": 23,
+    "side": 1,
+    "cmds": [
+     {
+      "t": 2435,
+      "type": "MOVE",
+      "dx": -6
+     },
+     {
+      "t": 3854,
+      "type": "TAP",
+      "slot": 1,
+      "tick": 7
+     },
+     {
+      "t": 12500,
+      "type": "FIRE",
+      "slot": 2,
+      "angle": 60518,
+      "power": 5819
+     },
+     {
+      "t": 20917,
+      "type": "END_TURN"
+     }
+    ],
+    "hash": "55ff6398"
+   },
+   {
+    "turn": 24,
+    "side": 0,
+    "cmds": [
+     {
+      "t": 3399,
+      "type": "MOVE",
+      "dx": 47
+     },
+     {
+      "t": 4310,
+      "type": "END_TURN"
+     }
+    ],
+    "hash": "c02136d0"
+   },
+   {
+    "turn": 25,
+    "side": 1,
+    "cmds": [
+     {
+      "t": 3737,
+      "type": "END_TURN"
+     }
+    ],
+    "hash": "8a17660c"
+   },
+   {
+    "turn": 26,
+    "side": 0,
+    "cmds": [
+     {
+      "t": 3594,
+      "type": "MOVE",
+      "dx": 8
+     },
+     {
+      "t": 6495,
+      "type": "END_TURN"
+     }
+    ],
+    "hash": "173c822a"
+   },
+   {
+    "turn": 27,
+    "side": 1,
+    "cmds": [
+     {
+      "t": 3250,
+      "type": "FIRE",
+      "slot": 4,
+      "angle": 39316,
+      "power": 9079
+     },
+     {
+      "t": 6636,
+      "type": "MOVE",
+      "dx": -25
+     },
+     {
+      "t": 7764,
+      "type": "FIRE",
+      "slot": 3,
+      "angle": 54080,
+      "power": 7716
+     },
+     {
+      "t": 13210,
+      "type": "TAP",
+      "slot": 1,
+      "tick": 33
+     }
+    ],
+    "hash": "18fc15af"
+   },
+   {
+    "turn": 28,
+    "side": 0,
+    "cmds": [
+     {
+      "t": 1173,
+      "type": "TAP",
+      "slot": 2,
+      "tick": 30
+     },
+     {
+      "t": 7010,
+      "type": "MOVE",
+      "dx": 34
+     },
+     {
+      "t": 7584,
+      "type": "END_TURN"
+     }
+    ],
+    "hash": "3ae48851"
+   },
+   {
+    "turn": 29,
+    "side": 1,
+    "cmds": [
+     {
+      "t": 2879,
+      "type": "MOVE",
+      "dx": 44
+     },
+     {
+      "t": 3401,
+      "type": "FIRE",
+      "slot": 2,
+      "angle": 60655,
+      "power": 8809
+     },
+     {
+      "t": 12013,
+      "type": "END_TURN"
+     }
+    ],
+    "hash": "3987522f"
+   },
+   {
+    "turn": 30,
+    "side": 0,
+    "cmds": [
+     {
+      "t": 1872,
+      "type": "FIRE",
+      "slot": 3,
+      "angle": 66732,
+      "power": 7559
+     },
+     {
+      "t": 8182,
+      "type": "MOVE",
+      "dx": 10
+     },
+     {
+      "t": 16152,
+      "type": "FIRE",
+      "slot": 3,
+      "angle": 68945,
+      "power": 8933
+     },
+     {
+      "t": 24874,
+      "type": "FIRE",
+      "slot": 1,
+      "angle": 65398,
+      "power": 7195
+     }
+    ],
+    "hash": "75d9c5ed"
+   }
+  ]
+ }
+}

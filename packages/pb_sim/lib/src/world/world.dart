@@ -1,8 +1,8 @@
-/// 월드 좌표 (개발 계획서 M2). 단위는 1/1000칸, 해수면이 y = 0 이다.
+/// 월드 좌표. 단위는 1/1000칸, 해수면이 y = 0 이다.
 ///
 /// 왼쪽 배(진영 0)는 +x 쪽을, 오른쪽 배(진영 1)는 −x 쪽을 향한다. 설계도는 뱃머리가
-/// +x 쪽인 로컬 격자로 짓고, 진영 1 은 좌우를 뒤집어 놓는다. 용골(y = 0 줄)은 M2 에서
-/// 해수면에 닿아 있다. 흘수선은 M3 에서 붙인다.
+/// +x 쪽인 로컬 격자로 짓고, 진영 1 은 좌우를 뒤집어 놓는다. 배는 흘수선만큼 물에
+/// 잠기고 파도에 위아래로 흔들린다: 용골 바닥의 월드 y 가 [ShipFrame.baseY] 다.
 library;
 
 import 'package:pb_sim/src/match/rules.dart';
@@ -10,18 +10,18 @@ import 'package:pb_sim/src/match/rules.dart';
 /// 1칸의 월드 단위.
 const int cellUnit = 1000;
 
-/// 판 시작 때 두 선체 끝(뱃머리) 사이 간격: 16칸 (설계서 §2.6).
-const int startGap = 16 * cellUnit;
+/// 판 시작 때 두 선체 끝(뱃머리) 사이 간격: 28칸 (설계서 §2.6, 범위 8~48칸).
+const int startGap = 28 * cellUnit;
 
-/// 배마다 시작 위치에서 전진·후퇴할 수 있는 거리: 4칸 (설계서 §2.6, 이동은 M3).
-const int moveRange = 4 * cellUnit;
+/// 배마다 시작 위치에서 전진·후퇴할 수 있는 거리: 10칸 (설계서 §2.6, 이동은 M3).
+const int moveRange = 10 * cellUnit;
 
-/// 중력: 36칸/초² → 틱당 속도 변화(1/1000칸/틱²). 최대 탄속 40칸/초와 함께, 45° 로
-/// 30칸을 쏘면 약 1.3초 날아간다(ADR-010 임시 값).
+/// 중력: 36칸/초² → 틱당 속도 변화(1/1000칸/틱²). 사거리 등급의 탄속 표가 이 값으로
+/// 계산돼 있다 (설계서 §2.8, `RangeGrade`). 값 자체는 ADR-010 임시 값.
 const int gravityPerTick = 36 * cellUnit ~/ (simTickHz * simTickHz);
 
-/// 투사체가 사라지는 월드 가로 경계(±60칸).
-const int worldHalfWidth = 60 * cellUnit;
+/// 투사체가 사라지는 월드 가로 경계: ±100칸 (설계서 §2.1).
+const int worldHalfWidth = 100 * cellUnit;
 
 /// 투사체 최대 수명: 10초.
 const int projectileMaxTicks = 10 * simTickHz;
@@ -46,11 +46,21 @@ class ShipFrame {
     required this.side,
     required this.bowX,
     required this.width,
+    this.baseY = 0,
   });
 
   final int side;
   final int bowX;
   final int width;
+
+  /// 용골 바닥(로컬 y = 0)의 월드 y. 흘수선만큼 음수이고 파도로 오르내린다.
+  final int baseY;
+
+  /// 월드 y → 로컬 y.
+  int toLocalY(int worldY) => worldY - baseY;
+
+  /// 로컬 y → 월드 y.
+  int toWorldY(int localY) => localY + baseY;
 
   int get _sternToBow => width * cellUnit;
 
@@ -69,6 +79,6 @@ class ShipFrame {
   /// 로컬 칸 ([cx], [cy]) 중심의 월드 좌표 (x, y).
   (int, int) cellCenter(int cx, int cy) => (
     toWorldX(cx * cellUnit + cellUnit ~/ 2),
-    cy * cellUnit + cellUnit ~/ 2,
+    toWorldY(cy * cellUnit + cellUnit ~/ 2),
   );
 }

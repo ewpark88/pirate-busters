@@ -20,13 +20,13 @@ void main() {
     expect(gravityPerTick, 40);
   });
 
-  test('최대 힘 수평 발사는 틱당 1.333칸, 오른쪽 진영은 반대 방향으로 날아간다', () {
+  test('사거리 긺 해적의 최대 힘 수평 발사는 틱당 1.414칸, 오른쪽 진영은 반대 방향이다', () {
     final left = _launch(angle: 0);
-    expect([left.vx, left.vy], [1333, 0]);
+    expect([left.vx, left.vy], [1414, 0]);
     final right = _launch(side: 1, angle: 0);
-    expect([right.vx, right.vy], [-1333, 0]);
+    expect([right.vx, right.vy], [-1414, 0]);
     final up = _launch(angle: 90000, power: 5000);
-    expect([up.vx, up.vy], [0, 667]);
+    expect([up.vx, up.vy], [0, 707]);
   });
 
   test('탄도는 속도에 바람과 중력을 더한 뒤 위치를 옮기는 정수 적분과 정확히 같다', () {
@@ -42,15 +42,30 @@ void main() {
     }
   });
 
-  test('45° 로 약 30칸을 쏘면 1.2~1.4초 날아간다 (설계서 §2.6)', () {
-    final p = _launch(angle: 45000, power: 8250);
-    var ticks = 0;
-    while (p.y >= 0) {
-      p.advance(0);
-      ticks++;
+  test('최대 힘·45° 로 쏘면 해수면까지 등급 사거리만큼 날아간다 (설계서 §2.8)', () {
+    for (final grade in RangeGrade.values) {
+      final p = Projectile.launch(
+        id: 0,
+        side: 0,
+        slot: 0,
+        spec: testPirate('t', range: grade),
+        x: 0,
+        y: 0,
+        angle: 45000,
+        power: maxFirePower,
+      );
+      while (p.y >= 0) {
+        p.advance(0);
+      }
+      final lo = (grade.cells - 1) * cellUnit;
+      final hi = (grade.cells + 1) * cellUnit;
+      expect(p.x, inInclusiveRange(lo, hi), reason: grade.name);
     }
-    expect(p.x, inInclusiveRange(28 * cellUnit, 34 * cellUnit));
-    expect(ticks, inInclusiveRange(36, 42));
+  });
+
+  test('사거리 등급은 데이터 이름으로 찾고, 모르는 이름은 오류를 낸다', () {
+    expect(RangeGrade.byName('veryLong'), RangeGrade.veryLong);
+    expect(() => RangeGrade.byName('far'), throwsFormatException);
   });
 
   test('순풍이면 더 멀리, 역풍이면 덜 날아간다', () {
