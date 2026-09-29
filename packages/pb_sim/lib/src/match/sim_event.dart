@@ -33,6 +33,16 @@ enum SimEventKind {
 
   /// 턴 끝. [SimEvent.value] = 턴 번호, [SimEvent.cell] = 끝난 이유([TurnEndReason] 순서).
   turnEnd,
+
+  /// 배 이동. [SimEvent.value] = 움직인 거리(1/1000칸, 전진 +), [SimEvent.x] = 새
+  /// 뱃머리 x, [SimEvent.y] = 걸린 시간(밀리초).
+  move,
+
+  /// 턴 끝 침수. [SimEvent.value] = 늘어난 침수량(0.1%p).
+  flood,
+
+  /// 폭풍 타임 시작. [SimEvent.value] = 턴 번호.
+  stormStart,
 }
 
 /// 턴이 끝난 이유. 순서는 이벤트 값으로 쓰인다.

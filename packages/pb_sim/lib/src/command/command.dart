@@ -24,6 +24,7 @@ sealed class Command {
         slot: readInt(json, 'slot'),
         tick: readInt(json, 'tick'),
       ),
+      MoveCommand.type => MoveCommand(t: t, dx: readInt(json, 'dx')),
       EndTurnCommand.type => EndTurnCommand(t: t),
       SurrenderCommand.type => SurrenderCommand(t: t),
       final other => throw FormatException('알 수 없는 커맨드: $other'),
@@ -78,6 +79,19 @@ final class TapCommand extends Command {
     'slot': slot,
     'tick': tick,
   };
+}
+
+/// 배를 [dx](1/10칸, 전진 +, 후퇴 −)만큼 움직인다 (설계서 §2.6, §7.2). 한계선·연료·
+/// 남은 턴 시간 검사는 시뮬레이션이 하고, 모자라면 갈 수 있는 데까지만 간다.
+final class MoveCommand extends Command {
+  const MoveCommand({required super.t, required this.dx});
+
+  static const String type = 'MOVE';
+
+  final int dx;
+
+  @override
+  Map<String, Object?> toJson() => {'t': t, 'type': type, 'dx': dx};
 }
 
 /// 턴 종료.

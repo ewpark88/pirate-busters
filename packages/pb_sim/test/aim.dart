@@ -1,8 +1,10 @@
 import 'package:pb_sim/pb_sim.dart';
 
-/// 테스트용 조준: 지금 턴 진영의 [slot] 해적이 지금 자리·바람에서 상대 배 로컬 칸
-/// ([tx], [ty]) 을 지나는 궤적을 찾아 FIRE 커맨드로 돌려준다. 다른 블록에 가로막히는
-/// 것은 보지 않는다. [highArc] 면 가장 높은 각도, 아니면 가장 낮은 각도를 고른다.
+/// 테스트용 조준: 지금 턴 진영의 [slot] 해적이 커맨드 시각 [t] 에 상대 배 로컬 칸
+/// ([tx], [ty]) 을 지나는 궤적을 찾아 FIRE 커맨드로 돌려준다. 시뮬레이션과 같은
+/// 발사 계산(파도·기울기, `launchShot`)과 파도에 흔들리는 표적(`frameAtMs`)을 쓴다.
+/// 다른 블록에 가로막히는 것은 보지 않는다. [highArc] 면 가장 높은 각도, 아니면 가장
+/// 낮은 각도를 고른다.
 FireCommand aimAt(
   MatchState state, {
   required int slot,
@@ -12,34 +14,28 @@ FireCommand aimAt(
   int power = maxFirePower,
   bool highArc = false,
 }) {
-  final side = state.activeSide;
-  final shooter = state.sides[side];
-  final frame = state.sides[1 - side].frame;
-  final spec = shooter.crew.pirates[slot].spec;
-  final cabin = shooter.cabins[slot];
-  final (x, y) = shooter.frame.cellCenter(cabin.x, cabin.y);
+  final target = 1 - state.activeSide;
+  final ms = realMs(state, effectiveMs(state, t));
   final wind = state.wind * state.rules.windAccel;
   FireCommand? found;
   for (var angle = 1000; angle <= 85000; angle += 250) {
-    final p = Projectile.launch(
-      id: 0,
-      side: side,
+    final p = launchShot(
+      state,
       slot: slot,
-      spec: spec,
-      x: x,
-      y: y,
       angle: angle,
       power: power,
+      ms: ms,
     );
     while (!p.isExpired && p.y >= 0) {
       final x0 = p.x;
       final y0 = p.y;
       p.advance(wind);
+      final frame = frameAtMs(state, target, msAfterTicks(ms, p.age));
       final hit = traceCells(
         frame.toLocalX(x0),
-        y0,
+        frame.toLocalY(y0),
         frame.toLocalX(p.x),
-        p.y,
+        frame.toLocalY(p.y),
         (cx, cy) => cx == tx && cy == ty,
       );
       if (hit != null) {

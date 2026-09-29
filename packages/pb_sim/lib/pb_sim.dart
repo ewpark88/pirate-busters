@@ -6,9 +6,12 @@
 library;
 
 export 'src/combat/impact.dart';
+export 'src/combat/launch.dart';
 export 'src/command/command.dart';
 export 'src/hash/state_hasher.dart';
 export 'src/match/controller.dart';
+export 'src/match/headless.dart';
+export 'src/match/judge.dart';
 export 'src/match/match.dart';
 export 'src/match/match_state.dart';
 export 'src/match/rules.dart';
@@ -24,8 +27,11 @@ export 'src/projectile/projectile.dart';
 export 'src/random/xorshift32.dart';
 export 'src/replay/replay.dart';
 export 'src/ship/blueprint.dart';
+export 'src/ship/flooding.dart';
 export 'src/ship/hull.dart';
 export 'src/ship/material.dart';
+export 'src/ship/motion.dart';
 export 'src/ship/ship_grid.dart';
 export 'src/ship/support.dart';
+export 'src/world/wave.dart';
 export 'src/world/world.dart';

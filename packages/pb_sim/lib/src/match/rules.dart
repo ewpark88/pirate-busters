@@ -1,3 +1,4 @@
+import 'package:pb_sim/src/json_read.dart';
 import 'package:pb_sim/src/random/xorshift32.dart';
 
 /// 시뮬레이션 고정 틱 속도(Hz). 턴 안의 탄 비행·붕괴는 틱으로 계산하고,
@@ -28,8 +29,8 @@ int _mul32(int a, int b) {
 /// 한 판에 출전할 수 있는 최대 해적 수 (설계서 §3.1, §4.5).
 const int maxLineup = 7;
 
-/// 판 규칙 수치. 턴 수·턴 시간은 기획에서 언제든 바뀔 수 있어 값으로 받는다
-/// (설계서 §2.3, §2.4, ADR-013).
+/// 판 규칙 수치. 턴 수·턴 시간·연료·파도·침수 수치는 기획과 Remote Config 로 바뀔 수
+/// 있어 값으로 받는다 (설계서 §2.3~§2.7, ADR-013, ADR-025).
 class MatchRules {
   const MatchRules({
     this.maxTurns = 30,
@@ -38,7 +39,84 @@ class MatchRules {
     this.maxWind = 3,
     this.windAccel = 1,
     this.sunkHullPercent = 20,
+    this.fuelPerTurn = 30,
+    this.stormTurns = 4,
+    this.stormTurnTimeMs = 20000,
+    this.stormRetreatPull = 6000,
+    this.stormFuel = 30,
+    this.stormWindPercent = 200,
+    this.stormWavePercent = 150,
+    this.stormFloodPercent = 150,
+    this.waveLevel = 1,
+    this.wavePeriodMs = 4000,
+    this.waveHeavePerLevel = 150,
+    this.waveRollPerLevel = 1000,
+    this.floodFullCell = 30,
+    this.floodHalfCell = 15,
+    this.waterlineDivisor = 4,
+    this.sinkAtFullFlood = 2000,
+    this.tiltPerCell = 1000,
+    this.maxTilt = 6000,
   });
+
+  /// [toJson] 결과에서 읽는다. 빠진 키나 범위 밖 값은 [FormatException].
+  /// 리플레이는 외부 입력이라 0 나눗셈·무한 루프가 될 값을 막는다.
+  factory MatchRules.fromJson(Map<String, Object?> json) {
+    final rules = MatchRules(
+      maxTurns: readInt(json, 'maxTurns'),
+      turnTimeMs: readInt(json, 'turnTimeMs'),
+      firesPerTurn: readInt(json, 'firesPerTurn'),
+      maxWind: readInt(json, 'maxWind'),
+      windAccel: readInt(json, 'windAccel'),
+      sunkHullPercent: readInt(json, 'sunkHullPercent'),
+      fuelPerTurn: readInt(json, 'fuelPerTurn'),
+      stormTurns: readInt(json, 'stormTurns'),
+      stormTurnTimeMs: readInt(json, 'stormTurnTimeMs'),
+      stormRetreatPull: readInt(json, 'stormRetreatPull'),
+      stormFuel: readInt(json, 'stormFuel'),
+      stormWindPercent: readInt(json, 'stormWindPercent'),
+      stormWavePercent: readInt(json, 'stormWavePercent'),
+      stormFloodPercent: readInt(json, 'stormFloodPercent'),
+      waveLevel: readInt(json, 'waveLevel'),
+      wavePeriodMs: readInt(json, 'wavePeriodMs'),
+      waveHeavePerLevel: readInt(json, 'waveHeavePerLevel'),
+      waveRollPerLevel: readInt(json, 'waveRollPerLevel'),
+      floodFullCell: readInt(json, 'floodFullCell'),
+      floodHalfCell: readInt(json, 'floodHalfCell'),
+      waterlineDivisor: readInt(json, 'waterlineDivisor'),
+      sinkAtFullFlood: readInt(json, 'sinkAtFullFlood'),
+      tiltPerCell: readInt(json, 'tiltPerCell'),
+      maxTilt: readInt(json, 'maxTilt'),
+    );
+    return rules.._check();
+  }
+
+  void _check() {
+    void need({required bool ok, required String what}) {
+      if (!ok) throw FormatException('규칙 값이 범위 밖: $what');
+    }
+
+    need(ok: maxTurns > 0 && maxTurns.isEven, what: 'maxTurns $maxTurns');
+    need(ok: turnTimeMs > 0 && stormTurnTimeMs > 0, what: '턴 시간');
+    need(ok: firesPerTurn > 0, what: 'firesPerTurn $firesPerTurn');
+    need(ok: maxWind >= 0, what: 'maxWind $maxWind');
+    need(
+      ok: stormTurns >= 0 && stormTurns <= maxTurns,
+      what: 'stormTurns $stormTurns',
+    );
+    need(ok: waveLevel >= 0 && waveLevel <= 3, what: 'waveLevel $waveLevel');
+    need(ok: wavePeriodMs > 0, what: 'wavePeriodMs $wavePeriodMs');
+    need(ok: waterlineDivisor > 0, what: 'waterlineDivisor $waterlineDivisor');
+    need(ok: maxTilt >= 0, what: 'maxTilt $maxTilt');
+    need(
+      ok:
+          fuelPerTurn >= 0 &&
+          stormFuel >= 0 &&
+          floodFullCell >= 0 &&
+          floodHalfCell >= 0,
+      what: '연료·침수 값',
+    );
+  }
 
   /// 양쪽 합친 최대 턴 수. 짝수여야 양쪽 턴 수가 같다.
   final int maxTurns;
@@ -58,11 +136,76 @@ class MatchRules {
   /// 선체 내구도가 시작의 이 비율(%) 미만이면 격침 (설계서 §2.4).
   final int sunkHullPercent;
 
+  /// 내 턴 시작 연료 회복 (설계서 §2.7).
+  final int fuelPerTurn;
+
+  /// 폭풍 타임 턴 수: 마지막 이만큼의 턴 (설계서 §2.4, 27~30턴).
+  final int stormTurns;
+
+  /// 폭풍 타임 턴 제한 시간(밀리초).
+  final int stormTurnTimeMs;
+
+  /// 폭풍 타임에 후퇴 한계를 당기는 거리(1/1000칸, 최대 간격 36칸).
+  final int stormRetreatPull;
+
+  /// 폭풍 타임이 시작될 때 양쪽에 채우는 연료.
+  final int stormFuel;
+
+  /// 폭풍 타임 바람 배율(%).
+  final int stormWindPercent;
+
+  /// 폭풍 타임 파도 배율(%).
+  final int stormWavePercent;
+
+  /// 폭풍 타임 턴 끝 침수 증가 배율(%).
+  final int stormFloodPercent;
+
+  /// 스테이지 파도 세기(0~3). 0 이면 흔들리지 않는다 (설계서 §2.5).
+  final int waveLevel;
+
+  /// 파도 주기(밀리초, 고정). 임시 값 (ADR-025).
+  final int wavePeriodMs;
+
+  /// 파도 세기 1 당 위아래 흔들림 폭(1/1000칸). 임시 값.
+  final int waveHeavePerLevel;
+
+  /// 파도 세기 1 당 기울기 폭(밀리도). 임시 값.
+  final int waveRollPerLevel;
+
+  /// 완전히 잠긴 구멍 1칸의 턴 끝 침수 증가(0.1%p 단위, 3%p) (설계서 §2.5).
+  final int floodFullCell;
+
+  /// 반쯤 잠긴 구멍 1칸의 턴 끝 침수 증가(0.1%p 단위, 1.5%p).
+  final int floodHalfCell;
+
+  /// 흘수선 = 무게 ÷ (선형 폭 × 이 값) (설계서 §3.4).
+  final int waterlineDivisor;
+
+  /// 침수량 100% 일 때 내려앉는 깊이(1/1000칸). 임시 값.
+  final int sinkAtFullFlood;
+
+  /// 앞·뒤 새는 칸 수 차이 1칸당 기울기(밀리도). 임시 값.
+  final int tiltPerCell;
+
+  /// 침수 기울기 상한(밀리도). 임시 값.
+  final int maxTilt;
+
+  /// 폭풍 타임이 시작되는 턴 번호.
+  int get stormStartTurn => maxTurns - stormTurns + 1;
+
+  /// [turn] 이 폭풍 타임인가.
+  bool isStorm(int turn) => turn >= stormStartTurn;
+
+  /// [turn] 의 턴 제한 시간(밀리초).
+  int turnTimeFor(int turn) => isStorm(turn) ? stormTurnTimeMs : turnTimeMs;
+
   /// [turn] 번째 턴(1부터)의 바람 세기. 매치 시드와 턴 번호로만 정해져 양쪽이 항상
-  /// 같은 값을 얻는다 (설계서 §7.2). 매치 난수 흐름과는 따로 뽑는다.
+  /// 같은 값을 얻는다 (설계서 §7.2). 매치 난수 흐름과는 따로 뽑는다. 폭풍 타임에는
+  /// [stormWindPercent] 배.
   int windForTurn(int seed, int turn) {
     final rng = XorShift32(mixSeed(seed ^ mixSeed(turn)));
-    return rng.nextRange(-maxWind, maxWind + 1);
+    final wind = rng.nextRange(-maxWind, maxWind + 1);
+    return isStorm(turn) ? wind * stormWindPercent ~/ 100 : wind;
   }
 
   Map<String, Object?> toJson() => {
@@ -72,5 +215,23 @@ class MatchRules {
     'maxWind': maxWind,
     'windAccel': windAccel,
     'sunkHullPercent': sunkHullPercent,
+    'fuelPerTurn': fuelPerTurn,
+    'stormTurns': stormTurns,
+    'stormTurnTimeMs': stormTurnTimeMs,
+    'stormRetreatPull': stormRetreatPull,
+    'stormFuel': stormFuel,
+    'stormWindPercent': stormWindPercent,
+    'stormWavePercent': stormWavePercent,
+    'stormFloodPercent': stormFloodPercent,
+    'waveLevel': waveLevel,
+    'wavePeriodMs': wavePeriodMs,
+    'waveHeavePerLevel': waveHeavePerLevel,
+    'waveRollPerLevel': waveRollPerLevel,
+    'floodFullCell': floodFullCell,
+    'floodHalfCell': floodHalfCell,
+    'waterlineDivisor': waterlineDivisor,
+    'sinkAtFullFlood': sinkAtFullFlood,
+    'tiltPerCell': tiltPerCell,
+    'maxTilt': maxTilt,
   };
 }

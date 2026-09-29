@@ -7,16 +7,21 @@ class HullSpec {
     required this.cabinSlots,
     required this.buildPoints,
     required this.moveSpeed,
+    required this.fuelTank,
+    required this.fuelPerCell,
   });
 
-  /// 슬루프: 12×8, 선실 4, 건조 포인트 60, 1.4칸/초. MVP 의 유일한 선형 (§11.1).
+  /// 슬루프: 12×8, 선실 4, 건조 포인트 60, 2.8칸/초, 탱크 80, 1칸당 연료 4.
+  /// MVP 의 유일한 선형 (§11.1).
   static const HullSpec sloop = HullSpec(
     id: 'sloop',
     width: 12,
     height: 8,
     cabinSlots: 4,
     buildPoints: 60,
-    moveSpeed: 1400,
+    moveSpeed: 2800,
+    fuelTank: 80,
+    fuelPerCell: 4,
   );
 
   /// 사용할 수 있는 선형. 나머지 선형은 정식 출시 단계에서 추가한다.
@@ -38,6 +43,12 @@ class HullSpec {
 
   /// 최고 이동 속도, 1/1000칸/초 (설계서 §2.6 이동 속도 표).
   final int moveSpeed;
+
+  /// 연료 탱크 상한 (설계서 §2.7). 판 시작 때 가득 차 있다.
+  final int fuelTank;
+
+  /// 1칸 움직일 때 쓰는 연료 (설계서 §2.7).
+  final int fuelPerCell;
 
   /// id 로 찾는다. 없으면 [FormatException].
   static HullSpec byId(String id) {

@@ -35,17 +35,9 @@ class Replay {
     if (version != formatVersion) {
       throw FormatException('지원하지 않는 리플레이 버전: $version');
     }
-    final r = asMap(json['rules'], '규칙');
     return Replay(
       seed: readInt(json, 'seed'),
-      rules: MatchRules(
-        maxTurns: readInt(r, 'maxTurns'),
-        turnTimeMs: readInt(r, 'turnTimeMs'),
-        firesPerTurn: readInt(r, 'firesPerTurn'),
-        maxWind: readInt(r, 'maxWind'),
-        windAccel: readInt(r, 'windAccel'),
-        sunkHullPercent: readInt(r, 'sunkHullPercent'),
-      ),
+      rules: MatchRules.fromJson(asMap(json['rules'], '규칙')),
       blueprints: [
         for (final b in readList(json, 'blueprints'))
           Blueprint.fromJson(asMap(b, '설계도')),
@@ -81,9 +73,9 @@ class Replay {
     turns: match.turnLog,
   );
 
-  /// 리플레이 JSON 형식 버전. v3(M2 턴제): 턴 묶음·규칙·코스트 한도. 이전 버전은
-  /// 읽지 않는다(배포된 리플레이가 없다).
-  static const int formatVersion = 3;
+  /// 리플레이 JSON 형식 버전. v4(M3): 이동·연료·파도·침수·폭풍 규칙 수치와 `MOVE`.
+  /// 이전 버전은 읽지 않는다(배포된 리플레이가 없다).
+  static const int formatVersion = 4;
 
   final int seed;
   final MatchRules rules;

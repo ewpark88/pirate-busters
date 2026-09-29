@@ -76,6 +76,7 @@ void main() {
         side: 1,
         blueprint: sampleBlueprint(),
         lineup: [testPirate('a')],
+        rules: const MatchRules(),
       );
       final events = <SimEvent>[];
       resolveImpact(
@@ -115,6 +116,7 @@ void main() {
         side: 1,
         blueprint: _pillarBlueprint(),
         lineup: [testPirate('a')],
+        rules: const MatchRules(),
       );
       final events = <SimEvent>[];
       resolveImpact(

@@ -50,6 +50,7 @@ int hashMatchState(MatchState state) {
     ..addInt(state.wind)
     ..addInt(state.firesThisTurn)
     ..addInt(state.pausedMs)
+    ..addInt(state.busyUntilMs)
     ..addInt(state.nextProjectileId)
     ..addInt(state.outcome.index)
     ..addInt(state.winner);
@@ -60,6 +61,8 @@ int hashMatchState(MatchState state) {
       ..addInts(grid.rawMaterials)
       ..addInts(grid.rawHp)
       ..addInt(side.bowX)
+      ..addInt(side.fuel)
+      ..addInt(side.flood)
       ..addInt(side.shotsFired)
       ..addInt(side.crew.size);
     for (final p in side.crew.pirates) {
