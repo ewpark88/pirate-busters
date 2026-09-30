@@ -66,15 +66,34 @@ class Projectile {
   /// 날아간 틱 수.
   int age = 0;
 
+  /// 중력을 받는가. 유도탄(날아가는 새)은 받지 않는다 (설계서 §4.1 공중: 유도·선회).
+  bool gravity = true;
+
+  /// 남은 수면 튕김 수 (물수제비탄).
+  int bouncesLeft = 0;
+
+  /// 수면에서 한 번이라도 튕겼는가 (흘수선 명중 ×1.5, §4.3).
+  bool bounced = false;
+
+  /// 남은 관통 칸 수 (관통탄).
+  int pierceLeft = 0;
+
+  /// 한 번 쪼개졌는가 (분열탄·다중투하는 한 번만 갈라진다).
+  bool divided = false;
+
+  /// 이 틱이 되기 전에는 날지 않는다(연사탄의 뒤 발).
+  int startTick = 0;
+
   /// 한 틱 진행한다: 속도에 바람(가로)과 중력을 더하고 위치를 옮긴다.
   ///
   /// 세로는 틱 앞뒤 속도의 평균으로 옮겨(반 스텝 보정) 사거리가 설계서 §2.8 의
   /// 등급 거리에 맞는다. 중력은 짝수라 정수로 떨어진다.
   void advance(int wind) {
+    final g = gravity ? gravityPerTick : 0;
     vx += wind;
-    vy -= gravityPerTick;
+    vy -= g;
     x += vx;
-    y += vy + gravityPerTick ~/ 2;
+    y += vy + g ~/ 2;
     age++;
   }
 

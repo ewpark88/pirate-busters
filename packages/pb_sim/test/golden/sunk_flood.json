@@ -4,7 +4,7 @@
   "outcome": "floodSunk",
   "winner": 0,
   "turns": 14,
-  "hash": "e9b35987"
+  "hash": "a57ea367"
  },
  "replay": {
   "version": 5,
@@ -493,7 +493,7 @@
       "power": 10000
      }
     ],
-    "hash": "700be8e4"
+    "hash": "ef59a164"
    },
    {
     "turn": 2,
@@ -504,7 +504,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "79978510"
+    "hash": "21f91710"
    },
    {
     "turn": 3,
@@ -525,7 +525,7 @@
       "power": 10000
      }
     ],
-    "hash": "cd241dab"
+    "hash": "3575480b"
    },
    {
     "turn": 4,
@@ -536,7 +536,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "5b483ba1"
+    "hash": "a7716ec1"
    },
    {
     "turn": 5,
@@ -557,7 +557,7 @@
       "power": 10000
      }
     ],
-    "hash": "ac78cef5"
+    "hash": "7c349895"
    },
    {
     "turn": 6,
@@ -568,7 +568,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "287c9cb0"
+    "hash": "c4e582b0"
    },
    {
     "turn": 7,
@@ -589,7 +589,7 @@
       "power": 10000
      }
     ],
-    "hash": "cac16b9a"
+    "hash": "a13704da"
    },
    {
     "turn": 8,
@@ -600,7 +600,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "98bad802"
+    "hash": "99009642"
    },
    {
     "turn": 9,
@@ -621,7 +621,7 @@
       "power": 10000
      }
     ],
-    "hash": "bef51ac3"
+    "hash": "8d69d023"
    },
    {
     "turn": 10,
@@ -632,7 +632,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "67e11424"
+    "hash": "a020f4a4"
    },
    {
     "turn": 11,
@@ -653,7 +653,7 @@
       "power": 10000
      }
     ],
-    "hash": "966f2bd8"
+    "hash": "ba71ced8"
    },
    {
     "turn": 12,
@@ -664,7 +664,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "4d241213"
+    "hash": "148e6173"
    },
    {
     "turn": 13,
@@ -685,7 +685,7 @@
       "power": 10000
      }
     ],
-    "hash": "67f9f5b1"
+    "hash": "8e765ad1"
    },
    {
     "turn": 14,
@@ -696,7 +696,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "e9b35987"
+    "hash": "a57ea367"
    }
   ]
  }

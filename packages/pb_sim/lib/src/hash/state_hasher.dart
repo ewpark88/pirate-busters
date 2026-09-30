@@ -76,5 +76,18 @@ int hashMatchState(MatchState state) {
       h.addInt(fired ? 1 : 0);
     }
   }
+  h.addInt(state.effects.length);
+  for (final e in state.effects) {
+    h
+      ..addInt(e.kind.index)
+      ..addInt(e.owner)
+      ..addInt(e.ownerSlot)
+      ..addInt(e.target)
+      ..addInt(e.trigger)
+      ..addInt(e.turnsLeft)
+      ..addString(e.spec.id)
+      ..addInt(e.cell)
+      ..addInt(e.x);
+  }
   return h.value;
 }

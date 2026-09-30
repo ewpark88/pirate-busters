@@ -176,3 +176,15 @@ class TurnBundle {
     if (hash != null) 'hash': hash!.toRadixString(16).padLeft(8, '0'),
   };
 }
+
+/// 턴 묶음 해시가 재생 결과와 다르다(부정 또는 버그, 설계서 §7.2).
+class TurnHashMismatch implements Exception {
+  const TurnHashMismatch(this.turn, this.expected, this.actual);
+
+  final int turn;
+  final int expected;
+  final int actual;
+
+  @override
+  String toString() => 'TurnHashMismatch(turn $turn: $expected != $actual)';
+}

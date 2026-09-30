@@ -107,6 +107,17 @@ class ShipGrid {
     return true;
   }
 
+  /// ‘구멍’ 단계 블록을 [amount] 만큼 고친다(최대 내구도까지). 부서진 칸은 고칠 수
+  /// 없다 (설계서 §2.5). 고쳤으면 true.
+  bool repair(int x, int y, int amount) {
+    if (!hasBlock(x, y) || stageAt(x, y) != DamageStage.holed) return false;
+    final i = indexOf(x, y);
+    final max = BlockMaterial.values[_materials[i]].durability;
+    final next = _hp[i] + amount;
+    _hp[i] = next > max ? max : next;
+    return true;
+  }
+
   /// 블록을 없앤다 (파괴·붕괴).
   void removeAt(int index) {
     _materials[index] = emptyCell;

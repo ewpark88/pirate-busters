@@ -184,6 +184,9 @@ class BattleGame extends FlameGame {
           if (side.offset == lo || side.offset == hi) {
             _fx.splash(Coords.point(e.x, 0));
           }
+        case SimEventKind.bounce:
+          _fx.splash(Coords.point(e.x, 0));
+          sound.play(Sfx.splash, volume: 0.6);
         case SimEventKind.pirateHit:
           _ships[e.side].playHit(e.slot);
           final rig = e.slot >= 0 && e.slot < _ships[e.side].rigs.length
@@ -201,7 +204,12 @@ class BattleGame extends FlameGame {
             SimEventKind.pirateReturned ||
             SimEventKind.pirateDown ||
             SimEventKind.flood ||
-            SimEventKind.stormStart:
+            SimEventKind.stormStart ||
+            // 분열·설치·수리·턴 효과 연출은 M5 앱 단계에서 붙인다.
+            SimEventKind.divide ||
+            SimEventKind.mineAttached ||
+            SimEventKind.repaired ||
+            SimEventKind.effectFired:
           break;
       }
     }

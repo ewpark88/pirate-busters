@@ -2,6 +2,7 @@ import 'package:pb_sim/src/match/match_state.dart';
 import 'package:pb_sim/src/match/rules.dart';
 import 'package:pb_sim/src/math/fx.dart';
 import 'package:pb_sim/src/math/trig.dart';
+import 'package:pb_sim/src/pirate/pirate_spec.dart';
 import 'package:pb_sim/src/projectile/projectile.dart';
 import 'package:pb_sim/src/ship/flooding.dart';
 import 'package:pb_sim/src/world/wave.dart';
@@ -74,6 +75,7 @@ Projectile launchShot(
   required int power,
   required int ms,
   int id = 0,
+  PirateSpec? spec,
 }) {
   final active = state.activeSide;
   final side = state.sides[active];
@@ -90,7 +92,7 @@ Projectile launchShot(
     id: id,
     side: active,
     slot: slot,
-    spec: side.crew.pirates[slot].spec,
+    spec: spec ?? side.crew.pirates[slot].spec,
     x: x,
     y: y < 0 ? 0 : y,
     angle: angle + tilt,

@@ -203,6 +203,10 @@ class BattleSession extends ChangeNotifier with SessionUiState {
     final start = _eventsStart(turn);
     final firedBefore = state.nextProjectileId;
     match.apply(c);
+    // 분열탄 탭 연출은 M5 앱 단계에서 붙인다. 그때까지는 갈라지지 않은 채 바로 계산한다.
+    if (match.pendingSlot >= 0) {
+      match.apply(TapCommand(t: c.t, slot: match.pendingSlot, tick: 0));
+    }
     // 턴이 끝나도 이벤트 목록은 다음 턴 첫 커맨드 때 비워진다.
     final events = state.events.sublist(start.clamp(0, state.events.length));
     if (path != null && state.nextProjectileId > firedBefore) {

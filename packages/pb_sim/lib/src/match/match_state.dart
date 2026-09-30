@@ -1,7 +1,9 @@
 import 'package:pb_sim/src/match/rules.dart';
 import 'package:pb_sim/src/match/sim_event.dart';
+import 'package:pb_sim/src/match/turn_effects.dart';
 import 'package:pb_sim/src/pirate/crew.dart';
 import 'package:pb_sim/src/pirate/pirate_spec.dart';
+import 'package:pb_sim/src/projectile/shot_trace.dart';
 import 'package:pb_sim/src/random/xorshift32.dart';
 import 'package:pb_sim/src/ship/blueprint.dart';
 import 'package:pb_sim/src/ship/ship_grid.dart';
@@ -177,6 +179,12 @@ class MatchState {
 
   /// 이번 턴에 일어난 렌더용 이벤트. 해시에 넣지 않는다.
   final List<SimEvent> events = [];
+
+  /// 턴 시작에 터지도록 예약한 효과 (설계서 §4.3 턴 효과). 예약 순서대로 처리한다.
+  final List<TurnEffect> effects = [];
+
+  /// 마지막 발사(또는 턴 효과)에서 난 탄들의 틱별 위치. 렌더용이라 해시에 넣지 않는다.
+  List<ShotTrace> lastTraces = const [];
 
   bool get isOver => outcome != MatchOutcome.ongoing;
 

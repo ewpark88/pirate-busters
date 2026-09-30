@@ -53,7 +53,7 @@ void main() {
       );
       expect(
         [for (final r in Rarity.values) v(AmmoType.sniper, r).$1],
-        [150, 180, 210, 240, 270],
+        [150, 170, 190, 210, 230],
       );
       expect(
         [for (final r in Rarity.values) v(AmmoType.flock, r).$1],

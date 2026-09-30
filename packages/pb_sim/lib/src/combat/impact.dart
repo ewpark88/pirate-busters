@@ -22,6 +22,8 @@ const int swimmerHitRange = cellUnit;
 ///
 /// 순서: 블록 피해(칸 인덱스 순) → 지지 구조 붕괴 → 선실 해적 폭발 피해(슬롯 순) →
 /// 헤엄치는 해적 → 선실이 없어진 해적 낙하 (설계서 §2.3, §3.4).
+/// [blockPercent] 는 블록 피해 배율(물수제비 흘수선 ×1.5), [centerPiratePercent] 는
+/// 착탄 칸 해적 피해 배율(저격탄 치명, §4.8).
 void resolveImpact(
   SideState target, {
   required PirateSpec spec,
@@ -30,6 +32,8 @@ void resolveImpact(
   required int x,
   required int y,
   required List<SimEvent> events,
+  int blockPercent = 100,
+  int centerPiratePercent = 100,
 }) {
   final grid = target.grid;
   final side = target.side;
@@ -40,7 +44,11 @@ void resolveImpact(
   for (var by = cy - r; by <= cy + r; by++) {
     for (var bx = cx - r; bx <= cx + r; bx++) {
       if (!_inBlast(bx - cx, by - cy, r) || !grid.inBounds(bx, by)) continue;
-      final dmg = _falloff(spec.blockDamage, bx == cx && by == cy, edge);
+      final dmg = _falloff(
+        spec.blockDamage * blockPercent ~/ 100,
+        bx == cx && by == cy,
+        edge,
+      );
       if (grid.damage(bx, by, dmg)) {
         events.add(
           SimEvent(
@@ -61,7 +69,11 @@ void resolveImpact(
     final c = target.cabins[slot];
     if (crew.pirates[slot].status != PirateStatus.aboard) continue;
     if (!_inBlast(c.x - cx, c.y - cy, r)) continue;
-    final dmg = _falloff(spec.pirateDamage, c.x == cx && c.y == cy, edge);
+    final center = c.x == cx && c.y == cy;
+    final base = center
+        ? spec.pirateDamage * centerPiratePercent ~/ 100
+        : spec.pirateDamage;
+    final dmg = _falloff(base, center, edge);
     crew.damage(slot, dmg, side, events);
   }
   _hitSwimmers(target, x, y, r, events);

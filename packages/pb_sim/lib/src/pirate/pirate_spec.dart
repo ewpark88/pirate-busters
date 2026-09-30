@@ -95,6 +95,28 @@ class PirateSpec {
   final int ammoParam;
 
   int get cost => rarity.cost;
+
+  /// 피해·반경만 바꾼 사본 (분열 조각·연사 한 발·소형 폭탄).
+  PirateSpec withDamage({
+    required int blockDamage,
+    required int pirateDamage,
+    int? blastRadius,
+  }) => PirateSpec(
+    id: id,
+    rarity: rarity,
+    hp: hp,
+    cooldownTurns: cooldownTurns,
+    blockDamage: blockDamage,
+    pirateDamage: pirateDamage,
+    blastRadius: blastRadius ?? this.blastRadius,
+    range: range,
+    family: family,
+    ammo: ammo,
+    ammoValue: ammoValue,
+    ammoValue2: ammoValue2,
+    spreadMdeg: spreadMdeg,
+    ammoParam: ammoParam,
+  );
 }
 
 /// 해적 쿨다운 상한(턴) (설계서 §2.3 “쿨다운 해적마다 0~2턴”).
