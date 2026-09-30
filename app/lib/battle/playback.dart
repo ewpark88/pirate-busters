@@ -27,7 +27,50 @@ class ShotPlayback extends Playback {
     required this.path,
     required this.before,
     required this.landing,
-  }) : super(path.lastTick * 1000 ~/ simTickHz);
+    int breakMs = 0,
+  }) : flightMs = roundDiv(path.lastTick * 1000, simTickHz),
+       super(roundDiv(path.lastTick * 1000, simTickHz) + breakMs);
+
+  /// 발사 커맨드가 낸 [events] 로 만든다: 궤적을 착탄·물보라 지점에서 자르고,
+  /// 블록이 부서졌으면 [breakPauseMs] 만큼 부서지는 연출을 붙인다 (설계서 §2.3).
+  factory ShotPlayback.fromEvents({
+    required int side,
+    required int slot,
+    required ShotPath path,
+    required List<GridSnapshot> before,
+    required List<SimEvent> events,
+    required int breakPauseMs,
+  }) {
+    var trimmed = path;
+    for (final e in events) {
+      if (e.kind == SimEventKind.impact || e.kind == SimEventKind.splash) {
+        trimmed = path.truncated(e.value, e.x, e.y);
+        break;
+      }
+    }
+    final broke = events.any(
+      (e) =>
+          e.kind == SimEventKind.blockDestroyed ||
+          e.kind == SimEventKind.blockCollapsed,
+    );
+    return ShotPlayback(
+      side: side,
+      slot: slot,
+      path: trimmed,
+      before: before,
+      landing: [
+        for (final e in events)
+          if (e.kind != SimEventKind.fire) e,
+      ],
+      breakMs: broke ? breakPauseMs : 0,
+    );
+  }
+
+  /// 탄 비행 시간. 그 뒤 [durationMs] 까지는 부서지는 연출(턴 타이머 정지, §2.3).
+  final int flightMs;
+
+  /// 착탄 효과를 냈는가.
+  bool landed = false;
 
   /// 쏜 진영.
   final int side;

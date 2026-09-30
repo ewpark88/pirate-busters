@@ -18,7 +18,7 @@ class ShotView extends Component {
   /// 탄의 지금 월드 위치. 카메라가 따라간다. 날아가는 탄이 없으면 null.
   Vector2? get projectile {
     final p = session.playback;
-    if (p is! ShotPlayback) return null;
+    if (p is! ShotPlayback || p.landed) return null;
     final path = p.path;
     final t = p.tick.clamp(0, path.lastTick.toDouble());
     final i = t.floor();

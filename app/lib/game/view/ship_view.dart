@@ -124,7 +124,10 @@ class ShipView extends PositionComponent with HasGameReference {
   void render(Canvas canvas) {
     final shot = session.playback;
     final grid = _state.grid;
-    final snap = shot is ShotPlayback ? shot.before[side] : null;
+    // 착탄 전까지는 쏘기 전 모습, 착탄 뒤(부서지는 연출)는 지금 모습.
+    final snap = shot is ShotPlayback && !shot.landed
+        ? shot.before[side]
+        : null;
     final materials = snap?.materials ?? grid.rawMaterials;
     final hp = snap?.hp ?? grid.rawHp;
     _renderRig(canvas, materials);

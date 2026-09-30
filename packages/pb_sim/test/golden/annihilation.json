@@ -4,10 +4,10 @@
   "outcome": "annihilation",
   "winner": 0,
   "turns": 3,
-  "hash": "ded6aefb"
+  "hash": "9beb797b"
  },
  "replay": {
-  "version": 4,
+  "version": 5,
   "seed": 11,
   "rules": {
    "maxTurns": 30,
@@ -33,7 +33,9 @@
    "waterlineDivisor": 4,
    "sinkAtFullFlood": 2000,
    "tiltPerCell": 1000,
-   "maxTilt": 6000
+   "maxTilt": 6000,
+   "breakPauseMs": 600,
+   "limitSlowZone": 500
   },
   "blueprints": [
    {
@@ -480,18 +482,18 @@
       "t": 1000,
       "type": "FIRE",
       "slot": 0,
-      "angle": 62250,
+      "angle": 63250,
       "power": 10000
      },
      {
       "t": 2000,
       "type": "FIRE",
       "slot": 1,
-      "angle": 64500,
+      "angle": 65000,
       "power": 10000
      }
     ],
-    "hash": "b7af6933"
+    "hash": "80cdee33"
    },
    {
     "turn": 2,
@@ -502,7 +504,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "4a86015f"
+    "hash": "e6f83adf"
    },
    {
     "turn": 3,
@@ -512,18 +514,18 @@
       "t": 1000,
       "type": "FIRE",
       "slot": 0,
-      "angle": 67250,
+      "angle": 68000,
       "power": 10000
      },
      {
       "t": 2000,
       "type": "FIRE",
       "slot": 1,
-      "angle": 69000,
+      "angle": 69500,
       "power": 10000
      }
     ],
-    "hash": "ded6aefb"
+    "hash": "9beb797b"
    }
   ]
  }

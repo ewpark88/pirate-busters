@@ -4,10 +4,10 @@
   "outcome": "sunk",
   "winner": 0,
   "turns": 7,
-  "hash": "4c61e50c"
+  "hash": "c75b520c"
  },
  "replay": {
-  "version": 4,
+  "version": 5,
   "seed": 11,
   "rules": {
    "maxTurns": 30,
@@ -33,7 +33,9 @@
    "waterlineDivisor": 1000,
    "sinkAtFullFlood": 2000,
    "tiltPerCell": 1000,
-   "maxTilt": 6000
+   "maxTilt": 6000,
+   "breakPauseMs": 600,
+   "limitSlowZone": 500
   },
   "blueprints": [
    {
@@ -480,18 +482,18 @@
       "t": 1000,
       "type": "FIRE",
       "slot": 0,
-      "angle": 30000,
+      "angle": 28500,
       "power": 10000
      },
      {
       "t": 2000,
       "type": "FIRE",
       "slot": 1,
-      "angle": 27750,
+      "angle": 26500,
       "power": 10000
      }
     ],
-    "hash": "7268a1d2"
+    "hash": "035c7252"
    },
    {
     "turn": 2,
@@ -502,7 +504,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "cd112fd1"
+    "hash": "aebb8251"
    },
    {
     "turn": 3,
@@ -512,18 +514,18 @@
       "t": 1000,
       "type": "FIRE",
       "slot": 0,
-      "angle": 29250,
+      "angle": 27750,
       "power": 10000
      },
      {
       "t": 2000,
       "type": "FIRE",
       "slot": 1,
-      "angle": 27000,
+      "angle": 25750,
       "power": 10000
      }
     ],
-    "hash": "3e656349"
+    "hash": "4c151649"
    },
    {
     "turn": 4,
@@ -534,7 +536,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "37527168"
+    "hash": "2db80d68"
    },
    {
     "turn": 5,
@@ -544,18 +546,18 @@
       "t": 1000,
       "type": "FIRE",
       "slot": 0,
-      "angle": 31000,
+      "angle": 29500,
       "power": 10000
      },
      {
       "t": 2000,
       "type": "FIRE",
       "slot": 1,
-      "angle": 28500,
+      "angle": 27000,
       "power": 10000
      }
     ],
-    "hash": "63913cf8"
+    "hash": "c5cc00f8"
    },
    {
     "turn": 6,
@@ -566,7 +568,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "1fb59158"
+    "hash": "f5f27558"
    },
    {
     "turn": 7,
@@ -576,11 +578,11 @@
       "t": 1000,
       "type": "FIRE",
       "slot": 0,
-      "angle": 29250,
+      "angle": 27750,
       "power": 10000
      }
     ],
-    "hash": "4c61e50c"
+    "hash": "c75b520c"
    }
   ]
  }

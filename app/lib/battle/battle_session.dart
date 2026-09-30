@@ -122,6 +122,10 @@ class BattleSession extends ChangeNotifier {
     final p = playback;
     if (p != null) {
       p.elapsedMs += dtMs;
+      if (p is ShotPlayback && !p.landed && p.elapsedMs >= p.flightMs) {
+        p.landed = true;
+        _cues.addAll(p.landing);
+      }
       if (p.isDone) _finishPlayback(p);
     }
     turnMs += dtMs;
@@ -223,7 +227,16 @@ class BattleSession extends ChangeNotifier {
     // 턴이 끝나도 이벤트 목록은 다음 턴 첫 커맨드 때 비워진다.
     final events = state.events.sublist(start.clamp(0, state.events.length));
     if (path != null && state.nextProjectileId > firedBefore) {
-      playback = _shotPlayback(side, c as FireCommand, path, before!, events);
+      // 발사 이벤트는 바로(공격 동작·포성), 나머지는 착탄 때 낸다.
+      _cues.addAll(events.where((e) => e.kind == SimEventKind.fire));
+      playback = ShotPlayback.fromEvents(
+        side: side,
+        slot: (c as FireCommand).slot,
+        path: path,
+        before: before!,
+        events: events,
+        breakPauseMs: state.rules.breakPauseMs,
+      );
     } else if (c is MoveCommand) {
       final move = events.where((e) => e.kind == SimEventKind.move);
       if (move.isNotEmpty) {
@@ -252,37 +265,9 @@ class BattleSession extends ChangeNotifier {
     return begun ? events.length : 0;
   }
 
-  ShotPlayback _shotPlayback(
-    int side,
-    FireCommand c,
-    ShotPath path,
-    List<GridSnapshot> before,
-    List<SimEvent> events,
-  ) {
-    var shotPath = path;
-    for (final e in events) {
-      if (e.kind == SimEventKind.impact || e.kind == SimEventKind.splash) {
-        shotPath = path.truncated(e.value, e.x, e.y);
-        break;
-      }
-    }
-    // 발사 이벤트는 바로(공격 동작·포성), 나머지는 착탄 때 낸다.
-    _cues.addAll(events.where((e) => e.kind == SimEventKind.fire));
-    return ShotPlayback(
-      side: side,
-      slot: c.slot,
-      path: shotPath,
-      before: before,
-      landing: [
-        for (final e in events)
-          if (e.kind != SimEventKind.fire) e,
-      ],
-    );
-  }
-
   void _finishPlayback(Playback p) {
     playback = null;
-    if (p is ShotPlayback) _cues.addAll(p.landing);
+    if (p is ShotPlayback && !p.landed) _cues.addAll(p.landing);
     if (p is MovePlayback) {
       _cues.add(SimEvent(SimEventKind.move, side: p.side, x: p.toX));
     }

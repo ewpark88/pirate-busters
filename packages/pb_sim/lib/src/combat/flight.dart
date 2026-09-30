@@ -35,24 +35,26 @@ bool _advanceOne(MatchState state, Projectile p, int wind, int ms) {
   }
 
   final target = state.sides[1 - p.side];
-  final frame = frameAtMs(state, target.side, msAfterTicks(ms, p.age));
+  final at = msAfterTicks(ms, p.age);
   final grid = target.grid;
+  final (lx0, ly0) = toShipLocal(state, target.side, at, x0, y0);
+  final (lx1, ly1) = toShipLocal(state, target.side, at, x1, y1);
   final hit = traceCells(
-    frame.toLocalX(x0),
-    frame.toLocalY(y0),
-    frame.toLocalX(x1),
-    frame.toLocalY(y1),
+    lx0,
+    ly0,
+    lx1,
+    ly1,
     (cx, cy) => grid.hasBlock(cx, cy) || target.isExposedPirateAt(cx, cy),
   );
   if (hit != null) {
-    final wx = frame.toWorldX(hit.x);
+    final (wx, wy) = fromShipLocal(state, target.side, at, hit.x, hit.y);
     state.events.add(
       SimEvent(
         SimEventKind.impact,
         side: target.side,
         cell: grid.indexOf(hit.cx, hit.cy),
         x: wx,
-        y: frame.toWorldY(hit.y),
+        y: wy,
         value: p.age,
       ),
     );
@@ -62,7 +64,7 @@ bool _advanceOne(MatchState state, Projectile p, int wind, int ms) {
       cx: hit.cx,
       cy: hit.cy,
       x: wx,
-      y: frame.toWorldY(hit.y),
+      y: wy,
       events: state.events,
     );
     return true;
@@ -75,4 +77,17 @@ bool _advanceOne(MatchState state, Projectile p, int wind, int ms) {
     return true;
   }
   return p.isExpired;
+}
+
+/// [from] 번째 이벤트부터(이번 발사) 블록이 부서지거나 무너졌으면 부서지는 연출만큼
+/// 턴 타이머를 더 멈춘다 (설계서 §2.3).
+int breakPauseOf(MatchState state, {required int from}) {
+  final events = state.events;
+  for (var i = from; i < events.length; i++) {
+    final k = events[i].kind;
+    if (k == SimEventKind.blockDestroyed || k == SimEventKind.blockCollapsed) {
+      return state.rules.breakPauseMs;
+    }
+  }
+  return 0;
 }

@@ -76,7 +76,17 @@ MoveResult applyMove(
   side
     ..offset += signed
     ..fuel -= dist * _fuelPerCell(side) ~/ cellUnit;
-  final ms = (dist * 1000 + speed - 1) ~/ speed;
+  // 한계선 앞 감속 구간은 절반 속도: 그 구간을 지난 거리만큼 시간을 한 번 더 센다.
+  final (lo, hi) = moveLimits(rules, turn);
+  final limit = signed > 0 ? hi : lo;
+  final zoneStart = signed > 0
+      ? limit - rules.limitSlowZone
+      : limit + rules.limitSlowZone;
+  final from = side.offset - signed;
+  final inZone = signed > 0
+      ? _overlap(from, side.offset, zoneStart, limit)
+      : _overlap(side.offset, from, limit, zoneStart);
+  final ms = ((dist + inZone) * 1000 + speed - 1) ~/ speed;
   return MoveResult(signed, ms);
 }
 
@@ -96,4 +106,11 @@ int startStorm(SideState side, MatchRules rules, int turn) {
   final moved = lo - side.offset;
   side.offset = lo;
   return moved;
+}
+
+/// 구간 [a1, a2] 와 [b1, b2] 가 겹치는 길이.
+int _overlap(int a1, int a2, int b1, int b2) {
+  final lo = a1 > b1 ? a1 : b1;
+  final hi = a2 < b2 ? a2 : b2;
+  return hi > lo ? hi - lo : 0;
 }

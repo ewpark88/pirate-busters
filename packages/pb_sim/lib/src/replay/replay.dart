@@ -73,9 +73,9 @@ class Replay {
     turns: match.turnLog,
   );
 
-  /// 리플레이 JSON 형식 버전. v4(M3): 이동·연료·파도·침수·폭풍 규칙 수치와 `MOVE`.
+  /// 리플레이 JSON 형식 버전. v5: 부서짐 정지 시간·한계 감속 구간 규칙 값(M3 재점검).
   /// 이전 버전은 읽지 않는다(배포된 리플레이가 없다).
-  static const int formatVersion = 4;
+  static const int formatVersion = 5;
 
   final int seed;
   final MatchRules rules;

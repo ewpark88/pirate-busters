@@ -20,8 +20,8 @@ class DummyController implements Controller {
     for (var slot = 0; slot < me.crew.size; slot++) {
       if (commands.length == state.rules.firesPerTurn) break;
       if (!me.canFire(slot)) continue;
-      final angle = _aim(state, slot, rng, t);
-      if (angle == null) continue;
+      // 닿는 각도를 못 찾으면 대충 45° 로 쏜다(허수아비답게).
+      final angle = _aim(state, slot, rng, t) ?? 45000;
       final error = rng.nextRange(-errorMdeg, errorMdeg + 1);
       commands.add(
         FireCommand(
@@ -50,8 +50,10 @@ class DummyController implements Controller {
     final target = state.sides[1 - state.activeSide];
     final grid = target.grid;
     final cells = <int>[];
+    // 물 위로 드러난 블록만 노린다(물 아래는 탄이 닿지 않는다).
     for (var i = 0; i < grid.cellCount; i++) {
-      if (grid.hasBlockAt(i)) cells.add(i);
+      final top = (i ~/ grid.width + 1) * cellUnit;
+      if (grid.hasBlockAt(i) && top > target.draft) cells.add(i);
     }
     if (cells.isEmpty) return null;
     final cell = cells[rng.nextInt(cells.length)];
@@ -71,12 +73,21 @@ class DummyController implements Controller {
         final x0 = p.x;
         final y0 = p.y;
         p.advance(wind);
-        final frame = frameAtMs(state, target.side, msAfterTicks(ms, p.age));
+        final at = msAfterTicks(ms, p.age);
+        final (lx0, ly0) = toShipLocal(state, target.side, at, x0, y0);
+        // 시뮬레이션처럼 해수면에서 자른다 (물 아래는 맞지 않는다).
+        var x1 = p.x;
+        var y1 = p.y;
+        if (y1 < 0) {
+          x1 = y0 <= 0 ? x0 : x0 + roundDiv((x1 - x0) * y0, y0 - y1);
+          y1 = 0;
+        }
+        final (lx1, ly1) = toShipLocal(state, target.side, at, x1, y1);
         final hit = traceCells(
-          frame.toLocalX(x0),
-          frame.toLocalY(y0),
-          frame.toLocalX(p.x),
-          frame.toLocalY(p.y),
+          lx0,
+          ly0,
+          lx1,
+          ly1,
           (cx, cy) => cx == tx && cy == ty,
         );
         if (hit != null) return angle;

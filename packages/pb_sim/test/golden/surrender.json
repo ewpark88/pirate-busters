@@ -4,10 +4,10 @@
   "outcome": "surrender",
   "winner": 1,
   "turns": 4,
-  "hash": "ffee15bc"
+  "hash": "88600ebc"
  },
  "replay": {
-  "version": 4,
+  "version": 5,
   "seed": 6,
   "rules": {
    "maxTurns": 30,
@@ -33,7 +33,9 @@
    "waterlineDivisor": 4,
    "sinkAtFullFlood": 2000,
    "tiltPerCell": 1000,
-   "maxTilt": 6000
+   "maxTilt": 6000,
+   "breakPauseMs": 600,
+   "limitSlowZone": 500
   },
   "blueprints": [
    {
@@ -480,7 +482,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "c0f0a1fa"
+    "hash": "8cca0b3a"
    },
    {
     "turn": 2,
@@ -496,7 +498,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "f06b35f6"
+    "hash": "b46e31b6"
    },
    {
     "turn": 3,
@@ -507,7 +509,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "97070111"
+    "hash": "26828e71"
    },
    {
     "turn": 4,
@@ -518,7 +520,7 @@
       "type": "SURRENDER"
      }
     ],
-    "hash": "ffee15bc"
+    "hash": "88600ebc"
    }
   ]
  }

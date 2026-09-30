@@ -209,8 +209,10 @@ class Match {
           value: id,
         ),
       );
+    final before = state.events.length;
     final ticks = resolveShot(state, shot, ms);
-    state.pausedMs += roundDiv(ticks * 1000, simTickHz);
+    state.pausedMs +=
+        roundDiv(ticks * 1000, simTickHz) + breakPauseOf(state, from: before);
     judgeInstant(state);
     if (state.isOver) {
       _endTurn(TurnEndReason.matchOver);
