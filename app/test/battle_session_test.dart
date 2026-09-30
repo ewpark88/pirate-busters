@@ -1,19 +1,21 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pb_sim/pb_sim.dart';
 import 'package:pirate_busters/battle/battle_session.dart';
-import 'package:pirate_busters/battle/battle_setup.dart';
 import 'package:pirate_busters/battle/dummy_controller.dart';
 import 'package:pirate_busters/battle/playback.dart';
 import 'package:pirate_busters/battle/session_views.dart';
 
+import 'test_catalog.dart';
+
 /// 사람이 선공인 시드를 찾아 허수아비전 세션을 만든다.
 BattleSession _humanFirst({bool hotseat = false}) {
   for (var seed = 1; ; seed++) {
-    final m = BattleSetup.newMatch(seed);
+    final m = testSetup.newMatch(seed);
     if (m.state.activeSide == 0) {
       return BattleSession(
         m,
         humanSides: hotseat ? const {0, 1} : const {0},
+        speciesOf: testCatalog.speciesOf,
         opponent: hotseat ? null : const DummyController(),
       );
     }
@@ -62,7 +64,7 @@ void main() {
         ..update(500)
         ..fire(0, 30000, 9000);
       _drain(s);
-      s.fire(2, 35000, 9000);
+      s.fire(1, 35000, 9000);
       _drain(s);
       expect(s.isHumanTurn, isFalse);
       var guard = 0;
@@ -134,8 +136,8 @@ void main() {
       final s = _humanFirst()
         ..update(100)
         ..endTurn()
-        ..select(2);
-      expect(s.selected, 2);
+        ..select(1);
+      expect(s.selected, 1);
       expect(s.focusSlot, isNull, reason: '상대 턴에는 줌인하지 않는다');
       var guard = 0;
       while (!s.isHumanTurn && guard++ < 2000) {
@@ -143,8 +145,8 @@ void main() {
       }
       _drain(s);
       s.update(10);
-      expect(s.focusSlot, 2);
-      s.fire(2, 30000, 8000);
+      expect(s.focusSlot, 1);
+      s.fire(1, 30000, 8000);
       expect(s.selected, isNull);
     });
 
@@ -210,7 +212,7 @@ void main() {
 
   group('허수아비 (ADR-029)', () {
     test('같은 판·같은 턴이면 같은 커맨드를 내고, 사람과 같은 커맨드만 쓴다', () {
-      final m = BattleSetup.newMatch(9);
+      final m = testSetup.newMatch(9);
       const dummy = DummyController();
       final a = dummy.turnFor(m.state).toJson();
       final b = dummy.turnFor(m.state).toJson();
@@ -224,7 +226,7 @@ void main() {
     });
 
     test('허수아비끼리 끝까지 두면 판이 끝난다', () {
-      final m = BattleSetup.newMatch(4);
+      final m = testSetup.newMatch(4);
       runMatch(m, const DummyController(), const DummyController());
       expect(m.state.isOver, isTrue);
     });

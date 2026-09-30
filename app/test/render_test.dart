@@ -10,7 +10,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:pirate_busters/app/providers.dart';
 import 'package:pirate_busters/audio/sound_service.dart';
 import 'package:pirate_busters/battle/battle_session.dart';
-import 'package:pirate_busters/battle/battle_setup.dart';
 import 'package:pirate_busters/battle/dummy_controller.dart';
 import 'package:pirate_busters/game/anim/anim_data.dart';
 import 'package:pirate_busters/game/battle_game.dart';
@@ -19,6 +18,8 @@ import 'package:pirate_busters/l10n/app_localizations.dart';
 import 'package:pirate_busters/settings/language.dart';
 import 'package:pirate_busters/settings/settings_store.dart';
 import 'package:pirate_busters/ui/battle_screen.dart';
+
+import 'test_catalog.dart';
 
 void main() {
   group('부위 애니메이션 데이터 (설계서 §10.1)', () {
@@ -122,6 +123,7 @@ void main() {
       ProviderScope(
         overrides: [
           settingsStoreProvider.overrideWithValue(MemorySettingsStore()),
+          gameCatalogProvider.overrideWithValue(testCatalog),
         ],
         child: const MaterialApp(
           locale: Locale('ko'),
@@ -148,8 +150,9 @@ void main() {
 
   testWidgets('전장이 배·해적·바다를 그리고 탄 비행·착탄까지 오류 없이 진행한다', (tester) async {
     final session = BattleSession(
-      BattleSetup.newMatch(7),
+      testSetup.newMatch(7),
       humanSides: const {0},
+      speciesOf: testCatalog.speciesOf,
       opponent: const DummyController(),
     );
     final sound = _RecordingSound();

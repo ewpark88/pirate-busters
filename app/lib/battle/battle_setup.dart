@@ -1,88 +1,46 @@
 import 'package:pb_sim/pb_sim.dart';
+import 'package:pirate_busters/data/game_catalog.dart';
 
-/// M4 첫 플레이어블의 고정 판 구성 (개발 계획서 M4, ADR-029).
+/// 전투 판 구성 (개발 계획서 M5). 해적과 추천 설계도는 게임 데이터에서 온다.
 ///
-/// 해적 데이터(`pb_data`)는 M5 에서 들어온다. 그전까지 해적 4종의 전투 수치와
-/// 그림 종족을 여기에 임시로 둔다.
-abstract final class BattleSetup {
-  /// 추천 설계도 전의 고정 슬루프. 용골(참나무) + 선체(소나무) + 3층 선실 줄 + 돛(망사).
-  static Blueprint sloop() => Blueprint(
-    HullSpec.sloop,
-    [
-      for (var x = 0; x < 12; x++) BlockCell(x, 0, BlockMaterial.oak),
-      for (var x = 0; x < 12; x++) BlockCell(x, 1, BlockMaterial.pine),
-      const BlockCell(1, 2, BlockMaterial.cork),
-      const BlockCell(2, 2, BlockMaterial.iron),
-      for (var x = 3; x < 9; x++) BlockCell(x, 2, BlockMaterial.pine),
-      const BlockCell(9, 2, BlockMaterial.iron),
-      for (var x = 4; x < 8; x++) BlockCell(x, 3, BlockMaterial.net),
-    ],
-    cabins: const [
-      CabinCell(3, 2),
-      CabinCell(5, 2),
-      CabinCell(6, 2),
-      CabinCell(8, 2),
-    ],
-    modules: const [ModuleCell(11, 1, ModuleKind.captain)],
-  );
+/// 플레이어는 처음에 시작 해적 2명(옥토·톡)으로 출전한다 (설계서 §4.6). 선원 편성
+/// 화면에서 고른 덱과 저장한 설계도가 있으면 그것을 쓴다.
+class BattleSetup {
+  const BattleSetup(this.catalog);
 
-  /// 임시 해적 4종. 코스트 합계 12 (일반 4명, 한도 15).
-  static final List<PirateSpec> pirates = [
-    const PirateSpec(
-      id: 'octo',
-      rarity: Rarity.common,
-      hp: 300,
-      cooldownTurns: 0,
-      blockDamage: 60,
-      pirateDamage: 80,
-      blastRadius: 1,
-      range: RangeGrade.long,
-    ),
-    const PirateSpec(
-      id: 'bones',
-      rarity: Rarity.common,
-      hp: 260,
-      cooldownTurns: 1,
-      blockDamage: 40,
-      pirateDamage: 150,
-      range: RangeGrade.veryLong,
-    ),
-    const PirateSpec(
-      id: 'sword',
-      rarity: Rarity.common,
-      hp: 320,
-      cooldownTurns: 0,
-      blockDamage: 100,
-      pirateDamage: 60,
-    ),
-    const PirateSpec(
-      id: 'otter',
-      rarity: Rarity.common,
-      hp: 280,
-      cooldownTurns: 0,
-      blockDamage: 70,
-      pirateDamage: 70,
-      range: RangeGrade.long,
-    ),
-  ];
+  final GameCatalog catalog;
 
-  static final PirateCatalog catalog = PirateCatalog(pirates);
+  /// 시작 해적 (설계서 §4.2, §4.6).
+  static const List<String> starterDeck = ['p01_octo', 'p36_tok'];
 
-  static const List<String> deck = ['octo', 'bones', 'sword', 'otter'];
+  /// 허수아비의 덱: 일반 2명 (개발 계획서 M4 허수아비, ADR-029).
+  static const List<String> dummyDeck = ['p06_pang', 'p16_suri'];
 
+  /// 플레이어 레벨 1 출전 코스트 한도 (설계서 §4.5, BALANCE.md A4.5).
   static const int costLimit = 15;
 
-  /// 해적 id → 그림 캐릭터 id (`assets/images/characters/<id>`). 지금은 같다.
-  static String speciesOf(String pirateId) => pirateId;
+  /// 추천 설계도 중 기본으로 쓰는 것.
+  static const String defaultPreset = 'balanced';
 
-  /// 새 판. [seed] 로 선공·바람이 정해진다.
-  static Match newMatch(int seed, {MatchRules rules = const MatchRules()}) =>
-      Match.start(
-        seed: seed,
-        rules: rules,
-        blueprints: [sloop(), sloop()],
-        decks: const [deck, deck],
-        costLimits: const [costLimit, costLimit],
-        pirates: catalog,
-      );
+  Blueprint get defaultBlueprint => catalog.preset(defaultPreset).blueprint;
+
+  /// 새 판. [seed] 로 선공·바람이 정해진다. 왼쪽(0)이 플레이어.
+  Match newMatch(
+    int seed, {
+    Blueprint? blueprint,
+    List<String> deck = starterDeck,
+    Blueprint? enemyBlueprint,
+    List<String> enemyDeck = dummyDeck,
+    MatchRules rules = const MatchRules(),
+  }) => Match.start(
+    seed: seed,
+    rules: rules,
+    blueprints: [
+      blueprint ?? defaultBlueprint,
+      enemyBlueprint ?? defaultBlueprint,
+    ],
+    decks: [deck, enemyDeck],
+    costLimits: const [costLimit, costLimit],
+    pirates: catalog.pirates,
+  );
 }

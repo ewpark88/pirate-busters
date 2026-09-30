@@ -1,7 +1,13 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pirate_busters/audio/sound_service.dart';
+import 'package:pirate_busters/data/game_catalog.dart';
 import 'package:pirate_busters/settings/language.dart';
 import 'package:pirate_busters/settings/settings_store.dart';
+
+/// 게임 데이터(해적·탄종·추천 설계도). 부트스트랩에서 덮어쓴다.
+final gameCatalogProvider = Provider<GameCatalog>(
+  (ref) => throw UnimplementedError('gameCatalogProvider 를 덮어써야 한다'),
+);
 
 /// 부트스트랩에서 덮어쓴다.
 final settingsStoreProvider = Provider<SettingsStore>(

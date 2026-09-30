@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pb_sim/pb_sim.dart';
 import 'package:pirate_busters/battle/battle_session.dart';
-import 'package:pirate_busters/battle/battle_setup.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
 import 'package:pirate_busters/ui/hud/hud_style.dart';
 
@@ -71,7 +70,7 @@ class _PirateCardState extends State<_PirateCard> {
     final l10n = AppLocalizations.of(context);
     final side = _s.state.sides[widget.side];
     final pirate = side.crew.pirates[widget.slot];
-    final species = BattleSetup.speciesOf(pirate.spec.id);
+    final species = _s.speciesOf(pirate.spec.id);
     final team = widget.side == 0 ? 'blue' : 'red';
     final note = switch (pirate.status) {
       PirateStatus.down => l10n.pirateDown,

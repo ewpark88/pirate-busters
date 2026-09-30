@@ -37,9 +37,11 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
   }
 
   void _start(int seed, {required bool hotseat}) {
+    final catalog = ref.read(gameCatalogProvider);
     _session = BattleSession(
-      BattleSetup.newMatch(seed),
+      BattleSetup(catalog).newMatch(seed),
       humanSides: hotseat ? const {0, 1} : const {0},
+      speciesOf: catalog.speciesOf,
       opponent: hotseat ? null : const DummyController(),
     );
     _game = BattleGame(_session, sound: ref.read(soundServiceProvider));

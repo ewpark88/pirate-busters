@@ -12,7 +12,12 @@ import 'package:pirate_busters/battle/ui_state.dart';
 /// - 연출([playback]) 동안에는 입력을 받지 않는다. 턴 시계는 계속 흐르고, 시뮬레이션이
 ///   탄 비행 시간만큼 턴 제한 시간을 멈춘다.
 class BattleSession extends ChangeNotifier with SessionUiState {
-  BattleSession(this.match, {required this.humanSides, this.opponent});
+  BattleSession(
+    this.match, {
+    required this.humanSides,
+    required this.speciesOf,
+    this.opponent,
+  });
 
   final Match match;
 
@@ -22,6 +27,9 @@ class BattleSession extends ChangeNotifier with SessionUiState {
 
   /// 사람이 아닌 진영의 컨트롤러.
   final Controller? opponent;
+
+  /// 해적 id → 그림 종족 id (게임 데이터 `render.species`).
+  final String Function(String pirateId) speciesOf;
 
   MatchState get state => match.state;
 
