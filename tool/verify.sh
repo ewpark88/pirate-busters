@@ -15,7 +15,7 @@ flutter analyze --fatal-infos --fatal-warnings
 step "3/7 architecture · determinism"
 dart run tool/check_architecture.dart
 
-step "4/7 doc sync (설계서 ↔ 계획서)"
+step "4/7 doc sync (설계서·BALANCE.md ↔ 계획서)"
 dart run tool/check_doc_sync.dart
 
 step "5/7 l10n (ko ↔ en ARB)"

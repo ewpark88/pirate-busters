@@ -33,7 +33,7 @@
 | 스크립트 | 규칙 | 근거 |
 |---|---|---|
 | `check_architecture.dart` | 의존 방향, 순수 Dart, 결정론 금지 식별자·실수·`/`, lib 300줄 | ADR-002, ADR-003, 절대 규칙 2·9 |
-| `check_doc_sync.dart` | 설계서 해시 = 계획서 표시 (설계서만 바뀐 커밋을 막는다. 내용 대조는 `/doc-sync`) | ADR-008, ADR-030 |
+| `check_doc_sync.dart` | 설계서 + `docs/BALANCE.md` 해시 = 계획서 `기준 문서 동기화:` 표시 (기준 문서만 바뀐 커밋을 막는다. 내용 대조는 `/doc-sync`) | ADR-008, ADR-030, ADR-037 |
 | `check_l10n.dart` | `app_ko.arb`·`app_en.arb` 키·플레이스홀더 짝, 빈 값 | 설계서 §14, 절대 규칙 10 |
 | `check_secrets.dart` | 키 파일·키 모양 문자열 | `docs/RELEASE.md` §4 |
 | `check_commit_msg.dart` | `<type>(<scope>): <요약>`, 허용 type·scope, 72자 | CLAUDE.md 「브랜치·커밋·버전」 |
