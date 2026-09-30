@@ -7,10 +7,10 @@ import 'package:pirate_busters/crew/crew_screen.dart';
 import 'package:pirate_busters/data/fleet_store.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
 import 'package:pirate_busters/l10n/data_text.dart';
+import 'package:pirate_busters/port/settings_screen.dart';
 import 'package:pirate_busters/settings/language.dart';
 import 'package:pirate_busters/settings/settings_store.dart';
 import 'package:pirate_busters/shipyard/shipyard_screen.dart';
-import 'package:pirate_busters/ui/menu_screen.dart';
 
 import 'test_catalog.dart';
 
@@ -53,11 +53,11 @@ void main() {
   for (final locale in const [Locale('ko'), Locale('en')]) {
     final lang = locale.languageCode;
 
-    testWidgets('메뉴·조선소·선원 화면이 $lang 로 넘치지 않고 그려진다 (설계서 §14)', (
+    testWidgets('설정·조선소·선원 화면이 $lang 로 넘치지 않고 그려진다 (설계서 §14)', (
       tester,
     ) async {
       for (final screen in const [
-        MenuScreen(),
+        SettingsScreen(),
         ShipyardScreen(),
         CrewScreen(),
       ]) {

@@ -433,5 +433,11 @@
   "story_s1_5_enemy": "Crab Lieutenant: See the iron bow? Your bullets bounce right off!",
   "story_s1_5_ally": "Tok: If the front is hard, hit from above or below.",
   "story_s1_12_enemy": "Patrol captain: You'll never take the heart shard. The cutter is closing in!",
-  "story_s1_12_ally": "Octo: The first shard is ours. Everyone, fire!"
+  "story_s1_12_ally": "Octo: The first shard is ours. Everyone, fire!",
+  "portLevel": "Lv {level}",
+  "portXp": "XP {xp} / {next}",
+  "portSail": "Set Sail",
+  "portShipyardLocked": "The shipyard opens from your 4th battle",
+  "soundOn": "Sound effects",
+  "vibrationOn": "Vibration"
 }

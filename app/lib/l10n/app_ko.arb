@@ -194,5 +194,11 @@
   "story_s1_5_enemy": "꽃게 부대장: 뱃머리 철판을 봐라. 직사탄 따위는 튕겨낸다!",
   "story_s1_5_ally": "톡: 정면이 단단하면 위에서, 아래에서 치면 되지.",
   "story_s1_12_enemy": "초계선 함장: 심장 조각은 넘길 수 없다. 초계선이 다가간다, 각오해라!",
-  "story_s1_12_ally": "옥토: 첫 조각은 우리가 가져간다. 다 같이, 쏴!"
+  "story_s1_12_ally": "옥토: 첫 조각은 우리가 가져간다. 다 같이, 쏴!",
+  "portLevel": "Lv {level}",
+  "portXp": "경험치 {xp} / {next}",
+  "portSail": "출항",
+  "portShipyardLocked": "조선소는 4판째부터 열려요",
+  "soundOn": "효과음",
+  "vibrationOn": "진동"
 }
