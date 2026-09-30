@@ -15,7 +15,7 @@ class TurnChooser {
   static const int reachPenalty = 15;
 
   /// 사거리 밖 해적 1명당, 닿는 간격까지 남은 1칸마다 빼는 점수 (A5.3 방어 점수의 연장).
-  static const int approachPerCell = 3;
+  static const int approachPerCell = 5;
 
   /// 콤보: 첫 발이 부순 칸 옆에 떨어지는 두 번째 발 보너스.
   static const int comboBonus = 20;
