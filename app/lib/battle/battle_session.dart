@@ -148,6 +148,25 @@ class BattleSession extends ChangeNotifier {
     _apply(FireCommand(t: turnMs, slot: slot, angle: angle, power: power));
   }
 
+  /// 상대 턴에 미리 골라 둔 다음 턴 해적 슬롯 (설계서 §13.4). 표시만 한다.
+  int? preselected;
+
+  void preselect(int slot) {
+    preselected = preselected == slot ? null : slot;
+    notifyListeners();
+  }
+
+  /// 비행 중 탭 (설계서 §2.2). 내 탄이 날고 있을 때만 `TAP` 을 기록한다.
+  /// MVP 에서는 효과가 없다(onTap 은 R1).
+  void tap() {
+    final shot = playback;
+    if (shot is! ShotPlayback || !humanSides.contains(shot.side)) return;
+    match.apply(
+      TapCommand(t: turnMs, slot: shot.slot, tick: shot.tick.floor()),
+    );
+    notifyListeners();
+  }
+
   void endTurn() {
     if (canAct) _apply(EndTurnCommand(t: turnMs));
   }
@@ -177,6 +196,7 @@ class BattleSession extends ChangeNotifier {
     if (playback != null || state.turn == _turnOfClock) return;
     _turnOfClock = state.turn;
     turnMs = 0;
+    if (isHumanTurn) preselected = null;
     _script = null;
     _scriptIndex = 0;
   }
@@ -263,6 +283,9 @@ class BattleSession extends ChangeNotifier {
   void _finishPlayback(Playback p) {
     playback = null;
     if (p is ShotPlayback) _cues.addAll(p.landing);
+    if (p is MovePlayback) {
+      _cues.add(SimEvent(SimEventKind.move, side: p.side, x: p.toX));
+    }
     _syncTurnClock();
   }
 }

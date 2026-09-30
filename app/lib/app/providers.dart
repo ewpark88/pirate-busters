@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pirate_busters/audio/sound_service.dart';
 import 'package:pirate_busters/settings/language.dart';
 import 'package:pirate_busters/settings/settings_store.dart';
 
@@ -36,3 +37,8 @@ class LowEndNotifier extends Notifier<bool> {
     await ref.read(settingsStoreProvider).setLowEnd(on: on);
   }
 }
+
+/// 효과음. 부트스트랩에서 flutter_soloud 로 덮어쓴다. 기본은 소리 없음(테스트).
+final soundServiceProvider = Provider<SoundService>(
+  (ref) => const SilentSoundService(),
+);

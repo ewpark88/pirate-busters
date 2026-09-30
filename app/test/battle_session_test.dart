@@ -102,6 +102,33 @@ void main() {
       expect(shot.path.ys.sublist(0, n), preview.ys.sublist(0, n));
     });
 
+    test('내 탄이 나는 동안 탭하면 TAP 이 발사로부터의 틱 수로 기록된다', () {
+      final s = _humanFirst()
+        ..update(500)
+        ..fire(0, 45000, 10000)
+        ..update(300)
+        ..tap();
+      _drain(s);
+      s.endTurn();
+      final taps = s.match.turnLog.first.commands.whereType<TapCommand>();
+      expect(taps.single.tick, 9);
+    });
+
+    test('상대 턴에는 다음 턴 해적을 미리 고르고, 내 턴이 오면 풀린다', () {
+      final s = _humanFirst()
+        ..update(100)
+        ..endTurn()
+        ..preselect(2);
+      expect(s.preselected, 2);
+      var guard = 0;
+      while (!s.isHumanTurn && guard++ < 2000) {
+        s.update(100);
+      }
+      _drain(s);
+      s.update(10);
+      expect(s.preselected, isNull);
+    });
+
     test('핫시트에서는 양쪽 모두 사람이 두고 컨트롤러를 부르지 않는다', () {
       final s = _humanFirst(hotseat: true)
         ..update(100)

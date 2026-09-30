@@ -64,6 +64,12 @@ class ShipView extends PositionComponent with HasGameReference {
     if (clip != null && slot < rigs.length) rigs[slot].play(clip);
   }
 
+  /// 판 시작 때 [cell] 칸이 철판이었는가 (착탄 소리).
+  bool isIron(int cell) =>
+      cell >= 0 &&
+      cell < _built.materials.length &&
+      _built.materials[cell] == BlockMaterial.iron.index;
+
   void playHit(int slot) {
     if (slot >= 0 && slot < rigs.length) rigs[slot].play(anims.hit);
   }

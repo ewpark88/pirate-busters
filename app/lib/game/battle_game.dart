@@ -5,6 +5,7 @@ import 'package:flame/game.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:pb_sim/pb_sim.dart';
+import 'package:pirate_busters/audio/sound_service.dart';
 import 'package:pirate_busters/battle/battle_session.dart';
 import 'package:pirate_busters/battle/playback.dart';
 import 'package:pirate_busters/game/anim/anim_data.dart';
@@ -18,10 +19,13 @@ import 'package:pirate_busters/game/view/shot_view.dart';
 
 /// 전장 (개발 계획서 M4). 매 프레임 [BattleSession] 을 진행하고 결과를 그린다.
 /// 판정은 하지 않는다 (CLAUDE.md 절대 규칙 3).
-class BattleGame extends FlameGame with ScaleDetector {
-  BattleGame(this.session);
+class BattleGame extends FlameGame with ScaleDetector, TapCallbacks {
+  BattleGame(this.session, {this.sound = const SilentSoundService()});
 
   final BattleSession session;
+
+  /// 코드 합성 효과음 (설계서 §10.3).
+  final SoundService sound;
   final CameraDirector director = CameraDirector();
 
   /// ‘전체 보기’ (설계서 §2.1). HUD 버튼이 바꾼다.
@@ -121,22 +125,38 @@ class BattleGame extends FlameGame with ScaleDetector {
   }
 
   void _dispatch(List<SimEvent> cues) {
+    var woodPlayed = false;
     for (final e in cues) {
       switch (e.kind) {
         case SimEventKind.fire:
           _ships[e.side].playAttack(e.slot);
+          sound.play(Sfx.cannon);
         case SimEventKind.impact:
           final at = Coords.point(e.x, e.y);
           _fx.explosion(at);
           director.impact(at);
+          sound.play(
+            _ships[e.side].isIron(e.cell) ? Sfx.clang : Sfx.cannon,
+            volume: 0.8,
+          );
         case SimEventKind.splash:
           final at = Coords.point(e.x, 0);
           _fx.splash(at);
           director.impact(at);
+          sound.play(Sfx.splash);
         case SimEventKind.blockDestroyed:
           _fx.blockBroken(_cellWorld(e.side, e.cell));
+          if (!woodPlayed) sound.play(Sfx.wood);
+          woodPlayed = true;
         case SimEventKind.blockCollapsed:
           _fx.collapsed(_cellWorld(e.side, e.cell));
+        case SimEventKind.move:
+          // 한계선에 닿으면 물살이 튄다 (설계서 §2.6).
+          final side = session.state.sides[e.side];
+          final (lo, hi) = moveLimits(session.state.rules, session.state.turn);
+          if (side.offset == lo || side.offset == hi) {
+            _fx.splash(Coords.point(e.x, 0));
+          }
         case SimEventKind.pirateHit:
           _ships[e.side].playHit(e.slot);
           final rig = e.slot >= 0 && e.slot < _ships[e.side].rigs.length
@@ -150,7 +170,6 @@ class BattleGame extends FlameGame with ScaleDetector {
             SimEventKind.pirateFell ||
             SimEventKind.pirateReturned ||
             SimEventKind.pirateDown ||
-            SimEventKind.move ||
             SimEventKind.flood ||
             SimEventKind.stormStart:
           break;
@@ -167,4 +186,8 @@ class BattleGame extends FlameGame with ScaleDetector {
     if (s.x == 1 && s.y == 1) return;
     director.setUserZoom(_pinchStart * (s.x + s.y) / 2);
   }
+
+  /// 비행 중 탭 → `TAP` (설계서 §2.2).
+  @override
+  void onTapDown(TapDownEvent event) => session.tap();
 }

@@ -8,6 +8,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pirate_busters/app/providers.dart';
+import 'package:pirate_busters/audio/sound_service.dart';
 import 'package:pirate_busters/battle/battle_session.dart';
 import 'package:pirate_busters/battle/battle_setup.dart';
 import 'package:pirate_busters/battle/dummy_controller.dart';
@@ -129,11 +130,13 @@ void main() {
       humanSides: const {0},
       opponent: const DummyController(),
     );
+    final sound = _RecordingSound();
     // 앞 테스트의 가짜 시간 영역에서 만든 자산 캐시(Future)는 여기서 끝나지 않는다.
     rootBundle.clear();
     await tester.runAsync(() async {
       // GameWidget 없이 띄운다: flame_test 의 initializeGame 과 같은 순서.
-      final game = BattleGame(session)..onGameResize(Vector2(960, 440));
+      final game = BattleGame(session, sound: sound)
+        ..onGameResize(Vector2(960, 440));
       // Flame 테스트 도우미와 같은 내부 수명 주기 호출이다.
       // ignore: invalid_use_of_internal_member
       await game.load();
@@ -150,6 +153,9 @@ void main() {
         sawShot |= session.playback != null;
       }
       expect(sawShot, isTrue);
+      // 발사 때 포성, 착탄 때 폭음·철판·물보라 중 하나 (설계서 §10.3).
+      expect(sound.played.first, Sfx.cannon);
+      expect(sound.played.length, greaterThanOrEqualTo(2));
       final recorder = ui.PictureRecorder();
       game.render(ui.Canvas(recorder));
       final image = await recorder.endRecording().toImage(96, 44);
@@ -157,4 +163,14 @@ void main() {
     });
     expect(tester.takeException(), isNull);
   });
+}
+
+class _RecordingSound implements SoundService {
+  final List<Sfx> played = [];
+
+  @override
+  Future<void> load(Map<Sfx, Uint8List> wavs) async {}
+
+  @override
+  void play(Sfx sfx, {double pitch = 1, double volume = 1}) => played.add(sfx);
 }

@@ -39,7 +39,7 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
       humanSides: hotseat ? const {0, 1} : const {0},
       opponent: hotseat ? null : const DummyController(),
     );
-    _game = BattleGame(_session);
+    _game = BattleGame(_session, sound: ref.read(soundServiceProvider));
   }
 
   void _restart({bool? hotseat}) {
@@ -57,7 +57,8 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
   void _pause(bool paused) {
     // 일시정지는 사람과 허수아비 판에서만 쓴다 (설계서 §13.4).
     setState(() => _paused = paused);
-    _game.paused = paused;
+    // 핫시트는 두 사람이 함께 두므로 창을 열어도 턴 시계를 멈추지 않는다.
+    _game.paused = paused && _session.humanSides.length < 2;
   }
 
   @override

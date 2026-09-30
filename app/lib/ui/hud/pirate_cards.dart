@@ -110,7 +110,10 @@ class _PirateCardState extends State<_PirateCard> {
       PirateStatus.aboard => null,
     };
     final aiming = _s.aim?.slot == widget.slot;
+    final picked = _s.preselected == widget.slot && !_s.isHumanTurn;
     return GestureDetector(
+      // 상대 턴에는 다음 턴 해적을 미리 고를 수 있다 (설계서 §13.4).
+      onTap: _s.isHumanTurn ? null : () => _s.preselect(widget.slot),
       onPanStart: _onStart,
       onPanUpdate: _onUpdate,
       onPanEnd: _onEnd,
@@ -124,8 +127,10 @@ class _PirateCardState extends State<_PirateCard> {
             color: HudColors.panel,
             borderRadius: BorderRadius.circular(10),
             border: Border.all(
-              color: aiming ? HudColors.warn : HudColors.team(widget.side),
-              width: aiming ? 3 : 1.5,
+              color: aiming || picked
+                  ? HudColors.warn
+                  : HudColors.team(widget.side),
+              width: aiming || picked ? 3 : 1.5,
             ),
           ),
           child: Stack(

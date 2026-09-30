@@ -27,4 +27,27 @@ void main() {
       expect(compareArb({'a': ''}, {'a': 'A'}), hasLength(1));
     });
   });
+
+  group('직접 쓴 문장 검사 (설계서 §14.5)', () {
+    test('한글 문자열과 Text 안의 영어 문장을 찾는다', () {
+      const src = '''
+final a = Text('턴 종료');
+final b = Text('End turn');
+final c = label ?? '대기';
+''';
+      expect(findHardcodedText('x.dart', src), hasLength(3));
+    });
+
+    test('로그·오류·주석·숫자·키·경로는 봐 준다', () {
+      const src = r'''
+// 한국어 주석은 괜찮다
+debugPrint('효과음 실패');
+throw ArgumentError('잘못된 값');
+final t = Text('$seconds');
+final u = Text(l10n.endTurn); // 턴 종료
+final v = 'assets/images/octo.png';
+''';
+      expect(findHardcodedText('x.dart', src), isEmpty);
+    });
+  });
 }
