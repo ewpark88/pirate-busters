@@ -186,7 +186,18 @@ class PirateTile extends StatelessWidget {
               '${Labels.family(l10n, def.family)} · ${spec.cost}',
               const Color(0xFF9A917F),
             ),
-            _line(ammoLabel(l10n, spec, locale), const Color(0xFFFFC24A)),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image.asset(ammoIconPath(spec.ammo), width: 12, height: 12),
+                Flexible(
+                  child: _line(
+                    ammoLabel(l10n, spec, locale),
+                    const Color(0xFFFFC24A),
+                  ),
+                ),
+              ],
+            ),
           ],
         ),
       ),

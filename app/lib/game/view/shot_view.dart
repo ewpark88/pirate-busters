@@ -7,14 +7,23 @@ import 'package:pirate_busters/battle/playback.dart';
 import 'package:pirate_busters/battle/session_views.dart';
 import 'package:pirate_busters/game/coords.dart';
 import 'package:pirate_busters/game/sprites.dart';
+import 'package:pirate_busters/game/weapon_styles.dart';
 
 /// 날아가는 탄, 조준 궤적(앞 30% 점선), 이동 끝 지점 점선, 이동 한계 부표.
 /// 모두 시뮬레이션 값으로 그린다 (개발 계획서 M4).
 class ShotView extends Component {
-  ShotView({required this.session, required this.sprites, super.priority});
+  ShotView({
+    required this.session,
+    required this.sprites,
+    this.weapons,
+    super.priority,
+  });
 
   final BattleSession session;
   final BattleSprites sprites;
+
+  /// 해적별 투사체 그림. 없으면 모두 공용 포탄(테스트).
+  final WeaponStyles? weapons;
 
   /// 지금 날고 있는 탄들의 월드 위치.
   List<Vector2> get projectiles {
@@ -34,6 +43,48 @@ class ShotView extends Component {
     final sum = Vector2.zero();
     all.forEach(sum.add);
     return sum..scale(1 / all.length);
+  }
+
+  /// 날고 있는 탄마다 그 해적의 무기 그림(분열 조각·소형 폭탄은 따로)을 그린다.
+  void _renderShots(Canvas canvas) {
+    final p = session.playback;
+    if (p is! ShotPlayback) return;
+    final t = p.tick;
+    final spec = session.state.sides[p.side].crew.pirates[p.slot].spec;
+    final own = weapons?.of(session.speciesOf(spec.id));
+    for (final (i, trace) in p.traces.indexed) {
+      if (t < trace.startTick || t >= trace.endTick) continue;
+      final pos = _at(trace, t);
+      final style = i == 0
+          ? own
+          : switch (spec.ammo) {
+              AmmoType.split => WeaponStyles.splitShard,
+              AmmoType.flock => WeaponStyles.bomblet,
+              _ => own,
+            };
+      final w = weapons;
+      if (style == null || w == null) {
+        sprites
+            .get('fx/cannonball.png')
+            .render(
+              canvas,
+              position: pos,
+              size: Vector2.all(18),
+              anchor: Anchor.center,
+            );
+        continue;
+      }
+      final ahead = _at(trace, t + 0.5) - pos;
+      final seconds = (t - trace.startTick) / simTickHz;
+      canvas
+        ..save()
+        ..translate(pos.x, pos.y)
+        ..rotate(style.angle(seconds, ahead.x, ahead.y));
+      w
+          .sprite(style)
+          .render(canvas, size: Vector2(32, 24), anchor: Anchor.center);
+      canvas.restore();
+    }
   }
 
   static Vector2 _at(ShotTrace trace, double tick) {
@@ -58,15 +109,7 @@ class ShotView extends Component {
     _renderLimits(canvas);
     _renderMovePreview(canvas);
     _renderAim(canvas);
-    final ball = sprites.get('fx/cannonball.png');
-    for (final pos in projectiles) {
-      ball.render(
-        canvas,
-        position: pos,
-        size: Vector2.all(18),
-        anchor: Anchor.center,
-      );
-    }
+    _renderShots(canvas);
   }
 
   void _renderAim(Canvas canvas) {

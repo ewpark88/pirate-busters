@@ -44,10 +44,11 @@ flutter:
     - family: Jua
       fonts:
         - asset: assets/fonts/Jua-Regular.ttf
-  # 아트 에셋 v0.19 (docs/ASSETS.md). 폴더를 바꾸면 dart run tool/import_assets.dart --check
+  # 아트 에셋 v0.21 (docs/ASSETS.md). 폴더를 바꾸면 dart run tool/import_assets.dart --check
   assets:
     - assets/data/
     - assets/game/
+    - assets/images/ammo/icons/
     - assets/images/characters/alba/
     - assets/images/characters/alba/parts_battle_blue/
     - assets/images/characters/alba/parts_battle_red/
@@ -258,3 +259,5 @@ flutter:
     - assets/images/ui/icons/
     - assets/images/ui/kit/
     - assets/images/ui/portraits/
+    - assets/images/weapons/
+    - assets/images/weapons/icons/

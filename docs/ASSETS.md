@@ -5,7 +5,7 @@
 ## 구조
 
 ```
-art/pb_v0.19_main/              패키지 원본 전체 (git 제외, .gitignore). v0.19: 40명 전원
+art/pb_v0.21_main/              패키지 원본 전체 (git 제외, .gitignore). v0.21: 40명 전원 + 무기·탄종 아이콘
                                 characters/*.svg, reference/, tools/, README.md …
 app/assets/images/              앱에 들어가는 PNG. @2x 한 벌만, 이름에서 "@2x" 를 뗀다
   characters/<id>/              <id>_<team>_battle.png (전투 외곽선을 구워 넣은 한 장)
@@ -14,8 +14,11 @@ app/assets/images/              앱에 들어가는 PNG. @2x 한 벌만, 이름�
   ship/tiles/ rooms/ rig/       블록 32x32 · 선실 96x64 · 돛대·돛·깃발
   fx/ fx/impact/ fx/collapse/   발사체·폭발 · 명중 임팩트 · 붕괴
   ui/portraits/ kit/ icons/     선원 초상 · 판·버튼 · 아이콘
+  ammo/icons/                   탄종 아이콘 13종 (카드 칩, 설계서 §13.4)
+  weapons/ weapons/icons/       해적별 투사체 37종 · 분열 조각·소형 폭탄 · 강습·지원 아이콘
 app/assets/data/anims.json      40명 공격 동작, 공용 피격, 발사체·명중 효과, 등급별 연출(rarityFx)
 app/assets/data/tokens.json     색, 팀 색, 눈빛 색, HUD 색, 크기, 대기 동작 수치
+app/assets/data/weapons.json    해적별 투사체 그림과 움직임(spin·face), 렌더 전용
 ```
 
 - 캐릭터 id: `octo` 옥토, `bones` 본즈, `sword` 핀, `otter` 수리, `puffer` 퍼피, `gull` 윙, `shark` 샤키, `turtle` 톡. 팀은 `blue`(우리)·`red`(상대).
@@ -44,6 +47,12 @@ dart run tool/import_assets.dart --check     # pubspec 목록 검사만
 - `art/pb_assets_v0.16/` 이 새로 생기고, `app/assets/images`·`app/assets/data` 는 지우고 다시 채운다.
 - 새 캐릭터·폴더가 생기면 `--check` 가 pubspec 에 빠진 폴더를 알려 준다. `app/pubspec.yaml` 에 추가한다.
 - 패키지 README 의 ‘바뀐 점’ 표(캔버스·기준점·전투 배율)를 확인하고 렌더 코드의 수치를 맞춘다.
+
+## v0.21 (2026-09-30, M5)
+
+- 캐릭터는 v0.19 와 같고 **무기(v0.20)·탄종 아이콘(v0.21)** 이 새로 들어왔다. 패키지의 `png/` 에 이미 뽑힌 @2x 를 그대로 복사했다(`png/ammo/icons`, `png/weapons`, `png/weapons/icons` → `app/assets/images/…`, `weapons/weapons.json` → `app/assets/data/`). 패키지 안 스크립트는 실행하지 않았다.
+- 패키지 `ammo/ammo.json` 의 사다리 값은 `app/assets/game/ammo.json`(BALANCE.md A4.8)과 13종 모두 같다.
+- 표정 부위는 아직 없다(M4 이월 그대로).
 
 ## Flame 재생기 (M4)
 

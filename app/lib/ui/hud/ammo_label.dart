@@ -24,6 +24,26 @@ String ammoLabel(AppLocalizations l10n, PirateSpec spec, String locale) {
   };
 }
 
+/// 탄종 아이콘 (에셋 v0.21 `ammo/icons`, 설계서 §13.4 카드 칩).
+String ammoIconPath(AmmoType ammo) {
+  final name = switch (ammo) {
+    AmmoType.explosive => 'explode',
+    AmmoType.fire => 'fire',
+    AmmoType.split => 'split',
+    AmmoType.burst => 'rapid',
+    AmmoType.sniper => 'snipe',
+    AmmoType.chain => 'chain',
+    AmmoType.pierce => 'pierce',
+    AmmoType.skip => 'skip',
+    AmmoType.mine => 'plant',
+    AmmoType.flock => 'multidrop',
+    AmmoType.homing => 'homing',
+    AmmoType.assault => 'assault',
+    AmmoType.support => 'support',
+  };
+  return 'assets/images/ammo/icons/$name.png';
+}
+
 /// 사거리 등급 이름 (설계서 §2.8).
 String rangeLabel(AppLocalizations l10n, RangeGrade range) => switch (range) {
   RangeGrade.short => l10n.rangeShort,

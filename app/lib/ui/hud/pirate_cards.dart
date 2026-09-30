@@ -135,6 +135,7 @@ class _PirateCardState extends State<_PirateCard> {
                 child: _strip(
                   ammoLabel(l10n, pirate.spec, locale),
                   HudColors.warn,
+                  icon: ammoIconPath(pirate.spec.ammo),
                 ),
               ),
               _strip(foot, footColor),
@@ -146,15 +147,23 @@ class _PirateCardState extends State<_PirateCard> {
   }
 
   /// 카드 위·아래 한 줄 글자 띠.
-  Widget _strip(String text, Color color) => Container(
+  Widget _strip(String text, Color color, {String? icon}) => Container(
     width: double.infinity,
     color: HudColors.panel,
-    child: Text(
-      text,
-      textAlign: TextAlign.center,
-      maxLines: 1,
-      overflow: TextOverflow.ellipsis,
-      style: TextStyle(color: color, fontSize: 10),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        if (icon != null) Image.asset(icon, width: 12, height: 12),
+        Flexible(
+          child: Text(
+            text,
+            textAlign: TextAlign.center,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(color: color, fontSize: 10),
+          ),
+        ),
+      ],
     ),
   );
 }

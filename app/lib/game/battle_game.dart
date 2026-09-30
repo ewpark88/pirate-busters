@@ -16,6 +16,7 @@ import 'package:pirate_busters/game/view/sea_theme.dart';
 import 'package:pirate_busters/game/view/sea_view.dart';
 import 'package:pirate_busters/game/view/ship_view.dart';
 import 'package:pirate_busters/game/view/shot_view.dart';
+import 'package:pirate_busters/game/weapon_styles.dart';
 
 /// 전장 (개발 계획서 M4). 매 프레임 [BattleSession] 을 진행하고 결과를 그린다.
 /// 판정은 하지 않는다 (CLAUDE.md 절대 규칙 3).
@@ -51,6 +52,7 @@ class BattleGame extends FlameGame {
   @override
   Future<void> onLoad() async {
     final sprites = await BattleSprites.load(images);
+    final weapons = await WeaponStyles.load(images, rootBundle);
     final anims = PbAnims.fromJsonString(
       await rootBundle.loadString(PbAnims.path),
     );
@@ -70,7 +72,12 @@ class BattleGame extends FlameGame {
       for (final side in const [0, 1])
         ShipView(session: session, side: side, sprites: sprites, anims: anims),
     ];
-    _shot = ShotView(session: session, sprites: sprites, priority: 20);
+    _shot = ShotView(
+      session: session,
+      sprites: sprites,
+      weapons: weapons,
+      priority: 20,
+    );
     _fx = FxLayer(sprites: sprites, priority: 30);
     await world.addAll([
       ParallaxScenery(theme: theme, factor: 0.15, seed: 1, priority: -30),

@@ -31,6 +31,7 @@ String? imageTarget(String rel) {
 const dataFiles = {
   'anims/anims.json': 'anims.json',
   'style/tokens.json': 'tokens.json',
+  'weapons/weapons.json': 'weapons.json',
 };
 
 /// 패키지 폴더 이름 → art/ 아래 이름. `pirate_busters_assets_v0.15` → `pb_assets_v0.15`.
