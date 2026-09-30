@@ -11,6 +11,7 @@ import 'package:pirate_busters/campaign/stage_spec.dart';
 import 'package:pirate_busters/game/battle_game.dart';
 import 'package:pirate_busters/input/field_gestures.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
+import 'package:pirate_busters/l10n/data_text.dart';
 import 'package:pirate_busters/ui/hud/battle_hud.dart';
 
 /// 전투 화면: 전장(Flame) 위에 HUD(Flutter 위젯)를 겹친다 (설계서 §13.4).
@@ -130,6 +131,12 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
     return _scaffold();
   }
 
+  /// 튜토리얼 판이면 안내 한 줄 (설계서 §13.1).
+  String? _hint(AppLocalizations l10n) {
+    final step = widget.stage?.tutorialStep ?? 0;
+    return step == 0 ? null : dataText(l10n, 'tutorial_hint_$step');
+  }
+
   Widget _scaffold() => Scaffold(
     backgroundColor: Colors.black,
     body: Stack(
@@ -148,6 +155,7 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
             paused: _paused,
             onPause: _pause,
             onRestart: _restart,
+            hint: _hint(AppLocalizations.of(context)),
           ),
         ),
       ],

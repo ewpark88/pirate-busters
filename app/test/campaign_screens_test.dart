@@ -91,14 +91,34 @@ void main() {
     });
   }
 
-  testWidgets('지도: 첫 스테이지만 열려 있고, 깬 뒤에는 다음 노드가 열린다', (tester) async {
+  testWidgets('지도: 튜토리얼을 마치기 전에는 튜토리얼 노드 3개만 보인다 (설계서 §13.1)', (
+    tester,
+  ) async {
     await _pump(tester, const CampaignMapScreen(), const Locale('ko'));
+    expect(find.text('t-1'), findsOneWidget);
+    expect(find.byIcon(Icons.lock), findsNWidgets(2));
+    expect(find.text('1-1'), findsNothing);
+  });
+
+  testWidgets('지도: 첫 스테이지만 열려 있고, 깬 뒤에는 다음 노드가 열린다', (tester) async {
+    await _pump(
+      tester,
+      const CampaignMapScreen(),
+      const Locale('ko'),
+      progress: const PlayerProgress(
+        tutorialDone: 3,
+        seenStories: ['sea_1_intro'],
+      ),
+    );
     expect(find.byIcon(Icons.lock), findsNWidgets(5));
     await _pump(
       tester,
       const CampaignMapScreen(),
       const Locale('ko'),
-      progress: const PlayerProgress().recordStage('1-1', 2),
+      progress: const PlayerProgress(
+        tutorialDone: 3,
+        seenStories: ['sea_1_intro'],
+      ).recordStage('1-1', 2),
     );
     expect(find.byIcon(Icons.lock), findsNWidgets(4));
     expect(find.byIcon(Icons.star), findsNWidgets(2));

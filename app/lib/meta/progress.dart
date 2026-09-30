@@ -14,6 +14,7 @@ class PlayerProgress {
     this.prologueSeen = false,
     this.tutorialDone = 0,
     this.matchesPlayed = 0,
+    this.seenStories = const [],
   });
 
   /// JSON 에서 읽는다. 모르는 값·깨진 값은 기본값으로 본다.
@@ -24,6 +25,7 @@ class PlayerProgress {
     }
 
     final owned = json['ownedPirates'];
+    final seen = json['seenStories'];
     final starsRaw = json['stars'];
     return PlayerProgress(
       level: readInt('level', 1).clamp(1, maxLevel),
@@ -42,6 +44,9 @@ class PlayerProgress {
       prologueSeen: json['prologueSeen'] == true,
       tutorialDone: readInt('tutorialDone', 0).clamp(0, tutorialMatches),
       matchesPlayed: readInt('matchesPlayed', 0),
+      seenStories: seen is List
+          ? seen.whereType<String>().toList(growable: false)
+          : const [],
     );
   }
 
@@ -87,6 +92,9 @@ class PlayerProgress {
 
   /// 지금까지 한 판 수(튜토리얼 포함).
   final int matchesPlayed;
+
+  /// 본 컷신 id (설계서 §15.4). 캠페인 지도에서 다시 볼 수 있다.
+  final List<String> seenStories;
 
   /// 다음 레벨까지 필요한 경험치 (수치: BALANCE.md A4.5).
   int get xpToNext => xpToNextFor(level);
@@ -138,6 +146,12 @@ class PlayerProgress {
 
   PlayerProgress seePrologue() => copyWith(prologueSeen: true);
 
+  bool hasSeen(String storyId) => seenStories.contains(storyId);
+
+  PlayerProgress seeStory(String storyId) => hasSeen(storyId)
+      ? this
+      : copyWith(seenStories: [...seenStories, storyId]);
+
   PlayerProgress copyWith({
     int? level,
     int? xp,
@@ -147,6 +161,7 @@ class PlayerProgress {
     bool? prologueSeen,
     int? tutorialDone,
     int? matchesPlayed,
+    List<String>? seenStories,
   }) => PlayerProgress(
     level: level ?? this.level,
     xp: xp ?? this.xp,
@@ -156,6 +171,7 @@ class PlayerProgress {
     prologueSeen: prologueSeen ?? this.prologueSeen,
     tutorialDone: tutorialDone ?? this.tutorialDone,
     matchesPlayed: matchesPlayed ?? this.matchesPlayed,
+    seenStories: seenStories ?? this.seenStories,
   );
 
   Map<String, Object?> toJson() => {
@@ -167,6 +183,7 @@ class PlayerProgress {
     'prologueSeen': prologueSeen,
     'tutorialDone': tutorialDone,
     'matchesPlayed': matchesPlayed,
+    'seenStories': seenStories,
   };
 
   String encode() => jsonEncode(toJson());

@@ -860,4 +860,75 @@ class AppLocalizationsEn extends AppLocalizations {
   String levelUpTo(Object level) {
     return 'Level up! Lv $level';
   }
+
+  @override
+  String get storySkip => 'Skip';
+
+  @override
+  String get story_prologue_1 =>
+      'A calm morning in Coral Harbor. Octo the octopus and Tok the turtle carpenter are fixing a small boat.';
+
+  @override
+  String get story_prologue_2 =>
+      'The golden flagship appears and Goldfin shatters the Heart of the Sea. The sky darkens and a storm rises.';
+
+  @override
+  String get story_prologue_3 =>
+      'The waves wreck our boat. Tok: “It\'s okay. We\'ll build a new one with our own hands!”';
+
+  @override
+  String get story_prologue_4 =>
+      'The Red Claw Patrol blockades the harbor under the excuse of a “pirate crackdown”. The first shard of the broken Heart glows on their flagship.';
+
+  @override
+  String get story_prologue_5 =>
+      'Octo: “Let\'s recover all six shards and sail to Golden Isle!” First we break through the patrol blocking the harbor.';
+
+  @override
+  String get story_sea_1_intro_1 =>
+      'Red Claw Patrol: Tropic Bay is our sea. This is a pirate crackdown, turn your ship around!';
+
+  @override
+  String get story_sea_1_intro_2 =>
+      'Tok: The first shard is glowing on their flagship. Let\'s take down the patrol boats one by one and reach it.';
+
+  @override
+  String get story_s1_5_before =>
+      'Crab Lieutenant: I\'ll give you credit for getting this far. But you\'ll never get through this iron bow!';
+
+  @override
+  String get story_s1_5_after =>
+      'Crab Lieutenant: Argh… Retreat to the flagship! The captain won\'t let you get away with this!';
+
+  @override
+  String get story_s1_12_before_1 =>
+      'Patrol captain: With the shard\'s power this cutter never stops. I\'ll close in and crush you.';
+
+  @override
+  String get story_s1_12_before_2 =>
+      'Octo: Come closer, then. You\'ll get a taste of my bombs up close!';
+
+  @override
+  String get story_s1_12_after_1 =>
+      'Patrol captain: The shard… lost its light. The fleet of Fog Strait will be waiting for you.';
+
+  @override
+  String get story_s1_12_after_2 =>
+      'Tok: We got the first shard back! The Heart feels a little warmer.';
+
+  @override
+  String get story_s1_12_after_3 =>
+      'Octo: Next is Fog Strait. The skeletons want to lift their curse with a shard?';
+
+  @override
+  String get tutorial_hint_1 =>
+      'Tap a pirate card, then pull the pirate on deck backwards to fire';
+
+  @override
+  String get tutorial_hint_2 =>
+      'Move with the ◀ ▶ buttons. You only go as far as your fuel allows';
+
+  @override
+  String get tutorial_hint_3 =>
+      'Holes below the waterline mean flooding! Fire Tok at your own ship to repair';
 }

@@ -6,6 +6,8 @@ import 'package:pirate_busters/campaign/rewards.dart';
 import 'package:pirate_busters/campaign/stage_result_screen.dart';
 import 'package:pirate_busters/campaign/stage_spec.dart';
 import 'package:pirate_busters/campaign/star_rules.dart';
+import 'package:pirate_busters/story/cutscene_screen.dart';
+import 'package:pirate_busters/story/story_data.dart';
 import 'package:pirate_busters/ui/battle_screen.dart';
 
 /// 스테이지 한 판의 흐름: 전투 → 끝나면 별·보상을 진행에 반영 → 결과 화면 (설계서 §13.5).
@@ -47,6 +49,23 @@ abstract final class StageFlow {
       reward = r.reward;
       return r.progress;
     });
+    // 보스를 이기면 결과 앞에 뒤 컷신 (설계서 §15.4). 한 번만.
+    final after = StoryData.bossAfter(stage.id);
+    final cuts = StoryData.of(after);
+    if (mine.won && stage.isBoss && cuts != null) {
+      final progress = ref.read(progressProvider);
+      if (!progress.hasSeen(after)) {
+        await ref
+            .read(progressProvider.notifier)
+            .update((p) => p.seeStory(after));
+        await navigator.pushReplacement(
+          MaterialPageRoute<void>(
+            fullscreenDialog: true,
+            builder: (_) => CutsceneScreen(cuts: cuts),
+          ),
+        );
+      }
+    }
     await navigator.pushReplacement(
       MaterialPageRoute<void>(
         builder: (_) => StageResultScreen(

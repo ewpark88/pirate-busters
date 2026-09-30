@@ -20,10 +20,14 @@ class BattleHud extends StatelessWidget {
     required this.paused,
     required this.onPause,
     required this.onRestart,
+    this.hint,
     super.key,
   });
 
   final BattleSession session;
+
+  /// 튜토리얼 안내 한 줄 (설계서 §13.1). 없으면 안 보인다.
+  final String? hint;
 
   /// ‘전체 보기’ 켜짐. 전장(카메라)이 읽는다.
   final ValueNotifier<bool> overview;
@@ -66,6 +70,14 @@ class BattleHud extends StatelessWidget {
           padding: const EdgeInsets.all(8),
           child: Column(
             children: [
+              if (hint != null)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 4),
+                  child: HudPanel(
+                    borderColor: HudColors.warn,
+                    child: Text(hint!, style: const TextStyle(fontSize: 13)),
+                  ),
+                ),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [

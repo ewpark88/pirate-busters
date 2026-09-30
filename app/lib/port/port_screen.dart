@@ -14,6 +14,8 @@ import 'package:pirate_busters/port/port_game.dart';
 import 'package:pirate_busters/port/port_widgets.dart';
 import 'package:pirate_busters/port/settings_screen.dart';
 import 'package:pirate_busters/shipyard/shipyard_screen.dart';
+import 'package:pirate_busters/story/cutscene_screen.dart';
+import 'package:pirate_busters/story/story_data.dart';
 import 'package:pirate_busters/ui/battle_screen.dart';
 
 /// 항구(메인 화면, 설계서 §13.2). MVP 는 위쪽 프로필·재화·설정, 가운데 내 배,
@@ -50,6 +52,18 @@ class _PortScreenState extends ConsumerState<PortScreen> {
   void initState() {
     super.initState();
     _rebuild();
+    WidgetsBinding.instance.addPostFrameCallback((_) => unawaited(_firstRun()));
+  }
+
+  /// 처음 실행: 프롤로그(건너뛰기 가능) 뒤 캠페인 지도(튜토리얼 3판)로 (설계서 §13.1, §15.2).
+  Future<void> _firstRun() async {
+    final progress = ref.read(progressProvider);
+    final cuts = StoryData.of(StoryData.prologue);
+    if (progress.prologueSeen || cuts == null) return;
+    await ref.read(progressProvider.notifier).update((p) => p.seePrologue());
+    if (!mounted) return;
+    await CutsceneScreen.show(context, cuts);
+    if (mounted) await _open(const CampaignMapScreen());
   }
 
   @override

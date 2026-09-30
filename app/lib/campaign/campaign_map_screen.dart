@@ -8,11 +8,13 @@ import 'package:pirate_busters/campaign/stage_spec.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
 import 'package:pirate_busters/l10n/data_text.dart';
 import 'package:pirate_busters/meta/progress.dart';
+import 'package:pirate_busters/story/cutscene_screen.dart';
+import 'package:pirate_busters/story/story_data.dart';
 import 'package:pirate_busters/ui/hud/hud_style.dart';
 
 /// 캠페인 지도 (설계서 §13.3). MVP 는 해역 1 일반 모드만: 스테이지 노드·별·보스 노드.
 /// 모드 탭·해역 넘기기·인트로 다시 보기는 R3.
-class CampaignMapScreen extends ConsumerWidget {
+class CampaignMapScreen extends ConsumerStatefulWidget {
   const CampaignMapScreen({super.key, this.sea = 1});
 
   final int sea;
@@ -22,15 +24,48 @@ class CampaignMapScreen extends ConsumerWidget {
       index == 0 || p.hasCleared(stages[index - 1].id);
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<CampaignMapScreen> createState() => _CampaignMapScreenState();
+}
+
+class _CampaignMapScreenState extends ConsumerState<CampaignMapScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => unawaited(_intro()));
+  }
+
+  /// 튜토리얼을 마치고 해역을 처음 열면 해역 인트로 (설계서 §13.3, §15.4). 한 번만.
+  Future<void> _intro() async {
+    if (widget.sea != 1) return;
+    final progress = ref.read(progressProvider);
+    final cuts = StoryData.of(StoryData.sea1Intro);
+    if (!progress.tutorialFinished ||
+        progress.hasSeen(StoryData.sea1Intro) ||
+        cuts == null) {
+      return;
+    }
+    await ref
+        .read(progressProvider.notifier)
+        .update((p) => p.seeStory(StoryData.sea1Intro));
+    if (mounted) await CutsceneScreen.show(context, cuts);
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final stages = ref.watch(campaignProvider).sea(sea).campaign;
+    final sea = ref.watch(campaignProvider).sea(widget.sea);
     final progress = ref.watch(progressProvider);
+    // 튜토리얼 3판을 마치기 전에는 튜토리얼 노드만 연다 (설계서 §13.1).
+    final tutorial = !progress.tutorialFinished;
+    final stages = tutorial ? sea.tutorial : sea.campaign;
+    bool open(int i) => tutorial
+        ? i <= progress.tutorialDone
+        : CampaignMapScreen.unlocked(stages, i, progress);
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 40,
         title: Text(
-          '${l10n.campaignTitle} · ${dataText(l10n, 'sea_${sea}_name')}',
+          '${l10n.campaignTitle} · ${dataText(l10n, 'sea_${widget.sea}_name')}',
         ),
       ),
       body: SafeArea(
@@ -45,15 +80,13 @@ class CampaignMapScreen extends ConsumerWidget {
                     Container(
                       width: 28,
                       height: 4,
-                      color: unlocked(stages, i, progress)
-                          ? HudColors.border
-                          : HudColors.mute,
+                      color: open(i) ? HudColors.border : HudColors.mute,
                     ),
                   StageNode(
                     stage: stages[i],
                     stars: progress.starsOf(stages[i].id),
-                    locked: !unlocked(stages, i, progress),
-                    onTap: () => _open(context, stages[i], stages, i, progress),
+                    locked: !open(i),
+                    onTap: () => _open(stages[i], locked: !open(i)),
                   ),
                 ],
               ],
@@ -64,14 +97,8 @@ class CampaignMapScreen extends ConsumerWidget {
     );
   }
 
-  void _open(
-    BuildContext context,
-    StageSpec stage,
-    List<StageSpec> stages,
-    int i,
-    PlayerProgress progress,
-  ) {
-    if (!unlocked(stages, i, progress)) {
+  void _open(StageSpec stage, {required bool locked}) {
+    if (locked) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(AppLocalizations.of(context).stageLocked)),
       );
