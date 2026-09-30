@@ -6,7 +6,7 @@ import 'package:test/test.dart';
 
 import 'golden/golden_scenarios.dart';
 
-/// 골든 리플레이 (개발 계획서 M3): 판 끝 방식마다 하나 + 무작위 4판. 규칙을 일부러
+/// 골든 리플레이 100판 (개발 계획서 M3·M7): 판 끝 방식마다 하나 + 무작위 94판. 규칙을 일부러
 /// 바꿨으면 `dart run test/golden/generate.dart` 로 다시 만들고 커밋 메시지에 이유를 적는다.
 void main() {
   // 헤드리스 판은 한 번씩만 돌려 여러 검사에서 같이 쓴다.

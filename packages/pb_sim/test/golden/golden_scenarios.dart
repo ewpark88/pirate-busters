@@ -87,7 +87,16 @@ MatchResult _versus(
   return null;
 }
 
-/// 판 끝 방식마다 하나씩 + 무작위 4판 = 10판.
+/// 무작위 골든 시드: 처음 4판 + CI 용 90판 (개발 계획서 M7 검증 “골든 리플레이 100개”).
+final List<int> randomGoldenSeeds = [
+  101,
+  202,
+  303,
+  404,
+  for (var i = 1; i <= 90; i++) 1000 + i,
+];
+
+/// 판 끝 방식마다 하나씩(6판) + 무작위 94판 = 100판.
 final List<GoldenScenario> goldenScenarios = [
   GoldenScenario(
     'sunk_hull',
@@ -133,7 +142,7 @@ final List<GoldenScenario> goldenScenarios = [
       passController,
     ),
   ),
-  for (final seed in const [101, 202, 303, 404])
+  for (final seed in randomGoldenSeeds)
     GoldenScenario(
       'random_$seed',
       () => _sample(seed, RandomController(seed), RandomController(seed + 1)),
