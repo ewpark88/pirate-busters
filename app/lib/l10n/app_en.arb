@@ -1,0 +1,106 @@
+{
+  "@@locale": "en",
+  "appTitle": "Pirate Busters",
+  "turnsLeft": "{count} turns left",
+  "@turnsLeft": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "yourTurn": "Your turn",
+  "enemyTurn": "Enemy turn",
+  "playerTurn": "Player {side} turn",
+  "@playerTurn": {
+    "placeholders": {
+      "side": {
+        "type": "int"
+      }
+    }
+  },
+  "hull": "Hull",
+  "flood": "Flood {percent}%",
+  "@flood": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "crewAlive": "Crew {alive}/{total}",
+  "@crewAlive": {
+    "placeholders": {
+      "alive": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "endTurn": "End turn",
+  "retreat": "Back",
+  "advance": "Ahead",
+  "fuel": "Fuel",
+  "firesLeft": "{count} shots left",
+  "@firesLeft": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "cooldown": "Rest {count}",
+  "@cooldown": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "cabinFlooded": "Flooded",
+  "pirateDown": "Down",
+  "pirateSwimming": "Swimming",
+  "wind": "Wind",
+  "stormTime": "Storm!",
+  "overview": "Overview",
+  "gapCells": "Gap {cells}",
+  "@gapCells": {
+    "placeholders": {
+      "cells": {
+        "type": "int"
+      }
+    }
+  },
+  "pause": "Pause",
+  "resume": "Resume",
+  "surrender": "Surrender",
+  "surrenderConfirm": "Give up this battle?",
+  "cancel": "Cancel",
+  "settings": "Settings",
+  "language": "Language",
+  "languageSystem": "System",
+  "languageKorean": "한국어",
+  "languageEnglish": "English",
+  "opponent": "Opponent",
+  "opponentDummy": "Training dummy",
+  "opponentHotseat": "Two players (one device)",
+  "resultWin": "Victory!",
+  "resultLose": "Defeat",
+  "resultDraw": "Draw",
+  "outcomeSunk": "Ship wrecked",
+  "outcomeFloodSunk": "Sunk by flooding",
+  "outcomeAnnihilation": "Crew wiped out",
+  "outcomeTimeDecision": "Time decision",
+  "outcomeSurrender": "Surrender",
+  "playAgain": "Play again",
+  "playerWins": "Player {side} wins!",
+  "@playerWins": {
+    "placeholders": {
+      "side": {
+        "type": "int"
+      }
+    }
+  }
+}

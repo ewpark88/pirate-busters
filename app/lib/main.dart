@@ -1,18 +1,26 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hive_ce_flutter/hive_flutter.dart';
+import 'package:pirate_busters/app/app.dart';
+import 'package:pirate_busters/app/providers.dart';
+import 'package:pirate_busters/settings/settings_store.dart';
 
-void main() {
-  runApp(const PirateBustersApp());
-}
-
-/// 앱 루트. M4 에서 Flame 전장으로 바꾼다.
-class PirateBustersApp extends StatelessWidget {
-  const PirateBustersApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      title: 'Pirate Busters',
-      home: Scaffold(body: Center(child: Text('Pirate Busters'))),
-    );
-  }
+/// 시작 순서: 화면 방향 → 저장소 → (효과음) → 앱.
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  // 가로 고정, 좌·우 모두 허용, 몰입 모드 (개발 계획서 M4).
+  await SystemChrome.setPreferredOrientations(const [
+    DeviceOrientation.landscapeLeft,
+    DeviceOrientation.landscapeRight,
+  ]);
+  await SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+  await Hive.initFlutter();
+  final settings = await HiveSettingsStore.open();
+  runApp(
+    ProviderScope(
+      overrides: [settingsStoreProvider.overrideWithValue(settings)],
+      child: const PirateBustersApp(),
+    ),
+  );
 }

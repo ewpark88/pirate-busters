@@ -29,11 +29,11 @@ class MoveResult {
   final int durationMs;
 }
 
-/// [side] 배를 [dx](1/10칸, 전진 +)만큼 움직인다 (설계서 §2.6, §2.7).
+/// [side] 배가 [dx](1/10칸, 전진 +)를 누르면 실제로 갈 거리(1/1000칸, 전진 +).
 ///
-/// 한계선, 연료, 남은 턴 시간 [timeLeftMs] 중 먼저 닿는 곳까지만 가고, 간 거리만큼
-/// 연료를 쓴다. 한계선에 막혀 못 간 거리는 연료를 쓰지 않는다.
-MoveResult applyMove(
+/// 한계선, 연료, 남은 턴 시간 [timeLeftMs] 중 먼저 닿는 곳까지다 (설계서 §2.6, §2.7).
+/// 상태는 바꾸지 않는다. 이동 버튼의 끝 지점 점선도 이 값을 쓴다.
+int moveReach(
   SideState side,
   MatchRules rules,
   int turn,
@@ -41,22 +41,41 @@ MoveResult applyMove(
   int timeLeftMs,
 ) {
   final speed = moveSpeedOf(side);
-  if (dx == 0 || speed <= 0 || timeLeftMs <= 0) return const MoveResult(0, 0);
+  if (dx == 0 || speed <= 0 || timeLeftMs <= 0) return 0;
   final (lo, hi) = moveLimits(rules, turn);
   final want = dx * moveStep;
   final target = (side.offset + want).clamp(lo, hi);
   var dist = (target - side.offset).abs();
-  final perCell = side.grid.hull.fuelPerCell * SideState.fuelUnit;
-  final byFuel = side.fuel * cellUnit ~/ perCell;
+  final byFuel = side.fuel * cellUnit ~/ _fuelPerCell(side);
   final byTime = timeLeftMs * speed ~/ 1000;
   if (byFuel < dist) dist = byFuel;
   if (byTime < dist) dist = byTime;
   dist -= dist % moveStep;
-  if (dist <= 0) return const MoveResult(0, 0);
-  final signed = want > 0 ? dist : -dist;
+  if (dist <= 0) return 0;
+  return want > 0 ? dist : -dist;
+}
+
+int _fuelPerCell(SideState side) =>
+    side.grid.hull.fuelPerCell * SideState.fuelUnit;
+
+/// [side] 배를 [dx](1/10칸, 전진 +)만큼 움직인다 (설계서 §2.6, §2.7).
+///
+/// [moveReach] 만큼만 가고, 간 거리만큼 연료를 쓴다. 한계선에 막혀 못 간 거리는
+/// 연료를 쓰지 않는다.
+MoveResult applyMove(
+  SideState side,
+  MatchRules rules,
+  int turn,
+  int dx,
+  int timeLeftMs,
+) {
+  final signed = moveReach(side, rules, turn, dx, timeLeftMs);
+  if (signed == 0) return const MoveResult(0, 0);
+  final dist = signed.abs();
+  final speed = moveSpeedOf(side);
   side
     ..offset += signed
-    ..fuel -= dist * perCell ~/ cellUnit;
+    ..fuel -= dist * _fuelPerCell(side) ~/ cellUnit;
   final ms = (dist * 1000 + speed - 1) ~/ speed;
   return MoveResult(signed, ms);
 }

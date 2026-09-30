@@ -90,7 +90,9 @@ List<String> checkFile(String relPath, String source) {
   }
 
   final lines = '\n'.allMatches(source).length + 1;
-  if (relPath.contains('/lib/') && lines > maxLibLines) {
+  // gen-l10n 이 만드는 파일은 키 수만큼 길어진다 (ADR-029).
+  final generated = relPath.contains('/lib/l10n/app_localizations');
+  if (relPath.contains('/lib/') && !generated && lines > maxLibLines) {
     violations.add('$relPath — $lines 줄, lib 파일은 $maxLibLines 줄 이하');
   }
   return violations;
