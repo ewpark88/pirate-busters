@@ -5,7 +5,7 @@
 ## 구조
 
 ```
-art/pb_assets_v0.15/            패키지 원본 전체 (git 제외, .gitignore)
+art/pb_v0.19_main/              패키지 원본 전체 (git 제외, .gitignore). v0.19: 40명 전원
                                 characters/*.svg, reference/, tools/, README.md …
 app/assets/images/              앱에 들어가는 PNG. @2x 한 벌만, 이름에서 "@2x" 를 뗀다
   characters/<id>/              <id>_<team>_battle.png (전투 외곽선을 구워 넣은 한 장)
@@ -14,7 +14,7 @@ app/assets/images/              앱에 들어가는 PNG. @2x 한 벌만, 이름�
   ship/tiles/ rooms/ rig/       블록 32x32 · 선실 96x64 · 돛대·돛·깃발
   fx/ fx/impact/ fx/collapse/   발사체·폭발 · 명중 임팩트 · 붕괴
   ui/portraits/ kit/ icons/     선원 초상 · 판·버튼 · 아이콘
-app/assets/data/anims.json      8명 공격 동작, 공용 피격, 발사체·명중 효과
+app/assets/data/anims.json      40명 공격 동작, 공용 피격, 발사체·명중 효과, 등급별 연출(rarityFx)
 app/assets/data/tokens.json     색, 팀 색, 눈빛 색, HUD 색, 크기, 대기 동작 수치
 ```
 
@@ -25,6 +25,16 @@ app/assets/data/tokens.json     색, 팀 색, 눈빛 색, HUD 색, 크기, 대�
 - Flutter 는 하위 폴더를 자동으로 넣지 않으므로 `app/pubspec.yaml` 에 폴더마다 한 줄씩 적는다.
 
 ## 새 버전으로 바꾸기
+
+v0.16 부터 패키지에 캐릭터 PNG 가 없고 SVG 만 있다. 패키지 복사본에서 PNG 를 먼저 뽑는다.
+패키지의 `tools/export_png.py` 는 cairosvg(= 네이티브 cairo)가 필요한데 Windows 에는 cairo 가 없어서,
+resvg 로 대신 그리는 대역 모듈 `tool/assets/cairosvg.py` 를 앞에 둔다 (`pip install resvg-py pillow`).
+
+```bash
+cp -r "D:/Projects/이미지참고용/pb_v0.19_main" <작업 폴더>/        # 원본은 건드리지 않는다
+cd <작업 폴더>/pb_v0.19_main && PYTHONPATH=<저장소>/tool/assets python tools/export_png.py
+dart run tool/import_assets.dart "<작업 폴더>/pb_v0.19_main"
+```
 
 ```bash
 dart run tool/import_assets.dart "D:/Projects/이미지참고용/pirate_busters_assets_v0.16"

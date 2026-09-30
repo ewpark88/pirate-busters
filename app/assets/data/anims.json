@@ -1,5 +1,5 @@
 {
- "version": "0.14",
+ "version": "0.19",
  "coordSpace": "character canvas 240x324, anchor 120,315",
  "phases": [
   {
@@ -1605,6 +1605,5200 @@
      "dur": 0.1
     }
    ]
+  },
+  "starry": {
+   "duration": 3.0,
+   "tracks": {
+    "root": [
+     {
+      "t": 0,
+      "ease": "io",
+      "dx": 0
+     },
+     {
+      "t": 0.5,
+      "ease": "io",
+      "dx": 0,
+      "sy": 1
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "dx": -5,
+      "sy": 1.03
+     },
+     {
+      "t": 1.45,
+      "ease": "out",
+      "dx": 7,
+      "sy": 0.97
+     },
+     {
+      "t": 1.8,
+      "ease": "io",
+      "dx": 2,
+      "sy": 1
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "dx": 0
+     }
+    ],
+    "head": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "rot": -5
+     },
+     {
+      "t": 1.45,
+      "ease": "io",
+      "rot": 5
+     },
+     {
+      "t": 2.2,
+      "ease": "io",
+      "rot": 0
+     }
+    ],
+    "arm": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0.0
+     },
+     {
+      "t": 0.5,
+      "ease": "io",
+      "rot": 0.0
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "rot": -24.0
+     },
+     {
+      "t": 1.45,
+      "ease": "out",
+      "rot": 52.5
+     },
+     {
+      "t": 1.6,
+      "ease": "io",
+      "rot": 46.5
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "rot": 0.0
+     }
+    ],
+    "held": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0.0
+     },
+     {
+      "t": 0,
+      "ease": "step",
+      "op": 1
+     },
+     {
+      "t": 0.5,
+      "ease": "io",
+      "rot": 0.0
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "rot": -24.0
+     },
+     {
+      "t": 1.45,
+      "ease": "out",
+      "rot": 52.5
+     },
+     {
+      "t": 1.45,
+      "ease": "step",
+      "op": 0
+     },
+     {
+      "t": 1.6,
+      "ease": "io",
+      "rot": 46.5
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "rot": 0.0
+     },
+     {
+      "t": 2.4,
+      "ease": "step",
+      "op": 1
+     }
+    ],
+    "fx": [
+     {
+      "t": 0,
+      "ease": "step",
+      "op": 0
+     },
+     {
+      "t": 1.45,
+      "ease": "step",
+      "op": 1
+     },
+     {
+      "t": 1.75,
+      "ease": "step",
+      "op": 0
+     }
+    ]
+   },
+   "events": [
+    {
+     "t": 1.45,
+     "type": "spawn",
+     "projectile": "bomb",
+     "part": "held",
+     "point": [
+      190,
+      104
+     ]
+    }
+   ],
+   "basedOn": "octo"
+  },
+  "crabs": {
+   "duration": 3.0,
+   "tracks": {
+    "root": [
+     {
+      "t": 0,
+      "ease": "io",
+      "dx": 0
+     },
+     {
+      "t": 0.5,
+      "ease": "io",
+      "dx": 0,
+      "sy": 1
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "dx": -5,
+      "sy": 1.03
+     },
+     {
+      "t": 1.45,
+      "ease": "out",
+      "dx": 7,
+      "sy": 0.97
+     },
+     {
+      "t": 1.8,
+      "ease": "io",
+      "dx": 2,
+      "sy": 1
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "dx": 0
+     }
+    ],
+    "head": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "rot": -5
+     },
+     {
+      "t": 1.45,
+      "ease": "io",
+      "rot": 5
+     },
+     {
+      "t": 2.2,
+      "ease": "io",
+      "rot": 0
+     }
+    ],
+    "arm": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0.0
+     },
+     {
+      "t": 0.5,
+      "ease": "io",
+      "rot": 0.0
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "rot": -24.0
+     },
+     {
+      "t": 1.45,
+      "ease": "out",
+      "rot": 52.5
+     },
+     {
+      "t": 1.6,
+      "ease": "io",
+      "rot": 46.5
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "rot": 0.0
+     }
+    ],
+    "held": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0.0
+     },
+     {
+      "t": 0,
+      "ease": "step",
+      "op": 1
+     },
+     {
+      "t": 0.5,
+      "ease": "io",
+      "rot": 0.0
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "rot": -24.0
+     },
+     {
+      "t": 1.45,
+      "ease": "out",
+      "rot": 52.5
+     },
+     {
+      "t": 1.45,
+      "ease": "step",
+      "op": 0
+     },
+     {
+      "t": 1.6,
+      "ease": "io",
+      "rot": 46.5
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "rot": 0.0
+     },
+     {
+      "t": 2.4,
+      "ease": "step",
+      "op": 1
+     }
+    ],
+    "arm_back": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0.0
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "rot": 7.5
+     },
+     {
+      "t": 1.45,
+      "ease": "io",
+      "rot": -9.0
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "rot": 0.0
+     }
+    ]
+   },
+   "events": [
+    {
+     "t": 1.45,
+     "type": "spawn",
+     "projectile": "bomb",
+     "part": "held",
+     "point": [
+      210,
+      188
+     ]
+    }
+   ],
+   "basedOn": "octo"
+  },
+  "uni": {
+   "duration": 3.0,
+   "tracks": {
+    "root": [
+     {
+      "t": 0,
+      "ease": "io",
+      "dx": 0
+     },
+     {
+      "t": 0.5,
+      "ease": "io",
+      "dx": 0,
+      "sy": 1
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "dx": -5,
+      "sy": 1.03
+     },
+     {
+      "t": 1.45,
+      "ease": "out",
+      "dx": 7,
+      "sy": 0.97
+     },
+     {
+      "t": 1.8,
+      "ease": "io",
+      "dx": 2,
+      "sy": 1
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "dx": 0
+     }
+    ],
+    "head": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "rot": -5
+     },
+     {
+      "t": 1.45,
+      "ease": "io",
+      "rot": 5
+     },
+     {
+      "t": 2.2,
+      "ease": "io",
+      "rot": 0
+     }
+    ],
+    "arm": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0.0
+     },
+     {
+      "t": 0.5,
+      "ease": "io",
+      "rot": 0.0
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "rot": -24.0
+     },
+     {
+      "t": 1.45,
+      "ease": "out",
+      "rot": 52.5
+     },
+     {
+      "t": 1.6,
+      "ease": "io",
+      "rot": 46.5
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "rot": 0.0
+     }
+    ],
+    "held": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0.0
+     },
+     {
+      "t": 0,
+      "ease": "step",
+      "op": 1
+     },
+     {
+      "t": 0.5,
+      "ease": "io",
+      "rot": 0.0
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "rot": -24.0
+     },
+     {
+      "t": 1.45,
+      "ease": "out",
+      "rot": 52.5
+     },
+     {
+      "t": 1.45,
+      "ease": "step",
+      "op": 0
+     },
+     {
+      "t": 1.6,
+      "ease": "io",
+      "rot": 46.5
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "rot": 0.0
+     },
+     {
+      "t": 2.4,
+      "ease": "step",
+      "op": 1
+     }
+    ]
+   },
+   "events": [
+    {
+     "t": 1.45,
+     "type": "spawn",
+     "projectile": "bomb",
+     "part": "held",
+     "point": [
+      202,
+      134
+     ]
+    }
+   ],
+   "basedOn": "octo"
+  },
+  "volke": {
+   "duration": 3.0,
+   "tracks": {
+    "root": [
+     {
+      "t": 0,
+      "ease": "io",
+      "dx": 0
+     },
+     {
+      "t": 0.5,
+      "ease": "io",
+      "dx": 0,
+      "sy": 1
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "dx": -5,
+      "sy": 1.03
+     },
+     {
+      "t": 1.45,
+      "ease": "out",
+      "dx": 7,
+      "sy": 0.97
+     },
+     {
+      "t": 1.8,
+      "ease": "io",
+      "dx": 2,
+      "sy": 1
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "dx": 0
+     }
+    ],
+    "head": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "rot": -5
+     },
+     {
+      "t": 1.45,
+      "ease": "io",
+      "rot": 5
+     },
+     {
+      "t": 2.2,
+      "ease": "io",
+      "rot": 0
+     }
+    ],
+    "arm": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0.0
+     },
+     {
+      "t": 0.5,
+      "ease": "io",
+      "rot": 0.0
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "rot": -24.0
+     },
+     {
+      "t": 1.45,
+      "ease": "out",
+      "rot": 52.5
+     },
+     {
+      "t": 1.6,
+      "ease": "io",
+      "rot": 46.5
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "rot": 0.0
+     }
+    ],
+    "arm_back": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0.0
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "rot": 7.5
+     },
+     {
+      "t": 1.45,
+      "ease": "io",
+      "rot": -9.0
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "rot": 0.0
+     }
+    ],
+    "fx": [
+     {
+      "t": 0,
+      "ease": "step",
+      "op": 0
+     },
+     {
+      "t": 1.45,
+      "ease": "step",
+      "op": 1
+     },
+     {
+      "t": 1.75,
+      "ease": "step",
+      "op": 0
+     }
+    ]
+   },
+   "events": [
+    {
+     "t": 1.45,
+     "type": "spawn",
+     "projectile": "bomb",
+     "part": "arm",
+     "point": [
+      120,
+      120
+     ]
+    }
+   ],
+   "basedOn": "octo"
+  },
+  "pang": {
+   "duration": 3.0,
+   "tracks": {
+    "root": [
+     {
+      "t": 0,
+      "ease": "io",
+      "dx": 0
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "dx": -2
+     },
+     {
+      "t": 1.4,
+      "ease": "step",
+      "dx": -2
+     },
+     {
+      "t": 1.43,
+      "ease": "out",
+      "dx": -8
+     },
+     {
+      "t": 1.8,
+      "ease": "io",
+      "dx": 0
+     }
+    ],
+    "arm": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0.0,
+      "dx": 0
+     },
+     {
+      "t": 0.5,
+      "ease": "io",
+      "rot": 0.0
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "rot": -5.25
+     },
+     {
+      "t": 1.4,
+      "ease": "step",
+      "rot": -5.25,
+      "dx": 0
+     },
+     {
+      "t": 1.43,
+      "ease": "out",
+      "rot": -1.5,
+      "dx": -10
+     },
+     {
+      "t": 1.75,
+      "ease": "io",
+      "rot": -5.25,
+      "dx": 0
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "rot": 0.0
+     }
+    ],
+    "head": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "rot": 4,
+      "dy": 2
+     },
+     {
+      "t": 1.43,
+      "ease": "io",
+      "rot": -3,
+      "dy": 0
+     },
+     {
+      "t": 2.2,
+      "ease": "io",
+      "rot": 0
+     }
+    ],
+    "eyes": [
+     {
+      "t": 0,
+      "ease": "io",
+      "sx": 1
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "sx": 1.25,
+      "sy": 0.7
+     },
+     {
+      "t": 1.45,
+      "ease": "io",
+      "sx": 1,
+      "sy": 1
+     }
+    ],
+    "fx": [
+     {
+      "t": 0,
+      "ease": "step",
+      "op": 0
+     },
+     {
+      "t": 1.4,
+      "ease": "step",
+      "op": 1
+     },
+     {
+      "t": 1.52,
+      "ease": "step",
+      "op": 0
+     }
+    ]
+   },
+   "events": [
+    {
+     "t": 1.4,
+     "type": "spawn",
+     "projectile": "bullet",
+     "part": "arm",
+     "point": [
+      216,
+      182
+     ]
+    },
+    {
+     "t": 1.4,
+     "type": "shake",
+     "amp": 2,
+     "dur": 0.12
+    }
+   ],
+   "basedOn": "bones"
+  },
+  "hippo": {
+   "duration": 3.0,
+   "tracks": {
+    "root": [
+     {
+      "t": 0,
+      "ease": "io",
+      "dx": 0
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "dx": -2
+     },
+     {
+      "t": 1.4,
+      "ease": "step",
+      "dx": -2
+     },
+     {
+      "t": 1.43,
+      "ease": "out",
+      "dx": -8
+     },
+     {
+      "t": 1.8,
+      "ease": "io",
+      "dx": 0
+     }
+    ],
+    "arm": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0.0,
+      "dx": 0
+     },
+     {
+      "t": 0.5,
+      "ease": "io",
+      "rot": 0.0
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "rot": -5.25
+     },
+     {
+      "t": 1.4,
+      "ease": "step",
+      "rot": -5.25,
+      "dx": 0
+     },
+     {
+      "t": 1.43,
+      "ease": "out",
+      "rot": -1.5,
+      "dx": -10
+     },
+     {
+      "t": 1.75,
+      "ease": "io",
+      "rot": -5.25,
+      "dx": 0
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "rot": 0.0
+     }
+    ],
+    "head": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "rot": 4,
+      "dy": 2
+     },
+     {
+      "t": 1.43,
+      "ease": "io",
+      "rot": -3,
+      "dy": 0
+     },
+     {
+      "t": 2.2,
+      "ease": "io",
+      "rot": 0
+     }
+    ],
+    "eyes": [
+     {
+      "t": 0,
+      "ease": "io",
+      "sx": 1
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "sx": 1.25,
+      "sy": 0.7
+     },
+     {
+      "t": 1.45,
+      "ease": "io",
+      "sx": 1,
+      "sy": 1
+     }
+    ],
+    "fx": [
+     {
+      "t": 0,
+      "ease": "step",
+      "op": 0
+     },
+     {
+      "t": 1.4,
+      "ease": "step",
+      "op": 1
+     },
+     {
+      "t": 1.52,
+      "ease": "step",
+      "op": 0
+     }
+    ]
+   },
+   "events": [
+    {
+     "t": 1.4,
+     "type": "spawn",
+     "projectile": "bullet",
+     "part": "arm",
+     "point": [
+      210,
+      173
+     ]
+    },
+    {
+     "t": 1.4,
+     "type": "shake",
+     "amp": 2,
+     "dur": 0.12
+    }
+   ],
+   "basedOn": "bones"
+  },
+  "lion": {
+   "duration": 3.0,
+   "tracks": {
+    "root": [
+     {
+      "t": 0,
+      "ease": "io",
+      "dx": 0
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "dx": -2
+     },
+     {
+      "t": 1.4,
+      "ease": "step",
+      "dx": -2
+     },
+     {
+      "t": 1.43,
+      "ease": "out",
+      "dx": -8
+     },
+     {
+      "t": 1.8,
+      "ease": "io",
+      "dx": 0
+     }
+    ],
+    "arm": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0.0,
+      "dx": 0
+     },
+     {
+      "t": 0.5,
+      "ease": "io",
+      "rot": 0.0
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "rot": -5.25
+     },
+     {
+      "t": 1.4,
+      "ease": "step",
+      "rot": -5.25,
+      "dx": 0
+     },
+     {
+      "t": 1.43,
+      "ease": "out",
+      "rot": -1.5,
+      "dx": -10
+     },
+     {
+      "t": 1.75,
+      "ease": "io",
+      "rot": -5.25,
+      "dx": 0
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "rot": 0.0
+     }
+    ],
+    "head": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "rot": 4,
+      "dy": 2
+     },
+     {
+      "t": 1.43,
+      "ease": "io",
+      "rot": -3,
+      "dy": 0
+     },
+     {
+      "t": 2.2,
+      "ease": "io",
+      "rot": 0
+     }
+    ],
+    "eyes": [
+     {
+      "t": 0,
+      "ease": "io",
+      "sx": 1
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "sx": 1.25,
+      "sy": 0.7
+     },
+     {
+      "t": 1.45,
+      "ease": "io",
+      "sx": 1,
+      "sy": 1
+     }
+    ],
+    "fx": [
+     {
+      "t": 0,
+      "ease": "step",
+      "op": 0
+     },
+     {
+      "t": 1.4,
+      "ease": "step",
+      "op": 1
+     },
+     {
+      "t": 1.52,
+      "ease": "step",
+      "op": 0
+     }
+    ]
+   },
+   "events": [
+    {
+     "t": 1.4,
+     "type": "spawn",
+     "projectile": "bullet",
+     "part": "arm",
+     "point": [
+      218,
+      164
+     ]
+    },
+    {
+     "t": 1.4,
+     "type": "shake",
+     "amp": 2,
+     "dur": 0.12
+    }
+   ],
+   "basedOn": "bones"
+  },
+  "volt": {
+   "duration": 3.0,
+   "tracks": {
+    "root": [
+     {
+      "t": 0,
+      "ease": "io",
+      "dx": 0
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "dx": -2
+     },
+     {
+      "t": 1.4,
+      "ease": "step",
+      "dx": -2
+     },
+     {
+      "t": 1.43,
+      "ease": "out",
+      "dx": -8
+     },
+     {
+      "t": 1.8,
+      "ease": "io",
+      "dx": 0
+     }
+    ],
+    "arm": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0.0,
+      "dx": 0
+     },
+     {
+      "t": 0.5,
+      "ease": "io",
+      "rot": 0.0
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "rot": -5.25
+     },
+     {
+      "t": 1.4,
+      "ease": "step",
+      "rot": -5.25,
+      "dx": 0
+     },
+     {
+      "t": 1.43,
+      "ease": "out",
+      "rot": -1.5,
+      "dx": -10
+     },
+     {
+      "t": 1.75,
+      "ease": "io",
+      "rot": -5.25,
+      "dx": 0
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "rot": 0.0
+     }
+    ],
+    "head": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "rot": 4,
+      "dy": 2
+     },
+     {
+      "t": 1.43,
+      "ease": "io",
+      "rot": -3,
+      "dy": 0
+     },
+     {
+      "t": 2.2,
+      "ease": "io",
+      "rot": 0
+     }
+    ],
+    "eyes": [
+     {
+      "t": 0,
+      "ease": "io",
+      "sx": 1
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "sx": 1.25,
+      "sy": 0.7
+     },
+     {
+      "t": 1.45,
+      "ease": "io",
+      "sx": 1,
+      "sy": 1
+     }
+    ],
+    "fx": [
+     {
+      "t": 0,
+      "ease": "step",
+      "op": 0
+     },
+     {
+      "t": 1.4,
+      "ease": "step",
+      "op": 1
+     },
+     {
+      "t": 1.52,
+      "ease": "step",
+      "op": 0
+     }
+    ]
+   },
+   "events": [
+    {
+     "t": 1.4,
+     "type": "spawn",
+     "projectile": "bullet",
+     "part": "arm",
+     "point": [
+      176,
+      160
+     ]
+    },
+    {
+     "t": 1.4,
+     "type": "shake",
+     "amp": 2,
+     "dur": 0.12
+    }
+   ],
+   "basedOn": "bones"
+  },
+  "nar": {
+   "duration": 3.0,
+   "tracks": {
+    "root": [
+     {
+      "t": 0,
+      "ease": "io",
+      "dx": 0
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "dx": -5
+     },
+     {
+      "t": 1.42,
+      "ease": "out",
+      "dx": 12
+     },
+     {
+      "t": 1.9,
+      "ease": "io",
+      "dx": 4
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "dx": 0
+     }
+    ],
+    "arm": [
+     {
+      "t": 0,
+      "ease": "io",
+      "dx": 0,
+      "rot": 0.0
+     },
+     {
+      "t": 0.5,
+      "ease": "io",
+      "dx": 0
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "dx": -18,
+      "rot": -3.75
+     },
+     {
+      "t": 1.42,
+      "ease": "out",
+      "dx": 26,
+      "rot": 1.5
+     },
+     {
+      "t": 1.7,
+      "ease": "io",
+      "dx": 18
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "dx": 0,
+      "rot": 0.0
+     }
+    ],
+    "arm_back": [
+     {
+      "t": 0,
+      "ease": "io",
+      "dx": 0,
+      "rot": 0.0
+     },
+     {
+      "t": 0.5,
+      "ease": "io",
+      "dx": 0
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "dx": -18,
+      "rot": -3.75
+     },
+     {
+      "t": 1.42,
+      "ease": "out",
+      "dx": 26,
+      "rot": 1.5
+     },
+     {
+      "t": 1.7,
+      "ease": "io",
+      "dx": 18
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "dx": 0,
+      "rot": 0.0
+     }
+    ],
+    "head": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "rot": -4
+     },
+     {
+      "t": 1.42,
+      "ease": "io",
+      "rot": 6
+     },
+     {
+      "t": 2.2,
+      "ease": "io",
+      "rot": 0
+     }
+    ],
+    "fx": [
+     {
+      "t": 0,
+      "ease": "step",
+      "op": 0
+     },
+     {
+      "t": 1.42,
+      "ease": "step",
+      "op": 1
+     },
+     {
+      "t": 1.62,
+      "ease": "step",
+      "op": 0
+     }
+    ]
+   },
+   "events": [
+    {
+     "t": 1.42,
+     "type": "spawn",
+     "projectile": "harpoon",
+     "part": "arm",
+     "point": [
+      216,
+      58
+     ]
+    }
+   ],
+   "basedOn": "sword"
+  },
+  "walrus": {
+   "duration": 3.0,
+   "tracks": {
+    "root": [
+     {
+      "t": 0,
+      "ease": "io",
+      "dx": 0
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "dx": -5
+     },
+     {
+      "t": 1.42,
+      "ease": "out",
+      "dx": 12
+     },
+     {
+      "t": 1.9,
+      "ease": "io",
+      "dx": 4
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "dx": 0
+     }
+    ],
+    "arm": [
+     {
+      "t": 0,
+      "ease": "io",
+      "dx": 0,
+      "rot": 0.0
+     },
+     {
+      "t": 0.5,
+      "ease": "io",
+      "dx": 0
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "dx": -18,
+      "rot": -3.75
+     },
+     {
+      "t": 1.42,
+      "ease": "out",
+      "dx": 26,
+      "rot": 1.5
+     },
+     {
+      "t": 1.7,
+      "ease": "io",
+      "dx": 18
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "dx": 0,
+      "rot": 0.0
+     }
+    ],
+    "held": [
+     {
+      "t": 0,
+      "ease": "io",
+      "dx": 0,
+      "rot": 0.0
+     },
+     {
+      "t": 0,
+      "ease": "step",
+      "op": 1
+     },
+     {
+      "t": 0.5,
+      "ease": "io",
+      "dx": 0
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "dx": -18,
+      "rot": -3.75
+     },
+     {
+      "t": 1.42,
+      "ease": "out",
+      "dx": 26,
+      "rot": 1.5
+     },
+     {
+      "t": 1.43,
+      "ease": "step",
+      "op": 0
+     },
+     {
+      "t": 1.7,
+      "ease": "io",
+      "dx": 18
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "dx": 0,
+      "rot": 0.0
+     },
+     {
+      "t": 2.4,
+      "ease": "step",
+      "op": 1
+     }
+    ],
+    "arm_back": [
+     {
+      "t": 0,
+      "ease": "io",
+      "dx": 0,
+      "rot": 0.0
+     },
+     {
+      "t": 0.5,
+      "ease": "io",
+      "dx": 0
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "dx": -18,
+      "rot": -3.75
+     },
+     {
+      "t": 1.42,
+      "ease": "out",
+      "dx": 26,
+      "rot": 1.5
+     },
+     {
+      "t": 1.7,
+      "ease": "io",
+      "dx": 18
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "dx": 0,
+      "rot": 0.0
+     }
+    ],
+    "head": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "rot": -4
+     },
+     {
+      "t": 1.42,
+      "ease": "io",
+      "rot": 6
+     },
+     {
+      "t": 2.2,
+      "ease": "io",
+      "rot": 0
+     }
+    ]
+   },
+   "events": [
+    {
+     "t": 1.42,
+     "type": "spawn",
+     "projectile": "harpoon",
+     "part": "held",
+     "point": [
+      190,
+      228
+     ]
+    }
+   ],
+   "basedOn": "sword"
+  },
+  "saw": {
+   "duration": 3.0,
+   "tracks": {
+    "root": [
+     {
+      "t": 0,
+      "ease": "io",
+      "dx": 0
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "dx": -5
+     },
+     {
+      "t": 1.42,
+      "ease": "out",
+      "dx": 12
+     },
+     {
+      "t": 1.9,
+      "ease": "io",
+      "dx": 4
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "dx": 0
+     }
+    ],
+    "arm": [
+     {
+      "t": 0,
+      "ease": "io",
+      "dx": 0,
+      "rot": 0.0
+     },
+     {
+      "t": 0.5,
+      "ease": "io",
+      "dx": 0
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "dx": -18,
+      "rot": -3.75
+     },
+     {
+      "t": 1.42,
+      "ease": "out",
+      "dx": 26,
+      "rot": 1.5
+     },
+     {
+      "t": 1.7,
+      "ease": "io",
+      "dx": 18
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "dx": 0,
+      "rot": 0.0
+     }
+    ],
+    "arm_back": [
+     {
+      "t": 0,
+      "ease": "io",
+      "dx": 0,
+      "rot": 0.0
+     },
+     {
+      "t": 0.5,
+      "ease": "io",
+      "dx": 0
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "dx": -18,
+      "rot": -3.75
+     },
+     {
+      "t": 1.42,
+      "ease": "out",
+      "dx": 26,
+      "rot": 1.5
+     },
+     {
+      "t": 1.7,
+      "ease": "io",
+      "dx": 18
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "dx": 0,
+      "rot": 0.0
+     }
+    ],
+    "head": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "rot": -4
+     },
+     {
+      "t": 1.42,
+      "ease": "io",
+      "rot": 6
+     },
+     {
+      "t": 2.2,
+      "ease": "io",
+      "rot": 0
+     }
+    ],
+    "fx": [
+     {
+      "t": 0,
+      "ease": "step",
+      "op": 0
+     },
+     {
+      "t": 1.42,
+      "ease": "step",
+      "op": 1
+     },
+     {
+      "t": 1.62,
+      "ease": "step",
+      "op": 0
+     }
+    ]
+   },
+   "events": [
+    {
+     "t": 1.42,
+     "type": "spawn",
+     "projectile": "harpoon",
+     "part": "arm",
+     "point": [
+      220,
+      141
+     ]
+    }
+   ],
+   "basedOn": "sword"
+  },
+  "moby": {
+   "duration": 3.0,
+   "tracks": {
+    "root": [
+     {
+      "t": 0,
+      "ease": "io",
+      "dx": 0
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "dx": -5
+     },
+     {
+      "t": 1.42,
+      "ease": "out",
+      "dx": 12
+     },
+     {
+      "t": 1.9,
+      "ease": "io",
+      "dx": 4
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "dx": 0
+     }
+    ],
+    "arm": [
+     {
+      "t": 0,
+      "ease": "io",
+      "dx": 0,
+      "rot": 0.0
+     },
+     {
+      "t": 0.5,
+      "ease": "io",
+      "dx": 0
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "dx": -18,
+      "rot": -3.75
+     },
+     {
+      "t": 1.42,
+      "ease": "out",
+      "dx": 26,
+      "rot": 1.5
+     },
+     {
+      "t": 1.7,
+      "ease": "io",
+      "dx": 18
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "dx": 0,
+      "rot": 0.0
+     }
+    ],
+    "held": [
+     {
+      "t": 0,
+      "ease": "io",
+      "dx": 0,
+      "rot": 0.0
+     },
+     {
+      "t": 0,
+      "ease": "step",
+      "op": 1
+     },
+     {
+      "t": 0.5,
+      "ease": "io",
+      "dx": 0
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "dx": -18,
+      "rot": -3.75
+     },
+     {
+      "t": 1.42,
+      "ease": "out",
+      "dx": 26,
+      "rot": 1.5
+     },
+     {
+      "t": 1.43,
+      "ease": "step",
+      "op": 0
+     },
+     {
+      "t": 1.7,
+      "ease": "io",
+      "dx": 18
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "dx": 0,
+      "rot": 0.0
+     },
+     {
+      "t": 2.4,
+      "ease": "step",
+      "op": 1
+     }
+    ],
+    "arm_back": [
+     {
+      "t": 0,
+      "ease": "io",
+      "dx": 0,
+      "rot": 0.0
+     },
+     {
+      "t": 0.5,
+      "ease": "io",
+      "dx": 0
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "dx": -18,
+      "rot": -3.75
+     },
+     {
+      "t": 1.42,
+      "ease": "out",
+      "dx": 26,
+      "rot": 1.5
+     },
+     {
+      "t": 1.7,
+      "ease": "io",
+      "dx": 18
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "dx": 0,
+      "rot": 0.0
+     }
+    ],
+    "head": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "rot": -4
+     },
+     {
+      "t": 1.42,
+      "ease": "io",
+      "rot": 6
+     },
+     {
+      "t": 2.2,
+      "ease": "io",
+      "rot": 0
+     }
+    ],
+    "fx": [
+     {
+      "t": 0,
+      "ease": "step",
+      "op": 0
+     },
+     {
+      "t": 1.42,
+      "ease": "step",
+      "op": 1
+     },
+     {
+      "t": 1.62,
+      "ease": "step",
+      "op": 0
+     }
+    ]
+   },
+   "events": [
+    {
+     "t": 1.42,
+     "type": "spawn",
+     "projectile": "harpoon",
+     "part": "held",
+     "point": [
+      220,
+      238
+     ]
+    }
+   ],
+   "basedOn": "sword"
+  },
+  "pingu": {
+   "duration": 3.0,
+   "tracks": {
+    "root": [
+     {
+      "t": 0,
+      "ease": "io",
+      "dx": 0
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "dx": -4
+     },
+     {
+      "t": 1.4,
+      "ease": "out",
+      "dx": 6
+     },
+     {
+      "t": 2.0,
+      "ease": "io",
+      "dx": 0
+     }
+    ],
+    "arm": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0.0
+     },
+     {
+      "t": 0.5,
+      "ease": "io",
+      "rot": 0.0
+     },
+     {
+      "t": 0.7,
+      "ease": "io",
+      "rot": -15.0
+     },
+     {
+      "t": 0.9,
+      "ease": "io",
+      "rot": 9.0
+     },
+     {
+      "t": 1.1,
+      "ease": "io",
+      "rot": -15.0
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "rot": 10.5
+     },
+     {
+      "t": 1.4,
+      "ease": "out",
+      "rot": 25.5
+     },
+     {
+      "t": 1.7,
+      "ease": "io",
+      "rot": 21.0
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "rot": 0.0
+     }
+    ],
+    "head": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "rot": -3
+     },
+     {
+      "t": 1.4,
+      "ease": "io",
+      "rot": 4
+     },
+     {
+      "t": 2.2,
+      "ease": "io",
+      "rot": 0
+     }
+    ],
+    "fx": [
+     {
+      "t": 0,
+      "ease": "step",
+      "op": 0
+     },
+     {
+      "t": 0.6,
+      "ease": "step",
+      "op": 1
+     },
+     {
+      "t": 1.4,
+      "ease": "step",
+      "op": 0
+     }
+    ]
+   },
+   "events": [
+    {
+     "t": 1.4,
+     "type": "spawn",
+     "projectile": "stone",
+     "part": "arm",
+     "point": [
+      120,
+      308
+     ]
+    }
+   ],
+   "basedOn": "otter"
+  },
+  "sheldon": {
+   "duration": 3.0,
+   "tracks": {
+    "root": [
+     {
+      "t": 0,
+      "ease": "io",
+      "dx": 0
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "dx": -4
+     },
+     {
+      "t": 1.4,
+      "ease": "out",
+      "dx": 6
+     },
+     {
+      "t": 2.0,
+      "ease": "io",
+      "dx": 0
+     }
+    ],
+    "arm": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0.0
+     },
+     {
+      "t": 0.5,
+      "ease": "io",
+      "rot": 0.0
+     },
+     {
+      "t": 0.7,
+      "ease": "io",
+      "rot": -15.0
+     },
+     {
+      "t": 0.9,
+      "ease": "io",
+      "rot": 9.0
+     },
+     {
+      "t": 1.1,
+      "ease": "io",
+      "rot": -15.0
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "rot": 10.5
+     },
+     {
+      "t": 1.4,
+      "ease": "out",
+      "rot": 25.5
+     },
+     {
+      "t": 1.7,
+      "ease": "io",
+      "rot": 21.0
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "rot": 0.0
+     }
+    ],
+    "head": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "rot": -3
+     },
+     {
+      "t": 1.4,
+      "ease": "io",
+      "rot": 4
+     },
+     {
+      "t": 2.2,
+      "ease": "io",
+      "rot": 0
+     }
+    ]
+   },
+   "events": [
+    {
+     "t": 1.4,
+     "type": "spawn",
+     "projectile": "stone",
+     "part": "arm",
+     "point": [
+      120,
+      214
+     ]
+    }
+   ],
+   "basedOn": "otter"
+  },
+  "dolphy": {
+   "duration": 3.0,
+   "tracks": {
+    "root": [
+     {
+      "t": 0,
+      "ease": "io",
+      "dx": 0
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "dx": -4
+     },
+     {
+      "t": 1.4,
+      "ease": "out",
+      "dx": 6
+     },
+     {
+      "t": 2.0,
+      "ease": "io",
+      "dx": 0
+     }
+    ],
+    "arm": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0.0
+     },
+     {
+      "t": 0.5,
+      "ease": "io",
+      "rot": 0.0
+     },
+     {
+      "t": 0.7,
+      "ease": "io",
+      "rot": -15.0
+     },
+     {
+      "t": 0.9,
+      "ease": "io",
+      "rot": 9.0
+     },
+     {
+      "t": 1.1,
+      "ease": "io",
+      "rot": -15.0
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "rot": 10.5
+     },
+     {
+      "t": 1.4,
+      "ease": "out",
+      "rot": 25.5
+     },
+     {
+      "t": 1.7,
+      "ease": "io",
+      "rot": 21.0
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "rot": 0.0
+     }
+    ],
+    "head": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "rot": -3
+     },
+     {
+      "t": 1.4,
+      "ease": "io",
+      "rot": 4
+     },
+     {
+      "t": 2.2,
+      "ease": "io",
+      "rot": 0
+     }
+    ],
+    "fx": [
+     {
+      "t": 0,
+      "ease": "step",
+      "op": 0
+     },
+     {
+      "t": 0.6,
+      "ease": "step",
+      "op": 1
+     },
+     {
+      "t": 1.4,
+      "ease": "step",
+      "op": 0
+     }
+    ]
+   },
+   "events": [
+    {
+     "t": 1.4,
+     "type": "spawn",
+     "projectile": "stone",
+     "part": "arm",
+     "point": [
+      124,
+      304
+     ]
+    }
+   ],
+   "basedOn": "otter"
+  },
+  "orca": {
+   "duration": 3.0,
+   "tracks": {
+    "root": [
+     {
+      "t": 0,
+      "ease": "io",
+      "dx": 0
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "dx": -4
+     },
+     {
+      "t": 1.4,
+      "ease": "out",
+      "dx": 6
+     },
+     {
+      "t": 2.0,
+      "ease": "io",
+      "dx": 0
+     }
+    ],
+    "arm": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0.0
+     },
+     {
+      "t": 0.5,
+      "ease": "io",
+      "rot": 0.0
+     },
+     {
+      "t": 0.7,
+      "ease": "io",
+      "rot": -15.0
+     },
+     {
+      "t": 0.9,
+      "ease": "io",
+      "rot": 9.0
+     },
+     {
+      "t": 1.1,
+      "ease": "io",
+      "rot": -15.0
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "rot": 10.5
+     },
+     {
+      "t": 1.4,
+      "ease": "out",
+      "rot": 25.5
+     },
+     {
+      "t": 1.7,
+      "ease": "io",
+      "rot": 21.0
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "rot": 0.0
+     }
+    ],
+    "held": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0.0
+     },
+     {
+      "t": 0,
+      "ease": "step",
+      "op": 1
+     },
+     {
+      "t": 0.5,
+      "ease": "io",
+      "rot": 0.0
+     },
+     {
+      "t": 0.7,
+      "ease": "io",
+      "rot": -15.0
+     },
+     {
+      "t": 0.9,
+      "ease": "io",
+      "rot": 9.0
+     },
+     {
+      "t": 1.1,
+      "ease": "io",
+      "rot": -15.0
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "rot": 10.5
+     },
+     {
+      "t": 1.4,
+      "ease": "out",
+      "rot": 25.5
+     },
+     {
+      "t": 1.41,
+      "ease": "step",
+      "op": 0
+     },
+     {
+      "t": 1.7,
+      "ease": "io",
+      "rot": 21.0
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "rot": 0.0
+     },
+     {
+      "t": 2.4,
+      "ease": "step",
+      "op": 1
+     }
+    ],
+    "head": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "rot": -3
+     },
+     {
+      "t": 1.4,
+      "ease": "io",
+      "rot": 4
+     },
+     {
+      "t": 2.2,
+      "ease": "io",
+      "rot": 0
+     }
+    ],
+    "fx": [
+     {
+      "t": 0,
+      "ease": "step",
+      "op": 0
+     },
+     {
+      "t": 0.6,
+      "ease": "step",
+      "op": 1
+     },
+     {
+      "t": 1.4,
+      "ease": "step",
+      "op": 0
+     }
+    ]
+   },
+   "events": [
+    {
+     "t": 1.4,
+     "type": "spawn",
+     "projectile": "stone",
+     "part": "held",
+     "point": [
+      192,
+      74
+     ]
+    }
+   ],
+   "basedOn": "otter"
+  },
+  "jelly": {
+   "duration": 3.0,
+   "tracks": {
+    "body": [
+     {
+      "t": 0,
+      "ease": "io",
+      "sx": 1,
+      "sy": 1
+     },
+     {
+      "t": 0.5,
+      "ease": "io",
+      "sx": 1,
+      "sy": 1
+     },
+     {
+      "t": 1.2,
+      "ease": "io",
+      "sx": 1.12,
+      "sy": 1.12
+     },
+     {
+      "t": 1.4,
+      "ease": "io",
+      "sx": 1.12,
+      "sy": 1.12
+     },
+     {
+      "t": 1.55,
+      "ease": "out",
+      "sx": 0.96,
+      "sy": 0.96
+     },
+     {
+      "t": 1.9,
+      "ease": "io",
+      "sx": 1,
+      "sy": 1
+     }
+    ],
+    "head": [
+     {
+      "t": 0,
+      "ease": "io",
+      "dy": 0
+     },
+     {
+      "t": 1.2,
+      "ease": "io",
+      "dy": -10
+     },
+     {
+      "t": 1.4,
+      "ease": "io",
+      "dy": -10
+     },
+     {
+      "t": 1.55,
+      "ease": "io",
+      "dy": 2
+     },
+     {
+      "t": 1.9,
+      "ease": "io",
+      "dy": 0
+     }
+    ],
+    "eyes": [
+     {
+      "t": 0,
+      "ease": "io",
+      "dy": 0,
+      "sx": 1,
+      "sy": 1
+     },
+     {
+      "t": 1.2,
+      "ease": "io",
+      "dy": -10,
+      "sx": 1.2,
+      "sy": 1.2
+     },
+     {
+      "t": 1.4,
+      "ease": "io",
+      "dy": -10
+     },
+     {
+      "t": 1.55,
+      "ease": "io",
+      "dy": 2,
+      "sx": 1,
+      "sy": 1
+     },
+     {
+      "t": 1.9,
+      "ease": "io",
+      "dy": 0
+     }
+    ],
+    "arm": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0.0
+     },
+     {
+      "t": 0.5,
+      "ease": "io",
+      "rot": 0.0
+     },
+     {
+      "t": 1.2,
+      "ease": "io",
+      "rot": -16.5
+     },
+     {
+      "t": 1.4,
+      "ease": "out",
+      "rot": 36.0
+     },
+     {
+      "t": 1.7,
+      "ease": "io",
+      "rot": 30.0
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "rot": 0.0
+     }
+    ],
+    "held": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0.0
+     },
+     {
+      "t": 0,
+      "ease": "step",
+      "op": 1
+     },
+     {
+      "t": 0.5,
+      "ease": "io",
+      "rot": 0.0
+     },
+     {
+      "t": 1.2,
+      "ease": "io",
+      "rot": -16.5
+     },
+     {
+      "t": 1.4,
+      "ease": "out",
+      "rot": 36.0
+     },
+     {
+      "t": 1.41,
+      "ease": "step",
+      "op": 0
+     },
+     {
+      "t": 1.7,
+      "ease": "io",
+      "rot": 30.0
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "rot": 0.0
+     },
+     {
+      "t": 2.4,
+      "ease": "step",
+      "op": 1
+     }
+    ],
+    "fx": [
+     {
+      "t": 0,
+      "ease": "step",
+      "op": 0
+     },
+     {
+      "t": 0.8,
+      "ease": "step",
+      "op": 1
+     },
+     {
+      "t": 1.4,
+      "ease": "step",
+      "op": 0
+     }
+    ]
+   },
+   "events": [
+    {
+     "t": 1.4,
+     "type": "spawn",
+     "projectile": "dynamite",
+     "part": "held",
+     "point": [
+      188,
+      260
+     ]
+    }
+   ],
+   "basedOn": "puffer"
+  },
+  "bara": {
+   "duration": 3.0,
+   "tracks": {
+    "body": [
+     {
+      "t": 0,
+      "ease": "io",
+      "sx": 1,
+      "sy": 1
+     },
+     {
+      "t": 0.5,
+      "ease": "io",
+      "sx": 1,
+      "sy": 1
+     },
+     {
+      "t": 1.2,
+      "ease": "io",
+      "sx": 1.12,
+      "sy": 1.12
+     },
+     {
+      "t": 1.4,
+      "ease": "io",
+      "sx": 1.12,
+      "sy": 1.12
+     },
+     {
+      "t": 1.55,
+      "ease": "out",
+      "sx": 0.96,
+      "sy": 0.96
+     },
+     {
+      "t": 1.9,
+      "ease": "io",
+      "sx": 1,
+      "sy": 1
+     }
+    ],
+    "back": [
+     {
+      "t": 0,
+      "ease": "io",
+      "sx": 1,
+      "sy": 1
+     },
+     {
+      "t": 0.5,
+      "ease": "io",
+      "sx": 1,
+      "sy": 1
+     },
+     {
+      "t": 1.2,
+      "ease": "io",
+      "sx": 1.12,
+      "sy": 1.12
+     },
+     {
+      "t": 1.4,
+      "ease": "io",
+      "sx": 1.12,
+      "sy": 1.12
+     },
+     {
+      "t": 1.55,
+      "ease": "io",
+      "sx": 0.96,
+      "sy": 0.96
+     },
+     {
+      "t": 1.9,
+      "ease": "io",
+      "sx": 1,
+      "sy": 1
+     }
+    ],
+    "head": [
+     {
+      "t": 0,
+      "ease": "io",
+      "dy": 0
+     },
+     {
+      "t": 1.2,
+      "ease": "io",
+      "dy": -10
+     },
+     {
+      "t": 1.4,
+      "ease": "io",
+      "dy": -10
+     },
+     {
+      "t": 1.55,
+      "ease": "io",
+      "dy": 2
+     },
+     {
+      "t": 1.9,
+      "ease": "io",
+      "dy": 0
+     }
+    ],
+    "eyes": [
+     {
+      "t": 0,
+      "ease": "io",
+      "dy": 0,
+      "sx": 1,
+      "sy": 1
+     },
+     {
+      "t": 1.2,
+      "ease": "io",
+      "dy": -10,
+      "sx": 1.2,
+      "sy": 1.2
+     },
+     {
+      "t": 1.4,
+      "ease": "io",
+      "dy": -10
+     },
+     {
+      "t": 1.55,
+      "ease": "io",
+      "dy": 2,
+      "sx": 1,
+      "sy": 1
+     },
+     {
+      "t": 1.9,
+      "ease": "io",
+      "dy": 0
+     }
+    ],
+    "arm": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0.0
+     },
+     {
+      "t": 0.5,
+      "ease": "io",
+      "rot": 0.0
+     },
+     {
+      "t": 1.2,
+      "ease": "io",
+      "rot": -16.5
+     },
+     {
+      "t": 1.4,
+      "ease": "out",
+      "rot": 36.0
+     },
+     {
+      "t": 1.7,
+      "ease": "io",
+      "rot": 30.0
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "rot": 0.0
+     }
+    ],
+    "held": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0.0
+     },
+     {
+      "t": 0,
+      "ease": "step",
+      "op": 1
+     },
+     {
+      "t": 0.5,
+      "ease": "io",
+      "rot": 0.0
+     },
+     {
+      "t": 1.2,
+      "ease": "io",
+      "rot": -16.5
+     },
+     {
+      "t": 1.4,
+      "ease": "out",
+      "rot": 36.0
+     },
+     {
+      "t": 1.41,
+      "ease": "step",
+      "op": 0
+     },
+     {
+      "t": 1.7,
+      "ease": "io",
+      "rot": 30.0
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "rot": 0.0
+     },
+     {
+      "t": 2.4,
+      "ease": "step",
+      "op": 1
+     }
+    ],
+    "arm_back": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0.0
+     },
+     {
+      "t": 1.2,
+      "ease": "io",
+      "rot": -10.5
+     },
+     {
+      "t": 1.4,
+      "ease": "io",
+      "rot": 6.0
+     },
+     {
+      "t": 2.0,
+      "ease": "io",
+      "rot": 0.0
+     }
+    ]
+   },
+   "events": [
+    {
+     "t": 1.4,
+     "type": "spawn",
+     "projectile": "dynamite",
+     "part": "held",
+     "point": [
+      216,
+      236
+     ]
+    }
+   ],
+   "basedOn": "puffer"
+  },
+  "moray": {
+   "duration": 3.0,
+   "tracks": {
+    "body": [
+     {
+      "t": 0,
+      "ease": "io",
+      "sx": 1,
+      "sy": 1
+     },
+     {
+      "t": 0.5,
+      "ease": "io",
+      "sx": 1,
+      "sy": 1
+     },
+     {
+      "t": 1.2,
+      "ease": "io",
+      "sx": 1.12,
+      "sy": 1.12
+     },
+     {
+      "t": 1.4,
+      "ease": "io",
+      "sx": 1.12,
+      "sy": 1.12
+     },
+     {
+      "t": 1.55,
+      "ease": "out",
+      "sx": 0.96,
+      "sy": 0.96
+     },
+     {
+      "t": 1.9,
+      "ease": "io",
+      "sx": 1,
+      "sy": 1
+     }
+    ],
+    "head": [
+     {
+      "t": 0,
+      "ease": "io",
+      "dy": 0
+     },
+     {
+      "t": 1.2,
+      "ease": "io",
+      "dy": -10
+     },
+     {
+      "t": 1.4,
+      "ease": "io",
+      "dy": -10
+     },
+     {
+      "t": 1.55,
+      "ease": "io",
+      "dy": 2
+     },
+     {
+      "t": 1.9,
+      "ease": "io",
+      "dy": 0
+     }
+    ],
+    "eyes": [
+     {
+      "t": 0,
+      "ease": "io",
+      "dy": 0,
+      "sx": 1,
+      "sy": 1
+     },
+     {
+      "t": 1.2,
+      "ease": "io",
+      "dy": -10,
+      "sx": 1.2,
+      "sy": 1.2
+     },
+     {
+      "t": 1.4,
+      "ease": "io",
+      "dy": -10
+     },
+     {
+      "t": 1.55,
+      "ease": "io",
+      "dy": 2,
+      "sx": 1,
+      "sy": 1
+     },
+     {
+      "t": 1.9,
+      "ease": "io",
+      "dy": 0
+     }
+    ],
+    "arm": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0.0
+     },
+     {
+      "t": 0.5,
+      "ease": "io",
+      "rot": 0.0
+     },
+     {
+      "t": 1.2,
+      "ease": "io",
+      "rot": -16.5
+     },
+     {
+      "t": 1.4,
+      "ease": "out",
+      "rot": 36.0
+     },
+     {
+      "t": 1.7,
+      "ease": "io",
+      "rot": 30.0
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "rot": 0.0
+     }
+    ]
+   },
+   "events": [
+    {
+     "t": 1.4,
+     "type": "spawn",
+     "projectile": "dynamite",
+     "part": "arm",
+     "point": [
+      180,
+      164
+     ]
+    }
+   ],
+   "basedOn": "puffer"
+  },
+  "kraki": {
+   "duration": 3.0,
+   "tracks": {
+    "head": [
+     {
+      "t": 0,
+      "ease": "io",
+      "dy": 0
+     },
+     {
+      "t": 1.2,
+      "ease": "io",
+      "dy": -10
+     },
+     {
+      "t": 1.4,
+      "ease": "io",
+      "dy": -10
+     },
+     {
+      "t": 1.55,
+      "ease": "io",
+      "dy": 2
+     },
+     {
+      "t": 1.9,
+      "ease": "io",
+      "dy": 0
+     }
+    ],
+    "eyes": [
+     {
+      "t": 0,
+      "ease": "io",
+      "dy": 0,
+      "sx": 1,
+      "sy": 1
+     },
+     {
+      "t": 1.2,
+      "ease": "io",
+      "dy": -10,
+      "sx": 1.2,
+      "sy": 1.2
+     },
+     {
+      "t": 1.4,
+      "ease": "io",
+      "dy": -10
+     },
+     {
+      "t": 1.55,
+      "ease": "io",
+      "dy": 2,
+      "sx": 1,
+      "sy": 1
+     },
+     {
+      "t": 1.9,
+      "ease": "io",
+      "dy": 0
+     }
+    ],
+    "arm": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0.0
+     },
+     {
+      "t": 0.5,
+      "ease": "io",
+      "rot": 0.0
+     },
+     {
+      "t": 1.2,
+      "ease": "io",
+      "rot": -16.5
+     },
+     {
+      "t": 1.4,
+      "ease": "out",
+      "rot": 36.0
+     },
+     {
+      "t": 1.7,
+      "ease": "io",
+      "rot": 30.0
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "rot": 0.0
+     }
+    ],
+    "arm_back": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0.0
+     },
+     {
+      "t": 1.2,
+      "ease": "io",
+      "rot": -10.5
+     },
+     {
+      "t": 1.4,
+      "ease": "io",
+      "rot": 6.0
+     },
+     {
+      "t": 2.0,
+      "ease": "io",
+      "rot": 0.0
+     }
+    ],
+    "fx": [
+     {
+      "t": 0,
+      "ease": "step",
+      "op": 0
+     },
+     {
+      "t": 0.8,
+      "ease": "step",
+      "op": 1
+     },
+     {
+      "t": 1.4,
+      "ease": "step",
+      "op": 0
+     }
+    ]
+   },
+   "events": [
+    {
+     "t": 1.4,
+     "type": "spawn",
+     "projectile": "dynamite",
+     "part": "arm",
+     "point": [
+      196,
+      168
+     ]
+    }
+   ],
+   "basedOn": "puffer"
+  },
+  "polly": {
+   "duration": 3.0,
+   "tracks": {
+    "root": [
+     {
+      "t": 0,
+      "ease": "io",
+      "dy": 0,
+      "sy": 1
+     },
+     {
+      "t": 0.5,
+      "ease": "io",
+      "dy": 0
+     },
+     {
+      "t": 0.7,
+      "ease": "io",
+      "dy": 6,
+      "sy": 0.94
+     },
+     {
+      "t": 1.05,
+      "ease": "out",
+      "dy": -48,
+      "sy": 1.04
+     },
+     {
+      "t": 1.5,
+      "ease": "io",
+      "dy": -54,
+      "sy": 1
+     },
+     {
+      "t": 2.0,
+      "ease": "io",
+      "dy": -18
+     },
+     {
+      "t": 2.4,
+      "ease": "in",
+      "dy": 0
+     }
+    ],
+    "arm_back": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0.0
+     },
+     {
+      "t": 0.7,
+      "ease": "io",
+      "rot": 0.0
+     },
+     {
+      "t": 0.85,
+      "ease": "io",
+      "rot": -19.5
+     },
+     {
+      "t": 1.0,
+      "ease": "io",
+      "rot": 7.5
+     },
+     {
+      "t": 1.15,
+      "ease": "io",
+      "rot": -19.5
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "rot": 7.5
+     },
+     {
+      "t": 1.45,
+      "ease": "io",
+      "rot": -19.5
+     },
+     {
+      "t": 1.6,
+      "ease": "io",
+      "rot": 7.5
+     },
+     {
+      "t": 1.75,
+      "ease": "io",
+      "rot": -15.0
+     },
+     {
+      "t": 2.0,
+      "ease": "io",
+      "rot": 3.0
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "rot": 0.0
+     }
+    ],
+    "back": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0
+     },
+     {
+      "t": 0.7,
+      "ease": "io",
+      "rot": 0
+     },
+     {
+      "t": 1.05,
+      "ease": "io",
+      "rot": -10
+     },
+     {
+      "t": 1.5,
+      "ease": "io",
+      "rot": 6
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "rot": 0
+     }
+    ],
+    "arm": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0.0
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "rot": -9.0
+     },
+     {
+      "t": 1.45,
+      "ease": "out",
+      "rot": 16.5
+     },
+     {
+      "t": 1.8,
+      "ease": "io",
+      "rot": 10.5
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "rot": 0.0
+     }
+    ],
+    "held": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0.0
+     },
+     {
+      "t": 0,
+      "ease": "step",
+      "op": 1
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "rot": -9.0
+     },
+     {
+      "t": 1.45,
+      "ease": "io",
+      "rot": 0.0
+     },
+     {
+      "t": 1.46,
+      "ease": "step",
+      "op": 0
+     },
+     {
+      "t": 2.4,
+      "ease": "step",
+      "op": 1
+     }
+    ],
+    "legs": [
+     {
+      "t": 0,
+      "ease": "io",
+      "dy": 0
+     },
+     {
+      "t": 0.9,
+      "ease": "io",
+      "dy": 0
+     },
+     {
+      "t": 1.1,
+      "ease": "io",
+      "dy": -4
+     },
+     {
+      "t": 2.2,
+      "ease": "io",
+      "dy": 0
+     }
+    ]
+   },
+   "events": [
+    {
+     "t": 1.45,
+     "type": "spawn",
+     "projectile": "bomb_drop",
+     "part": "held",
+     "point": [
+      216,
+      140
+     ]
+    }
+   ],
+   "basedOn": "gull"
+  },
+  "pelly": {
+   "duration": 3.0,
+   "tracks": {
+    "root": [
+     {
+      "t": 0,
+      "ease": "io",
+      "dy": 0,
+      "sy": 1
+     },
+     {
+      "t": 0.5,
+      "ease": "io",
+      "dy": 0
+     },
+     {
+      "t": 0.7,
+      "ease": "io",
+      "dy": 6,
+      "sy": 0.94
+     },
+     {
+      "t": 1.05,
+      "ease": "out",
+      "dy": -48,
+      "sy": 1.04
+     },
+     {
+      "t": 1.5,
+      "ease": "io",
+      "dy": -54,
+      "sy": 1
+     },
+     {
+      "t": 2.0,
+      "ease": "io",
+      "dy": -18
+     },
+     {
+      "t": 2.4,
+      "ease": "in",
+      "dy": 0
+     }
+    ],
+    "arm_back": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0.0
+     },
+     {
+      "t": 0.7,
+      "ease": "io",
+      "rot": 0.0
+     },
+     {
+      "t": 0.85,
+      "ease": "io",
+      "rot": -19.5
+     },
+     {
+      "t": 1.0,
+      "ease": "io",
+      "rot": 7.5
+     },
+     {
+      "t": 1.15,
+      "ease": "io",
+      "rot": -19.5
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "rot": 7.5
+     },
+     {
+      "t": 1.45,
+      "ease": "io",
+      "rot": -19.5
+     },
+     {
+      "t": 1.6,
+      "ease": "io",
+      "rot": 7.5
+     },
+     {
+      "t": 1.75,
+      "ease": "io",
+      "rot": -15.0
+     },
+     {
+      "t": 2.0,
+      "ease": "io",
+      "rot": 3.0
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "rot": 0.0
+     }
+    ],
+    "arm": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0.0
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "rot": -9.0
+     },
+     {
+      "t": 1.45,
+      "ease": "out",
+      "rot": 16.5
+     },
+     {
+      "t": 1.8,
+      "ease": "io",
+      "rot": 10.5
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "rot": 0.0
+     }
+    ],
+    "held": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0.0
+     },
+     {
+      "t": 0,
+      "ease": "step",
+      "op": 1
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "rot": -9.0
+     },
+     {
+      "t": 1.45,
+      "ease": "io",
+      "rot": 0.0
+     },
+     {
+      "t": 1.46,
+      "ease": "step",
+      "op": 0
+     },
+     {
+      "t": 2.4,
+      "ease": "step",
+      "op": 1
+     }
+    ],
+    "legs": [
+     {
+      "t": 0,
+      "ease": "io",
+      "dy": 0
+     },
+     {
+      "t": 0.9,
+      "ease": "io",
+      "dy": 0
+     },
+     {
+      "t": 1.1,
+      "ease": "io",
+      "dy": -4
+     },
+     {
+      "t": 2.2,
+      "ease": "io",
+      "dy": 0
+     }
+    ]
+   },
+   "events": [
+    {
+     "t": 1.45,
+     "type": "spawn",
+     "projectile": "bomb_drop",
+     "part": "held",
+     "point": [
+      170,
+      182
+     ]
+    }
+   ],
+   "basedOn": "gull"
+  },
+  "alba": {
+   "duration": 3.0,
+   "tracks": {
+    "root": [
+     {
+      "t": 0,
+      "ease": "io",
+      "dy": 0,
+      "sy": 1
+     },
+     {
+      "t": 0.5,
+      "ease": "io",
+      "dy": 0
+     },
+     {
+      "t": 0.7,
+      "ease": "io",
+      "dy": 6,
+      "sy": 0.94
+     },
+     {
+      "t": 1.05,
+      "ease": "out",
+      "dy": -48,
+      "sy": 1.04
+     },
+     {
+      "t": 1.5,
+      "ease": "io",
+      "dy": -54,
+      "sy": 1
+     },
+     {
+      "t": 2.0,
+      "ease": "io",
+      "dy": -18
+     },
+     {
+      "t": 2.4,
+      "ease": "in",
+      "dy": 0
+     }
+    ],
+    "arm_back": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0.0
+     },
+     {
+      "t": 0.7,
+      "ease": "io",
+      "rot": 0.0
+     },
+     {
+      "t": 0.85,
+      "ease": "io",
+      "rot": -19.5
+     },
+     {
+      "t": 1.0,
+      "ease": "io",
+      "rot": 7.5
+     },
+     {
+      "t": 1.15,
+      "ease": "io",
+      "rot": -19.5
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "rot": 7.5
+     },
+     {
+      "t": 1.45,
+      "ease": "io",
+      "rot": -19.5
+     },
+     {
+      "t": 1.6,
+      "ease": "io",
+      "rot": 7.5
+     },
+     {
+      "t": 1.75,
+      "ease": "io",
+      "rot": -15.0
+     },
+     {
+      "t": 2.0,
+      "ease": "io",
+      "rot": 3.0
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "rot": 0.0
+     }
+    ],
+    "arm": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0.0
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "rot": -9.0
+     },
+     {
+      "t": 1.45,
+      "ease": "out",
+      "rot": 16.5
+     },
+     {
+      "t": 1.8,
+      "ease": "io",
+      "rot": 10.5
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "rot": 0.0
+     }
+    ],
+    "legs": [
+     {
+      "t": 0,
+      "ease": "io",
+      "dy": 0
+     },
+     {
+      "t": 0.9,
+      "ease": "io",
+      "dy": 0
+     },
+     {
+      "t": 1.1,
+      "ease": "io",
+      "dy": -4
+     },
+     {
+      "t": 2.2,
+      "ease": "io",
+      "dy": 0
+     }
+    ]
+   },
+   "events": [
+    {
+     "t": 1.45,
+     "type": "spawn",
+     "projectile": "bomb_drop",
+     "part": "arm",
+     "point": [
+      120,
+      264
+     ]
+    }
+   ],
+   "basedOn": "gull"
+  },
+  "manta": {
+   "duration": 3.0,
+   "tracks": {
+    "root": [
+     {
+      "t": 0,
+      "ease": "io",
+      "dy": 0,
+      "sy": 1
+     },
+     {
+      "t": 0.5,
+      "ease": "io",
+      "dy": 0
+     },
+     {
+      "t": 0.7,
+      "ease": "io",
+      "dy": 6,
+      "sy": 0.94
+     },
+     {
+      "t": 1.05,
+      "ease": "out",
+      "dy": -48,
+      "sy": 1.04
+     },
+     {
+      "t": 1.5,
+      "ease": "io",
+      "dy": -54,
+      "sy": 1
+     },
+     {
+      "t": 2.0,
+      "ease": "io",
+      "dy": -18
+     },
+     {
+      "t": 2.4,
+      "ease": "in",
+      "dy": 0
+     }
+    ],
+    "arm_back": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0.0
+     },
+     {
+      "t": 0.7,
+      "ease": "io",
+      "rot": 0.0
+     },
+     {
+      "t": 0.85,
+      "ease": "io",
+      "rot": -19.5
+     },
+     {
+      "t": 1.0,
+      "ease": "io",
+      "rot": 7.5
+     },
+     {
+      "t": 1.15,
+      "ease": "io",
+      "rot": -19.5
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "rot": 7.5
+     },
+     {
+      "t": 1.45,
+      "ease": "io",
+      "rot": -19.5
+     },
+     {
+      "t": 1.6,
+      "ease": "io",
+      "rot": 7.5
+     },
+     {
+      "t": 1.75,
+      "ease": "io",
+      "rot": -15.0
+     },
+     {
+      "t": 2.0,
+      "ease": "io",
+      "rot": 3.0
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "rot": 0.0
+     }
+    ],
+    "arm": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0.0
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "rot": -9.0
+     },
+     {
+      "t": 1.45,
+      "ease": "out",
+      "rot": 16.5
+     },
+     {
+      "t": 1.8,
+      "ease": "io",
+      "rot": 10.5
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "rot": 0.0
+     }
+    ],
+    "legs": [
+     {
+      "t": 0,
+      "ease": "io",
+      "dy": 0
+     },
+     {
+      "t": 0.9,
+      "ease": "io",
+      "dy": 0
+     },
+     {
+      "t": 1.1,
+      "ease": "io",
+      "dy": -4
+     },
+     {
+      "t": 2.2,
+      "ease": "io",
+      "dy": 0
+     }
+    ],
+    "fx": [
+     {
+      "t": 0,
+      "ease": "step",
+      "op": 0
+     },
+     {
+      "t": 0.9,
+      "ease": "step",
+      "op": 1
+     },
+     {
+      "t": 1.6,
+      "ease": "step",
+      "op": 0
+     }
+    ]
+   },
+   "events": [
+    {
+     "t": 1.45,
+     "type": "spawn",
+     "projectile": "bomb_drop",
+     "part": "arm",
+     "point": [
+      120,
+      94
+     ]
+    }
+   ],
+   "basedOn": "gull"
+  },
+  "crabby": {
+   "duration": 3.0,
+   "tracks": {
+    "root": [
+     {
+      "t": 0,
+      "ease": "io",
+      "dx": 0
+     },
+     {
+      "t": 0.5,
+      "ease": "io",
+      "dx": 0
+     },
+     {
+      "t": 1.2,
+      "ease": "io",
+      "dx": -8,
+      "sy": 1.02
+     },
+     {
+      "t": 1.4,
+      "ease": "out",
+      "dx": 60,
+      "sy": 0.98
+     },
+     {
+      "t": 1.8,
+      "ease": "io",
+      "dx": 56,
+      "sy": 1
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "dx": 0
+     }
+    ],
+    "arm": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0.0
+     },
+     {
+      "t": 0.5,
+      "ease": "io",
+      "rot": 0.0
+     },
+     {
+      "t": 1.2,
+      "ease": "io",
+      "rot": -105.0
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "rot": -109.5
+     },
+     {
+      "t": 1.42,
+      "ease": "out",
+      "rot": 9.0
+     },
+     {
+      "t": 1.8,
+      "ease": "io",
+      "rot": 6.0
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "rot": 0.0
+     }
+    ],
+    "arm_back": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0.0
+     },
+     {
+      "t": 1.2,
+      "ease": "io",
+      "rot": 16.5
+     },
+     {
+      "t": 1.42,
+      "ease": "io",
+      "rot": -7.5
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "rot": 0.0
+     }
+    ],
+    "back": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0
+     },
+     {
+      "t": 1.2,
+      "ease": "io",
+      "rot": -6
+     },
+     {
+      "t": 1.42,
+      "ease": "io",
+      "rot": 8
+     },
+     {
+      "t": 2.2,
+      "ease": "io",
+      "rot": 0
+     }
+    ]
+   },
+   "events": [
+    {
+     "t": 1.42,
+     "type": "slash",
+     "point": [
+      216,
+      154
+     ],
+     "part": "arm"
+    },
+    {
+     "t": 1.42,
+     "type": "shake",
+     "amp": 3,
+     "dur": 0.15
+    }
+   ],
+   "basedOn": "shark"
+  },
+  "king": {
+   "duration": 3.0,
+   "tracks": {
+    "root": [
+     {
+      "t": 0,
+      "ease": "io",
+      "dx": 0
+     },
+     {
+      "t": 0.5,
+      "ease": "io",
+      "dx": 0
+     },
+     {
+      "t": 1.2,
+      "ease": "io",
+      "dx": -8,
+      "sy": 1.02
+     },
+     {
+      "t": 1.4,
+      "ease": "out",
+      "dx": 60,
+      "sy": 0.98
+     },
+     {
+      "t": 1.8,
+      "ease": "io",
+      "dx": 56,
+      "sy": 1
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "dx": 0
+     }
+    ],
+    "arm": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0.0
+     },
+     {
+      "t": 0.5,
+      "ease": "io",
+      "rot": 0.0
+     },
+     {
+      "t": 1.2,
+      "ease": "io",
+      "rot": -105.0
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "rot": -109.5
+     },
+     {
+      "t": 1.42,
+      "ease": "out",
+      "rot": 9.0
+     },
+     {
+      "t": 1.8,
+      "ease": "io",
+      "rot": 6.0
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "rot": 0.0
+     }
+    ],
+    "arm_back": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0.0
+     },
+     {
+      "t": 1.2,
+      "ease": "io",
+      "rot": 16.5
+     },
+     {
+      "t": 1.42,
+      "ease": "io",
+      "rot": -7.5
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "rot": 0.0
+     }
+    ],
+    "head": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0
+     },
+     {
+      "t": 1.2,
+      "ease": "io",
+      "rot": -6
+     },
+     {
+      "t": 1.42,
+      "ease": "io",
+      "rot": 8
+     },
+     {
+      "t": 2.2,
+      "ease": "io",
+      "rot": 0
+     }
+    ]
+   },
+   "events": [
+    {
+     "t": 1.42,
+     "type": "slash",
+     "point": [
+      190,
+      214
+     ],
+     "part": "held"
+    },
+    {
+     "t": 1.42,
+     "type": "shake",
+     "amp": 3,
+     "dur": 0.15
+    }
+   ],
+   "basedOn": "shark"
+  },
+  "lob": {
+   "duration": 3.0,
+   "tracks": {
+    "root": [
+     {
+      "t": 0,
+      "ease": "io",
+      "dx": 0
+     },
+     {
+      "t": 0.5,
+      "ease": "io",
+      "dx": 0
+     },
+     {
+      "t": 1.2,
+      "ease": "io",
+      "dx": -8,
+      "sy": 1.02
+     },
+     {
+      "t": 1.4,
+      "ease": "out",
+      "dx": 60,
+      "sy": 0.98
+     },
+     {
+      "t": 1.8,
+      "ease": "io",
+      "dx": 56,
+      "sy": 1
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "dx": 0
+     }
+    ],
+    "arm": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0.0
+     },
+     {
+      "t": 0.5,
+      "ease": "io",
+      "rot": 0.0
+     },
+     {
+      "t": 1.2,
+      "ease": "io",
+      "rot": -105.0
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "rot": -109.5
+     },
+     {
+      "t": 1.42,
+      "ease": "out",
+      "rot": 9.0
+     },
+     {
+      "t": 1.8,
+      "ease": "io",
+      "rot": 6.0
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "rot": 0.0
+     }
+    ],
+    "arm_back": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0.0
+     },
+     {
+      "t": 1.2,
+      "ease": "io",
+      "rot": 16.5
+     },
+     {
+      "t": 1.42,
+      "ease": "io",
+      "rot": -7.5
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "rot": 0.0
+     }
+    ],
+    "head": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0
+     },
+     {
+      "t": 1.2,
+      "ease": "io",
+      "rot": -6
+     },
+     {
+      "t": 1.42,
+      "ease": "io",
+      "rot": 8
+     },
+     {
+      "t": 2.2,
+      "ease": "io",
+      "rot": 0
+     }
+    ],
+    "back": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0
+     },
+     {
+      "t": 1.2,
+      "ease": "io",
+      "rot": -6
+     },
+     {
+      "t": 1.42,
+      "ease": "io",
+      "rot": 8
+     },
+     {
+      "t": 2.2,
+      "ease": "io",
+      "rot": 0
+     }
+    ],
+    "fx": [
+     {
+      "t": 0,
+      "ease": "step",
+      "op": 0
+     },
+     {
+      "t": 1.38,
+      "ease": "step",
+      "op": 1
+     },
+     {
+      "t": 1.6,
+      "ease": "step",
+      "op": 0
+     }
+    ]
+   },
+   "events": [
+    {
+     "t": 1.42,
+     "type": "slash",
+     "point": [
+      210,
+      124
+     ],
+     "part": "arm"
+    },
+    {
+     "t": 1.42,
+     "type": "shake",
+     "amp": 3,
+     "dur": 0.15
+    }
+   ],
+   "basedOn": "shark"
+  },
+  "davy": {
+   "duration": 3.0,
+   "tracks": {
+    "root": [
+     {
+      "t": 0,
+      "ease": "io",
+      "dx": 0
+     },
+     {
+      "t": 0.5,
+      "ease": "io",
+      "dx": 0
+     },
+     {
+      "t": 1.2,
+      "ease": "io",
+      "dx": -8,
+      "sy": 1.02
+     },
+     {
+      "t": 1.4,
+      "ease": "out",
+      "dx": 60,
+      "sy": 0.98
+     },
+     {
+      "t": 1.8,
+      "ease": "io",
+      "dx": 56,
+      "sy": 1
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "dx": 0
+     }
+    ],
+    "arm": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0.0
+     },
+     {
+      "t": 0.5,
+      "ease": "io",
+      "rot": 0.0
+     },
+     {
+      "t": 1.2,
+      "ease": "io",
+      "rot": -105.0
+     },
+     {
+      "t": 1.3,
+      "ease": "io",
+      "rot": -109.5
+     },
+     {
+      "t": 1.42,
+      "ease": "out",
+      "rot": 9.0
+     },
+     {
+      "t": 1.8,
+      "ease": "io",
+      "rot": 6.0
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "rot": 0.0
+     }
+    ],
+    "arm_back": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0.0
+     },
+     {
+      "t": 1.2,
+      "ease": "io",
+      "rot": 16.5
+     },
+     {
+      "t": 1.42,
+      "ease": "io",
+      "rot": -7.5
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "rot": 0.0
+     }
+    ],
+    "head": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0
+     },
+     {
+      "t": 1.2,
+      "ease": "io",
+      "rot": -6
+     },
+     {
+      "t": 1.42,
+      "ease": "io",
+      "rot": 8
+     },
+     {
+      "t": 2.2,
+      "ease": "io",
+      "rot": 0
+     }
+    ],
+    "back": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0
+     },
+     {
+      "t": 1.2,
+      "ease": "io",
+      "rot": -6
+     },
+     {
+      "t": 1.42,
+      "ease": "io",
+      "rot": 8
+     },
+     {
+      "t": 2.2,
+      "ease": "io",
+      "rot": 0
+     }
+    ],
+    "fx": [
+     {
+      "t": 0,
+      "ease": "step",
+      "op": 0
+     },
+     {
+      "t": 1.38,
+      "ease": "step",
+      "op": 1
+     },
+     {
+      "t": 1.6,
+      "ease": "step",
+      "op": 0
+     }
+    ]
+   },
+   "events": [
+    {
+     "t": 1.42,
+     "type": "slash",
+     "point": [
+      214,
+      160
+     ],
+     "part": "arm"
+    },
+    {
+     "t": 1.42,
+     "type": "shake",
+     "amp": 3,
+     "dur": 0.15
+    }
+   ],
+   "basedOn": "shark"
+  },
+  "pumpum": {
+   "duration": 3.0,
+   "tracks": {
+    "root": [
+     {
+      "t": 0,
+      "ease": "io",
+      "dy": 0,
+      "sy": 1
+     },
+     {
+      "t": 1.1,
+      "ease": "io",
+      "dy": 0,
+      "sy": 1.02
+     },
+     {
+      "t": 1.35,
+      "ease": "out",
+      "dy": 2,
+      "sy": 0.96
+     },
+     {
+      "t": 1.7,
+      "ease": "io",
+      "dy": 0,
+      "sy": 1
+     }
+    ],
+    "arm": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0.0
+     },
+     {
+      "t": 0.5,
+      "ease": "io",
+      "rot": 0.0
+     },
+     {
+      "t": 1.1,
+      "ease": "io",
+      "rot": -31.5
+     },
+     {
+      "t": 1.35,
+      "ease": "out",
+      "rot": 43.5
+     },
+     {
+      "t": 1.7,
+      "ease": "io",
+      "rot": 37.5
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "rot": 0.0
+     }
+    ],
+    "arm_back": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0.0
+     },
+     {
+      "t": 1.1,
+      "ease": "io",
+      "rot": -7.5
+     },
+     {
+      "t": 1.35,
+      "ease": "io",
+      "rot": 4.5
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "rot": 0.0
+     }
+    ],
+    "head": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0
+     },
+     {
+      "t": 1.1,
+      "ease": "io",
+      "rot": -5
+     },
+     {
+      "t": 1.35,
+      "ease": "io",
+      "rot": 6
+     },
+     {
+      "t": 2.2,
+      "ease": "io",
+      "rot": 0
+     }
+    ],
+    "fx": [
+     {
+      "t": 0,
+      "ease": "step",
+      "op": 0
+     },
+     {
+      "t": 1.35,
+      "ease": "step",
+      "op": 1
+     },
+     {
+      "t": 1.7,
+      "ease": "step",
+      "op": 0
+     }
+    ]
+   },
+   "events": [
+    {
+     "t": 1.35,
+     "type": "repair",
+     "part": "held",
+     "point": [
+      120,
+      124
+     ],
+     "amount": 12
+    },
+    {
+     "t": 1.35,
+     "type": "shake",
+     "amp": 2,
+     "dur": 0.1
+    }
+   ],
+   "basedOn": "turtle"
+  },
+  "cook": {
+   "duration": 3.0,
+   "tracks": {
+    "root": [
+     {
+      "t": 0,
+      "ease": "io",
+      "dy": 0,
+      "sy": 1
+     },
+     {
+      "t": 1.1,
+      "ease": "io",
+      "dy": 0,
+      "sy": 1.02
+     },
+     {
+      "t": 1.35,
+      "ease": "out",
+      "dy": 2,
+      "sy": 0.96
+     },
+     {
+      "t": 1.7,
+      "ease": "io",
+      "dy": 0,
+      "sy": 1
+     }
+    ],
+    "arm": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0.0
+     },
+     {
+      "t": 0.5,
+      "ease": "io",
+      "rot": 0.0
+     },
+     {
+      "t": 1.1,
+      "ease": "io",
+      "rot": -31.5
+     },
+     {
+      "t": 1.35,
+      "ease": "out",
+      "rot": 43.5
+     },
+     {
+      "t": 1.7,
+      "ease": "io",
+      "rot": 37.5
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "rot": 0.0
+     }
+    ],
+    "head": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0
+     },
+     {
+      "t": 1.1,
+      "ease": "io",
+      "rot": -5
+     },
+     {
+      "t": 1.35,
+      "ease": "io",
+      "rot": 6
+     },
+     {
+      "t": 2.2,
+      "ease": "io",
+      "rot": 0
+     }
+    ],
+    "fx": [
+     {
+      "t": 0,
+      "ease": "step",
+      "op": 0
+     },
+     {
+      "t": 1.35,
+      "ease": "step",
+      "op": 1
+     },
+     {
+      "t": 1.7,
+      "ease": "step",
+      "op": 0
+     }
+    ]
+   },
+   "events": [
+    {
+     "t": 1.35,
+     "type": "repair",
+     "part": "held",
+     "point": [
+      204,
+      128
+     ],
+     "amount": 12
+    },
+    {
+     "t": 1.35,
+     "type": "shake",
+     "amp": 2,
+     "dur": 0.1
+    }
+   ],
+   "basedOn": "turtle"
+  },
+  "corey": {
+   "duration": 3.0,
+   "tracks": {
+    "root": [
+     {
+      "t": 0,
+      "ease": "io",
+      "dy": 0,
+      "sy": 1
+     },
+     {
+      "t": 1.1,
+      "ease": "io",
+      "dy": 0,
+      "sy": 1.02
+     },
+     {
+      "t": 1.35,
+      "ease": "out",
+      "dy": 2,
+      "sy": 0.96
+     },
+     {
+      "t": 1.7,
+      "ease": "io",
+      "dy": 0,
+      "sy": 1
+     }
+    ],
+    "arm": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0.0
+     },
+     {
+      "t": 0.5,
+      "ease": "io",
+      "rot": 0.0
+     },
+     {
+      "t": 1.1,
+      "ease": "io",
+      "rot": -31.5
+     },
+     {
+      "t": 1.35,
+      "ease": "out",
+      "rot": 43.5
+     },
+     {
+      "t": 1.7,
+      "ease": "io",
+      "rot": 37.5
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "rot": 0.0
+     }
+    ],
+    "arm_back": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0.0
+     },
+     {
+      "t": 1.1,
+      "ease": "io",
+      "rot": -7.5
+     },
+     {
+      "t": 1.35,
+      "ease": "io",
+      "rot": 4.5
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "rot": 0.0
+     }
+    ]
+   },
+   "events": [
+    {
+     "t": 1.35,
+     "type": "repair",
+     "part": "arm",
+     "point": [
+      182,
+      264
+     ],
+     "amount": 12
+    },
+    {
+     "t": 1.35,
+     "type": "shake",
+     "amp": 2,
+     "dur": 0.1
+    }
+   ],
+   "basedOn": "turtle"
+  },
+  "lamp": {
+   "duration": 3.0,
+   "tracks": {
+    "root": [
+     {
+      "t": 0,
+      "ease": "io",
+      "dy": 0,
+      "sy": 1
+     },
+     {
+      "t": 1.1,
+      "ease": "io",
+      "dy": 0,
+      "sy": 1.02
+     },
+     {
+      "t": 1.35,
+      "ease": "out",
+      "dy": 2,
+      "sy": 0.96
+     },
+     {
+      "t": 1.7,
+      "ease": "io",
+      "dy": 0,
+      "sy": 1
+     }
+    ],
+    "arm": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0.0
+     },
+     {
+      "t": 0.5,
+      "ease": "io",
+      "rot": 0.0
+     },
+     {
+      "t": 1.1,
+      "ease": "io",
+      "rot": -31.5
+     },
+     {
+      "t": 1.35,
+      "ease": "out",
+      "rot": 43.5
+     },
+     {
+      "t": 1.7,
+      "ease": "io",
+      "rot": 37.5
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "rot": 0.0
+     }
+    ],
+    "arm_back": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0.0
+     },
+     {
+      "t": 1.1,
+      "ease": "io",
+      "rot": -7.5
+     },
+     {
+      "t": 1.35,
+      "ease": "io",
+      "rot": 4.5
+     },
+     {
+      "t": 2.4,
+      "ease": "io",
+      "rot": 0.0
+     }
+    ],
+    "head": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 0
+     },
+     {
+      "t": 1.1,
+      "ease": "io",
+      "rot": -5
+     },
+     {
+      "t": 1.35,
+      "ease": "io",
+      "rot": 6
+     },
+     {
+      "t": 2.2,
+      "ease": "io",
+      "rot": 0
+     }
+    ],
+    "fx": [
+     {
+      "t": 0,
+      "ease": "step",
+      "op": 0
+     },
+     {
+      "t": 1.35,
+      "ease": "step",
+      "op": 1
+     },
+     {
+      "t": 1.7,
+      "ease": "step",
+      "op": 0
+     }
+    ]
+   },
+   "events": [
+    {
+     "t": 1.35,
+     "type": "repair",
+     "part": "arm",
+     "point": [
+      170,
+      94
+     ],
+     "amount": 12
+    },
+    {
+     "t": 1.35,
+     "type": "shake",
+     "amp": 2,
+     "dur": 0.1
+    }
+   ],
+   "basedOn": "turtle"
   }
  },
  "hit": {
@@ -1804,440 +6998,447 @@
     1,
     0
    ]
+  }
+ },
+ "roster": [
+  {
+   "num": 1,
+   "k": "octo",
+   "name": "문어 폭탄병 옥토",
+   "en": "Octo the Bomber",
+   "species": "octopus",
+   "family": "lob",
+   "rarity": "common"
   },
-  "bomb_v2": {
-   "note": "11단계 폭탄 명중. 모든 값은 명중 후 경과 시간(te) 기준. 스프라이트는 fx/impact/",
-   "hitStop": 0.07,
-   "layers": [
-    {
-     "id": "flash",
-     "sprite": "flash.svg",
-     "t": [
-      0,
-      0.17
-     ],
-     "scale": [
-      0.5,
-      1.17
-     ],
-     "op": [
-      0.9,
-      0
-     ],
-     "note": "히트스톱 동안 최대 밝기"
-    },
-    {
-     "id": "burst",
-     "sprite": "burst.svg",
-     "t": [
-      0.07,
-      0.29
-     ],
-     "scale": [
-      0.2,
-      1.35
-     ],
-     "op": [
-      1,
-      0
-     ]
-    },
-    {
-     "id": "fireball",
-     "sprite": "puff_0..6.svg",
-     "count": 12,
-     "life": 1.0,
-     "grow": 0.2,
-     "radius": [
-      14,
-      25
-     ],
-     "spread": [
-      6,
-      36
-     ],
-     "rise": [
-      30,
-      60
-     ],
-     "colorSteps": "puff_0(흰) → 1 → 2 → 3 → 4 → 5 → 6(연기). 바깥 불덩이일수록 1.3배 빨리 진행",
-     "outline": "puff_0~5는 외곽선 포함. 모든 불덩이의 외곽선을 먼저, 색을 그 위에 그려 하나의 덩어리로 보이게"
-    },
-    {
-     "id": "shockwave",
-     "sprite": "shockwave.svg",
-     "t": [
-      0.07,
-      0.42
-     ],
-     "radius": [
-      18,
-      150
-     ],
-     "op": [
-      1,
-      0
-     ]
-    },
-    {
-     "id": "sparks",
-     "sprite": "spark.svg",
-     "count": 26,
-     "speed": [
-      260,
-      560
-     ],
-     "gravity": 760,
-     "life": [
-      0.3,
-      0.6
-     ],
-     "note": "진행 방향으로 회전"
-    },
-    {
-     "id": "debris",
-     "sprite": "debris_0..5.svg + debris_plank.svg",
-     "count": 14,
-     "speed": [
-      180,
-      560
-     ],
-     "gravity": 1100,
-     "spin": [
-      -700,
-      700
-     ],
-     "onWater": "splash_small.svg 0.5초 후 제거"
-    },
-    {
-     "id": "hole",
-     "sprite": "hole_burnt.svg + scorch.svg + cracks.svg",
-     "t": [
-      0.07,
-      "계속"
-     ],
-     "note": "칸 가운데에 배 좌표로 붙임(배와 같이 흔들림)"
-    },
-    {
-     "id": "flames",
-     "sprite": "flame.svg",
-     "count": 3,
-     "t": [
-      0.27,
-      "계속"
-     ],
-     "flicker": "세로 0.85~1.05, 17rad/s"
-    },
-    {
-     "id": "smoke",
-     "sprite": "smoke.svg",
-     "start": 0.42,
-     "every": 0.14,
-     "count": 12,
-     "rise": 46,
-     "radius": [
-      8,
-      26
-     ]
-    },
-    {
-     "id": "embers",
-     "sprite": "ember.svg",
-     "count": 14,
-     "rise": [
-      30,
-      60
-     ],
-     "life": [
-      1.2,
-      2.1
-     ]
-    },
-    {
-     "id": "number",
-     "style": "Black Han Sans 34, 채움 #fff2c8, 외곽선 #14161c 6 + #b3302b 12",
-     "pop": [
-      0,
-      1.55,
-      1
-     ],
-     "popSec": [
-      0.08,
-      0.2
-     ],
-     "fade": [
-      1.1,
-      1.45
-     ],
-     "label": "블록 파괴! BLOCK BROKEN (#ffd24a 13)"
-    },
-    {
-     "id": "crew",
-     "hit": "hit 클립 + 흰 번쩍 0.07초 + dizzy_star 3개 머리 위 궤도 1.4초"
-    }
-   ],
-   "camera": {
-    "shake": 9,
-    "shakeDecay": 6,
-    "punch": 0.07,
-    "punchDecay": 7,
-    "note": "흔들림 = 9·e^(-6t), 줌 = 1 - 0.07·e^(-7t)"
+  {
+   "num": 2,
+   "k": "starry",
+   "name": "불가사리 불꽃병 스타리",
+   "en": "Starry the Flamer",
+   "species": "starfish",
+   "family": "lob",
+   "rarity": "common"
+  },
+  {
+   "num": 3,
+   "k": "crabs",
+   "name": "꽃게 형제",
+   "en": "Crab Brothers",
+   "species": "crab",
+   "family": "lob",
+   "rarity": "rare"
+  },
+  {
+   "num": 4,
+   "k": "uni",
+   "name": "성게 폭탄 우니",
+   "en": "Uni the Urchin",
+   "species": "urchin",
+   "family": "lob",
+   "rarity": "hero"
+  },
+  {
+   "num": 5,
+   "k": "volke",
+   "name": "화산 소라게 볼케",
+   "en": "Volke the Volcano",
+   "species": "hermit_crab",
+   "family": "lob",
+   "rarity": "legend"
+  },
+  {
+   "num": 6,
+   "k": "pang",
+   "name": "딱총새우 팡",
+   "en": "Pang the Pistol Shrimp",
+   "species": "pistol_shrimp",
+   "family": "direct",
+   "rarity": "common"
+  },
+  {
+   "num": 7,
+   "k": "hippo",
+   "name": "해마 쌍권총 히포",
+   "en": "Hippo the Gunslinger",
+   "species": "seahorse",
+   "family": "direct",
+   "rarity": "common"
+  },
+  {
+   "num": 8,
+   "k": "bones",
+   "name": "해골 저격수 본즈",
+   "en": "Bones the Marksman",
+   "species": "skeleton",
+   "family": "direct",
+   "rarity": "rare"
+  },
+  {
+   "num": 9,
+   "k": "lion",
+   "name": "쏠배감펭 가시포 라이언",
+   "en": "Lion the Spinegunner",
+   "species": "lionfish",
+   "family": "direct",
+   "rarity": "hero"
+  },
+  {
+   "num": 10,
+   "k": "volt",
+   "name": "전기뱀장어 볼트",
+   "en": "Volt the Eel",
+   "species": "electric_eel",
+   "family": "direct",
+   "rarity": "legend"
+  },
+  {
+   "num": 11,
+   "k": "sword",
+   "name": "황새치 작살꾼 핀",
+   "en": "Finn the Harpooner",
+   "species": "swordfish",
+   "family": "pierce",
+   "rarity": "common"
+  },
+  {
+   "num": 12,
+   "k": "nar",
+   "name": "일각고래 나르",
+   "en": "Nar the Narwhal",
+   "species": "narwhal",
+   "family": "pierce",
+   "rarity": "rare"
+  },
+  {
+   "num": 13,
+   "k": "walrus",
+   "name": "바다코끼리 닻잡이 왈러스",
+   "en": "Walrus the Anchor",
+   "species": "walrus",
+   "family": "pierce",
+   "rarity": "rare"
+  },
+  {
+   "num": 14,
+   "k": "saw",
+   "name": "톱상어 소오",
+   "en": "Saw the Sawshark",
+   "species": "sawshark",
+   "family": "pierce",
+   "rarity": "hero"
+  },
+  {
+   "num": 15,
+   "k": "moby",
+   "name": "향유고래 모비",
+   "en": "Moby the Sperm Whale",
+   "species": "sperm_whale",
+   "family": "pierce",
+   "rarity": "legend"
+  },
+  {
+   "num": 16,
+   "k": "otter",
+   "name": "해달 돌팔매 수리",
+   "en": "Suri the Slinger",
+   "species": "otter",
+   "family": "skip",
+   "rarity": "common"
+  },
+  {
+   "num": 17,
+   "k": "pingu",
+   "name": "펭귄 배썰매 핑구",
+   "en": "Pingu the Slider",
+   "species": "penguin",
+   "family": "skip",
+   "rarity": "rare"
+  },
+  {
+   "num": 18,
+   "k": "sheldon",
+   "name": "투구게 셀던",
+   "en": "Sheldon the Horseshoe Crab",
+   "species": "horseshoe_crab",
+   "family": "skip",
+   "rarity": "rare"
+  },
+  {
+   "num": 19,
+   "k": "dolphy",
+   "name": "돌고래 서퍼 돌피",
+   "en": "Dolphy the Surfer",
+   "species": "dolphin",
+   "family": "skip",
+   "rarity": "hero"
+  },
+  {
+   "num": 20,
+   "k": "orca",
+   "name": "범고래 해일 오르카",
+   "en": "Orca the Tidebringer",
+   "species": "orca",
+   "family": "skip",
+   "rarity": "legend"
+  },
+  {
+   "num": 21,
+   "k": "puffer",
+   "name": "복어 자폭병 퍼피",
+   "en": "Puffy the Blaster",
+   "species": "pufferfish",
+   "family": "underwater",
+   "rarity": "common"
+  },
+  {
+   "num": 22,
+   "k": "jelly",
+   "name": "해파리 기뢰 젤리",
+   "en": "Jelly the Mine Layer",
+   "species": "jellyfish",
+   "family": "underwater",
+   "rarity": "rare"
+  },
+  {
+   "num": 23,
+   "k": "bara",
+   "name": "바라쿠다 어뢰 바라",
+   "en": "Bara the Torpedo",
+   "species": "barracuda",
+   "family": "underwater",
+   "rarity": "rare"
+  },
+  {
+   "num": 24,
+   "k": "moray",
+   "name": "곰치 모레이",
+   "en": "Moray the Biter",
+   "species": "moray_eel",
+   "family": "underwater",
+   "rarity": "hero"
+  },
+  {
+   "num": 25,
+   "k": "kraki",
+   "name": "아기 크라켄 크라키",
+   "en": "Kraki the Baby Kraken",
+   "species": "kraken",
+   "family": "underwater",
+   "rarity": "legend"
+  },
+  {
+   "num": 26,
+   "k": "polly",
+   "name": "앵무새 폴리",
+   "en": "Polly the Parrot",
+   "species": "parrot",
+   "family": "air",
+   "rarity": "common"
+  },
+  {
+   "num": 27,
+   "k": "gull",
+   "name": "갈매기 폭격수 윙",
+   "en": "Wing the Bombardier",
+   "species": "seagull",
+   "family": "air",
+   "rarity": "common"
+  },
+  {
+   "num": 28,
+   "k": "pelly",
+   "name": "펠리컨 수송대 펠리",
+   "en": "Pelly the Pelican",
+   "species": "pelican",
+   "family": "air",
+   "rarity": "rare"
+  },
+  {
+   "num": 29,
+   "k": "alba",
+   "name": "알바트로스 알바",
+   "en": "Alba the Albatross",
+   "species": "albatross",
+   "family": "air",
+   "rarity": "hero"
+  },
+  {
+   "num": 30,
+   "k": "manta",
+   "name": "폭풍 가오리 만타",
+   "en": "Manta the Stormray",
+   "species": "manta_ray",
+   "family": "air",
+   "rarity": "legend"
+  },
+  {
+   "num": 31,
+   "k": "shark",
+   "name": "상어 난동꾼 샤키",
+   "en": "Sharky the Brawler",
+   "species": "shark",
+   "family": "boarding",
+   "rarity": "common"
+  },
+  {
+   "num": 32,
+   "k": "crabby",
+   "name": "농게 로프 크래비",
+   "en": "Crabby the Roper",
+   "species": "fiddler_crab",
+   "family": "boarding",
+   "rarity": "rare"
+  },
+  {
+   "num": 33,
+   "k": "king",
+   "name": "대게 방패병 킹",
+   "en": "King the Shieldcrab",
+   "species": "snow_crab",
+   "family": "boarding",
+   "rarity": "rare"
+  },
+  {
+   "num": 34,
+   "k": "lob",
+   "name": "바닷가재 쌍집게 랍",
+   "en": "Lob the Lobster",
+   "species": "lobster",
+   "family": "boarding",
+   "rarity": "hero"
+  },
+  {
+   "num": 35,
+   "k": "davy",
+   "name": "해골 선장 데비",
+   "en": "Davy the Skeleton Captain",
+   "species": "skeleton",
+   "family": "boarding",
+   "rarity": "legend"
+  },
+  {
+   "num": 36,
+   "k": "turtle",
+   "name": "거북 목수 톡",
+   "en": "Tok the Shipwright",
+   "species": "turtle",
+   "family": "support",
+   "rarity": "common"
+  },
+  {
+   "num": 37,
+   "k": "pumpum",
+   "name": "아기고래 뿜뿜",
+   "en": "Pumpum the Baby Whale",
+   "species": "baby_whale",
+   "family": "support",
+   "rarity": "common"
+  },
+  {
+   "num": 38,
+   "k": "cook",
+   "name": "소라게 요리사 쿡",
+   "en": "Cook the Hermit Chef",
+   "species": "hermit_crab",
+   "family": "support",
+   "rarity": "rare"
+  },
+  {
+   "num": 39,
+   "k": "corey",
+   "name": "산호 골렘 코리",
+   "en": "Corey the Coral Golem",
+   "species": "coral",
+   "family": "support",
+   "rarity": "hero"
+  },
+  {
+   "num": 40,
+   "k": "lamp",
+   "name": "아귀 항해사 램프",
+   "en": "Lamp the Navigator",
+   "species": "anglerfish",
+   "family": "support",
+   "rarity": "legend"
+  }
+ ],
+ "rarityFx": {
+  "note": "등급별 전투 연출. 게임 수치는 바꾸지 않고 색·입자만 추가. tools/rarity_fx.js, tools/flame/pb_rarity.dart 와 같은 값",
+  "tiers": {
+   "common": {
+    "color": null,
+    "hi": null,
+    "aura": 0,
+    "motes": 0,
+    "glint": 0,
+    "aim": "#fff2dc",
+    "trail": "smoke",
+    "ring": 0,
+    "shards": 0,
+    "shake": 1.0,
+    "glow": 0
    },
-   "shipRock": {
-    "deg": 2.2,
-    "decay": 2.5,
-    "freq": 9,
-    "dy": 5,
-    "note": "맞은 반대쪽으로 기울며 감쇠 진동"
+   "rare": {
+    "color": "#58a6ff",
+    "hi": "#cfe6ff",
+    "aura": 1,
+    "motes": 0,
+    "glint": 1,
+    "aim": "#9fd0ff",
+    "trail": "dots",
+    "ring": 1,
+    "shards": 0,
+    "shake": 1.0,
+    "glow": 0
+   },
+   "hero": {
+    "color": "#c07bff",
+    "hi": "#f2d6ff",
+    "aura": 1,
+    "motes": 3,
+    "glint": 1,
+    "aim": "#d9a8ff",
+    "trail": "ribbon",
+    "ring": 1,
+    "shards": 6,
+    "shake": 1.08,
+    "glow": 4
+   },
+   "legend": {
+    "color": "#ffc83a",
+    "hi": "#fff6c8",
+    "aura": 2,
+    "motes": 5,
+    "glint": 2,
+    "aim": "#ffd84a",
+    "trail": "ribbon+stars",
+    "ring": 2,
+    "shards": 10,
+    "shake": 1.15,
+    "glow": 6
    }
   },
-  "collapse": {
-   "note": "12단계 블록 붕괴. tc = 붕괴 시작 후 경과 시간(= 마지막 받침이 부서진 명중 후 0.3초). 스프라이트는 fx/collapse/",
-   "input": "덩어리 경계 box, 기우는 축 pivot(바깥쪽 아래 모서리), 방향 dir(-1 왼쪽/1 오른쪽), 떨어져 나갈 모서리 칸 목록, 수면 y",
-   "creak": {
-    "when": "명중 후 0.07~0.3초",
-    "deg": 1.5,
-    "hz": 70
-   },
-   "tip": {
-    "deg": 95,
-    "sec": 0.8,
-    "formula": "각도 = dir·95·(tc/0.8)², 0.8초 뒤에는 같은 각속도 유지"
-   },
-   "slide": {
-    "vx": 110,
-    "ax": 170,
-    "g": 760,
-    "delay": 0.12,
-    "formula": "축 x = x0 + dir·(110·tc + 170·tc²), 축 y = y0 + 760·max(0, tc-0.12)²"
-   },
-   "waterEntry": "네 모서리 중 가장 낮은 점이 수면+4px에 닿는 순간(미리 계산)",
-   "sink": {
-    "damp": 2.5,
-    "speed": 50,
-    "extraDeg": 15
-   },
-   "loose": {
-    "detachAt": [
-     0.45,
-     0.55
-    ],
-    "kick": [
-     -70,
-     -130
-    ],
-    "spin": 520,
-    "gravity": 1100,
-    "note": "떨어져 나갈 때 덩어리의 속도를 이어받음"
-   },
-   "dust": {
-    "sprite": "dust.svg",
-    "count": 9,
-    "life": 0.7,
-    "note": "이음새를 따라 퍼짐"
-   },
-   "brokenEdge": {
-    "sprite": "broken_edge.svg",
-    "note": "덩어리가 떨어진 갑판 윗면에 남김"
-   },
-   "splash": {
-    "sprite": "water_spike.svg ×9, water_drop.svg ×24, foam_ring.svg ×2, mist.svg ×5",
-    "height": 130,
-    "dur": 1.1
-   },
-   "bubbles": {
-    "sprite": "bubble.svg",
-    "count": 10,
-    "from": 0.3,
-    "life": 1.4,
-    "total": 3.2
-   },
-   "camera": {
-    "amp": 12,
-    "decay": 5,
-    "pan": "붕괴 중 화면 중심을 입수 지점 쪽으로 25% 이동"
-   },
-   "shipRock": {
-    "deg": 2.0,
-    "decay": 2,
-    "freq": 6,
-    "dy": 4,
-    "note": "무게가 빠진 배가 반대쪽으로 튐"
-   },
-   "text": [
-    "성루 붕괴! TOWER COLLAPSED (붕괴 0.75초 뒤)",
-    "선원 이탈! CREW OVERBOARD (입수 0.15초 뒤, 덩어리에 선원이 있을 때)"
-   ],
-   "detectionSuggestion": "연출용 제안: 칸이 부서질 때마다 용골(맨 아래 줄)에서 4방향 연결을 채워 보고, 연결되지 않은 칸 묶음을 덩어리 하나로 넘김. 규칙 확정은 게임 설계서에서."
+  "fields": {
+   "aura": "0 없음, 1 발밑 고리, 2 고리+회전 점선+빛기둥",
+   "motes": "발밑에서 떠오르는 반짝임 수",
+   "glint": "발사 순간 손끝 반짝 크기 단계",
+   "aim": "조준 점선 색",
+   "trail": "발사체 꼬리 모양",
+   "ring": "명중 시 등급색 고리 수",
+   "shards": "명중 시 별 조각 수",
+   "shake": "화면 흔들림 배율",
+   "glow": "캐릭터 외곽 빛 반경(1x px)"
   },
-  "kinds": {
-   "note": "14단계 공격 방식별 명중. 구현 tools/impact_kinds.js (SPEC 값)",
-   "underwater": {
-    "glow": "수중 주황 섬광 0.3초",
-    "bulge": "수면 불룩 0.4초, 높이 34",
-    "column": {
-     "spikes": 7,
-     "height": 190,
-     "dur": 1.3,
-     "drops": 18
-    },
-    "breach": "흘수선 아래 파공 + 물 들어오는 흐름선 + 거품(계속)",
-    "shipLift": {
-     "dy": -9,
-     "decay": 3
-    },
-    "camera": {
-     "shake": 7,
-     "punch": 0.05
-    },
-    "text": "-피해 + 침수 +N% FLOOD (파란 숫자)"
-   },
-   "pierce": {
-    "secondCellDelay": 0.06,
-    "chips": [
-     10,
-     7
-    ],
-    "stuckHarpoon": {
-     "wobbleDeg": 6,
-     "hz": 38,
-     "decay": 5
-    },
-    "camera": {
-     "shake": 5
-    },
-    "text": "칸마다 숫자, 둘째에 관통 ×2 PIERCE"
-   },
-   "direct": {
-    "burst": 0.16,
-    "sparks": 14,
-    "chips": 6,
-    "hole": "r5 + 금 4줄",
-    "camera": {
-     "shake": 3
-    }
-   },
-   "skip": {
-    "dustRing": 0.45,
-    "cracks": "거미줄 8줄 0.12초에 퍼짐",
-    "chips": 8,
-    "stoneDrops": true,
-    "camera": {
-     "shake": 6,
-     "punch": 0.03
-    },
-    "text": "쿵! THUD"
-   }
-  },
-  "bomb_v3": {
-   "note": "폭탄 명중 v3 (bomb_v2를 대체). 구현 tools/impact_fx.js",
-   "hitStop": 0.07,
-   "impactFrame": "히트스톱 동안 흰(#ffffff) 가시 별, 외곽선 5px, 1.25배",
-   "burst": {
-    "dur": 0.14,
-    "scale": [
-     1.25,
-     1.7
-    ],
-    "note": "주황 가시 별로 바뀌며 커지고 사라짐",
-    "colors": [
-     "#e8203a",
-     "#fff27a"
-    ]
-   },
-   "fireball": {
-    "puffs": 16,
-    "radius": 46,
-    "life": 1.25,
-    "expandTau": 0.035,
-    "breakAt": 0.35,
-    "rise": 70,
-    "spread": 60,
-    "layers": "외곽선(r+4) → 바깥색(r) → 중간색(0.74r, 위왼쪽 0.12·0.16r) → 안쪽색(0.46r, 0.2·0.28r) → 심지(0.24r). 모든 불덩이를 층별로 한꺼번에 그려 하나의 덩어리로 보이게",
-    "palette": [
-     [
-      "~12%",
-      "#e8203a",
-      "#ffb000",
-      "#fff27a",
-      "#ffffff"
-     ],
-     [
-      "~30%",
-      "#b0102e",
-      "#ff6a00",
-      "#ffd23a",
-      "#fff6c8"
-     ],
-     [
-      "~44%",
-      "#7a0f2a",
-      "#d83a1a",
-      "#ff9a2a",
-      "#ffe07a"
-     ],
-     [
-      "~58%",
-      "#231c28",
-      "#3a2a33",
-      "#ff5a1a (아래로 이동하며 줄어듦)"
-     ],
-     [
-      "~100%",
-      "#18141e",
-      "#2c2632",
-      "#7a2a1a"
-     ]
-    ],
-    "sprites": "fx/impact/fireball_0~4_*.svg (한 불덩이의 층 모양 참고)"
-   },
-   "pops": [
-    {
-     "t": 0.16,
-     "offset": [
-      52,
-      -34
-     ],
-     "radius": 21
-    },
-    {
-     "t": 0.26,
-     "offset": [
-      -46,
-      24
-     ],
-     "radius": 18
-    }
-   ],
-   "hullLight": {
-    "radius": 230,
-    "dur": 0.6,
-    "blend": "screen",
-    "color": "#fff6d0 → #ff4a2a → 투명"
-   },
-   "shock": {
-    "dur": 0.3,
-    "r": [
-     24,
-     190
-    ]
-   },
-   "smoke": {
-    "start": 0.6,
-    "every": 0.16,
-    "count": 10
-   },
-   "rest": "불꽃·파편·구멍·잔불·불씨·배 반동·카메라·피해 숫자·선원 반응은 bomb_v2와 같음",
-   "final": {
-    "palette": "B 고대비 진홍 Crimson",
-    "scale": 1.0,
-    "reason": "주황(A)은 노을 배경·갈색 선체에 묻힘. 흰·노랑 심지 + 진홍 테두리 + 더 어두운 연기로 대비 확보. 크게(1.35)는 옆 선실 선원을 가림"
-   },
-   "smokeColumn": {
-    "fill": "#3a3440",
-    "highlight": "#565060"
-   },
-   "alternatives": "tools/impact_fx.js PALETTES: A 주황, C 화약 흰 연기, D 만화 원색 — make({pal, scale})로 바꿔 볼 수 있음"
+  "families": {
+   "common": "모든 계열: aura, glow, glint(발사/시전 순간), impact 고리·별 조각, shake 배율, 전설 화면 번쩍",
+   "lob": "trail(폭탄, 일반은 연기) + 곡선 조준 점선 aim 색",
+   "air": "trail(떨어뜨리는 폭탄) — 투척과 같은 규칙",
+   "direct": "accent: 총알 섬광선 색 + trail(noSmoke) + 직선 조준선 aim 색",
+   "pierce": "accent: 작살 밧줄 빛 + trail(noSmoke) + 두 칸 impact(두 번째 +0.06초)",
+   "skip": "trail(noSmoke) + 튕길 때마다 bounce",
+   "underwater": "물 위 trail(noSmoke), 물속 trail(water) + 입수 지점 bounce",
+   "boarding": "발사체 없음 → slash(베기 궤적) + 명중 impact",
+   "support": "명중 없음 → repair(공용 초록 수리 + 등급 고리·반짝임)"
   }
  }
 }

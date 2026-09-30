@@ -100,6 +100,8 @@ void _check() {
             .listSync(recursive: true)
             .whereType<File>()
             .map((f) => f.path.replaceAll(r'\', '/').substring(4))
+            // 글꼴은 pubspec 의 `fonts:` 로 따로 선언한다.
+            .where((f) => !f.startsWith('assets/fonts/'))
       : const <String>[];
   final errors = compareAssetDirs(
     pubspecAssetDirs(File(pubspecPath).readAsStringSync()),

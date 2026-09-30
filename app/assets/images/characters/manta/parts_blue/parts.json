@@ -1,0 +1,123 @@
+{
+  "id": "manta",
+  "team": "blue",
+  "scale": 2,
+  "canvas": [
+    480.0,
+    648.0
+  ],
+  "anchor": [
+    240,
+    630
+  ],
+  "parts": [
+    {
+      "id": "shadow",
+      "anim": "shadow",
+      "z": 0,
+      "file": "shadow.png",
+      "offset": [
+        120,
+        616
+      ],
+      "size": [
+        240,
+        28
+      ],
+      "pivot": [
+        120.0,
+        14.0
+      ]
+    },
+    {
+      "id": "fx",
+      "anim": "fx",
+      "z": 1,
+      "file": "fx.png",
+      "offset": [
+        141,
+        106
+      ],
+      "size": [
+        201,
+        154
+      ],
+      "pivot": [
+        99.0,
+        62.0
+      ]
+    },
+    {
+      "id": "legs",
+      "anim": "body",
+      "z": 2,
+      "file": "legs.png",
+      "offset": [
+        174,
+        513
+      ],
+      "size": [
+        128,
+        114
+      ],
+      "pivot": [
+        66.0,
+        117.0
+      ]
+    },
+    {
+      "id": "body",
+      "anim": "body",
+      "z": 3,
+      "file": "body.png",
+      "offset": [
+        43,
+        303
+      ],
+      "size": [
+        394,
+        238
+      ],
+      "pivot": [
+        197.0,
+        125.0
+      ]
+    },
+    {
+      "id": "head",
+      "anim": "head",
+      "z": 4,
+      "file": "head.png",
+      "offset": [
+        167,
+        253
+      ],
+      "size": [
+        146,
+        171
+      ],
+      "pivot": [
+        73.0,
+        115.0
+      ]
+    },
+    {
+      "id": "eyes",
+      "anim": "eyes",
+      "z": 5,
+      "file": "eyes.png",
+      "offset": [
+        192,
+        345
+      ],
+      "size": [
+        96,
+        38
+      ],
+      "pivot": [
+        48.0,
+        19.0
+      ]
+    }
+  ]
+}
