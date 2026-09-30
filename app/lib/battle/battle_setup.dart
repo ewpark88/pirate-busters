@@ -23,6 +23,7 @@ abstract final class BattleSetup {
       CabinCell(6, 2),
       CabinCell(8, 2),
     ],
+    modules: const [ModuleCell(11, 1, ModuleKind.captain)],
   );
 
   /// 임시 해적 4종. 코스트 합계 12 (일반 4명, 한도 15).

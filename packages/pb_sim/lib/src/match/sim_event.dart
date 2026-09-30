@@ -58,6 +58,9 @@ enum SimEventKind {
 
   /// 예약된 턴 효과가 터짐(설치탄 폭발·투하·다시 물기). [SimEvent.value] = 효과 종류.
   effectFired,
+
+  /// 모듈이 붙은 블록이 부서졌다 (설계서 §3.3). value = 모듈 종류 index.
+  moduleDestroyed,
 }
 
 /// 턴이 끝난 이유. 순서는 이벤트 값으로 쓰인다.

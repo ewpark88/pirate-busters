@@ -201,7 +201,8 @@ void main() {
 
     test('누르고 있을 때의 이동 끝 지점은 시뮬레이션의 이동 거리와 같다', () {
       final s = _humanFirst()..update(100);
-      s.state.sides[0].fuel = 10 * SideState.fuelUnit; // 2.5칸
+      final me = s.state.sides[0];
+      me.fuel = me.fuelPerCell * 5 ~/ 2; // 2.5칸 (무게 연료 반영, 설계서 §2.7)
       expect(s.reach(80), 2500);
       expect(s.reach(-3), -300);
     });

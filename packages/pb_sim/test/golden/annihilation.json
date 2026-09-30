@@ -4,10 +4,10 @@
   "outcome": "annihilation",
   "winner": 0,
   "turns": 3,
-  "hash": "4decc254"
+  "hash": "348b3e74"
  },
  "replay": {
-  "version": 5,
+  "version": 6,
   "seed": 11,
   "rules": {
    "maxTurns": 30,
@@ -244,6 +244,13 @@
       8,
       2
      ]
+    ],
+    "modules": [
+     [
+      11,
+      1,
+      "captain"
+     ]
     ]
    },
    {
@@ -452,6 +459,13 @@
       8,
       2
      ]
+    ],
+    "modules": [
+     [
+      11,
+      1,
+      "captain"
+     ]
     ]
    }
   ],
@@ -493,7 +507,7 @@
       "power": 10000
      }
     ],
-    "hash": "e7832cd3"
+    "hash": "b46dfd8b"
    },
    {
     "turn": 2,
@@ -504,7 +518,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "41c9ad30"
+    "hash": "f5461490"
    },
    {
     "turn": 3,
@@ -525,7 +539,7 @@
       "power": 10000
      }
     ],
-    "hash": "4decc254"
+    "hash": "348b3e74"
    }
   ]
  }

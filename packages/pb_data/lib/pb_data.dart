@@ -3,6 +3,7 @@
 library;
 
 export 'src/ammo_ladder.dart';
+export 'src/blueprint_preset.dart';
 export 'src/game_data.dart';
 export 'src/json_reader.dart';
 export 'src/pirate_def.dart';

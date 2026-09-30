@@ -1,6 +1,6 @@
 import 'package:pb_sim/pb_sim.dart';
 
-/// 테스트용 슬루프 설계도 (비용 57/60). 선실은 2층(y = 2)에 4개.
+/// 테스트용 슬루프 설계도 (비용 57/60). 선실은 2층(y = 2)에 4개, 선장실은 (11, 1).
 Blueprint sampleBlueprint() => Blueprint(
   HullSpec.sloop,
   [
@@ -13,6 +13,7 @@ Blueprint sampleBlueprint() => Blueprint(
     for (var x = 4; x < 8; x++) BlockCell(x, 3, BlockMaterial.net),
   ],
   cabins: sampleCabins,
+  modules: const [ModuleCell(11, 1, ModuleKind.captain)],
 );
 
 const List<CabinCell> sampleCabins = [

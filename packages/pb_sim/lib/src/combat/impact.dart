@@ -1,3 +1,4 @@
+import 'package:pb_sim/src/combat/module_effects.dart';
 import 'package:pb_sim/src/match/match_state.dart';
 import 'package:pb_sim/src/match/sim_event.dart';
 import 'package:pb_sim/src/math/fx.dart';
@@ -63,6 +64,8 @@ void resolveImpact(
   for (final i in collapseUnsupported(grid)) {
     events.add(SimEvent(SimEventKind.blockCollapsed, side: side, cell: i));
   }
+  // 부서진 모듈의 효과(유폭·돛대 붕괴)는 해적 피해보다 먼저 (설계서 §3.3).
+  settleModules(target, events);
 
   final crew = target.crew;
   for (var slot = 0; slot < crew.size; slot++) {

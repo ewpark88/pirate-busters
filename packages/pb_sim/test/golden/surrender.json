@@ -4,10 +4,10 @@
   "outcome": "surrender",
   "winner": 1,
   "turns": 4,
-  "hash": "3282c13c"
+  "hash": "0ed5b97c"
  },
  "replay": {
-  "version": 5,
+  "version": 6,
   "seed": 6,
   "rules": {
    "maxTurns": 30,
@@ -244,6 +244,13 @@
       8,
       2
      ]
+    ],
+    "modules": [
+     [
+      11,
+      1,
+      "captain"
+     ]
     ]
    },
    {
@@ -452,6 +459,13 @@
       8,
       2
      ]
+    ],
+    "modules": [
+     [
+      11,
+      1,
+      "captain"
+     ]
     ]
    }
   ],
@@ -482,7 +496,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "f98073fa"
+    "hash": "c261709a"
    },
    {
     "turn": 2,
@@ -498,7 +512,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "6a09aeb6"
+    "hash": "85c5f0c1"
    },
    {
     "turn": 3,
@@ -509,7 +523,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "a58d49d1"
+    "hash": "842c0bae"
    },
    {
     "turn": 4,
@@ -520,7 +534,7 @@
       "type": "SURRENDER"
      }
     ],
-    "hash": "3282c13c"
+    "hash": "0ed5b97c"
    }
   ]
  }

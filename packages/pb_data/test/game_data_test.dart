@@ -205,4 +205,73 @@ void main() {
       expect(cappedBlastRadius(3), 2);
     });
   });
+
+  group('추천 설계도 blueprints.json (설계서 §3.4)', () {
+    List<BlueprintPreset> load() => parsePresets(
+      jsonDecode(File('$_gameDir/blueprints.json').readAsStringSync()),
+    );
+
+    test('밸런스·철갑·고속 3종이 건조 규칙(포인트·용골·선실·선장실·모듈 한도)을 지킨다', () {
+      final presets = load();
+      expect([for (final p in presets) p.id], ['balanced', 'armored', 'fast']);
+      for (final p in presets) {
+        final b = p.blueprint;
+        expect(b.cost, lessThanOrEqualTo(b.hull.buildPoints), reason: p.id);
+        expect(
+          b.modules.where((m) => m.kind == ModuleKind.captain),
+          hasLength(1),
+        );
+      }
+    });
+
+    test('철갑은 가장 무겁고, 고속은 가장 가볍고 연료통으로 탱크가 크다', () {
+      final byId = {for (final p in load()) p.id: p.blueprint};
+      int weight(Blueprint b) =>
+          b.cells.fold(0, (s, c) => s + c.material.weight);
+      expect(weight(byId['armored']!), greaterThan(weight(byId['balanced']!)));
+      expect(weight(byId['fast']!), lessThan(weight(byId['balanced']!)));
+      expect(
+        byId['fast']!.modules.where((m) => m.kind == ModuleKind.fuelTank),
+        hasLength(2),
+      );
+    });
+
+    test('설계도 이름·설명 키가 한국어·영어 ARB 에 모두 있다 (설계서 §14.5)', () {
+      final keys = [for (final p in load()) ...p.textKeys];
+      for (final lang in ['ko', 'en']) {
+        final arb =
+            jsonDecode(File('$_l10nDir/app_$lang.arb').readAsStringSync())
+                as Map<String, Object?>;
+        expect(keys.where((k) => !arb.containsKey(k)), isEmpty, reason: lang);
+      }
+    });
+
+    test('규칙을 어긴 설계도(선장실 없음)는 데이터 오류로 거부한다', () {
+      expect(
+        () => parsePresets({
+          'presets': [
+            {
+              'id': 'x',
+              'nameKey': 'n',
+              'descKey': 'd',
+              'blueprint': {
+                'hull': 'sloop',
+                'cells': [
+                  for (var x = 0; x < 12; x++) [x, 0, 'oak'],
+                ],
+                'cabins': [
+                  [0, 0],
+                  [1, 0],
+                  [2, 0],
+                  [3, 0],
+                ],
+                'modules': <Object?>[],
+              },
+            },
+          ],
+        }),
+        throwsA(isA<DataFormatError>()),
+      );
+    });
+  });
 }

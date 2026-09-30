@@ -2,6 +2,7 @@ import 'package:pb_sim/src/combat/ammo_rules.dart';
 import 'package:pb_sim/src/combat/effect_runner.dart';
 import 'package:pb_sim/src/combat/flight.dart';
 import 'package:pb_sim/src/combat/launch.dart';
+import 'package:pb_sim/src/combat/module_effects.dart';
 import 'package:pb_sim/src/combat/volley.dart';
 import 'package:pb_sim/src/command/command.dart';
 import 'package:pb_sim/src/hash/state_hasher.dart';
@@ -15,7 +16,6 @@ import 'package:pb_sim/src/pirate/ammo.dart';
 import 'package:pb_sim/src/pirate/pirate_spec.dart';
 import 'package:pb_sim/src/projectile/projectile.dart';
 import 'package:pb_sim/src/ship/blueprint.dart';
-import 'package:pb_sim/src/ship/flooding.dart';
 import 'package:pb_sim/src/ship/motion.dart';
 
 /// 결정론 턴제 전투 엔진 (설계서 §2.3, §7). 같은 입력이면 같은 결과를 낸다.
@@ -213,7 +213,7 @@ class Match {
       power: c.power,
       ms: ms,
     );
-    side.crew.markFired(c.slot);
+    markFiredWithModules(side, c.slot);
     side.shotsFired++;
     state
       ..firesThisTurn += 1
@@ -261,10 +261,7 @@ class Match {
     final side = state.activeSide;
     final turn = state.turn;
     if (!state.isOver) {
-      final gain = applyFlood(state.sides[side], state.rules, turn);
-      if (gain > 0) {
-        state.events.add(SimEvent(SimEventKind.flood, side: side, value: gain));
-      }
+      endTurnWater(state.sides[side], state.rules, turn, state.events);
       judgeInstant(state);
     }
     state.sides[side].crew.endOwnTurn();

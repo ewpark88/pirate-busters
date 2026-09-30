@@ -163,6 +163,7 @@ void main() {
           CabinCell(6, 0),
           CabinCell(8, 0),
         ],
+        modules: const [ModuleCell(0, 0, ModuleKind.captain)],
       );
       final m = Match.start(
         seed: 2,

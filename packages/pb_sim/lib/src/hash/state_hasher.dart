@@ -75,6 +75,14 @@ int hashMatchState(MatchState state) {
     for (final fired in side.crew.firedThisTurn) {
       h.addInt(fired ? 1 : 0);
     }
+    h.addInt(side.modules.list.length);
+    for (final m in side.modules.list) {
+      h
+        ..addInt(m.kind.index)
+        ..addInt(m.x)
+        ..addInt(m.y)
+        ..addInt(m.intact ? 1 : 0);
+    }
   }
   h.addInt(state.effects.length);
   for (final e in state.effects) {

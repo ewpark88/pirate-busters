@@ -13,6 +13,7 @@ Blueprint _keelOnly() => Blueprint(
     CabinCell(6, 0),
     CabinCell(8, 0),
   ],
+  modules: const [ModuleCell(0, 0, ModuleKind.captain)],
 );
 
 /// [setup] 으로 판 시작 상태를 바꾼 뒤 양쪽이 턴만 넘기며 끝까지 돌린다.

@@ -49,6 +49,7 @@ void main() {
         CabinCell(5, 0),
         CabinCell(6, 0),
       ],
+      modules: const [ModuleCell(3, 0, ModuleKind.captain)],
     );
     expect(b.cost, 10);
     expect(
@@ -79,10 +80,15 @@ void main() {
       for (var x = 0; x < 4; x++) BlockCell(x, 0, BlockMaterial.oak),
     ];
     expect(
-      () => Blueprint(HullSpec.sloop, [
-        ...keel,
-        const BlockCell(8, 2, BlockMaterial.pine),
-      ], cabins: cabins),
+      () => Blueprint(
+        HullSpec.sloop,
+        [
+          ...keel,
+          const BlockCell(8, 2, BlockMaterial.pine),
+        ],
+        cabins: cabins,
+        modules: const [],
+      ),
       throwsArgumentError,
     );
     expect(
@@ -100,54 +106,85 @@ void main() {
           CabinCell(2, 1),
           CabinCell(3, 1),
         ],
+        modules: const [],
       ),
       throwsArgumentError,
     );
     // 대각선은 이어진 것이 아니다.
     expect(
-      () => Blueprint(HullSpec.sloop, [
-        ...keel,
-        const BlockCell(4, 1, BlockMaterial.pine),
-      ], cabins: cabins),
+      () => Blueprint(
+        HullSpec.sloop,
+        [
+          ...keel,
+          const BlockCell(4, 1, BlockMaterial.pine),
+        ],
+        cabins: cabins,
+        modules: const [],
+      ),
       throwsArgumentError,
     );
     expect(
-      Blueprint(HullSpec.sloop, [
-        ...keel,
-        const BlockCell(3, 1, BlockMaterial.pine),
-        const BlockCell(4, 1, BlockMaterial.pine),
-      ], cabins: cabins).cells,
+      Blueprint(
+        HullSpec.sloop,
+        [
+          ...keel,
+          const BlockCell(3, 1, BlockMaterial.pine),
+          const BlockCell(4, 1, BlockMaterial.pine),
+        ],
+        cabins: cabins,
+        modules: const [ModuleCell(4, 1, ModuleKind.captain)],
+      ).cells,
       hasLength(6),
     );
   });
 
   test('격자 밖 블록·같은 칸 중복·건조 포인트 초과는 거부한다', () {
     expect(
-      () => Blueprint(HullSpec.sloop, const [
-        BlockCell(12, 0, BlockMaterial.oak),
-      ], cabins: const []),
+      () => Blueprint(
+        HullSpec.sloop,
+        const [
+          BlockCell(12, 0, BlockMaterial.oak),
+        ],
+        cabins: const [],
+        modules: const [],
+      ),
       throwsArgumentError,
     );
     expect(
-      () => Blueprint(HullSpec.sloop, const [
-        BlockCell(1, 1, BlockMaterial.oak),
-        BlockCell(1, 1, BlockMaterial.pine),
-      ], cabins: const []),
+      () => Blueprint(
+        HullSpec.sloop,
+        const [
+          BlockCell(1, 1, BlockMaterial.oak),
+          BlockCell(1, 1, BlockMaterial.pine),
+        ],
+        cabins: const [],
+        modules: const [],
+      ),
       throwsArgumentError,
     );
     expect(
-      () => Blueprint(HullSpec.sloop, [
-        for (var x = 0; x < 12; x++) BlockCell(x, 0, BlockMaterial.iron),
-        for (var x = 0; x < 4; x++) BlockCell(x, 1, BlockMaterial.iron),
-      ], cabins: const []),
+      () => Blueprint(
+        HullSpec.sloop,
+        [
+          for (var x = 0; x < 12; x++) BlockCell(x, 0, BlockMaterial.iron),
+          for (var x = 0; x < 4; x++) BlockCell(x, 1, BlockMaterial.iron),
+        ],
+        cabins: const [],
+        modules: const [],
+      ),
       throwsArgumentError,
     );
   });
 
   test('선실은 선실 슬롯 수만큼, 블록 위에, 서로 다른 칸에 있어야 한다', () {
-    Blueprint build(List<CabinCell> cabins) => Blueprint(HullSpec.sloop, [
-      for (var x = 0; x < 12; x++) BlockCell(x, 0, BlockMaterial.oak),
-    ], cabins: cabins);
+    Blueprint build(List<CabinCell> cabins) => Blueprint(
+      HullSpec.sloop,
+      [
+        for (var x = 0; x < 12; x++) BlockCell(x, 0, BlockMaterial.oak),
+      ],
+      cabins: cabins,
+      modules: const [ModuleCell(11, 0, ModuleKind.captain)],
+    );
     expect(
       () => build(const [CabinCell(0, 0), CabinCell(1, 0), CabinCell(2, 0)]),
       throwsArgumentError,

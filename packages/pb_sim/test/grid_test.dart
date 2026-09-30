@@ -18,6 +18,7 @@ Blueprint _pillarBlueprint() => Blueprint(
     CabinCell(3, 0),
     CabinCell(4, 0),
   ],
+  modules: const [ModuleCell(0, 0, ModuleKind.captain)],
 );
 
 void main() {

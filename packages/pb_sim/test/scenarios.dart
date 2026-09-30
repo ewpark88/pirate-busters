@@ -59,6 +59,7 @@ Blueprint towerBlueprint() => Blueprint(
     CabinCell(9, 0),
     CabinCell(10, 0),
   ],
+  modules: const [ModuleCell(0, 0, ModuleKind.captain)],
 );
 
 /// 시나리오용 해적: 역할(gun·killer·wrecker·sapper)마다 4명, 오른쪽 기본 r0~r3.

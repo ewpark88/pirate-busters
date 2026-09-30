@@ -6,6 +6,8 @@ import 'package:pb_sim/src/pirate/pirate_spec.dart';
 import 'package:pb_sim/src/projectile/shot_trace.dart';
 import 'package:pb_sim/src/random/xorshift32.dart';
 import 'package:pb_sim/src/ship/blueprint.dart';
+import 'package:pb_sim/src/ship/module.dart';
+import 'package:pb_sim/src/ship/module_state.dart';
 import 'package:pb_sim/src/ship/ship_grid.dart';
 import 'package:pb_sim/src/world/world.dart';
 
@@ -44,8 +46,18 @@ class SideState {
   }) : grid = ShipGrid.fromBlueprint(blueprint),
        cabins = blueprint.cabins,
        crew = Crew(lineup),
-       fuel = blueprint.hull.fuelTank * fuelUnit,
+       modules = ShipModules(blueprint),
+       fuel = _startTank(blueprint),
        waterline = waterlineOf(blueprint, rules);
+
+  static int _startTank(Blueprint blueprint) {
+    var tanks = 0;
+    for (final m in blueprint.modules) {
+      if (m.kind == ModuleKind.fuelTank) tanks++;
+    }
+    return (blueprint.hull.fuelTank + tanks * ModuleNumbers.fuelTankBonus) *
+        fuelUnit;
+  }
 
   /// 연료 1 의 내부 단위. 1/10칸 이동의 연료도 정수로 셈한다.
   static const int fuelUnit = 1000;
@@ -94,6 +106,44 @@ class SideState {
   final List<CabinCell> cabins;
 
   final Crew crew;
+
+  /// 기능 모듈 (설계서 §3.3).
+  final ShipModules modules;
+
+  /// 연료 탱크 상한(×[fuelUnit]): 선형 탱크 + 남은 연료통 × 40 (설계서 §2.7).
+  int get tank =>
+      (grid.hull.fuelTank +
+          modules.intactCount(ModuleKind.fuelTank) *
+              ModuleNumbers.fuelTankBonus) *
+      fuelUnit;
+
+  /// 돛대가 부러졌다: 1칸당 연료 2배, 속도 절반 (BALANCE.md A2.6).
+  bool get mastBroken => modules.anyLost(ModuleKind.mast);
+
+  /// 1칸당 연료(×[fuelUnit]): 선형 소모 × 무게 배율 × 돛대 (설계서 §2.7).
+  int get fuelPerCell {
+    final base = grid.hull.fuelPerCell * fuelUnit * modules.weightPermille;
+    return base ~/ 1000 * (mastBroken ? ModuleNumbers.mastFuelFactor : 1);
+  }
+
+  /// [slot] 해적의 모듈 피해 보너스(%): 그 선실 포문 +10, 화약고가 남아 있으면 +10.
+  int damageBonusPercent(int slot) {
+    final c = cabins[slot];
+    var bonus = 0;
+    if (modules.hasAt(c.x, c.y, ModuleKind.gunPort)) {
+      bonus += ModuleNumbers.gunPortPercent;
+    }
+    if (modules.intactCount(ModuleKind.magazine) > 0) {
+      bonus += ModuleNumbers.magazinePercent;
+    }
+    return bonus;
+  }
+
+  /// [slot] 선실에 망루가 있다: 궤적 표시 50% (설계서 §3.3).
+  bool hasLookout(int slot) {
+    final c = cabins[slot];
+    return modules.hasAt(c.x, c.y, ModuleKind.lookout);
+  }
 
   /// 뱃머리 월드 x.
   int get bowX => startBowX(side) + facingOf(side) * offset;

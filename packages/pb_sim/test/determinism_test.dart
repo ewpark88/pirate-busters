@@ -8,7 +8,7 @@ import 'fixtures.dart';
 
 /// 샘플 매치(시드 20260929, 끝까지)의 기대 해시. 의도한 규칙 변경일 때만 갱신하고
 /// 커밋 메시지에 이유를 적는다 (개발 계획서 §2.4 DoD 2).
-const int _goldenHash = 2525239449;
+const int _goldenHash = 430086788;
 
 int _hash(Match m) => hashMatchState(m.state);
 

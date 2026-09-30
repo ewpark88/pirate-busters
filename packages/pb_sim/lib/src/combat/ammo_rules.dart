@@ -31,14 +31,15 @@ List<Projectile> launchVolley(
   required int power,
   required int ms,
 }) {
-  final spec = state.sides[state.activeSide].crew.pirates[slot].spec;
+  final side = state.sides[state.activeSide];
+  final spec = side.crew.pirates[slot].spec;
   final reach = reachOf(state);
   var aim = angle;
-  var dmgPercent = 100;
+  var dmgPercent = 100 + side.damageBonusPercent(slot);
   if (spec.family == Family.direct) {
-    if (reach == Reach.near) dmgPercent = 120;
+    if (reach == Reach.near) dmgPercent = dmgPercent * 120 ~/ 100;
     if (reach == Reach.far) {
-      dmgPercent = 80;
+      dmgPercent = dmgPercent * 80 ~/ 100;
       aim +=
           state.rng.nextInt(2 * directFarJitterMdeg + 1) - directFarJitterMdeg;
     }

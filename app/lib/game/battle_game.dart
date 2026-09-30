@@ -205,11 +205,12 @@ class BattleGame extends FlameGame {
             SimEventKind.pirateDown ||
             SimEventKind.flood ||
             SimEventKind.stormStart ||
-            // 분열·설치·수리·턴 효과 연출은 M5 앱 단계에서 붙인다.
+            // 분열·설치·수리·턴 효과·모듈 파괴 연출은 M5 앱 단계에서 붙인다.
             SimEventKind.divide ||
             SimEventKind.mineAttached ||
             SimEventKind.repaired ||
-            SimEventKind.effectFired:
+            SimEventKind.effectFired ||
+            SimEventKind.moduleDestroyed:
           break;
       }
     }

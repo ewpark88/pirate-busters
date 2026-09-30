@@ -83,5 +83,11 @@
   "pirate_p31_lore": "적 배에 뛰어드는 것을 무엇보다 좋아한다.",
   "pirate_p36_name": "거북 목수 톡",
   "pirate_p36_desc": "아군 배에 쏘면 구멍 난 블록 3칸 수리",
-  "pirate_p36_lore": "느리지만 꼼꼼하다. 배는 그가 지킨다."
+  "pirate_p36_lore": "느리지만 꼼꼼하다. 배는 그가 지킨다.",
+  "blueprint_balanced_name": "밸런스",
+  "blueprint_balanced_desc": "참나무 용골에 펌프와 목수 공방을 단 기본형. 포문과 망루로 한 명을 키운다.",
+  "blueprint_armored_name": "철갑",
+  "blueprint_armored_desc": "선실 양옆을 철판으로 막은 튼튼한 배. 무거워서 깊이 잠기니 펌프로 버틴다.",
+  "blueprint_fast_name": "고속",
+  "blueprint_fast_desc": "소나무와 코르크로 가볍게 띄우고 연료통 둘로 멀리 움직인다. 대신 잘 부서진다."
 }
