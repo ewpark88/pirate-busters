@@ -1,5 +1,6 @@
 import 'package:pb_sim/src/match/match_state.dart';
 import 'package:pb_sim/src/match/rules.dart';
+import 'package:pb_sim/src/ship/module_state.dart';
 import 'package:pb_sim/src/world/world.dart';
 
 /// 이동 단위: 1/10칸 (설계서 §7.2 MOVE 커맨드의 dx).
@@ -12,10 +13,14 @@ const int moveStep = cellUnit ~/ 10;
   return (-moveRange + pull, moveRange);
 }
 
-/// 이동 속도(1/1000칸/초): 선형 속도 × (1 − 침수량 × 0.6) (설계서 §2.6).
+/// 이동 속도(1/1000칸/초): 선형 속도 × (1 − 침수량 × 0.6), 돛대가 부러지면 절반
+/// (설계서 §2.6).
 int moveSpeedOf(SideState side) {
   final factor = 1000 - side.flood * 600 ~/ fullFlood;
-  return side.grid.hull.moveSpeed * factor ~/ 1000;
+  final speed = side.grid.hull.moveSpeed * factor ~/ 1000;
+  return side.mastBroken
+      ? speed * ModuleNumbers.mastSpeedPercent ~/ 100
+      : speed;
 }
 
 /// 이동 한 번의 결과.
@@ -46,7 +51,7 @@ int moveReach(
   final want = dx * moveStep;
   final target = (side.offset + want).clamp(lo, hi);
   var dist = (target - side.offset).abs();
-  final byFuel = side.fuel * cellUnit ~/ _fuelPerCell(side);
+  final byFuel = side.fuel * cellUnit ~/ side.fuelPerCell;
   final byTime = timeLeftMs * speed ~/ 1000;
   if (byFuel < dist) dist = byFuel;
   if (byTime < dist) dist = byTime;
@@ -54,9 +59,6 @@ int moveReach(
   if (dist <= 0) return 0;
   return want > 0 ? dist : -dist;
 }
-
-int _fuelPerCell(SideState side) =>
-    side.grid.hull.fuelPerCell * SideState.fuelUnit;
 
 /// [side] 배를 [dx](1/10칸, 전진 +)만큼 움직인다 (설계서 §2.6, §2.7).
 ///
@@ -75,7 +77,7 @@ MoveResult applyMove(
   final speed = moveSpeedOf(side);
   side
     ..offset += signed
-    ..fuel -= dist * _fuelPerCell(side) ~/ cellUnit;
+    ..fuel -= dist * side.fuelPerCell ~/ cellUnit;
   // 한계선 앞 감속 구간은 절반 속도: 그 구간을 지난 거리만큼 시간을 한 번 더 센다.
   final (lo, hi) = moveLimits(rules, turn);
   final limit = signed > 0 ? hi : lo;
@@ -92,7 +94,7 @@ MoveResult applyMove(
 
 /// 연료를 [amount] 채운다(탱크 상한까지).
 void refuel(SideState side, int amount) {
-  final tank = side.grid.hull.fuelTank * SideState.fuelUnit;
+  final tank = side.tank;
   final next = side.fuel + amount * SideState.fuelUnit;
   side.fuel = next > tank ? tank : next;
 }

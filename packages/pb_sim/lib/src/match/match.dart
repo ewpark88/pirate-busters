@@ -1,30 +1,22 @@
+import 'package:pb_sim/src/combat/ammo_rules.dart';
 import 'package:pb_sim/src/combat/flight.dart';
 import 'package:pb_sim/src/combat/launch.dart';
+import 'package:pb_sim/src/combat/module_effects.dart';
+import 'package:pb_sim/src/combat/volley.dart';
 import 'package:pb_sim/src/command/command.dart';
 import 'package:pb_sim/src/hash/state_hasher.dart';
 import 'package:pb_sim/src/match/judge.dart';
 import 'package:pb_sim/src/match/match_state.dart';
 import 'package:pb_sim/src/match/rules.dart';
 import 'package:pb_sim/src/match/sim_event.dart';
+import 'package:pb_sim/src/match/turn_start.dart';
 import 'package:pb_sim/src/math/fx.dart';
 import 'package:pb_sim/src/math/trig.dart';
+import 'package:pb_sim/src/pirate/ammo.dart';
 import 'package:pb_sim/src/pirate/pirate_spec.dart';
 import 'package:pb_sim/src/projectile/projectile.dart';
 import 'package:pb_sim/src/ship/blueprint.dart';
-import 'package:pb_sim/src/ship/flooding.dart';
 import 'package:pb_sim/src/ship/motion.dart';
-
-/// 턴 묶음 해시가 재생 결과와 다르다(부정 또는 버그, 설계서 §7.2).
-class TurnHashMismatch implements Exception {
-  const TurnHashMismatch(this.turn, this.expected, this.actual);
-
-  final int turn;
-  final int expected;
-  final int actual;
-
-  @override
-  String toString() => 'TurnHashMismatch(turn $turn: $expected != $actual)';
-}
 
 /// 결정론 턴제 전투 엔진 (설계서 §2.3, §7). 같은 입력이면 같은 결과를 낸다.
 ///
@@ -69,19 +61,48 @@ class Match {
   final List<Command> _current = [];
   bool _turnOpen = false;
 
+  /// 탭을 기다리는 분열탄 발사 (설계서 §4.8). 다음 커맨드에서 계산한다.
+  Volley? _pending;
+
   /// 끝난 턴 묶음(턴 끝 해시 포함). 리플레이 저장·네트워크 전송용.
   List<TurnBundle> get turnLog => List.unmodifiable(_log);
 
   bool get isOver => state.isOver;
+
+  /// 분열탄이 날아가며 TAP 을 기다리는 중이면 그 해적 슬롯, 아니면 −1.
+  int get pendingSlot => _pending?.shots.first.slot ?? -1;
+
+  /// 기다리던 분열탄을 갈라지지 않은 채 지금 계산한다(커맨드는 남기지 않는다).
+  /// 다음 커맨드가 와서 계산될 때와 결과가 같다(발사 시각으로 계산하므로).
+  /// 컴퓨터가 탭하지 않을 때, 사람이 탭하지 않고 착탄할 때 쓴다.
+  void settlePending() {
+    final pending = _pending;
+    if (pending != null) _resolve(pending, -1);
+  }
 
   /// 지금 턴의 커맨드 하나를 적용한다. 판이 끝났으면 무시한다.
   ///
   /// 턴 제한 시간이 지난 커맨드는 버리고 턴을 넘긴다. 발사는 탄이 떨어질 때까지
   /// 계산하고, 그 시간만큼 턴 타이머를 멈춘다. 이동은 거리 ÷ 속도만큼 턴 시간을
   /// 쓰고, 그동안 들어온 커맨드는 이동이 끝난 시각에 처리한다 (ADR-025).
+  ///
+  /// 분열탄을 쏘면 바로 계산하지 않고 다음 커맨드를 기다린다. 같은 해적의 `TAP` 이면
+  /// 그 `tick` 에 갈라지고(시각 `t` 는 보지 않는다), 다른 커맨드면 갈라지지 않은 채
+  /// 계산한 뒤 그 커맨드를 이어서 처리한다. 계산으로 턴이 끝나면 그 커맨드는 버린다.
   void apply(Command c) {
     if (state.isOver) return;
-    if (!_turnOpen) _beginTurn();
+    final pending = _pending;
+    if (pending != null) {
+      final turn = state.turn;
+      if (c is TapCommand && c.slot == pendingSlot) {
+        _current.add(c);
+        _resolve(pending, c.ticks);
+        return;
+      }
+      _resolve(pending, -1);
+      if (state.turn != turn || state.isOver) return;
+    }
+    if (!_turnOpen && !_openTurn()) return;
     _current.add(c);
     final at = effectiveMs(state, c.t);
     if (at > state.rules.turnTimeFor(state.turn)) {
@@ -95,7 +116,7 @@ class Match {
       case FireCommand():
         _fire(c, at);
       case TapCommand():
-        // 비행 중 2단 동작(onTap)은 MVP 에서 쓰지 않는다 (개발 계획서 M5, R1).
+        // 탭을 기다리는 분열탄이 없으면 아무 일도 없다.
         break;
       case EndTurnCommand():
         _endTurn(TurnEndReason.endTurn);
@@ -123,8 +144,7 @@ class Match {
       apply(c);
     }
     if (state.turn == turn && !state.isOver) {
-      if (!_turnOpen) _beginTurn();
-      _endTurn(TurnEndReason.timeout);
+      if (_turnOpen || _openTurn()) _endTurn(TurnEndReason.timeout);
     }
     final expected = bundle.hash;
     final actual = _log.last.hash!;
@@ -133,30 +153,17 @@ class Match {
     }
   }
 
-  /// 턴 시작: 폭풍 타임 시작(양쪽 연료·후퇴 한계) → 내 연료 회복 → 해적 복귀.
+  /// 턴을 연다. 턴 시작 효과로 판이 끝나면 턴을 닫고 false.
+  bool _openTurn() {
+    _beginTurn();
+    if (!state.isOver) return true;
+    _endTurn(TurnEndReason.matchOver);
+    return false;
+  }
+
   void _beginTurn() {
     _turnOpen = true;
-    final side = state.activeSide;
-    final turn = state.turn;
-    final rules = state.rules;
-    state.events
-      ..clear()
-      ..add(SimEvent(SimEventKind.turnStart, side: side, value: turn));
-    if (turn == rules.stormStartTurn) {
-      for (final s in state.sides) {
-        final moved = startStorm(s, rules, turn);
-        if (moved != 0) {
-          state.events.add(
-            SimEvent(SimEventKind.move, side: s.side, x: s.bowX, value: moved),
-          );
-        }
-      }
-      state.events.add(
-        SimEvent(SimEventKind.stormStart, side: side, value: turn),
-      );
-    }
-    refuel(state.sides[side], rules.fuelPerTurn);
-    state.sides[side].crew.startOwnTurn(side, state.events);
+    beginTurn(state);
   }
 
   void _move(MoveCommand c, int at) {
@@ -182,55 +189,65 @@ class Match {
     if (state.firesThisTurn >= state.rules.firesPerTurn) return;
     if (!side.canFire(c.slot)) return;
     if (c.angle < 0 || c.angle >= fullTurnMdeg) return;
+    // 지원 해적은 0~180° 로 제 배 쪽까지 쏜다 (설계서 §7.2).
+    final spec = side.crew.pirates[c.slot].spec;
+    if (spec.ammo == AmmoType.support && c.angle > fullTurnMdeg ~/ 2) return;
     if (c.power < 0 || c.power > maxFirePower) return;
     final ms = realMs(state, at);
-    final id = state.nextProjectileId++;
-    final shot = launchShot(
+    final shots = launchVolley(
       state,
       slot: c.slot,
       angle: c.angle,
       power: c.power,
       ms: ms,
-      id: id,
     );
-    final x = shot.x;
-    final y = shot.y;
-    side.crew.markFired(c.slot);
+    markFiredWithModules(side, c.slot);
     side.shotsFired++;
     state
       ..firesThisTurn += 1
+      ..lastTraces = const []
       ..events.add(
         SimEvent(
           SimEventKind.fire,
           side: active,
           slot: c.slot,
-          x: x,
-          y: y,
-          value: id,
+          x: shots.first.x,
+          y: shots.first.y,
+          value: shots.first.id,
         ),
       );
+    final pending = Volley(shots, ms);
+    if (shots.first.spec.ammo == AmmoType.split) {
+      _pending = pending;
+    } else {
+      _resolve(pending, -1);
+    }
+  }
+
+  /// 발사한 탄을 떨어질 때까지 계산하고 그만큼 턴 타이머를 멈춘다. [closeTurn] 이면
+  /// 판이 끝나거나 발사를 다 썼을 때 턴을 닫는다.
+  void _resolve(Volley shot, int tapTick, {bool closeTurn = true}) {
+    _pending = null;
     final before = state.events.length;
-    final ticks = resolveShot(state, shot, ms);
+    final ticks = runVolley(state, shot.shots, shot.ms, tapTick: tapTick);
     state.pausedMs +=
         roundDiv(ticks * 1000, simTickHz) + breakPauseOf(state, from: before);
     judgeInstant(state);
-    if (state.isOver) {
-      _endTurn(TurnEndReason.matchOver);
-    } else if (state.firesThisTurn >= state.rules.firesPerTurn) {
-      _endTurn(TurnEndReason.firesUsed);
-    }
+    if (!closeTurn) return;
+    // 2발을 다 쏴도 턴은 닫지 않는다: 유예 뒤 END_TURN 은 컨트롤러가 낸다
+    // (설계서 §2.2, ADR-042).
+    if (state.isOver) _endTurn(TurnEndReason.matchOver);
   }
 
   /// 턴 끝 처리 (설계서 §2.3): 화재(M5) → 침수 → 수리·펌프(M5) → 쿨다운 → 바람.
   /// 30턴이 끝나면 시간 판정 (설계서 §2.4).
   void _endTurn(TurnEndReason reason) {
+    final pending = _pending;
+    if (pending != null) _resolve(pending, -1, closeTurn: false);
     final side = state.activeSide;
     final turn = state.turn;
     if (!state.isOver) {
-      final gain = applyFlood(state.sides[side], state.rules, turn);
-      if (gain > 0) {
-        state.events.add(SimEvent(SimEventKind.flood, side: side, value: gain));
-      }
+      endTurnWater(state.sides[side], state.rules, turn, state.events);
       judgeInstant(state);
     }
     state.sides[side].crew.endOwnTurn();

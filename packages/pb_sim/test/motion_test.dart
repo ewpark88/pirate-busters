@@ -35,12 +35,13 @@ void main() {
       final fuel = me.fuel;
       m.apply(const MoveCommand(t: 100, dx: 150));
       expect(me.offset, 10 * cellUnit);
-      expect(me.fuel, fuel - 10 * 4 * _fuel);
+      expect(me.fuel, fuel - 10 * me.fuelPerCell);
     });
 
     test('연료가 모자라면 갈 수 있는 데까지만 간다', () {
       final m = _calm()..apply(const MoveCommand(t: 10, dx: 0)); // 턴 시작
-      final me = _me(m)..fuel = 10 * _fuel; // 2.5칸 분량
+      final me = _me(m);
+      me.fuel = me.fuelPerCell * 5 ~/ 2; // 2.5칸 분량
       m.apply(const MoveCommand(t: 100, dx: -80));
       expect(me.offset, -2500);
       expect(me.fuel, 0);

@@ -13,6 +13,7 @@ Blueprint _keelOnly() => Blueprint(
     CabinCell(6, 0),
     CabinCell(8, 0),
   ],
+  modules: const [ModuleCell(0, 0, ModuleKind.captain)],
 );
 
 /// [setup] 으로 판 시작 상태를 바꾼 뒤 양쪽이 턴만 넘기며 끝까지 돌린다.
@@ -118,9 +119,14 @@ void main() {
     });
 
     test('9. 폭풍 타임(27~30턴)에는 턴 끝 침수가 1.5배로 찬다', () {
-      final s = _play((l, r) => r.grid.damage(3, 0, 100));
+      // 처음 침수 6%p 로 맨 아래 줄이 완전히 잠긴 채 시작한다.
+      final s = _play(
+        (l, r) => r
+          ..flood = 60
+          ..grid.damage(3, 0, 100),
+      );
       // 오른쪽 15턴 중 폭풍 전 13턴 × 3%p + 폭풍 2턴 × 4.5%p.
-      expect(s.sides[1].flood, 13 * 30 + 2 * 45);
+      expect(s.sides[1].flood, 60 + 13 * 30 + 2 * 45);
       _expectResult(s, 0);
     });
 

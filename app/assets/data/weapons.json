@@ -1,0 +1,439 @@
+{
+ "version": "0.21",
+ "note": "캐릭터별 무기. 스프라이트는 가운데(0,0) 기준 +x 방향, viewBox -40 -24 64 48. 개수(count·splitN·dropN)는 표시용 기본값이고 실제 개수는 ammo/ammo.json 등급 사다리를 따른다.",
+ "weapons": {
+  "octo": {
+   "mode": "spin",
+   "spin": 540,
+   "trail": "smoke",
+   "id": "octo",
+   "desc": "검은 폭탄 Bomb",
+   "ammo": "explode",
+   "sprite": "weapons/octo.svg"
+  },
+  "starry": {
+   "mode": "spin",
+   "spin": 900,
+   "trail": "fire",
+   "hit": [
+    "화상 BURN"
+   ],
+   "id": "starry",
+   "desc": "회전하는 불별 Fire star",
+   "ammo": "fire",
+   "sprite": "weapons/starry.svg"
+  },
+  "crabs": {
+   "mode": "spin",
+   "spin": 540,
+   "trail": "smoke",
+   "count": 2,
+   "stagger": 0.14,
+   "spread": 10,
+   "id": "crabs",
+   "desc": "작은 폭탄 2발 Twin bombs",
+   "ammo": "explode",
+   "sprite": "weapons/crabs.svg"
+  },
+  "uni": {
+   "mode": "spin",
+   "spin": 720,
+   "trail": "smoke",
+   "split": 0.5,
+   "splitN": 4,
+   "id": "uni",
+   "desc": "가시 성게 → 3갈래 분열 Splitting urchin",
+   "ammo": "split",
+   "sprite": "weapons/uni.svg"
+  },
+  "volke": {
+   "mode": "spin",
+   "spin": 360,
+   "trail": "lava",
+   "id": "volke",
+   "desc": "용암 바위 Lava rock",
+   "ammo": "explode",
+   "sprite": "weapons/volke.svg"
+  },
+  "pang": {
+   "mode": "face",
+   "trail": "water",
+   "id": "pang",
+   "desc": "물방울 총알 Water bullet",
+   "ammo": "snipe",
+   "sprite": "weapons/pang.svg"
+  },
+  "hippo": {
+   "mode": "face",
+   "trail": "spark",
+   "count": 3,
+   "stagger": 0.07,
+   "spread": 0,
+   "id": "hippo",
+   "desc": "황동 탄 3연사 Triple shot",
+   "ammo": "rapid",
+   "sprite": "weapons/hippo.svg"
+  },
+  "bones": {
+   "mode": "face",
+   "trail": "spark",
+   "trailCol": "#7affc8",
+   "id": "bones",
+   "desc": "초고속 저격탄 Sniper round",
+   "ammo": "snipe",
+   "sprite": "weapons/bones.svg"
+  },
+  "lion": {
+   "mode": "face",
+   "trail": "none",
+   "count": 12,
+   "stagger": 0.022,
+   "spread": 4,
+   "id": "lion",
+   "desc": "독가시 부채꼴 5발 Spine fan",
+   "ammo": "rapid",
+   "sprite": "weapons/lion.svg"
+  },
+  "volt": {
+   "mode": "face",
+   "trail": "spark",
+   "trailCol": "#9ff0ff",
+   "hit": [
+    "체인 번개 CHAIN"
+   ],
+   "id": "volt",
+   "desc": "번개 Lightning",
+   "ammo": "chain",
+   "sprite": "weapons/volt.svg"
+  },
+  "sword": {
+   "mode": "face",
+   "trail": "none",
+   "rope": true,
+   "id": "sword",
+   "desc": "작살 Harpoon",
+   "ammo": "pierce",
+   "sprite": "weapons/sword.svg"
+  },
+  "nar": {
+   "mode": "face",
+   "trail": "wind",
+   "id": "nar",
+   "desc": "나선 뿔 창 Horn spear",
+   "ammo": "pierce",
+   "sprite": "weapons/nar.svg"
+  },
+  "walrus": {
+   "mode": "face",
+   "trail": "none",
+   "rope": true,
+   "ropeCol": "#6f7680",
+   "hit": [
+    "블록 뜯기 RIP"
+   ],
+   "id": "walrus",
+   "desc": "쇠사슬 닻 Chained anchor",
+   "ammo": "pierce",
+   "sprite": "weapons/walrus.svg"
+  },
+  "saw": {
+   "mode": "spin",
+   "spin": 1800,
+   "trail": "spark",
+   "id": "saw",
+   "desc": "회전 톱날 Spinning saw",
+   "ammo": "pierce",
+   "sprite": "weapons/saw.svg"
+  },
+  "moby": {
+   "mode": "face",
+   "trail": "none",
+   "rope": true,
+   "ropeCol": "#b0875a",
+   "ropeW": 4,
+   "hit": [
+    "끌어당김 PULL"
+   ],
+   "id": "moby",
+   "desc": "끌어당기는 갈고리 Grapnel",
+   "ammo": "pierce",
+   "sprite": "weapons/moby.svg"
+  },
+  "otter": {
+   "mode": "spin",
+   "spin": 720,
+   "trail": "none",
+   "id": "otter",
+   "desc": "돌멩이 Stone",
+   "ammo": "skip",
+   "sprite": "weapons/otter.svg"
+  },
+  "pingu": {
+   "mode": "face",
+   "trail": "wind",
+   "id": "pingu",
+   "desc": "썰매 Sled",
+   "ammo": "skip",
+   "sprite": "weapons/pingu.svg"
+  },
+  "sheldon": {
+   "mode": "spin",
+   "spin": 1080,
+   "trail": "none",
+   "id": "sheldon",
+   "desc": "등껍질 원반 Shell disc",
+   "ammo": "skip",
+   "sprite": "weapons/sheldon.svg"
+  },
+  "dolphy": {
+   "mode": "face",
+   "trail": "water",
+   "id": "dolphy",
+   "desc": "서핑보드 Surfboard",
+   "ammo": "skip",
+   "sprite": "weapons/dolphy.svg"
+  },
+  "orca": {
+   "mode": "face",
+   "trail": "water",
+   "hit": [
+    "해일 TIDE"
+   ],
+   "id": "orca",
+   "desc": "해일 Tidal wave",
+   "ammo": "skip",
+   "sprite": "weapons/orca.svg"
+  },
+  "puffer": {
+   "mode": "face",
+   "trail": "bubble",
+   "id": "puffer",
+   "desc": "다이너마이트 Dynamite",
+   "ammo": "plant",
+   "sprite": "weapons/puffer.svg"
+  },
+  "jelly": {
+   "mode": "spin",
+   "spin": 180,
+   "trail": "bubble",
+   "hit": [
+    "기뢰 MINE"
+   ],
+   "id": "jelly",
+   "desc": "해파리 기뢰 Jelly mine",
+   "ammo": "plant",
+   "sprite": "weapons/jelly.svg"
+  },
+  "bara": {
+   "mode": "face",
+   "trail": "bubble",
+   "id": "bara",
+   "desc": "어뢰 Torpedo",
+   "ammo": "pierce",
+   "sprite": "weapons/bara.svg"
+  },
+  "moray": {
+   "mode": "face",
+   "trail": "bubble",
+   "hit": [
+    "물어뜯기 BITE"
+   ],
+   "id": "moray",
+   "desc": "곰치 머리 Moray bite",
+   "ammo": "plant",
+   "sprite": "weapons/moray.svg"
+  },
+  "kraki": {
+   "mode": "spin",
+   "spin": 270,
+   "trail": "bubble",
+   "hit": [
+    "촉수 TENTACLE"
+   ],
+   "id": "kraki",
+   "desc": "먹물 촉수 구슬 Ink orb",
+   "ammo": "plant",
+   "sprite": "weapons/kraki.svg"
+  },
+  "polly": {
+   "mode": "face",
+   "trail": "none",
+   "id": "polly",
+   "desc": "깃털 다트 Feather dart",
+   "ammo": "homing",
+   "sprite": "weapons/polly.svg"
+  },
+  "gull": {
+   "mode": "spin",
+   "spin": 360,
+   "trail": "smoke",
+   "count": 3,
+   "stagger": 0.1,
+   "spread": 16,
+   "id": "gull",
+   "desc": "소형 폭탄 3발 Bomblets",
+   "ammo": "multidrop",
+   "sprite": "weapons/gull.svg"
+  },
+  "pelly": {
+   "mode": "spin",
+   "spin": 200,
+   "trail": "smoke",
+   "dropN": 4,
+   "id": "pelly",
+   "desc": "부리 주머니 폭탄 Pouch bomb",
+   "ammo": "multidrop",
+   "sprite": "weapons/pelly.svg"
+  },
+  "alba": {
+   "mode": "spin",
+   "spin": 720,
+   "trail": "wind",
+   "hit": [
+    "바람 뒤집기 WIND"
+   ],
+   "id": "alba",
+   "desc": "돌풍 Gust",
+   "ammo": "homing",
+   "sprite": "weapons/alba.svg"
+  },
+  "manta": {
+   "mode": "spin",
+   "spin": 90,
+   "trail": "spark",
+   "trailCol": "#b0a0ff",
+   "hit": [
+    "폭풍 STORM"
+   ],
+   "id": "manta",
+   "desc": "번개 구름 Storm cloud",
+   "ammo": "homing",
+   "sprite": "weapons/manta.svg"
+  },
+  "shark": {
+   "mode": "melee",
+   "melee": "bite",
+   "hit": [
+    "물어뜯기 BITE"
+   ],
+   "id": "shark",
+   "desc": "물어뜯기 Bite",
+   "ammo": "assault",
+   "icon": "weapons/icons/bite.svg"
+  },
+  "crabby": {
+   "mode": "melee",
+   "melee": "lasso",
+   "hit": [
+    "끌고가기 GRAB"
+   ],
+   "id": "crabby",
+   "desc": "밧줄 + 집게 Lasso grab",
+   "ammo": "assault",
+   "icon": "weapons/icons/lasso.svg"
+  },
+  "king": {
+   "mode": "melee",
+   "melee": "bash",
+   "hit": [
+    "선실 봉쇄 BLOCK"
+   ],
+   "id": "king",
+   "desc": "방패 밀치기 Shield bash",
+   "ammo": "assault",
+   "icon": "weapons/icons/bash.svg"
+  },
+  "lob": {
+   "mode": "melee",
+   "melee": "xslash",
+   "hit": [
+    "연속 베기 CHAIN"
+   ],
+   "id": "lob",
+   "desc": "X자 쌍집게 Cross claws",
+   "ammo": "assault",
+   "icon": "weapons/icons/xslash.svg"
+  },
+  "davy": {
+   "mode": "melee",
+   "melee": "summon",
+   "hit": [
+    "해골 소환 SUMMON"
+   ],
+   "id": "davy",
+   "desc": "해골 선원 소환 Summon",
+   "ammo": "assault",
+   "icon": "weapons/icons/summon.svg"
+  },
+  "turtle": {
+   "mode": "support",
+   "support": "planks",
+   "label": [
+    "+12",
+    "수리 REPAIR"
+   ],
+   "spin": 360,
+   "id": "turtle",
+   "desc": "판자 수리 Planks",
+   "ammo": "support",
+   "sprite": "weapons/turtle.svg",
+   "icon": "weapons/icons/planks.svg"
+  },
+  "pumpum": {
+   "mode": "support",
+   "support": "spout",
+   "label": [
+    "-15%",
+    "배수 PUMP"
+   ],
+   "spin": 0,
+   "id": "pumpum",
+   "desc": "물 뿜기 Spout",
+   "ammo": "support",
+   "sprite": "weapons/pumpum.svg",
+   "icon": "weapons/icons/spout.svg"
+  },
+  "cook": {
+   "mode": "support",
+   "support": "food",
+   "label": [
+    "+20",
+    "회복·쿨다운 HEAL"
+   ],
+   "spin": 180,
+   "id": "cook",
+   "desc": "음식·회복 Food",
+   "ammo": "support",
+   "sprite": "weapons/cook.svg",
+   "icon": "weapons/icons/food.svg"
+  },
+  "corey": {
+   "mode": "support",
+   "support": "coral",
+   "label": [
+    "방벽",
+    "산호 BARRIER"
+   ],
+   "spin": 360,
+   "id": "corey",
+   "desc": "산호 방벽 Coral wall",
+   "ammo": "support",
+   "sprite": "weapons/corey.svg",
+   "icon": "weapons/icons/coral.svg"
+  },
+  "lamp": {
+   "mode": "support",
+   "support": "lantern",
+   "label": [
+    "100%",
+    "궤적 표시 GUIDE"
+   ],
+   "spin": 0,
+   "id": "lamp",
+   "desc": "초롱불 길잡이 Lantern",
+   "ammo": "support",
+   "sprite": "weapons/lamp.svg",
+   "icon": "weapons/icons/lantern.svg"
+  }
+ }
+}

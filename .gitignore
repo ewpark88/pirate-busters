@@ -42,3 +42,6 @@ GoogleService-Info.plist
 
 # 아트 원본 패키지 (docs/ASSETS.md, ADR-026)
 art/
+
+# 골든 테스트 실패 이미지
+app/test/failures/

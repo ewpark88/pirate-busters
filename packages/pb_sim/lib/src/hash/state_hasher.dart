@@ -40,7 +40,9 @@ class Fnv1a32 {
 /// 매치 상태 전체를 정해진 순서로 직렬화한 해시 (설계서 §7.1 검증, §7.2 턴 해시).
 ///
 /// 상태에 필드를 추가하면 여기에도 추가한다. 순서를 바꾸면 골든 해시가 바뀐다.
-/// 렌더용 이벤트([MatchState.events])는 넣지 않는다.
+/// 렌더용 이벤트([MatchState.events])는 넣지 않는다. 탭을 기다리는 분열탄
+/// (`Match.pendingSlot`)은 상태 밖에 있고 턴 끝 해시 전에 반드시 계산된다
+/// (설계서 §7.2). 턴 도중에 부르면 대기 탄은 빠진다.
 int hashMatchState(MatchState state) {
   final h = Fnv1a32()
     ..addInt(state.seed)
@@ -75,6 +77,27 @@ int hashMatchState(MatchState state) {
     for (final fired in side.crew.firedThisTurn) {
       h.addInt(fired ? 1 : 0);
     }
+    h.addInt(side.modules.list.length);
+    for (final m in side.modules.list) {
+      h
+        ..addInt(m.kind.index)
+        ..addInt(m.x)
+        ..addInt(m.y)
+        ..addInt(m.intact ? 1 : 0);
+    }
+  }
+  h.addInt(state.effects.length);
+  for (final e in state.effects) {
+    h
+      ..addInt(e.kind.index)
+      ..addInt(e.owner)
+      ..addInt(e.ownerSlot)
+      ..addInt(e.target)
+      ..addInt(e.trigger)
+      ..addInt(e.turnsLeft)
+      ..addString(e.spec.id)
+      ..addInt(e.cell)
+      ..addInt(e.x);
   }
   return h.value;
 }

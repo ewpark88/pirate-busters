@@ -28,6 +28,25 @@ class ShotPath {
     return ShotPath._(xs, ys);
   }
 
+  /// 처음 닿는 곳(상대 배 또는 해수면)에서 끝나는 예측. 판정과 같은
+  /// `pb_sim` 의 [predictFirstHit] 를 쓴다(렌더 전용, 분열탄 탭 대기).
+  factory ShotPath.predictToHit(
+    MatchState state, {
+    required int slot,
+    required int angle,
+    required int power,
+    required int ms,
+  }) {
+    final p = predictFirstHit(
+      state,
+      slot: slot,
+      angle: angle,
+      power: power,
+      ms: ms,
+    );
+    return ShotPath._(p.xs, p.ys);
+  }
+
   /// 틱 0(발사)부터의 위치.
   final List<int> xs;
   final List<int> ys;

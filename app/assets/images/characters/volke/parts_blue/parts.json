@@ -1,0 +1,177 @@
+{
+  "id": "volke",
+  "team": "blue",
+  "scale": 2,
+  "canvas": [
+    480.0,
+    648.0
+  ],
+  "anchor": [
+    240,
+    630
+  ],
+  "parts": [
+    {
+      "id": "shadow",
+      "anim": "shadow",
+      "z": 0,
+      "file": "shadow.png",
+      "offset": [
+        112,
+        616
+      ],
+      "size": [
+        256,
+        28
+      ],
+      "pivot": [
+        128.0,
+        14.0
+      ]
+    },
+    {
+      "id": "fx",
+      "anim": "fx",
+      "z": 1,
+      "file": "fx.png",
+      "offset": [
+        204,
+        100
+      ],
+      "size": [
+        76,
+        108
+      ],
+      "pivot": [
+        36.0,
+        68.0
+      ]
+    },
+    {
+      "id": "back",
+      "anim": "back",
+      "z": 2,
+      "file": "back.png",
+      "offset": [
+        115,
+        189
+      ],
+      "size": [
+        250,
+        324
+      ],
+      "pivot": [
+        125.0,
+        219.0
+      ]
+    },
+    {
+      "id": "legs",
+      "anim": "body",
+      "z": 3,
+      "file": "legs.png",
+      "offset": [
+        146,
+        518
+      ],
+      "size": [
+        188,
+        112
+      ],
+      "pivot": [
+        94.0,
+        112.0
+      ]
+    },
+    {
+      "id": "body",
+      "anim": "body",
+      "z": 4,
+      "file": "body.png",
+      "offset": [
+        162,
+        423
+      ],
+      "size": [
+        156,
+        134
+      ],
+      "pivot": [
+        78.0,
+        105.0
+      ]
+    },
+    {
+      "id": "head",
+      "anim": "head",
+      "z": 5,
+      "file": "head.png",
+      "offset": [
+        131,
+        322
+      ],
+      "size": [
+        194,
+        138
+      ],
+      "pivot": [
+        109.0,
+        106.0
+      ]
+    },
+    {
+      "id": "eyes",
+      "anim": "eyes",
+      "z": 6,
+      "file": "eyes.png",
+      "offset": [
+        182,
+        301
+      ],
+      "size": [
+        116,
+        46
+      ],
+      "pivot": [
+        58.0,
+        23.0
+      ]
+    },
+    {
+      "id": "arm_back",
+      "anim": "arm",
+      "z": 7,
+      "file": "arm_back.png",
+      "offset": [
+        93,
+        430
+      ],
+      "size": [
+        89,
+        121
+      ],
+      "pivot": [
+        71.0,
+        18.0
+      ]
+    },
+    {
+      "id": "arm",
+      "anim": "arm",
+      "z": 8,
+      "file": "arm.png",
+      "offset": [
+        297,
+        316
+      ],
+      "size": [
+        127,
+        151
+      ],
+      "pivot": [
+        19.0,
+        132.0
+      ]
+    }
+  ]
+}

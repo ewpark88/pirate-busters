@@ -18,6 +18,7 @@ Blueprint _pillarBlueprint() => Blueprint(
     CabinCell(3, 0),
     CabinCell(4, 0),
   ],
+  modules: const [ModuleCell(0, 0, ModuleKind.captain)],
 );
 
 void main() {
@@ -57,6 +58,19 @@ void main() {
   });
 
   group('블록 피해', () {
+    test('구멍 단계 블록만 고치고, 부서진 칸·멀쩡한 칸은 못 고친다 (설계서 §2.5)', () {
+      final g = ShipGrid.fromBlueprint(sampleBlueprint()); // (0,0) 참나무 80
+      expect(g.repair(0, 0, 10), isFalse, reason: '멀쩡함');
+      g.damage(0, 0, 60);
+      expect(g.stageAt(0, 0), DamageStage.holed);
+      expect(g.repair(0, 0, 500), isTrue);
+      expect(g.hpAt(0, 0), 80, reason: '최대 내구도까지만');
+      g.damage(0, 0, 80);
+      expect(g.isBroken(0, 0), isTrue);
+      expect(g.repair(0, 0, 80), isFalse);
+      expect(g.hasBlock(0, 0), isFalse);
+    });
+
     test('손상 단계는 내구도 2/3·1/3 경계로 나뉜다 (설계서 §10.2)', () {
       final g = ShipGrid.fromBlueprint(sampleBlueprint()); // (0,0) 참나무 80
       expect(g.stageAt(0, 0), DamageStage.intact);

@@ -2,6 +2,7 @@ import 'package:pb_sim/src/match/match_state.dart';
 import 'package:pb_sim/src/match/rules.dart';
 import 'package:pb_sim/src/math/fx.dart';
 import 'package:pb_sim/src/math/trig.dart';
+import 'package:pb_sim/src/pirate/pirate_spec.dart';
 import 'package:pb_sim/src/projectile/projectile.dart';
 import 'package:pb_sim/src/ship/flooding.dart';
 import 'package:pb_sim/src/world/wave.dart';
@@ -74,6 +75,7 @@ Projectile launchShot(
   required int power,
   required int ms,
   int id = 0,
+  PirateSpec? spec,
 }) {
   final active = state.activeSide;
   final side = state.sides[active];
@@ -90,7 +92,7 @@ Projectile launchShot(
     id: id,
     side: active,
     slot: slot,
-    spec: side.crew.pirates[slot].spec,
+    spec: spec ?? side.crew.pirates[slot].spec,
     x: x,
     y: y < 0 ? 0 : y,
     angle: angle + tilt,
@@ -100,3 +102,11 @@ Projectile launchShot(
 
 /// 발사 [ms] 로부터 [age] 틱 뒤의 실제 시각.
 int msAfterTicks(int ms, int age) => ms + roundDiv(age * 1000, simTickHz);
+
+/// [side] 진영 [slot] 해적의 사거리로 지금 적 선체에 닿기 어려운가 (설계서 §2.8,
+/// BALANCE.md A2.8). 두 뱃머리 간격이 사거리 등급의 `hitGap` 보다 멀다.
+bool isOutOfRange(MatchState state, int side, int slot) {
+  final gap = (state.sides[0].bowX - state.sides[1].bowX).abs();
+  final spec = state.sides[side].crew.pirates[slot].spec;
+  return gap > spec.range.hitGap;
+}

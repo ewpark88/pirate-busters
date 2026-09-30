@@ -16,9 +16,17 @@ const int startGap = 28 * cellUnit;
 /// 배마다 시작 위치에서 전진·후퇴할 수 있는 거리: 10칸 (설계서 §2.6, 이동은 M3).
 const int moveRange = 10 * cellUnit;
 
-/// 중력: 36칸/초² → 틱당 속도 변화(1/1000칸/틱²). 사거리 등급의 탄속 표가 이 값으로
-/// 계산돼 있다 (설계서 §2.8, `RangeGrade`). 값 자체는 ADR-010 임시 값.
-const int gravityPerTick = 36 * cellUnit ~/ (simTickHz * simTickHz);
+/// 투사체 속도 단위: 월드 단위(1/1000칸)의 1/[velocityScale]. 중력·바람을 정수로
+/// 나타내려고 속도만 더 잘게 센다 (ADR-043). 위치는 틱마다 나머지를 이어 받는다.
+const int velocityScale = 100;
+
+/// 중력: 16칸/초² (BALANCE.md A2.8, ADR-043 임시값) → 틱당 속도 변화(속도 단위).
+/// 16 × 1000 × 100 ÷ 30² = 1777.8 을 짝수 1778 로 둔다(반 스텝 보정 g/2 가 정수).
+/// 사거리 등급의 탄속 표가 이 값으로 계산돼 있다 (`RangeGrade`).
+const int gravityPerTick = 1778;
+
+/// 바람 세기 1 단계의 가로 가속: 중력의 2.5% (BALANCE.md A2.3) → 44 (속도 단위).
+const int windAccelPerStep = gravityPerTick * 25 ~/ 1000;
 
 /// 투사체가 사라지는 월드 가로 경계: ±100칸 (설계서 §2.1).
 const int worldHalfWidth = 100 * cellUnit;

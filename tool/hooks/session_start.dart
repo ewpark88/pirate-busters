@@ -26,7 +26,7 @@ Future<void> main() async {
   ], runInShell: true);
   if (sync.exitCode != 0) {
     out.writeln(
-      '설계서가 바뀌었다. 다른 작업보다 먼저 CLAUDE.md 「설계서가 바뀌면」 절차(/doc-sync)를 따른다.',
+      '설계서나 BALANCE.md 가 바뀌었다. 다른 작업보다 먼저 CLAUDE.md 「설계서나 BALANCE.md 가 바뀌면」 절차(/doc-sync)를 따른다.',
     );
   }
   final hooks = await _run('git', ['config', 'core.hooksPath']);

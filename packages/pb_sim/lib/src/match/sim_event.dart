@@ -43,6 +43,24 @@ enum SimEventKind {
 
   /// 폭풍 타임 시작. [SimEvent.value] = 턴 번호.
   stormStart,
+
+  /// 수면에서 튕김(물수제비). (x, 0), [SimEvent.value] = 발사 후 틱.
+  bounce,
+
+  /// 탄이 갈라짐(분열·다중투하). [SimEvent.value] = 조각 수, (x, y) = 갈라진 곳.
+  divide,
+
+  /// 설치탄이 배에 붙음. [SimEvent.cell] = 붙은 칸, [SimEvent.side] = 붙은 배.
+  mineAttached,
+
+  /// 수리됨. [SimEvent.cell] = 칸, [SimEvent.side] = 고친 배.
+  repaired,
+
+  /// 예약된 턴 효과가 터짐(설치탄 폭발·투하·다시 물기). [SimEvent.value] = 효과 종류.
+  effectFired,
+
+  /// 모듈이 붙은 블록이 부서졌다 (설계서 §3.3). value = 모듈 종류 index.
+  moduleDestroyed,
 }
 
 /// 턴이 끝난 이유. 순서는 이벤트 값으로 쓰인다.

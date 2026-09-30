@@ -7,27 +7,96 @@ import 'package:pirate_busters/battle/playback.dart';
 import 'package:pirate_busters/battle/session_views.dart';
 import 'package:pirate_busters/game/coords.dart';
 import 'package:pirate_busters/game/sprites.dart';
+import 'package:pirate_busters/game/weapon_styles.dart';
 
 /// 날아가는 탄, 조준 궤적(앞 30% 점선), 이동 끝 지점 점선, 이동 한계 부표.
 /// 모두 시뮬레이션 값으로 그린다 (개발 계획서 M4).
 class ShotView extends Component {
-  ShotView({required this.session, required this.sprites, super.priority});
+  ShotView({
+    required this.session,
+    required this.sprites,
+    this.weapons,
+    super.priority,
+  });
 
   final BattleSession session;
   final BattleSprites sprites;
 
-  /// 탄의 지금 월드 위치. 카메라가 따라간다. 날아가는 탄이 없으면 null.
+  /// 해적별 투사체 그림. 없으면 모두 공용 포탄(테스트).
+  final WeaponStyles? weapons;
+
+  /// 지금 날고 있는 탄들의 월드 위치.
+  List<Vector2> get projectiles {
+    final p = session.playback;
+    if (p is! ShotPlayback) return const [];
+    final t = p.tick;
+    return [
+      for (final trace in p.traces)
+        if (t >= trace.startTick && t < trace.endTick) _at(trace, t),
+    ];
+  }
+
+  /// 카메라가 따라갈 탄: 날고 있는 탄 중 가장 앞선(표적 쪽으로 가장 멀리 간) 탄.
+  /// 없으면 null (설계서 §2.1).
   Vector2? get projectile {
     final p = session.playback;
-    if (p is! ShotPlayback || p.landed) return null;
-    final path = p.path;
-    final t = p.tick.clamp(0, path.lastTick.toDouble());
+    final all = projectiles;
+    if (p is! ShotPlayback || all.isEmpty) return null;
+    final facing = facingOf(p.side).toDouble();
+    return all.reduce((a, b) => a.x * facing >= b.x * facing ? a : b);
+  }
+
+  /// 날고 있는 탄마다 그 해적의 무기 그림(분열 조각·소형 폭탄은 따로)을 그린다.
+  void _renderShots(Canvas canvas) {
+    final p = session.playback;
+    if (p is! ShotPlayback) return;
+    final t = p.tick;
+    final spec = session.state.sides[p.side].crew.pirates[p.slot].spec;
+    final own = weapons?.of(session.speciesOf(spec.id));
+    for (final (i, trace) in p.traces.indexed) {
+      if (t < trace.startTick || t >= trace.endTick) continue;
+      final pos = _at(trace, t);
+      final style = i == 0
+          ? own
+          : switch (spec.ammo) {
+              AmmoType.split => WeaponStyles.splitShard,
+              AmmoType.flock => WeaponStyles.bomblet,
+              _ => own,
+            };
+      final w = weapons;
+      if (style == null || w == null) {
+        sprites
+            .get('fx/cannonball.png')
+            .render(
+              canvas,
+              position: pos,
+              size: Vector2.all(18),
+              anchor: Anchor.center,
+            );
+        continue;
+      }
+      final ahead = _at(trace, t + 0.5) - pos;
+      final seconds = (t - trace.startTick) / simTickHz;
+      canvas
+        ..save()
+        ..translate(pos.x, pos.y)
+        ..rotate(style.angle(seconds, ahead.x, ahead.y));
+      w
+          .sprite(style)
+          .render(canvas, size: Vector2(32, 24), anchor: Anchor.center);
+      canvas.restore();
+    }
+  }
+
+  static Vector2 _at(ShotTrace trace, double tick) {
+    final last = trace.xs.length - 1;
+    final t = (tick - trace.startTick).clamp(0, last.toDouble());
     final i = t.floor();
-    final j = i + 1 > path.lastTick ? i : i + 1;
+    final j = i + 1 > last ? i : i + 1;
     final f = t - i;
     return Vector2(
-      Coords.x(path.xs[i] + (path.xs[j] - path.xs[i]) * f),
-      Coords.y(path.ys[i] + (path.ys[j] - path.ys[i]) * f),
+      Coords.x(trace.xs[i] + (trace.xs[j] - trace.xs[i]) * f),
+      Coords.y(trace.ys[i] + (trace.ys[j] - trace.ys[i]) * f),
     );
   }
 
@@ -41,17 +110,7 @@ class ShotView extends Component {
     _renderLimits(canvas);
     _renderMovePreview(canvas);
     _renderAim(canvas);
-    final pos = projectile;
-    if (pos != null) {
-      sprites
-          .get('fx/cannonball.png')
-          .render(
-            canvas,
-            position: pos,
-            size: Vector2.all(18),
-            anchor: Anchor.center,
-          );
-    }
+    _renderShots(canvas);
   }
 
   void _renderAim(Canvas canvas) {
@@ -61,6 +120,7 @@ class ShotView extends Component {
     final path = session
         .previewShot(aim.slot, aim.shot.angle, aim.shot.power)
         .head(30);
+    _renderRangeEnd(canvas, aim.slot, path.xs.first);
     final dot = sprites.get('fx/trajectory_dot.png');
     for (var i = 0; i <= path.lastTick; i += 2) {
       dot.render(
@@ -70,6 +130,22 @@ class ShotView extends Component {
         anchor: Anchor.center,
       );
     }
+  }
+
+  static final Paint _rangePaint = Paint()
+    ..color = const Color(0xCCFFC24A)
+    ..strokeWidth = 2;
+
+  /// 사거리 끝: 발사 지점에서 사거리(칸)만큼 앞 물 위의 점선과 부표 (설계서 §2.8).
+  void _renderRangeEnd(Canvas canvas, int slot, int launchX) {
+    final state = session.state;
+    final side = state.activeSide;
+    final range = state.sides[side].crew.pirates[slot].spec.range;
+    final x = Coords.x(launchX + facingOf(side) * range.cells * cellUnit);
+    for (var y = -36.0; y < 8; y += 8) {
+      canvas.drawLine(Offset(x, y), Offset(x, y + 4), _rangePaint);
+    }
+    canvas.drawCircle(Offset(x, -40), 4, _rangePaint);
   }
 
   void _renderMovePreview(Canvas canvas) {

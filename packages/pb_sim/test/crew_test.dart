@@ -61,4 +61,20 @@ void main() {
     }
     expect(left, [3, 2, 1, 0]);
   });
+
+  test('덱 검사는 예외 없이 문제를 알려 주고 코스트 한도는 레벨마다 +1 (§4.5)', () {
+    expect(costLimitForLevel(1), 15);
+    expect(costLimitForLevel(20), 34);
+    const hull = HullSpec.sloop;
+    expect(deckProblem(hull, sampleCatalog, ['p01', 'p06'], 15), isNull);
+    expect(
+      deckProblem(hull, sampleCatalog, ['nobody'], 15),
+      contains('알 수 없는'),
+    );
+    expect(deckProblem(hull, sampleCatalog, ['p01', 'p01'], 15), contains('둘'));
+    expect(
+      deckProblem(hull, sampleCatalog, ['p01', 'p06', 'p11', 'p16'], 11),
+      contains('코스트'),
+    );
+  });
 }

@@ -3,10 +3,10 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pirate_busters/app/providers.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
+import 'package:pirate_busters/port/port_screen.dart';
 import 'package:pirate_busters/settings/language.dart';
-import 'package:pirate_busters/ui/battle_screen.dart';
 
-/// 앱 루트. M4 는 바로 전투 화면으로 간다(메뉴는 M7).
+/// 앱 루트. 항구(설계서 §13.2)에서 조선소·선원·출항으로 간다. 프롤로그·튜토리얼 분기는 M7 뒤 묶음.
 class PirateBustersApp extends ConsumerWidget {
   const PirateBustersApp({super.key});
 
@@ -32,7 +32,7 @@ class PirateBustersApp extends ConsumerWidget {
         fontFamily: 'Jua',
         colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF1E6FB8)),
       ),
-      home: const BattleScreen(),
+      home: const PortScreen(),
     );
   }
 }

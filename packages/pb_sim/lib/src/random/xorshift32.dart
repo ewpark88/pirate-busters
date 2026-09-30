@@ -19,6 +19,9 @@ class XorShift32 {
   /// 현재 내부 상태(상태 해시·스냅샷용).
   int get state => _state;
 
+  /// [state] 로 되돌린다(미리 계산한 뒤 복원, AI 후보 평가).
+  void restore(int state) => _state = _normalize(state);
+
   static int _normalize(int seed) {
     final s = seed & _mask32;
     return s == 0 ? _zeroSeedReplacement : s;

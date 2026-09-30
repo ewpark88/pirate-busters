@@ -38,8 +38,8 @@ class MatchRules {
     this.turnTimeMs = 25000,
     this.firesPerTurn = 2,
     this.maxWind = 3,
-    this.windAccel = 1,
-    this.sunkHullPercent = 20,
+    this.windAccel = windAccelPerStep,
+    this.sunkHullPercent = 30,
     this.fuelPerTurn = 30,
     this.stormTurns = 4,
     this.stormTurnTimeMs = 20000,
@@ -165,7 +165,7 @@ class MatchRules {
   /// 바람 세기 절댓값 상한(−maxWind ~ +maxWind).
   final int maxWind;
 
-  /// 바람 세기 1 당 투사체 가로 가속(1/1000칸/틱²).
+  /// 바람 세기 1 당 투사체 가로 가속(속도 단위/틱, 기본 중력의 2.5%, BALANCE.md A2.3).
   final int windAccel;
 
   /// 선체 내구도가 시작의 이 비율(%) 미만이면 격침 (설계서 §2.4).

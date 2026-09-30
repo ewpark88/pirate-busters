@@ -16,6 +16,7 @@ import 'package:pirate_busters/game/view/sea_theme.dart';
 import 'package:pirate_busters/game/view/sea_view.dart';
 import 'package:pirate_busters/game/view/ship_view.dart';
 import 'package:pirate_busters/game/view/shot_view.dart';
+import 'package:pirate_busters/game/weapon_styles.dart';
 
 /// 전장 (개발 계획서 M4). 매 프레임 [BattleSession] 을 진행하고 결과를 그린다.
 /// 판정은 하지 않는다 (CLAUDE.md 절대 규칙 3).
@@ -44,13 +45,14 @@ class BattleGame extends FlameGame {
   late final FxLayer _fx;
   double _pinchStart = 1;
 
-  /// 사람이 보는 진영(허수아비전은 0, 핫시트는 지금 턴 진영).
+  /// 사람이 보는 진영(AI 전은 0, 핫시트는 지금 턴 진영).
   int get viewSide =>
       session.humanSides.length == 2 ? session.state.activeSide : 0;
 
   @override
   Future<void> onLoad() async {
     final sprites = await BattleSprites.load(images);
+    final weapons = await WeaponStyles.load(images, rootBundle);
     final anims = PbAnims.fromJsonString(
       await rootBundle.loadString(PbAnims.path),
     );
@@ -70,7 +72,12 @@ class BattleGame extends FlameGame {
       for (final side in const [0, 1])
         ShipView(session: session, side: side, sprites: sprites, anims: anims),
     ];
-    _shot = ShotView(session: session, sprites: sprites, priority: 20);
+    _shot = ShotView(
+      session: session,
+      sprites: sprites,
+      weapons: weapons,
+      priority: 20,
+    );
     _fx = FxLayer(sprites: sprites, priority: 30);
     await world.addAll([
       ParallaxScenery(theme: theme, factor: 0.15, seed: 1, priority: -30),
@@ -129,6 +136,8 @@ class BattleGame extends FlameGame {
       projectile: _shot.projectile,
       targetX: shot is ShotPlayback ? _shipCenterX(1 - shot.side) : null,
       aimStretch: aim?.stretch ?? 0,
+      holdImpact: shot is ShotPlayback && shot.landed && !shot.isDone,
+      aspect: size.x > 0 ? size.y / size.x : 0.46,
     );
     director.update(dt, goal);
     final shake = _fx.shake;
@@ -184,6 +193,9 @@ class BattleGame extends FlameGame {
           if (side.offset == lo || side.offset == hi) {
             _fx.splash(Coords.point(e.x, 0));
           }
+        case SimEventKind.bounce:
+          _fx.splash(Coords.point(e.x, 0));
+          sound.play(Sfx.splash, volume: 0.6);
         case SimEventKind.pirateHit:
           _ships[e.side].playHit(e.slot);
           final rig = e.slot >= 0 && e.slot < _ships[e.side].rigs.length
@@ -201,7 +213,13 @@ class BattleGame extends FlameGame {
             SimEventKind.pirateReturned ||
             SimEventKind.pirateDown ||
             SimEventKind.flood ||
-            SimEventKind.stormStart:
+            SimEventKind.stormStart ||
+            // 분열·설치·수리·턴 효과·모듈 파괴 연출은 M5 앱 단계에서 붙인다.
+            SimEventKind.divide ||
+            SimEventKind.mineAttached ||
+            SimEventKind.repaired ||
+            SimEventKind.effectFired ||
+            SimEventKind.moduleDestroyed:
           break;
       }
     }

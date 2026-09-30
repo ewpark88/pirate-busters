@@ -1,6 +1,6 @@
 import 'package:pb_sim/pb_sim.dart';
 
-/// 테스트용 슬루프 설계도 (비용 57/60). 선실은 2층(y = 2)에 4개.
+/// 테스트용 슬루프 설계도 (비용 57/60). 선실은 2층(y = 2)에 4개, 선장실은 (11, 1).
 Blueprint sampleBlueprint() => Blueprint(
   HullSpec.sloop,
   [
@@ -13,6 +13,7 @@ Blueprint sampleBlueprint() => Blueprint(
     for (var x = 4; x < 8; x++) BlockCell(x, 3, BlockMaterial.net),
   ],
   cabins: sampleCabins,
+  modules: const [ModuleCell(11, 1, ModuleKind.captain)],
 );
 
 const List<CabinCell> sampleCabins = [
@@ -90,7 +91,7 @@ class RandomController implements Controller {
     for (var i = 0; i < actions; i++) {
       final slot = rng.nextInt(5);
       if (rng.nextChance(1, 5)) {
-        commands.add(TapCommand(t: t, slot: slot, tick: rng.nextInt(40)));
+        commands.add(TapCommand(t: t, slot: slot, ticks: rng.nextInt(40)));
       } else if (rng.nextChance(1, 3)) {
         commands.add(MoveCommand(t: t, dx: rng.nextRange(-60, 61)));
       } else {

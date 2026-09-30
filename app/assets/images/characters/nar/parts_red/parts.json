@@ -1,0 +1,159 @@
+{
+  "id": "nar",
+  "team": "red",
+  "scale": 2,
+  "canvas": [
+    480.0,
+    648.0
+  ],
+  "anchor": [
+    240,
+    630
+  ],
+  "parts": [
+    {
+      "id": "shadow",
+      "anim": "shadow",
+      "z": 0,
+      "file": "shadow.png",
+      "offset": [
+        140,
+        616
+      ],
+      "size": [
+        200,
+        28
+      ],
+      "pivot": [
+        100.0,
+        14.0
+      ]
+    },
+    {
+      "id": "fx",
+      "anim": "fx",
+      "z": 1,
+      "file": "fx.png",
+      "offset": [
+        337,
+        201
+      ],
+      "size": [
+        90,
+        70
+      ],
+      "pivot": [
+        83.0,
+        7.0
+      ]
+    },
+    {
+      "id": "legs",
+      "anim": "body",
+      "z": 2,
+      "file": "legs.png",
+      "offset": [
+        148,
+        512
+      ],
+      "size": [
+        184,
+        125
+      ],
+      "pivot": [
+        92.0,
+        118.0
+      ]
+    },
+    {
+      "id": "body",
+      "anim": "body",
+      "z": 3,
+      "file": "body.png",
+      "offset": [
+        159,
+        333
+      ],
+      "size": [
+        162,
+        216
+      ],
+      "pivot": [
+        81.0,
+        195.0
+      ]
+    },
+    {
+      "id": "head",
+      "anim": "head",
+      "z": 4,
+      "file": "head.png",
+      "offset": [
+        153,
+        112
+      ],
+      "size": [
+        283,
+        258
+      ],
+      "pivot": [
+        87.0,
+        236.0
+      ]
+    },
+    {
+      "id": "eyes",
+      "anim": "eyes",
+      "z": 5,
+      "file": "eyes.png",
+      "offset": [
+        194,
+        274
+      ],
+      "size": [
+        100,
+        48
+      ],
+      "pivot": [
+        54.0,
+        26.0
+      ]
+    },
+    {
+      "id": "arm_back",
+      "anim": "arm",
+      "z": 6,
+      "file": "arm_back.png",
+      "offset": [
+        122,
+        396
+      ],
+      "size": [
+        62,
+        76
+      ],
+      "pivot": [
+        50.0,
+        12.0
+      ]
+    },
+    {
+      "id": "arm",
+      "anim": "arm",
+      "z": 7,
+      "file": "arm.png",
+      "offset": [
+        296,
+        396
+      ],
+      "size": [
+        62,
+        76
+      ],
+      "pivot": [
+        12.0,
+        12.0
+      ]
+    }
+  ]
+}

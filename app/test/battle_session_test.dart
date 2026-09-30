@@ -1,20 +1,23 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:pb_ai/pb_ai.dart';
 import 'package:pb_sim/pb_sim.dart';
+import 'package:pirate_busters/battle/auto_end.dart';
 import 'package:pirate_busters/battle/battle_session.dart';
-import 'package:pirate_busters/battle/battle_setup.dart';
-import 'package:pirate_busters/battle/dummy_controller.dart';
 import 'package:pirate_busters/battle/playback.dart';
 import 'package:pirate_busters/battle/session_views.dart';
+
+import 'test_catalog.dart';
 
 /// 사람이 선공인 시드를 찾아 허수아비전 세션을 만든다.
 BattleSession _humanFirst({bool hotseat = false}) {
   for (var seed = 1; ; seed++) {
-    final m = BattleSetup.newMatch(seed);
+    final m = testSetup.newMatch(seed);
     if (m.state.activeSide == 0) {
       return BattleSession(
         m,
         humanSides: hotseat ? const {0, 1} : const {0},
-        opponent: hotseat ? null : const DummyController(),
+        speciesOf: testCatalog.speciesOf,
+        opponent: hotseat ? null : const AiController(level: AiLevel.easy),
       );
     }
   }
@@ -46,7 +49,7 @@ void main() {
         ..update(500)
         ..fire(0, 30000, 9000);
       final shot = s.playback! as ShotPlayback;
-      expect(shot.path.lastTick, greaterThan(10));
+      expect(shot.lastTick, greaterThan(10));
       // 발사 이벤트(공격 동작·포성)는 바로, 착탄 효과는 연출 뒤에 나온다.
       expect(s.takeCues().map((e) => e.kind), [SimEventKind.fire]);
       _drain(s);
@@ -57,13 +60,15 @@ void main() {
       );
     });
 
-    test('2발을 쏘면 턴이 넘어가고, 허수아비가 두고 다시 내 턴이 온다', () {
+    test('2발을 쏘면 유예 뒤 턴이 넘어가고, AI 가 두고 다시 내 턴이 온다 (ADR-042)', () {
       final s = _humanFirst()
         ..update(500)
         ..fire(0, 30000, 9000);
       _drain(s);
-      s.fire(2, 35000, 9000);
+      s.fire(1, 35000, 9000);
       _drain(s);
+      expect(s.isHumanTurn, isTrue, reason: '유예 동안은 이동할 수 있다');
+      s.update(AutoEndClock.graceMs);
       expect(s.isHumanTurn, isFalse);
       var guard = 0;
       while (!s.isHumanTurn && !s.isOver && guard++ < 2000) {
@@ -98,9 +103,10 @@ void main() {
       final preview = s.previewShot(1, 25000, 8000);
       s.fire(1, 25000, 8000);
       final shot = s.playback! as ShotPlayback;
-      final n = shot.path.lastTick - 1;
-      expect(shot.path.xs.sublist(0, n), preview.xs.sublist(0, n));
-      expect(shot.path.ys.sublist(0, n), preview.ys.sublist(0, n));
+      final path = shot.traces.single;
+      final n = path.xs.length - 1;
+      expect(path.xs.sublist(0, n), preview.xs.sublist(0, n));
+      expect(path.ys.sublist(0, n), preview.ys.sublist(0, n));
     });
 
     test('내 탄이 나는 동안 탭하면 TAP 이 발사로부터의 틱 수로 기록된다', () {
@@ -112,7 +118,7 @@ void main() {
       _drain(s);
       s.endTurn();
       final taps = s.match.turnLog.first.commands.whereType<TapCommand>();
-      expect(taps.single.tick, 9);
+      expect(taps.single.ticks, 9);
     });
 
     test('상대 턴에 누른 항복은 내 턴이 오면 바로 낸다 (설계서 §13.4)', () {
@@ -134,8 +140,8 @@ void main() {
       final s = _humanFirst()
         ..update(100)
         ..endTurn()
-        ..select(2);
-      expect(s.selected, 2);
+        ..select(1);
+      expect(s.selected, 1);
       expect(s.focusSlot, isNull, reason: '상대 턴에는 줌인하지 않는다');
       var guard = 0;
       while (!s.isHumanTurn && guard++ < 2000) {
@@ -143,8 +149,8 @@ void main() {
       }
       _drain(s);
       s.update(10);
-      expect(s.focusSlot, 2);
-      s.fire(2, 30000, 8000);
+      expect(s.focusSlot, 1);
+      s.fire(1, 30000, 8000);
       expect(s.selected, isNull);
     });
 
@@ -201,31 +207,59 @@ void main() {
 
     test('누르고 있을 때의 이동 끝 지점은 시뮬레이션의 이동 거리와 같다', () {
       final s = _humanFirst()..update(100);
-      s.state.sides[0].fuel = 10 * SideState.fuelUnit; // 2.5칸
+      final me = s.state.sides[0];
+      me.fuel = me.fuelPerCell * 5 ~/ 2; // 2.5칸 (무게 연료 반영, 설계서 §2.7)
       expect(s.reach(80), 2500);
       expect(s.reach(-3), -300);
     });
   });
 
-  group('허수아비 (ADR-029)', () {
-    test('같은 판·같은 턴이면 같은 커맨드를 내고, 사람과 같은 커맨드만 쓴다', () {
-      final m = BattleSetup.newMatch(9);
-      const dummy = DummyController();
-      final a = dummy.turnFor(m.state).toJson();
-      final b = dummy.turnFor(m.state).toJson();
-      expect(a, b);
-      final bundle = dummy.turnFor(m.state);
-      expect(bundle.commands.last, isA<EndTurnCommand>());
+  group('AI 상대 (설계서 §5, ADR-040)', () {
+    test('AI 는 프레임마다 나눠 계획한 뒤 사람과 같은 커맨드로 두고 턴을 넘긴다', () {
+      final s = _humanFirst()
+        ..update(100)
+        ..endTurn();
+      expect(s.isHumanTurn, isFalse);
+      s.update(16);
+      expect(s.state.turn, 2, reason: '계획이 한 프레임에 끝나지 않는다');
+      var guard = 0;
+      while (!s.isHumanTurn && !s.isOver && guard++ < 5000) {
+        s.update(16);
+      }
+      expect(s.isHumanTurn || s.isOver, isTrue);
+      final log = s.match.turnLog[1];
       expect(
-        bundle.commands.whereType<FireCommand>().length,
-        lessThanOrEqualTo(2),
+        log.commands.every(
+          (c) =>
+              c is MoveCommand ||
+              c is FireCommand ||
+              c is TapCommand ||
+              c is EndTurnCommand,
+        ),
+        isTrue,
       );
     });
 
-    test('허수아비끼리 끝까지 두면 판이 끝난다', () {
-      final m = BattleSetup.newMatch(4);
-      runMatch(m, const DummyController(), const DummyController());
-      expect(m.state.isOver, isTrue);
+    test('AI 가 쏘기 전 조준 자세는 난이도별 생각 연출 시간만큼 보인다 (A5.2)', () {
+      final s = _humanFirst();
+      expect(s.aimShowMs, AiDials.of(AiLevel.easy).thinkMs);
     });
+
+    test('AI 덱은 플레이어 덱과 같은 인원이다', () {
+      final m = testSetup.newMatch(
+        4,
+        deck: const ['p01_octo', 'p06_pang', 'p16_suri'],
+      );
+      expect(m.state.sides[1].crew.size, 3);
+    });
+  });
+
+  test('자동 턴 종료를 끄면 2발을 쏴도 턴이 넘어가지 않는다 (§2.2)', () {
+    final clock = AutoEndClock()..enabled = false;
+    expect(clock.tick(5000, done: true, held: false), isFalse);
+    clock.enabled = true;
+    expect(clock.tick(1000, done: true, held: true), isFalse, reason: '이동 중');
+    expect(clock.tick(1000, done: true, held: false), isFalse);
+    expect(clock.tick(600, done: true, held: false), isTrue);
   });
 }

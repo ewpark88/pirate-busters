@@ -7,11 +7,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:pb_ai/pb_ai.dart';
 import 'package:pirate_busters/app/providers.dart';
 import 'package:pirate_busters/audio/sound_service.dart';
 import 'package:pirate_busters/battle/battle_session.dart';
-import 'package:pirate_busters/battle/battle_setup.dart';
-import 'package:pirate_busters/battle/dummy_controller.dart';
+import 'package:pirate_busters/data/fleet_store.dart';
 import 'package:pirate_busters/game/anim/anim_data.dart';
 import 'package:pirate_busters/game/battle_game.dart';
 import 'package:pirate_busters/game/camera_director.dart';
@@ -19,6 +19,8 @@ import 'package:pirate_busters/l10n/app_localizations.dart';
 import 'package:pirate_busters/settings/language.dart';
 import 'package:pirate_busters/settings/settings_store.dart';
 import 'package:pirate_busters/ui/battle_screen.dart';
+
+import 'test_catalog.dart';
 
 void main() {
   group('부위 애니메이션 데이터 (설계서 §10.1)', () {
@@ -73,6 +75,41 @@ void main() {
       expect(center.x, 200);
     });
 
+    test('탄이 높이 올라가도 화면 밖으로 나가지 않고, 착탄 연출이 끝날 때까지 머문다 (§2.1)', () {
+      final c = CameraDirector();
+      const aspect = 0.46;
+      for (final y in [-200.0, -600.0, -1100.0]) {
+        final shot = Vector2(-300, y);
+        final (center, w) = c.target(
+          myX: -900,
+          enemyX: 900,
+          facing: 1,
+          projectile: shot,
+        );
+        final halfH = w * aspect / 2;
+        expect(
+          (shot.x - center.x).abs(),
+          lessThanOrEqualTo(w / 2),
+          reason: '$y',
+        );
+        expect(
+          shot.y,
+          inInclusiveRange(center.y - halfH, center.y + halfH),
+          reason: '$y',
+        );
+      }
+      c
+        ..impact(Vector2(800, -40))
+        ..update(5, c.target(myX: 0, enemyX: 900, facing: 1));
+      final (held, _) = c.target(
+        myX: 0,
+        enemyX: 900,
+        facing: 1,
+        holdImpact: true,
+      );
+      expect(held.x, 800, reason: '1.3초가 지나도 부서지는 연출 동안 착탄 지점');
+    });
+
     test('핀치 줌은 1.5배 확대부터 간격 48칸이 다 보이는 배율까지만', () {
       final c = CameraDirector()..setUserZoom(10);
       final (_, wIn) = c.target(myX: 0, enemyX: 1000, facing: 1);
@@ -122,6 +159,8 @@ void main() {
       ProviderScope(
         overrides: [
           settingsStoreProvider.overrideWithValue(MemorySettingsStore()),
+          gameCatalogProvider.overrideWithValue(testCatalog),
+          fleetStoreProvider.overrideWithValue(MemoryFleetStore()),
         ],
         child: const MaterialApp(
           locale: Locale('ko'),
@@ -148,9 +187,10 @@ void main() {
 
   testWidgets('전장이 배·해적·바다를 그리고 탄 비행·착탄까지 오류 없이 진행한다', (tester) async {
     final session = BattleSession(
-      BattleSetup.newMatch(7),
+      testSetup.newMatch(7),
       humanSides: const {0},
-      opponent: const DummyController(),
+      speciesOf: testCatalog.speciesOf,
+      opponent: const AiController(level: AiLevel.easy),
     );
     final sound = _RecordingSound();
     // 앞 테스트의 가짜 시간 영역에서 만든 자산 캐시(Future)는 여기서 끝나지 않는다.

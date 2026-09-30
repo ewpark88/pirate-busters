@@ -7,11 +7,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pirate_busters/app/providers.dart';
 import 'package:pirate_busters/battle/battle_session.dart';
-import 'package:pirate_busters/battle/battle_setup.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
 import 'package:pirate_busters/settings/language.dart';
 import 'package:pirate_busters/settings/settings_store.dart';
 import 'package:pirate_busters/ui/hud/battle_hud.dart';
+
+import 'test_catalog.dart';
 
 /// 골든은 글꼴 그리기가 OS 마다 달라 만든 환경(Windows)에서만 비교한다.
 /// 다시 만들기: `flutter test test/hud_golden_test.dart --update-goldens`.
@@ -40,8 +41,9 @@ void main() {
           tester.view.devicePixelRatio = 2;
           addTearDown(tester.view.reset);
           final session = BattleSession(
-            BattleSetup.newMatch(3),
+            testSetup.newMatch(3),
             humanSides: const {0, 1},
+            speciesOf: testCatalog.speciesOf,
           );
           await tester.pumpWidget(
             ProviderScope(

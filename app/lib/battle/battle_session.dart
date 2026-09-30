@@ -1,7 +1,10 @@
 import 'package:flutter/foundation.dart';
+import 'package:pb_ai/pb_ai.dart';
 import 'package:pb_sim/pb_sim.dart';
+import 'package:pirate_busters/battle/auto_end.dart';
 import 'package:pirate_busters/battle/playback.dart';
-import 'package:pirate_busters/battle/shot_path.dart';
+import 'package:pirate_busters/battle/session_views.dart';
+import 'package:pirate_busters/battle/shot_flow.dart';
 import 'package:pirate_busters/battle/ui_state.dart';
 
 /// 한 판의 진행 (개발 계획서 M4). 판정은 모두 [Match] 가 하고, 여기서는 시각을 세고
@@ -12,16 +15,24 @@ import 'package:pirate_busters/battle/ui_state.dart';
 /// - 연출([playback]) 동안에는 입력을 받지 않는다. 턴 시계는 계속 흐르고, 시뮬레이션이
 ///   탄 비행 시간만큼 턴 제한 시간을 멈춘다.
 class BattleSession extends ChangeNotifier with SessionUiState {
-  BattleSession(this.match, {required this.humanSides, this.opponent});
+  BattleSession(
+    this.match, {
+    required this.humanSides,
+    required this.speciesOf,
+    this.opponent,
+  });
 
   final Match match;
 
-  /// 사람이 두는 진영. 허수아비전은 {0}, 핫시트는 {0, 1}.
+  /// 사람이 두는 진영. AI 전은 {0}, 핫시트는 {0, 1}.
   @override
   final Set<int> humanSides;
 
   /// 사람이 아닌 진영의 컨트롤러.
   final Controller? opponent;
+
+  /// 해적 id → 그림 종족 id (게임 데이터 `render.species`).
+  final String Function(String pirateId) speciesOf;
 
   MatchState get state => match.state;
 
@@ -31,6 +42,9 @@ class BattleSession extends ChangeNotifier with SessionUiState {
   /// 지금 턴이 시작된 뒤 흐른 실제 시간(밀리초). 커맨드 `t` 가 된다.
   int turnMs = 0;
 
+  /// 2발 뒤 자동 턴 종료 유예 (설계서 §2.2). 설정에서 끈다.
+  final AutoEndClock autoEnd = AutoEndClock();
+
   /// 지금 보여주는 연출. 없으면 null.
   Playback? playback;
 
@@ -38,6 +52,9 @@ class BattleSession extends ChangeNotifier with SessionUiState {
   final List<SimEvent> _cues = [];
 
   TurnBundle? _script;
+
+  /// AI 상대의 이번 턴 계획기. 프레임마다 후보를 나눠 평가한다 (BALANCE.md A5.1).
+  AiPlanner? _planner;
   int _scriptIndex = 0;
   int _turnOfClock = 1;
 
@@ -48,18 +65,6 @@ class BattleSession extends ChangeNotifier with SessionUiState {
 
   /// 사람이 지금 조작할 수 있는가.
   bool get canAct => !isOver && isHumanTurn && playback == null;
-
-  /// 남은 턴 시간(밀리초). 탄 비행 연출 중에는 줄지 않는다.
-  int get remainingMs {
-    final shot = playback;
-    final flightLeft = shot is ShotPlayback
-        ? shot.durationMs - shot.elapsedMs
-        : 0;
-    final paused = state.pausedMs - flightLeft;
-    final used = turnMs - paused;
-    final left = state.rules.turnTimeFor(state.turn) - used;
-    return left < 0 ? 0 : left;
-  }
 
   /// [slot] 해적을 지금 쏠 수 있는가.
   @override
@@ -78,8 +83,9 @@ class BattleSession extends ChangeNotifier with SessionUiState {
     final c = bundle.commands[_scriptIndex];
     if (c is! FireCommand) return null;
     final left = c.t - turnMs;
-    if (left > 1200) return null;
-    return (slot: c.slot, progress: (1 - left / 1200).clamp(0.0, 1.0));
+    final window = aimShowMs;
+    if (left > window) return null;
+    return (slot: c.slot, progress: (1 - left / window).clamp(0.0, 1.0));
   }
 
   /// 쌓인 효과 이벤트를 꺼낸다.
@@ -95,11 +101,9 @@ class BattleSession extends ChangeNotifier with SessionUiState {
     final p = playback;
     if (p != null) {
       p.elapsedMs += dtMs;
-      if (p is ShotPlayback && !p.landed && p.elapsedMs >= p.flightMs) {
-        p.landed = true;
-        _cues.addAll(p.landing);
-      }
-      if (p.isDone) _finishPlayback(p);
+      if (p is ShotPlayback) _advanceShot(p);
+      final now = playback;
+      if (now != null && now.isDone) _finishPlayback(now);
     }
     turnMs += dtMs;
     if (!isOver && playback == null) {
@@ -107,13 +111,23 @@ class BattleSession extends ChangeNotifier with SessionUiState {
         surrenderQueued = false;
         _apply(SurrenderCommand(t: turnMs));
       } else if (isHumanTurn) {
-        if (remainingMs <= 0) _apply(EndTurnCommand(t: turnMs));
+        if (remainingMs <= 0) {
+          _apply(EndTurnCommand(t: turnMs));
+        } else if (_autoEndDue(dtMs)) {
+          _apply(EndTurnCommand(t: turnMs));
+        }
       } else {
         _playScript();
       }
     }
     notifyListeners();
   }
+
+  bool _autoEndDue(int dtMs) => autoEnd.tick(
+    dtMs,
+    done: state.firesThisTurn >= state.rules.firesPerTurn,
+    held: moveHeld,
+  );
 
   /// 배를 [dx](1/10칸, 전진 +)만큼 움직인다.
   void move(int dx) {
@@ -129,16 +143,31 @@ class BattleSession extends ChangeNotifier with SessionUiState {
     _apply(FireCommand(t: turnMs, slot: slot, angle: angle, power: power));
   }
 
-  /// 비행 중 탭 (설계서 §2.2). 내 탄이 날고 있을 때만 `TAP` 을 기록한다.
-  /// MVP 에서는 효과가 없다(onTap 은 R1).
+  /// 비행 중 탭 (설계서 §2.2). 내 탄이 날고 있을 때만 `TAP` 을 낸다. 분열탄이면
+  /// 지금 틱에 갈라지고(설계서 §4.8), 다른 탄종에서는 효과가 없다.
   void tap() {
     final shot = playback;
     if (shot is! ShotPlayback || !humanSides.contains(shot.side)) return;
-    match.apply(
-      TapCommand(t: turnMs, slot: shot.slot, tick: shot.tick.floor()),
-    );
+    final tick = shot.tick.floor();
+    if (shot.awaitingTap) {
+      if (tick >= 1 && tick < shot.lastTick) _resolveSplit(shot, tick);
+    } else {
+      match.apply(TapCommand(t: turnMs, slot: shot.slot, ticks: tick));
+    }
     notifyListeners();
   }
+
+  /// 탄 연출 한 프레임: 틱이 온 효과를 내고, 탭 없이 떨어지는 분열탄을 계산한다.
+  void _advanceShot(ShotPlayback p) {
+    if (p.awaitingTap) {
+      if (p.tick >= p.lastTick) _resolveSplit(p, null);
+      return;
+    }
+    _cues.addAll(p.takeDue());
+  }
+
+  void _resolveSplit(ShotPlayback p, int? tick) =>
+      playback = resolveSplit(match, p, tick);
 
   void endTurn() {
     if (canAct) _apply(EndTurnCommand(t: turnMs));
@@ -158,6 +187,12 @@ class BattleSession extends ChangeNotifier with SessionUiState {
   }
 
   void _playScript() {
+    final ai = opponent;
+    if (_script == null && ai is AiController) {
+      final planner = _planner ??= ai.planner(state);
+      if (!planner.step()) return;
+      _script = planner.bundle;
+    }
     final bundle = _script ??= opponent?.turnFor(state);
     if (bundle == null) return;
     while (playback == null && _scriptIndex < bundle.commands.length) {
@@ -178,9 +213,11 @@ class BattleSession extends ChangeNotifier with SessionUiState {
     if (playback != null || state.turn == _turnOfClock) return;
     _turnOfClock = state.turn;
     turnMs = 0;
+    autoEnd.reset();
     // 고른 진영의 턴이 끝났으면 선택을 푼다(상대 턴에 고른 것은 남는다).
     if (selectedSide != state.activeSide) selected = null;
     _script = null;
+    _planner = null;
     _scriptIndex = 0;
   }
 
@@ -188,34 +225,38 @@ class BattleSession extends ChangeNotifier with SessionUiState {
     final side = state.activeSide;
     final turn = state.turn;
     final bowBefore = state.sides[side].bowX;
-    ShotPath? path;
-    List<GridSnapshot>? before;
-    if (c is FireCommand) {
-      path = ShotPath.predict(
-        state,
-        slot: c.slot,
-        angle: c.angle,
-        power: c.power,
-        ms: realMs(state, effectiveMs(state, c.t)),
-      );
-      before = [for (final s in state.sides) GridSnapshot(s.grid)];
-    }
+    // 분열탄은 탭 전까지 계산하지 않으므로 떨어질 곳을 미리 예측해 둔다.
+    final split = c is FireCommand ? splitPathFor(state, c) : null;
+    final before = [for (final s in state.sides) GridSnapshot(s.grid)];
     final start = _eventsStart(turn);
     final firedBefore = state.nextProjectileId;
     match.apply(c);
     // 턴이 끝나도 이벤트 목록은 다음 턴 첫 커맨드 때 비워진다.
     final events = state.events.sublist(start.clamp(0, state.events.length));
-    if (path != null && state.nextProjectileId > firedBefore) {
-      // 발사 이벤트는 바로(공격 동작·포성), 나머지는 착탄 때 낸다.
+    if (c is FireCommand && state.nextProjectileId > firedBefore) {
+      // 발사 이벤트는 바로(공격 동작·포성), 나머지는 착탄 틱에 낸다.
       _cues.addAll(events.where((e) => e.kind == SimEventKind.fire));
-      playback = ShotPlayback.fromEvents(
-        side: side,
-        slot: (c as FireCommand).slot,
-        path: path,
-        before: before!,
-        events: events,
-        breakPauseMs: state.rules.breakPauseMs,
-      );
+      final pending = match.pendingSlot >= 0;
+      if (pending && split != null && humanSides.contains(side)) {
+        playback = ShotPlayback.awaitingTap(
+          side: side,
+          slot: c.slot,
+          fireT: c.t,
+          path: split,
+          before: before,
+        );
+      } else {
+        // 컴퓨터는 탭하지 않는다(갈라지지 않은 채 계산).
+        if (pending) match.settlePending();
+        playback = resolvedShot(
+          state,
+          side: side,
+          slot: c.slot,
+          fireT: c.t,
+          before: before,
+          start: start,
+        );
+      }
     } else if (c is MoveCommand) {
       final move = events.where((e) => e.kind == SimEventKind.move);
       if (move.isNotEmpty) {
@@ -246,7 +287,7 @@ class BattleSession extends ChangeNotifier with SessionUiState {
 
   void _finishPlayback(Playback p) {
     playback = null;
-    if (p is ShotPlayback && !p.landed) _cues.addAll(p.landing);
+    if (p is ShotPlayback) _cues.addAll(p.takeDue(all: true));
     if (p is MovePlayback) {
       _cues.add(SimEvent(SimEventKind.move, side: p.side, x: p.toX));
     }

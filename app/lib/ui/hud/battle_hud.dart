@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pirate_busters/battle/battle_session.dart';
+import 'package:pirate_busters/battle/playback.dart';
+import 'package:pirate_busters/battle/session_views.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
 import 'package:pirate_busters/ui/hud/gap_bar.dart';
 import 'package:pirate_busters/ui/hud/hud_scale.dart';
@@ -45,6 +47,13 @@ class BattleHud extends StatelessWidget {
       return HudScale(child: _layout(context, l10n, myTurn: myTurn));
     },
   );
+
+  bool get _awaitingTap {
+    final p = session.playback;
+    return p is ShotPlayback &&
+        p.awaitingTap &&
+        session.humanSides.contains(p.side);
+  }
 
   Widget _layout(
     BuildContext context,
@@ -114,6 +123,20 @@ class BattleHud extends StatelessWidget {
                 fontSize: 96,
                 color: HudColors.danger,
                 shadows: [Shadow(blurRadius: 8)],
+              ),
+            ),
+          ),
+        ),
+      if (_awaitingTap)
+        // 분열탄이 날고 있다: 화면 어디든 탭하면 갈라진다 (설계서 §2.2, §4.8).
+        Align(
+          alignment: const Alignment(0, -0.45),
+          child: IgnorePointer(
+            child: HudPanel(
+              borderColor: HudColors.warn,
+              child: Text(
+                l10n.tapToSplit,
+                style: const TextStyle(fontSize: 22, color: HudColors.warn),
               ),
             ),
           ),

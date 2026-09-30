@@ -4,18 +4,18 @@
   "outcome": "surrender",
   "winner": 1,
   "turns": 4,
-  "hash": "88600ebc"
+  "hash": "0ed5b97c"
  },
  "replay": {
-  "version": 5,
+  "version": 7,
   "seed": 6,
   "rules": {
    "maxTurns": 30,
    "turnTimeMs": 25000,
    "firesPerTurn": 2,
    "maxWind": 3,
-   "windAccel": 1,
-   "sunkHullPercent": 20,
+   "windAccel": 44,
+   "sunkHullPercent": 30,
    "fuelPerTurn": 30,
    "stormTurns": 4,
    "stormTurnTimeMs": 20000,
@@ -36,6 +36,17 @@
    "maxTilt": 6000,
    "breakPauseMs": 600,
    "limitSlowZone": 500
+  },
+  "params": {
+   "hullPermille": [
+    1000,
+    1000
+   ],
+   "sets": [
+    [],
+    []
+   ],
+   "dataVersion": ""
   },
   "blueprints": [
    {
@@ -244,6 +255,13 @@
       8,
       2
      ]
+    ],
+    "modules": [
+     [
+      11,
+      1,
+      "captain"
+     ]
     ]
    },
    {
@@ -452,6 +470,13 @@
       8,
       2
      ]
+    ],
+    "modules": [
+     [
+      11,
+      1,
+      "captain"
+     ]
     ]
    }
   ],
@@ -482,7 +507,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "8cca0b3a"
+    "hash": "c261709a"
    },
    {
     "turn": 2,
@@ -498,7 +523,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "b46e31b6"
+    "hash": "85c5f0c1"
    },
    {
     "turn": 3,
@@ -509,7 +534,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "26828e71"
+    "hash": "842c0bae"
    },
    {
     "turn": 4,
@@ -520,7 +545,7 @@
       "type": "SURRENDER"
      }
     ],
-    "hash": "88600ebc"
+    "hash": "0ed5b97c"
    }
   ]
  }

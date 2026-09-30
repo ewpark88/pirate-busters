@@ -5,8 +5,9 @@ import 'package:flame/components.dart';
 /// 카메라 목표 계산 (설계서 §2.1, 렌더 전용). Flame 과 무관한 순수 계산이라 테스트한다.
 ///
 /// 수치는 에셋 tokens.json `camera` 를 따른다: 착탄 뒤 1.3초 머묾, 착탄 화면 폭 700.
-/// 기본 화면은 내 배와 앞바다, 조준할수록 줌아웃, 탄을 쏘면 탄과 표적이 한 화면에
-/// 들어오게 따라간다. 핀치 줌은 1.5배 확대부터 간격 48칸이 다 보이는 배율까지.
+/// 기본 화면은 내 배와 앞바다, 조준할수록 줌아웃. 탄을 쏘면 발사부터 착탄·파괴 연출이
+/// 끝날 때까지 탄을 따라가고 탄이 화면 밖으로 나가지 않는다(높이 올라가면 넓게 본다).
+/// 상대 턴도 같다 (설계서 §2.1, ADR-043). 핀치 줌은 1.5배 확대부터 간격 48칸까지.
 class CameraDirector {
   /// 기본 화면 폭(월드 px, 약 28칸).
   static const double baseWidth = 900;
@@ -17,6 +18,15 @@ class CameraDirector {
   static const double impactWidth = 700;
   static const double impactHoldSec = 1.3;
   static const double followRate = 4;
+
+  /// 탄을 따라갈 때는 더 빨리 붙는다(탄이 화면 밖으로 나가지 않게).
+  static const double shotFollowRate = 12;
+
+  /// 탄 위·아래 여백(월드 px). 아래는 해수면·배까지 보이게.
+  static const double shotMarginTop = 90;
+  static const double shotMarginBottom = 110;
+
+  double _rate = followRate;
 
   final Vector2 center = Vector2(0, -120);
   double width = baseWidth;
@@ -54,24 +64,38 @@ class CameraDirector {
     Vector2? projectile,
     double? targetX,
     double aimStretch = 0,
+    bool holdImpact = false,
+    double aspect = 0.46,
   }) {
+    _rate = projectile != null ? shotFollowRate : followRate;
     if (overview) {
       final w = ((myX - enemyX).abs() + 800).clamp(baseWidth, maxWidth);
       return (Vector2((myX + enemyX) / 2, -150), w);
     }
     final impactAt = _impact;
-    if (impactAt != null && _impactLeft > 0) {
+    // 착탄 뒤 1.3초, 또는 부서지는 연출이 끝날 때까지 착탄 지점에 머문다.
+    if (impactAt != null && (_impactLeft > 0 || holdImpact)) {
       final double y = math.min(-60, impactAt.y);
       return (Vector2(impactAt.x, y), impactWidth);
     }
     if (projectile != null) {
       // 탄과 맞을 배(없으면 상대 배)를 한 화면에.
       final aimX = targetX ?? enemyX;
-      final w = ((projectile.x - aimX).abs() + 500).clamp(
-        baseWidth,
-        maxWidth,
+      // 세로: 탄 위 여백부터 해수면 아래 여백까지가 화면 높이 안에 든다.
+      final top = math.min(projectile.y, -60) - shotMarginTop;
+      const bottom = shotMarginBottom;
+      final byHeight = (bottom - top) / aspect;
+      final w = math
+          .max((projectile.x - aimX).abs() + 500, byHeight)
+          .clamp(
+            baseWidth,
+            maxWidth,
+          );
+      final halfH = w * aspect / 2;
+      final double y = math.min(
+        math.max((top + bottom) / 2, top + halfH),
+        bottom - halfH,
       );
-      final double y = math.min(-120, projectile.y * 0.6);
       return (Vector2((projectile.x + aimX) / 2, y), w);
     }
     final feet = focusFeet;
@@ -101,9 +125,9 @@ class CameraDirector {
 
   /// 목표로 부드럽게 다가간다.
   void update(double dt, (Vector2, double) goal) {
+    // 착탄 지점은 다음 착탄까지 남겨 둔다: 부서지는 연출이 길면 계속 머문다.
     _impactLeft = math.max(0, _impactLeft - dt);
-    if (_impactLeft == 0) _impact = null;
-    final k = 1 - math.exp(-followRate * dt);
+    final k = 1 - math.exp(-_rate * dt);
     center.add((goal.$1 - center) * k);
     width += (goal.$2 - width) * k;
   }

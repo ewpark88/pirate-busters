@@ -1,0 +1,79 @@
+{
+  "sea": 1,
+  "nameKey": "sea_1_name",
+  "factionKey": "sea_1_faction",
+  "stages": [
+    {
+      "id": "t-1", "kind": "tutorial", "tutorialStep": 1,
+      "enemyPreset": "balanced", "enemyDeck": ["p16_suri"],
+      "aiLevel": "easy", "personality": "bombard", "waveLevel": 0, "maxWind": 0,
+      "starTurns": 30, "mission": { "type": "no_pirate_down" },
+      "dialogueKeys": ["story_t1_enemy", "story_t1_ally"],
+      "reward": { "gold": 50 }
+    },
+    {
+      "id": "t-2", "kind": "tutorial", "tutorialStep": 2,
+      "enemyPreset": "balanced", "enemyDeck": ["p16_suri", "p11_finn"],
+      "aiLevel": "easy", "personality": "bombard", "waveLevel": 1, "maxWind": 1,
+      "starTurns": 30, "mission": { "type": "no_pirate_down" },
+      "dialogueKeys": ["story_t2_enemy", "story_t2_ally"],
+      "reward": { "gold": 50 }
+    },
+    {
+      "id": "t-3", "kind": "tutorial", "tutorialStep": 3,
+      "enemyPreset": "balanced", "enemyDeck": ["p16_suri", "p21_puffy"],
+      "aiLevel": "easy", "personality": "sinker", "waveLevel": 1, "maxWind": 2,
+      "starTurns": 30, "mission": { "type": "flood_below", "percent": 50 },
+      "dialogueKeys": ["story_t3_enemy", "story_t3_ally"],
+      "reward": { "gold": 50 }
+    },
+    {
+      "id": "1-1", "kind": "normal",
+      "enemyPreset": "balanced", "enemyDeck": ["p06_pang", "p16_suri"],
+      "aiLevel": "easy", "personality": "bombard", "waveLevel": 1, "maxWind": 2,
+      "starTurns": 12, "mission": { "type": "no_pirate_down" },
+      "dialogueKeys": ["story_s1_1_enemy", "story_s1_1_ally"],
+      "reward": { "gold": 100 }
+    },
+    {
+      "id": "1-2", "kind": "normal",
+      "enemyPreset": "balanced", "enemyDeck": ["p06_pang", "p16_suri", "p11_finn"],
+      "aiLevel": "easy", "personality": "bombard", "waveLevel": 1, "maxWind": 3,
+      "starTurns": 12, "mission": { "type": "hull_above", "percent": 60 },
+      "dialogueKeys": ["story_s1_2_enemy", "story_s1_2_ally"],
+      "reward": { "gold": 120, "pirate": "p16_suri" }
+    },
+    {
+      "id": "1-3", "kind": "normal",
+      "enemyPreset": "fast", "enemyDeck": ["p06_pang", "p11_finn", "p26_polly"],
+      "aiLevel": "easy", "personality": "hunter", "waveLevel": 2, "maxWind": 3,
+      "starTurns": 12, "mission": { "type": "flood_below", "percent": 30 },
+      "dialogueKeys": ["story_s1_3_enemy", "story_s1_3_ally"],
+      "reward": { "gold": 150 }
+    },
+    {
+      "id": "1-4", "kind": "normal",
+      "enemyPreset": "balanced", "enemyDeck": ["p06_pang", "p07_hippo", "p11_finn", "p26_polly"],
+      "aiLevel": "easy", "personality": "bombard", "waveLevel": 2, "maxWind": 3,
+      "starTurns": 12, "mission": { "type": "win_by_sink" },
+      "dialogueKeys": ["story_s1_4_enemy", "story_s1_4_ally"],
+      "reward": { "gold": 200, "pirate": "p26_polly" }
+    },
+    {
+      "id": "1-5", "kind": "midBoss", "gimmick": "bow_iron_shield",
+      "enemyPreset": "armored", "enemyDeck": ["p06_pang", "p07_hippo", "p11_finn", "p31_sharky"],
+      "aiLevel": "normal", "personality": "bombard", "waveLevel": 2, "maxWind": 3,
+      "starTurns": 12, "mission": { "type": "no_pirate_down" },
+      "dialogueKeys": ["story_s1_5_enemy", "story_s1_5_ally"],
+      "reward": { "gold": 300, "pirate": "p06_pang" }
+    },
+    {
+      "id": "1-12", "kind": "boss", "gimmick": "patrol_closing_in",
+      "enemyPreset": "armored", "enemyDeck": ["p06_pang", "p04_uni", "p11_finn", "p31_sharky"],
+      "aiLevel": "normal", "personality": "bombard", "waveLevel": 3, "maxWind": 3,
+      "starTurns": 12, "mission": { "type": "turns_within", "turns": 10 },
+      "dialogueKeys": ["story_s1_12_enemy", "story_s1_12_ally"],
+      "reward": { "gold": 500, "pirate": "p31_sharky" }
+    }
+  ]
+}

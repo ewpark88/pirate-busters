@@ -4,7 +4,6 @@ import 'dart:ui';
 import 'package:flame/components.dart';
 import 'package:pb_sim/pb_sim.dart';
 import 'package:pirate_busters/battle/battle_session.dart';
-import 'package:pirate_busters/battle/battle_setup.dart';
 import 'package:pirate_busters/battle/playback.dart';
 import 'package:pirate_busters/game/anim/anim_data.dart';
 import 'package:pirate_busters/game/anim/character_rig.dart';
@@ -41,7 +40,7 @@ class ShipView extends PositionComponent with HasGameReference {
   Future<void> onLoad() async {
     final team = side == 0 ? 'blue' : 'red';
     for (var slot = 0; slot < _state.crew.size; slot++) {
-      final id = BattleSetup.speciesOf(_state.crew.pirates[slot].spec.id);
+      final id = session.speciesOf(_state.crew.pirates[slot].spec.id);
       final rig = await CharacterRig.load(
         game.images,
         id,
@@ -59,7 +58,7 @@ class ShipView extends PositionComponent with HasGameReference {
 
   /// 해적 [slot] 의 공격 동작.
   void playAttack(int slot) {
-    final id = BattleSetup.speciesOf(_state.crew.pirates[slot].spec.id);
+    final id = session.speciesOf(_state.crew.pirates[slot].spec.id);
     final clip = anims.attacks[id];
     if (clip != null && slot < rigs.length) rigs[slot].play(clip);
   }

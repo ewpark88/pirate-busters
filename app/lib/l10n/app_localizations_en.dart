@@ -137,9 +137,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get opponent => 'Opponent';
 
   @override
-  String get opponentDummy => 'Training dummy';
-
-  @override
   String get opponentHotseat => 'Two players (one device)';
 
   @override
@@ -187,4 +184,680 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get surrenderQueued => 'You will surrender at the start of your turn';
+
+  @override
+  String get pirate_p01_name => 'Octo the Bomber';
+
+  @override
+  String get pirate_p01_desc => 'Lobbed bomb that bursts in a 1-cell radius';
+
+  @override
+  String get pirate_p01_lore =>
+      'Raised in Coral Harbor, Octo juggles bombs with all eight arms.';
+
+  @override
+  String get pirate_p04_name => 'Uni the Urchin';
+
+  @override
+  String get pirate_p04_desc => 'Tap in flight to split into 4 spikes';
+
+  @override
+  String get pirate_p04_lore =>
+      'As prickly as her spines. She picks the moment to burst.';
+
+  @override
+  String get pirate_p06_name => 'Pang the Pistol Shrimp';
+
+  @override
+  String get pirate_p06_desc => 'Claw-snap water bullet, critical on pirates';
+
+  @override
+  String get pirate_p06_lore => 'One snap of his claw fires a bubble bullet.';
+
+  @override
+  String get pirate_p07_name => 'Hippo the Gunslinger';
+
+  @override
+  String get pirate_p07_desc => 'Short-range triple shot';
+
+  @override
+  String get pirate_p07_lore =>
+      'Anchors with his tail and fires two pistols at once.';
+
+  @override
+  String get pirate_p11_name => 'Finn the Harpooner';
+
+  @override
+  String get pirate_p11_desc => 'Harpoon charge that pierces 2 blocks';
+
+  @override
+  String get pirate_p11_lore =>
+      'His long nose is the harpoon. Hiding behind walls won\'t help.';
+
+  @override
+  String get pirate_p16_name => 'Suri the Slinger';
+
+  @override
+  String get pirate_p16_desc => 'Stone skips twice and hits the waterline';
+
+  @override
+  String get pirate_p16_lore =>
+      'Skips stones with the same knack she uses to crack clams.';
+
+  @override
+  String get pirate_p21_name => 'Puffy the Blaster';
+
+  @override
+  String get pirate_p21_desc => 'Clings below the waterline, bursts next turn';
+
+  @override
+  String get pirate_p21_lore =>
+      'Puffs up, sticks under the hull, and then... boom.';
+
+  @override
+  String get pirate_p26_name => 'Polly the Parrot';
+
+  @override
+  String get pirate_p26_desc => 'Homes in on the nearest pirate and pecks';
+
+  @override
+  String get pirate_p26_lore =>
+      'Leaves the captain\'s shoulder to chase enemy crew.';
+
+  @override
+  String get pirate_p27_name => 'Wing the Bombardier';
+
+  @override
+  String get pirate_p27_desc => 'Dives and drops 3 small bombs';
+
+  @override
+  String get pirate_p27_lore => 'Circles the sea, then dives in a flash.';
+
+  @override
+  String get pirate_p28_name => 'Pelly the Pelican';
+
+  @override
+  String get pirate_p28_desc => 'Drops 4 small bombs from her pouch next turn';
+
+  @override
+  String get pirate_p28_lore =>
+      'Nobody knows what\'s in her pouch until it drops.';
+
+  @override
+  String get pirate_p31_name => 'Sharky the Brawler';
+
+  @override
+  String get pirate_p31_desc =>
+      'Leaps onto the deck and bites pirates within 1 cell';
+
+  @override
+  String get pirate_p31_lore =>
+      'Nothing makes him happier than jumping aboard.';
+
+  @override
+  String get pirate_p36_name => 'Tok the Shipwright';
+
+  @override
+  String get pirate_p36_desc => 'Fire at your ship to patch 3 holed blocks';
+
+  @override
+  String get pirate_p36_lore => 'Slow but careful. He keeps the ship afloat.';
+
+  @override
+  String get blueprint_balanced_name => 'Balanced';
+
+  @override
+  String get blueprint_balanced_desc =>
+      'Oak keel with a pump and a workshop. A gun port and a lookout back one star pirate.';
+
+  @override
+  String get blueprint_armored_name => 'Ironclad';
+
+  @override
+  String get blueprint_armored_desc =>
+      'Iron walls guard both sides of the cabins. Heavy and low in the water, so the pump keeps it afloat.';
+
+  @override
+  String get blueprint_fast_name => 'Swift';
+
+  @override
+  String get blueprint_fast_desc =>
+      'Pine and cork keep it light, and two fuel tanks let it roam far. It breaks easily.';
+
+  @override
+  String ammoExplosive(int n) {
+    return 'Blast $n%';
+  }
+
+  @override
+  String ammoFire(int n) {
+    return 'Fire ${n}T';
+  }
+
+  @override
+  String ammoSplit(int n) {
+    return 'Split ×$n';
+  }
+
+  @override
+  String ammoBurst(int n) {
+    return 'Burst ×$n';
+  }
+
+  @override
+  String ammoSniper(String rate) {
+    return 'Crit ×$rate';
+  }
+
+  @override
+  String ammoChain(int n) {
+    return 'Chain $n';
+  }
+
+  @override
+  String ammoPierce(int n) {
+    return 'Pierce $n';
+  }
+
+  @override
+  String ammoSkip(int n) {
+    return 'Skip ×$n';
+  }
+
+  @override
+  String ammoMine(int n) {
+    return 'Mine ${n}T';
+  }
+
+  @override
+  String ammoFlock(int n) {
+    return 'Drop ×$n';
+  }
+
+  @override
+  String ammoHoming(int n) {
+    return 'Homing $n°';
+  }
+
+  @override
+  String ammoAssault(int n) {
+    return 'Raid +$n';
+  }
+
+  @override
+  String ammoSupport(int n) {
+    return 'Repair $n%';
+  }
+
+  @override
+  String get rangeShort => 'Short';
+
+  @override
+  String get rangeMedium => 'Mid';
+
+  @override
+  String get rangeLong => 'Long';
+
+  @override
+  String get rangeVeryLong => 'Far';
+
+  @override
+  String get outOfRange => 'Out of range';
+
+  @override
+  String get tapToSplit => 'Tap to split!';
+
+  @override
+  String get menuHotseat => 'Two players';
+
+  @override
+  String get menuShipyard => 'Shipyard';
+
+  @override
+  String get menuCrew => 'Crew';
+
+  @override
+  String statPoints(int used, int max) {
+    return 'Points $used/$max';
+  }
+
+  @override
+  String statWaterline(String cells) {
+    return 'Draft $cells';
+  }
+
+  @override
+  String statFuelPerCell(String fuel) {
+    return 'Fuel/cell $fuel';
+  }
+
+  @override
+  String statTank(int n) {
+    return 'Tank $n';
+  }
+
+  @override
+  String statSpeed(String speed) {
+    return 'Speed $speed/s';
+  }
+
+  @override
+  String statCabins(int n, int max) {
+    return 'Cabins $n/$max';
+  }
+
+  @override
+  String statModules(int n, int max) {
+    return 'Modules $n/$max';
+  }
+
+  @override
+  String statCaptain(int n) {
+    return 'Captain $n/1';
+  }
+
+  @override
+  String get materialPine => 'Pine';
+
+  @override
+  String get materialOak => 'Oak';
+
+  @override
+  String get materialIron => 'Iron';
+
+  @override
+  String get materialCork => 'Cork';
+
+  @override
+  String get materialNet => 'Net';
+
+  @override
+  String get toolCabin => 'Cabin';
+
+  @override
+  String get toolErase => 'Erase';
+
+  @override
+  String get moduleGunPort => 'Gun port';
+
+  @override
+  String get moduleMagazine => 'Magazine';
+
+  @override
+  String get modulePump => 'Pump';
+
+  @override
+  String get moduleWorkshop => 'Workshop';
+
+  @override
+  String get moduleMast => 'Mast';
+
+  @override
+  String get moduleLookout => 'Lookout';
+
+  @override
+  String get moduleCaptain => 'Captain';
+
+  @override
+  String get moduleFuelTank => 'Fuel tank';
+
+  @override
+  String get undo => 'Undo';
+
+  @override
+  String get save => 'Save';
+
+  @override
+  String get saved => 'Saved';
+
+  @override
+  String get cannotSave => 'Check the red cells and counts';
+
+  @override
+  String get sailWithThis => 'Sail with this';
+
+  @override
+  String get sailing => 'Sailing';
+
+  @override
+  String get loadPreset => 'Load preset';
+
+  @override
+  String planSlot(int n) {
+    return 'Plan $n';
+  }
+
+  @override
+  String crewCost(int used, int max) {
+    return 'Cost $used/$max';
+  }
+
+  @override
+  String get crewHint => 'Drag pirates into the cabins';
+
+  @override
+  String get deckFamilies => 'Types';
+
+  @override
+  String get deckRanges => 'Range';
+
+  @override
+  String get preferNear => 'Fights close';
+
+  @override
+  String get preferFar => 'Fights far';
+
+  @override
+  String get preferMixed => 'Any distance';
+
+  @override
+  String get familyLob => 'Lob';
+
+  @override
+  String get familyDirect => 'Direct';
+
+  @override
+  String get familyPierce => 'Pierce';
+
+  @override
+  String get familySkip => 'Skip';
+
+  @override
+  String get familyUnderwater => 'Underwater';
+
+  @override
+  String get familyAir => 'Air';
+
+  @override
+  String get familyAssault => 'Assault';
+
+  @override
+  String get familySupport => 'Support';
+
+  @override
+  String get rarityCommon => 'Common';
+
+  @override
+  String get rarityRare => 'Rare';
+
+  @override
+  String get rarityHero => 'Hero';
+
+  @override
+  String get rarityLegend => 'Legend';
+
+  @override
+  String get rarityMyth => 'Myth';
+
+  @override
+  String get opponentAi => 'Computer (AI)';
+
+  @override
+  String get menuBattleAi => 'Battle the AI';
+
+  @override
+  String get chooseLevel => 'Difficulty';
+
+  @override
+  String get levelEasy => 'Easy';
+
+  @override
+  String get levelNormal => 'Normal';
+
+  @override
+  String get levelHard => 'Hard';
+
+  @override
+  String get levelHell => 'Hell';
+
+  @override
+  String get autoEndTurn => 'Auto end turn after 2 shots';
+
+  @override
+  String get sea_1_name => 'Tropic Bay';
+
+  @override
+  String get sea_1_faction => 'Red Claw Patrol';
+
+  @override
+  String get mission_no_pirate_down => 'Win with no pirate knocked out';
+
+  @override
+  String mission_flood_below(Object percent) {
+    return 'Win with flooding at $percent% or less';
+  }
+
+  @override
+  String mission_hull_above(Object percent) {
+    return 'Win with hull at $percent% or more';
+  }
+
+  @override
+  String get mission_win_by_sink => 'Win by sinking (not by wipeout or time)';
+
+  @override
+  String mission_turns_within(Object turns) {
+    return 'Win within $turns turns';
+  }
+
+  @override
+  String get story_t1_enemy =>
+      'Patrol recruit: The harbor is closed! Turn back, pirates!';
+
+  @override
+  String get story_t1_ally =>
+      'Octo: Pirates? We were just fixing our boat… Fine, have a bomb!';
+
+  @override
+  String get story_t2_enemy =>
+      'Patrol recruit: Two of us this time. We\'ll keep our distance and fire!';
+
+  @override
+  String get story_t2_ally =>
+      'Tok: Save your fuel. Choose when to close in and when to fall back.';
+
+  @override
+  String get story_t3_enemy =>
+      'Patrol diver: Punch a hole below the waterline and any ship goes down.';
+
+  @override
+  String get story_t3_ally =>
+      'Tok: I\'ll patch the holes. Run the pump before the water rises!';
+
+  @override
+  String get story_s1_1_enemy =>
+      'Patrol guard: Pirate inspection. Where are you going in that wreck?';
+
+  @override
+  String get story_s1_1_ally =>
+      'Octo: We built this ship with our own hands. Don\'t call it a wreck!';
+
+  @override
+  String get story_s1_2_enemy =>
+      'Patrol guard: We brought a harpooner. Hiding behind walls won\'t help.';
+
+  @override
+  String get story_s1_2_ally =>
+      'Suri: Watch my stone skip. Aim for the waterline, right?';
+
+  @override
+  String get story_s1_3_enemy =>
+      'Patrol scout: The parrot will find you. There\'s nowhere to hide.';
+
+  @override
+  String get story_s1_3_ally =>
+      'Octo: Then let\'s finish before we spring a leak. Fast!';
+
+  @override
+  String get story_s1_4_enemy =>
+      'Patrol gunner: Four of us firing and your deck won\'t survive.';
+
+  @override
+  String get story_s1_4_ally =>
+      'Polly: The sky is mine! I\'ll dive on them from above.';
+
+  @override
+  String get story_s1_5_enemy =>
+      'Crab Lieutenant: See the iron bow? Your bullets bounce right off!';
+
+  @override
+  String get story_s1_5_ally =>
+      'Tok: If the front is hard, hit from above or below.';
+
+  @override
+  String get story_s1_12_enemy =>
+      'Patrol captain: You\'ll never take the heart shard. The cutter is closing in!';
+
+  @override
+  String get story_s1_12_ally =>
+      'Octo: The first shard is ours. Everyone, fire!';
+
+  @override
+  String portLevel(Object level) {
+    return 'Lv $level';
+  }
+
+  @override
+  String portXp(Object next, Object xp) {
+    return 'XP $xp / $next';
+  }
+
+  @override
+  String get portSail => 'Set Sail';
+
+  @override
+  String get portShipyardLocked => 'The shipyard opens from your 4th battle';
+
+  @override
+  String get soundOn => 'Sound effects';
+
+  @override
+  String get vibrationOn => 'Vibration';
+
+  @override
+  String get campaignTitle => 'Campaign';
+
+  @override
+  String get stageLocked => 'Clear the previous stage first';
+
+  @override
+  String get stageKindMidBoss => 'Mid boss';
+
+  @override
+  String get stageKindBoss => 'Sea boss';
+
+  @override
+  String get prepTitle => 'Battle Prep';
+
+  @override
+  String prepBlueprintSlot(Object slot) {
+    return 'Blueprint $slot';
+  }
+
+  @override
+  String get prepBlueprintEmpty => 'Empty (Balanced preset)';
+
+  @override
+  String get prepDeck => 'Crew';
+
+  @override
+  String prepCost(Object limit, Object used) {
+    return 'Cost $used / $limit';
+  }
+
+  @override
+  String get prepEnemy => 'Opponent';
+
+  @override
+  String prepEnemyCount(Object count) {
+    return '$count enemy pirates';
+  }
+
+  @override
+  String prepWeather(Object wave, Object wind) {
+    return 'Waves $wave · Wind up to $wind';
+  }
+
+  @override
+  String get prepEditDeck => 'Edit crew';
+
+  @override
+  String get prepSail => 'Set sail';
+
+  @override
+  String get dialogueTap => 'Tap to continue';
+
+  @override
+  String get personality_bombard => 'Bombardier';
+
+  @override
+  String get personality_hunter => 'Hunter';
+
+  @override
+  String get personality_sinker => 'Sinker';
+
+  @override
+  String get personality_rusher => 'Rusher';
+
+  @override
+  String get gimmick_bow_iron_shield =>
+      'Iron bow shield: direct-fire damage from the front is greatly reduced';
+
+  @override
+  String get gimmick_patrol_closing_in =>
+      'The cutter closes in every turn and its cooldowns drop faster';
+
+  @override
+  String resultMission(Object text) {
+    return 'Mission: $text';
+  }
+
+  @override
+  String resultInTurns(Object turns) {
+    return 'Win within $turns turns';
+  }
+
+  @override
+  String rewardGold(Object gold) {
+    return 'Gold +$gold';
+  }
+
+  @override
+  String rewardXp(Object xp) {
+    return 'XP +$xp';
+  }
+
+  @override
+  String rewardPirate(Object name) {
+    return 'New pirate joined: $name';
+  }
+
+  @override
+  String get rewardFirstClear => 'First clear bonus';
+
+  @override
+  String get resultToPort => 'To port';
+
+  @override
+  String statTurns(Object turns) {
+    return 'Turns used $turns';
+  }
+
+  @override
+  String statShots(Object shots) {
+    return '$shots shots';
+  }
+
+  @override
+  String statFlood(Object enemy, Object mine) {
+    return 'Flooding you $mine% · enemy $enemy%';
+  }
+
+  @override
+  String get resultDouble => 'Watch ad for 2×';
+
+  @override
+  String levelUpTo(Object level) {
+    return 'Level up! Lv $level';
+  }
 }

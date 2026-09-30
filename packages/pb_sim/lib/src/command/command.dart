@@ -22,7 +22,8 @@ sealed class Command {
       TapCommand.type => TapCommand(
         t: t,
         slot: readInt(json, 'slot'),
-        tick: readInt(json, 'tick'),
+        ticks: readInt(json, 'ticks'),
+        dir: json.containsKey('dir') ? readInt(json, 'dir') : 0,
       ),
       MoveCommand.type => MoveCommand(t: t, dx: readInt(json, 'dx')),
       EndTurnCommand.type => EndTurnCommand(t: t),
@@ -62,22 +63,29 @@ final class FireCommand extends Command {
   };
 }
 
-/// 비행 중 2단 동작. 판정은 [t] 가 아니라 발사로부터의 [tick] 으로 한다.
-/// MVP 에서는 효과가 없다(onTap 은 R1).
+/// 비행 중 2단 동작 (설계서 §7.2). 판정은 [t] 가 아니라 발사 뒤 지난 틱 [ticks] 로
+/// 한다. MVP 에서는 분열탄만 쓴다. [dir] 은 방향 전환 탄종의 방향(R1, 지금은 무시).
 final class TapCommand extends Command {
-  const TapCommand({required super.t, required this.slot, required this.tick});
+  const TapCommand({
+    required super.t,
+    required this.slot,
+    required this.ticks,
+    this.dir = 0,
+  });
 
   static const String type = 'TAP';
 
   final int slot;
-  final int tick;
+  final int ticks;
+  final int dir;
 
   @override
   Map<String, Object?> toJson() => {
     't': t,
     'type': type,
     'slot': slot,
-    'tick': tick,
+    'ticks': ticks,
+    if (dir != 0) 'dir': dir,
   };
 }
 
@@ -175,4 +183,16 @@ class TurnBundle {
     'cmds': [for (final c in commands) c.toJson()],
     if (hash != null) 'hash': hash!.toRadixString(16).padLeft(8, '0'),
   };
+}
+
+/// 턴 묶음 해시가 재생 결과와 다르다(부정 또는 버그, 설계서 §7.2).
+class TurnHashMismatch implements Exception {
+  const TurnHashMismatch(this.turn, this.expected, this.actual);
+
+  final int turn;
+  final int expected;
+  final int actual;
+
+  @override
+  String toString() => 'TurnHashMismatch(turn $turn: $expected != $actual)';
 }

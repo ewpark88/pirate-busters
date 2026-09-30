@@ -84,7 +84,6 @@
   "languageKorean": "한국어",
   "languageEnglish": "English",
   "opponent": "Opponent",
-  "opponentDummy": "Training dummy",
   "opponentHotseat": "Two players (one device)",
   "resultWin": "Victory!",
   "resultLose": "Defeat",
@@ -113,5 +112,365 @@
     }
   },
   "sunkBanner": "Sunk!",
-  "surrenderQueued": "You will surrender at the start of your turn"
+  "surrenderQueued": "You will surrender at the start of your turn",
+  "pirate_p01_name": "Octo the Bomber",
+  "pirate_p01_desc": "Lobbed bomb that bursts in a 1-cell radius",
+  "pirate_p01_lore": "Raised in Coral Harbor, Octo juggles bombs with all eight arms.",
+  "pirate_p04_name": "Uni the Urchin",
+  "pirate_p04_desc": "Tap in flight to split into 4 spikes",
+  "pirate_p04_lore": "As prickly as her spines. She picks the moment to burst.",
+  "pirate_p06_name": "Pang the Pistol Shrimp",
+  "pirate_p06_desc": "Claw-snap water bullet, critical on pirates",
+  "pirate_p06_lore": "One snap of his claw fires a bubble bullet.",
+  "pirate_p07_name": "Hippo the Gunslinger",
+  "pirate_p07_desc": "Short-range triple shot",
+  "pirate_p07_lore": "Anchors with his tail and fires two pistols at once.",
+  "pirate_p11_name": "Finn the Harpooner",
+  "pirate_p11_desc": "Harpoon charge that pierces 2 blocks",
+  "pirate_p11_lore": "His long nose is the harpoon. Hiding behind walls won't help.",
+  "pirate_p16_name": "Suri the Slinger",
+  "pirate_p16_desc": "Stone skips twice and hits the waterline",
+  "pirate_p16_lore": "Skips stones with the same knack she uses to crack clams.",
+  "pirate_p21_name": "Puffy the Blaster",
+  "pirate_p21_desc": "Clings below the waterline, bursts next turn",
+  "pirate_p21_lore": "Puffs up, sticks under the hull, and then... boom.",
+  "pirate_p26_name": "Polly the Parrot",
+  "pirate_p26_desc": "Homes in on the nearest pirate and pecks",
+  "pirate_p26_lore": "Leaves the captain's shoulder to chase enemy crew.",
+  "pirate_p27_name": "Wing the Bombardier",
+  "pirate_p27_desc": "Dives and drops 3 small bombs",
+  "pirate_p27_lore": "Circles the sea, then dives in a flash.",
+  "pirate_p28_name": "Pelly the Pelican",
+  "pirate_p28_desc": "Drops 4 small bombs from her pouch next turn",
+  "pirate_p28_lore": "Nobody knows what's in her pouch until it drops.",
+  "pirate_p31_name": "Sharky the Brawler",
+  "pirate_p31_desc": "Leaps onto the deck and bites pirates within 1 cell",
+  "pirate_p31_lore": "Nothing makes him happier than jumping aboard.",
+  "pirate_p36_name": "Tok the Shipwright",
+  "pirate_p36_desc": "Fire at your ship to patch 3 holed blocks",
+  "pirate_p36_lore": "Slow but careful. He keeps the ship afloat.",
+  "blueprint_balanced_name": "Balanced",
+  "blueprint_balanced_desc": "Oak keel with a pump and a workshop. A gun port and a lookout back one star pirate.",
+  "blueprint_armored_name": "Ironclad",
+  "blueprint_armored_desc": "Iron walls guard both sides of the cabins. Heavy and low in the water, so the pump keeps it afloat.",
+  "blueprint_fast_name": "Swift",
+  "blueprint_fast_desc": "Pine and cork keep it light, and two fuel tanks let it roam far. It breaks easily.",
+  "ammoExplosive": "Blast {n}%",
+  "@ammoExplosive": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "ammoFire": "Fire {n}T",
+  "@ammoFire": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "ammoSplit": "Split ×{n}",
+  "@ammoSplit": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "ammoBurst": "Burst ×{n}",
+  "@ammoBurst": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "ammoSniper": "Crit ×{rate}",
+  "@ammoSniper": {
+    "placeholders": {
+      "rate": {
+        "type": "String"
+      }
+    }
+  },
+  "ammoChain": "Chain {n}",
+  "@ammoChain": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "ammoPierce": "Pierce {n}",
+  "@ammoPierce": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "ammoSkip": "Skip ×{n}",
+  "@ammoSkip": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "ammoMine": "Mine {n}T",
+  "@ammoMine": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "ammoFlock": "Drop ×{n}",
+  "@ammoFlock": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "ammoHoming": "Homing {n}°",
+  "@ammoHoming": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "ammoAssault": "Raid +{n}",
+  "@ammoAssault": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "ammoSupport": "Repair {n}%",
+  "@ammoSupport": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "rangeShort": "Short",
+  "rangeMedium": "Mid",
+  "rangeLong": "Long",
+  "rangeVeryLong": "Far",
+  "outOfRange": "Out of range",
+  "tapToSplit": "Tap to split!",
+  "menuHotseat": "Two players",
+  "menuShipyard": "Shipyard",
+  "menuCrew": "Crew",
+  "statPoints": "Points {used}/{max}",
+  "@statPoints": {
+    "placeholders": {
+      "used": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "statWaterline": "Draft {cells}",
+  "@statWaterline": {
+    "placeholders": {
+      "cells": {
+        "type": "String"
+      }
+    }
+  },
+  "statFuelPerCell": "Fuel/cell {fuel}",
+  "@statFuelPerCell": {
+    "placeholders": {
+      "fuel": {
+        "type": "String"
+      }
+    }
+  },
+  "statTank": "Tank {n}",
+  "@statTank": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "statSpeed": "Speed {speed}/s",
+  "@statSpeed": {
+    "placeholders": {
+      "speed": {
+        "type": "String"
+      }
+    }
+  },
+  "statCabins": "Cabins {n}/{max}",
+  "@statCabins": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "statModules": "Modules {n}/{max}",
+  "@statModules": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "statCaptain": "Captain {n}/1",
+  "@statCaptain": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "materialPine": "Pine",
+  "materialOak": "Oak",
+  "materialIron": "Iron",
+  "materialCork": "Cork",
+  "materialNet": "Net",
+  "toolCabin": "Cabin",
+  "toolErase": "Erase",
+  "moduleGunPort": "Gun port",
+  "moduleMagazine": "Magazine",
+  "modulePump": "Pump",
+  "moduleWorkshop": "Workshop",
+  "moduleMast": "Mast",
+  "moduleLookout": "Lookout",
+  "moduleCaptain": "Captain",
+  "moduleFuelTank": "Fuel tank",
+  "undo": "Undo",
+  "save": "Save",
+  "saved": "Saved",
+  "cannotSave": "Check the red cells and counts",
+  "sailWithThis": "Sail with this",
+  "sailing": "Sailing",
+  "loadPreset": "Load preset",
+  "planSlot": "Plan {n}",
+  "@planSlot": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "crewCost": "Cost {used}/{max}",
+  "@crewCost": {
+    "placeholders": {
+      "used": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "crewHint": "Drag pirates into the cabins",
+  "deckFamilies": "Types",
+  "deckRanges": "Range",
+  "preferNear": "Fights close",
+  "preferFar": "Fights far",
+  "preferMixed": "Any distance",
+  "familyLob": "Lob",
+  "familyDirect": "Direct",
+  "familyPierce": "Pierce",
+  "familySkip": "Skip",
+  "familyUnderwater": "Underwater",
+  "familyAir": "Air",
+  "familyAssault": "Assault",
+  "familySupport": "Support",
+  "rarityCommon": "Common",
+  "rarityRare": "Rare",
+  "rarityHero": "Hero",
+  "rarityLegend": "Legend",
+  "rarityMyth": "Myth",
+  "opponentAi": "Computer (AI)",
+  "menuBattleAi": "Battle the AI",
+  "chooseLevel": "Difficulty",
+  "levelEasy": "Easy",
+  "levelNormal": "Normal",
+  "levelHard": "Hard",
+  "levelHell": "Hell",
+  "autoEndTurn": "Auto end turn after 2 shots",
+  "sea_1_name": "Tropic Bay",
+  "sea_1_faction": "Red Claw Patrol",
+  "mission_no_pirate_down": "Win with no pirate knocked out",
+  "mission_flood_below": "Win with flooding at {percent}% or less",
+  "mission_hull_above": "Win with hull at {percent}% or more",
+  "mission_win_by_sink": "Win by sinking (not by wipeout or time)",
+  "mission_turns_within": "Win within {turns} turns",
+  "story_t1_enemy": "Patrol recruit: The harbor is closed! Turn back, pirates!",
+  "story_t1_ally": "Octo: Pirates? We were just fixing our boat… Fine, have a bomb!",
+  "story_t2_enemy": "Patrol recruit: Two of us this time. We'll keep our distance and fire!",
+  "story_t2_ally": "Tok: Save your fuel. Choose when to close in and when to fall back.",
+  "story_t3_enemy": "Patrol diver: Punch a hole below the waterline and any ship goes down.",
+  "story_t3_ally": "Tok: I'll patch the holes. Run the pump before the water rises!",
+  "story_s1_1_enemy": "Patrol guard: Pirate inspection. Where are you going in that wreck?",
+  "story_s1_1_ally": "Octo: We built this ship with our own hands. Don't call it a wreck!",
+  "story_s1_2_enemy": "Patrol guard: We brought a harpooner. Hiding behind walls won't help.",
+  "story_s1_2_ally": "Suri: Watch my stone skip. Aim for the waterline, right?",
+  "story_s1_3_enemy": "Patrol scout: The parrot will find you. There's nowhere to hide.",
+  "story_s1_3_ally": "Octo: Then let's finish before we spring a leak. Fast!",
+  "story_s1_4_enemy": "Patrol gunner: Four of us firing and your deck won't survive.",
+  "story_s1_4_ally": "Polly: The sky is mine! I'll dive on them from above.",
+  "story_s1_5_enemy": "Crab Lieutenant: See the iron bow? Your bullets bounce right off!",
+  "story_s1_5_ally": "Tok: If the front is hard, hit from above or below.",
+  "story_s1_12_enemy": "Patrol captain: You'll never take the heart shard. The cutter is closing in!",
+  "story_s1_12_ally": "Octo: The first shard is ours. Everyone, fire!",
+  "portLevel": "Lv {level}",
+  "portXp": "XP {xp} / {next}",
+  "portSail": "Set Sail",
+  "portShipyardLocked": "The shipyard opens from your 4th battle",
+  "soundOn": "Sound effects",
+  "vibrationOn": "Vibration",
+  "campaignTitle": "Campaign",
+  "stageLocked": "Clear the previous stage first",
+  "stageKindMidBoss": "Mid boss",
+  "stageKindBoss": "Sea boss",
+  "prepTitle": "Battle Prep",
+  "prepBlueprintSlot": "Blueprint {slot}",
+  "prepBlueprintEmpty": "Empty (Balanced preset)",
+  "prepDeck": "Crew",
+  "prepCost": "Cost {used} / {limit}",
+  "prepEnemy": "Opponent",
+  "prepEnemyCount": "{count} enemy pirates",
+  "prepWeather": "Waves {wave} · Wind up to {wind}",
+  "prepEditDeck": "Edit crew",
+  "prepSail": "Set sail",
+  "dialogueTap": "Tap to continue",
+  "personality_bombard": "Bombardier",
+  "personality_hunter": "Hunter",
+  "personality_sinker": "Sinker",
+  "personality_rusher": "Rusher",
+  "gimmick_bow_iron_shield": "Iron bow shield: direct-fire damage from the front is greatly reduced",
+  "gimmick_patrol_closing_in": "The cutter closes in every turn and its cooldowns drop faster",
+  "resultMission": "Mission: {text}",
+  "resultInTurns": "Win within {turns} turns",
+  "rewardGold": "Gold +{gold}",
+  "rewardXp": "XP +{xp}",
+  "rewardPirate": "New pirate joined: {name}",
+  "rewardFirstClear": "First clear bonus",
+  "resultToPort": "To port",
+  "statTurns": "Turns used {turns}",
+  "statShots": "{shots} shots",
+  "statFlood": "Flooding you {mine}% · enemy {enemy}%",
+  "resultDouble": "Watch ad for 2×",
+  "levelUpTo": "Level up! Lv {level}"
 }

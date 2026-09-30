@@ -8,7 +8,7 @@ import 'fixtures.dart';
 
 /// 샘플 매치(시드 20260929, 끝까지)의 기대 해시. 의도한 규칙 변경일 때만 갱신하고
 /// 커밋 메시지에 이유를 적는다 (개발 계획서 §2.4 DoD 2).
-const int _goldenHash = 1852174760;
+const int _goldenHash = 2822812090;
 
 int _hash(Match m) => hashMatchState(m.state);
 
@@ -138,5 +138,29 @@ void main() {
       (json['rules']! as Map<String, Object?>)[key] = bad[key];
       expect(() => Replay.fromJson(json), throwsFormatException, reason: key);
     }
+  });
+
+  test('리플레이는 매치 파라미터를 담고, 아직 못 쓰는 보정·세트는 재생을 거부한다 (§7.2)', () {
+    final m = newSampleMatch(3);
+    runMatch(m, RandomController(1), RandomController(2));
+    final replay = Replay.fromMatch(
+      blueprints: [sampleBlueprint(), sampleBlueprint()],
+      decks: sampleDecks,
+      costLimits: sampleCostLimits,
+      match: m,
+      params: const MatchParams(dataVersion: 'test'),
+    );
+    final back = Replay.fromJson(replay.toJson());
+    expect(back.params.dataVersion, 'test');
+    expect(back.params.hullPermille, [1000, 1000]);
+    final strong = Replay(
+      seed: 3,
+      blueprints: [sampleBlueprint(), sampleBlueprint()],
+      decks: sampleDecks,
+      costLimits: sampleCostLimits,
+      turns: const [],
+      params: const MatchParams(hullPermille: [1200, 1000]),
+    );
+    expect(() => strong.play(pirates: sampleCatalog), throwsArgumentError);
   });
 }

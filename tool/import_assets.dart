@@ -31,6 +31,7 @@ String? imageTarget(String rel) {
 const dataFiles = {
   'anims/anims.json': 'anims.json',
   'style/tokens.json': 'tokens.json',
+  'weapons/weapons.json': 'weapons.json',
 };
 
 /// 패키지 폴더 이름 → art/ 아래 이름. `pirate_busters_assets_v0.15` → `pb_assets_v0.15`.
@@ -100,6 +101,8 @@ void _check() {
             .listSync(recursive: true)
             .whereType<File>()
             .map((f) => f.path.replaceAll(r'\', '/').substring(4))
+            // 글꼴은 pubspec 의 `fonts:` 로 따로 선언한다.
+            .where((f) => !f.startsWith('assets/fonts/'))
       : const <String>[];
   final errors = compareAssetDirs(
     pubspecAssetDirs(File(pubspecPath).readAsStringSync()),

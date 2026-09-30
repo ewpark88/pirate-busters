@@ -4,11 +4,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pirate_busters/app/providers.dart';
 import 'package:pirate_busters/battle/battle_session.dart';
-import 'package:pirate_busters/battle/battle_setup.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
 import 'package:pirate_busters/settings/language.dart';
 import 'package:pirate_busters/settings/settings_store.dart';
 import 'package:pirate_busters/ui/hud/battle_hud.dart';
+
+import 'test_catalog.dart';
 
 Future<BattleSession> _pumpHud(
   WidgetTester tester,
@@ -20,8 +21,9 @@ Future<BattleSession> _pumpHud(
   tester.view.devicePixelRatio = 2;
   addTearDown(tester.view.reset);
   final session = BattleSession(
-    BattleSetup.newMatch(3),
+    testSetup.newMatch(3),
     humanSides: const {0, 1},
+    speciesOf: testCatalog.speciesOf,
   );
   await tester.pumpWidget(
     ProviderScope(

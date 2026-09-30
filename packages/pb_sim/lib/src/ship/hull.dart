@@ -9,9 +9,11 @@ class HullSpec {
     required this.moveSpeed,
     required this.fuelTank,
     required this.fuelPerCell,
+    required this.moduleLimit,
   });
 
-  /// 슬루프: 12×8, 선실 4, 건조 포인트 60, 2.8칸/초, 탱크 80, 1칸당 연료 4.
+  /// 슬루프: 12×8, 선실 4, 건조 포인트 60, 2.8칸/초, 탱크 80, 1칸당 연료 4,
+  /// 기능 모듈 한도 4 (BALANCE.md A3.1·A2.7·A3.3).
   /// MVP 의 유일한 선형 (§11.1).
   static const HullSpec sloop = HullSpec(
     id: 'sloop',
@@ -22,6 +24,7 @@ class HullSpec {
     moveSpeed: 2800,
     fuelTank: 80,
     fuelPerCell: 4,
+    moduleLimit: 4,
   );
 
   /// 사용할 수 있는 선형. 나머지 선형은 정식 출시 단계에서 추가한다.
@@ -49,6 +52,9 @@ class HullSpec {
 
   /// 1칸 움직일 때 쓰는 연료 (설계서 §2.7).
   final int fuelPerCell;
+
+  /// 선장실을 뺀 기능 모듈 수 상한 (설계서 §3.3, BALANCE.md A3.3).
+  final int moduleLimit;
 
   /// id 로 찾는다. 없으면 [FormatException].
   static HullSpec byId(String id) {

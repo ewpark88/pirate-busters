@@ -14,9 +14,9 @@ void main() {
         m.name: [m.durability, m.weight, m.cost],
     };
     expect(table, {
-      'pine': [40, 1000, 1],
+      'pine': [40, 500, 1],
       'oak': [80, 2000, 2],
-      'iron': [150, 4000, 4],
+      'iron': [160, 5000, 4],
       'cork': [30, -2000, 3],
       'net': [20, 500, 1],
     });
@@ -49,6 +49,7 @@ void main() {
         CabinCell(5, 0),
         CabinCell(6, 0),
       ],
+      modules: const [ModuleCell(3, 0, ModuleKind.captain)],
     );
     expect(b.cost, 10);
     expect(
@@ -79,10 +80,15 @@ void main() {
       for (var x = 0; x < 4; x++) BlockCell(x, 0, BlockMaterial.oak),
     ];
     expect(
-      () => Blueprint(HullSpec.sloop, [
-        ...keel,
-        const BlockCell(8, 2, BlockMaterial.pine),
-      ], cabins: cabins),
+      () => Blueprint(
+        HullSpec.sloop,
+        [
+          ...keel,
+          const BlockCell(8, 2, BlockMaterial.pine),
+        ],
+        cabins: cabins,
+        modules: const [],
+      ),
       throwsArgumentError,
     );
     expect(
@@ -100,54 +106,85 @@ void main() {
           CabinCell(2, 1),
           CabinCell(3, 1),
         ],
+        modules: const [],
       ),
       throwsArgumentError,
     );
     // 대각선은 이어진 것이 아니다.
     expect(
-      () => Blueprint(HullSpec.sloop, [
-        ...keel,
-        const BlockCell(4, 1, BlockMaterial.pine),
-      ], cabins: cabins),
+      () => Blueprint(
+        HullSpec.sloop,
+        [
+          ...keel,
+          const BlockCell(4, 1, BlockMaterial.pine),
+        ],
+        cabins: cabins,
+        modules: const [],
+      ),
       throwsArgumentError,
     );
     expect(
-      Blueprint(HullSpec.sloop, [
-        ...keel,
-        const BlockCell(3, 1, BlockMaterial.pine),
-        const BlockCell(4, 1, BlockMaterial.pine),
-      ], cabins: cabins).cells,
+      Blueprint(
+        HullSpec.sloop,
+        [
+          ...keel,
+          const BlockCell(3, 1, BlockMaterial.pine),
+          const BlockCell(4, 1, BlockMaterial.pine),
+        ],
+        cabins: cabins,
+        modules: const [ModuleCell(4, 1, ModuleKind.captain)],
+      ).cells,
       hasLength(6),
     );
   });
 
   test('격자 밖 블록·같은 칸 중복·건조 포인트 초과는 거부한다', () {
     expect(
-      () => Blueprint(HullSpec.sloop, const [
-        BlockCell(12, 0, BlockMaterial.oak),
-      ], cabins: const []),
+      () => Blueprint(
+        HullSpec.sloop,
+        const [
+          BlockCell(12, 0, BlockMaterial.oak),
+        ],
+        cabins: const [],
+        modules: const [],
+      ),
       throwsArgumentError,
     );
     expect(
-      () => Blueprint(HullSpec.sloop, const [
-        BlockCell(1, 1, BlockMaterial.oak),
-        BlockCell(1, 1, BlockMaterial.pine),
-      ], cabins: const []),
+      () => Blueprint(
+        HullSpec.sloop,
+        const [
+          BlockCell(1, 1, BlockMaterial.oak),
+          BlockCell(1, 1, BlockMaterial.pine),
+        ],
+        cabins: const [],
+        modules: const [],
+      ),
       throwsArgumentError,
     );
     expect(
-      () => Blueprint(HullSpec.sloop, [
-        for (var x = 0; x < 12; x++) BlockCell(x, 0, BlockMaterial.iron),
-        for (var x = 0; x < 4; x++) BlockCell(x, 1, BlockMaterial.iron),
-      ], cabins: const []),
+      () => Blueprint(
+        HullSpec.sloop,
+        [
+          for (var x = 0; x < 12; x++) BlockCell(x, 0, BlockMaterial.iron),
+          for (var x = 0; x < 4; x++) BlockCell(x, 1, BlockMaterial.iron),
+        ],
+        cabins: const [],
+        modules: const [],
+      ),
       throwsArgumentError,
     );
   });
 
   test('선실은 선실 슬롯 수만큼, 블록 위에, 서로 다른 칸에 있어야 한다', () {
-    Blueprint build(List<CabinCell> cabins) => Blueprint(HullSpec.sloop, [
-      for (var x = 0; x < 12; x++) BlockCell(x, 0, BlockMaterial.oak),
-    ], cabins: cabins);
+    Blueprint build(List<CabinCell> cabins) => Blueprint(
+      HullSpec.sloop,
+      [
+        for (var x = 0; x < 12; x++) BlockCell(x, 0, BlockMaterial.oak),
+      ],
+      cabins: cabins,
+      modules: const [ModuleCell(11, 0, ModuleKind.captain)],
+    );
     expect(
       () => build(const [CabinCell(0, 0), CabinCell(1, 0), CabinCell(2, 0)]),
       throwsArgumentError,
@@ -197,11 +234,11 @@ void main() {
     final g = ShipGrid.fromBlueprint(sampleBlueprint());
     expect(g.cellCount, 96);
     expect(g.materialAt(2, 2), BlockMaterial.iron);
-    expect(g.hpAt(2, 2), 150);
+    expect(g.hpAt(2, 2), 160);
     expect(g.materialAt(0, 7), isNull);
     expect(g.hpAt(0, 7), 0);
     expect(g.blockCount, 37);
-    expect(g.totalHp, 12 * 80 + 12 * 40 + 30 + 2 * 150 + 6 * 40 + 4 * 20);
+    expect(g.totalHp, 12 * 80 + 12 * 40 + 30 + 2 * 160 + 6 * 40 + 4 * 20);
     expect(g.rawMaterials[g.indexOf(1, 2)], BlockMaterial.cork.index);
   });
 }

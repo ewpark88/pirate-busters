@@ -35,7 +35,7 @@ void main() {
       expect(m.state.activeSide, first);
     });
 
-    test('한 턴에 서로 다른 해적 2명까지 쏘고, 2발을 쏘면 턴이 자동으로 끝난다', () {
+    test('한 턴에 서로 다른 해적 2명까지 쏘고, 2발을 쏴도 턴은 END_TURN 으로만 끝난다 (ADR-042)', () {
       final m = newSampleMatch(1);
       final side = m.state.activeSide;
       m
@@ -45,8 +45,15 @@ void main() {
       expect(m.state.turn, 1);
       m.apply(_fire(300, 1));
       expect(m.state.sides[side].shotsFired, 2);
+      expect(m.state.turn, 1, reason: '유예 동안 이동할 수 있다');
+      m
+        ..apply(_fire(400, 2))
+        ..apply(const MoveCommand(t: 500, dx: 5));
+      expect(m.state.sides[side].shotsFired, 2, reason: '세 번째 발은 무시');
+      expect(m.state.sides[side].offset, 500);
+      m.apply(const EndTurnCommand(t: 600));
       expect(m.state.turn, 2);
-      expect(_endReasons(m.state), [TurnEndReason.firesUsed]);
+      expect(_endReasons(m.state), [TurnEndReason.endTurn]);
     });
 
     test('쿨다운 0턴은 다음 내 턴에, 1턴은 내 턴 하나를 건너뛴 뒤에 다시 쏜다', () {

@@ -2,10 +2,12 @@ import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:pb_ai/pb_ai.dart';
+import 'package:pb_sim/pb_sim.dart';
 import 'package:pirate_busters/app/providers.dart';
 import 'package:pirate_busters/battle/battle_session.dart';
 import 'package:pirate_busters/battle/battle_setup.dart';
-import 'package:pirate_busters/battle/dummy_controller.dart';
+import 'package:pirate_busters/campaign/stage_spec.dart';
 import 'package:pirate_busters/game/battle_game.dart';
 import 'package:pirate_busters/input/field_gestures.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
@@ -14,9 +16,25 @@ import 'package:pirate_busters/ui/hud/battle_hud.dart';
 /// 전투 화면: 전장(Flame) 위에 HUD(Flutter 위젯)를 겹친다 (설계서 §13.4).
 /// 전장의 게임 루프가 매 프레임 [BattleSession] 을 진행한다.
 class BattleScreen extends ConsumerStatefulWidget {
-  const BattleScreen({super.key, this.seed = 20260930, this.hotseat = false});
+  const BattleScreen({
+    super.key,
+    this.seed = 20260930,
+    this.hotseat = false,
+    this.level = AiLevel.normal,
+    this.stage,
+    this.onOver,
+  });
 
   final int seed;
+
+  /// 캠페인 스테이지 (설계서 §6.1). 있으면 적 설계도·덱·난이도·성격·파도·바람을 여기서 쓴다.
+  final StageSpec? stage;
+
+  /// 판이 끝났을 때 한 번 부른다(결과 화면, 보상). 없으면 간이 결과 창만 띄운다.
+  final void Function(MatchState state)? onOver;
+
+  /// AI 상대 난이도 (설계서 §5.2).
+  final AiLevel level;
 
   /// 한 기기에서 두 사람이 번갈아 둔다(개발용, ADR-029).
   final bool hotseat;
@@ -29,6 +47,7 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
   late BattleSession _session;
   late BattleGame _game;
   bool _paused = false;
+  bool _reported = false;
 
   @override
   void initState() {
@@ -37,12 +56,40 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
   }
 
   void _start(int seed, {required bool hotseat}) {
+    final catalog = ref.read(gameCatalogProvider);
+    final fleet = ref.read(fleetStoreProvider);
+    final stage = widget.stage;
+    final setup = BattleSetup(catalog);
+    final blueprint = fleet.blueprint(fleet.activeSlot);
     _session = BattleSession(
-      BattleSetup.newMatch(seed),
+      stage == null
+          ? setup.newMatchFor(seed, blueprint: blueprint, deck: fleet.deck)
+          : setup.newStageMatch(
+              seed,
+              stage,
+              blueprint: blueprint,
+              deck: fleet.deck,
+            ),
       humanSides: hotseat ? const {0, 1} : const {0},
-      opponent: hotseat ? null : const DummyController(),
+      speciesOf: catalog.speciesOf,
+      opponent: hotseat
+          ? null
+          : AiController(
+              level: stage?.aiLevel ?? widget.level,
+              personality:
+                  stage?.personality ??
+                  Personality.values[seed % Personality.values.length],
+            ),
     );
+    _reported = false;
+    _session.addListener(_checkOver);
     _game = BattleGame(_session, sound: ref.read(soundServiceProvider));
+  }
+
+  void _checkOver() {
+    if (_reported || !_session.isOver) return;
+    _reported = true;
+    widget.onOver?.call(_session.state);
   }
 
   void _restart({bool? hotseat}) {
@@ -58,7 +105,7 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
   }
 
   void _pause(bool paused) {
-    // 일시정지는 사람과 허수아비 판에서만 쓴다 (설계서 §13.4).
+    // 일시정지는 AI 전에서만 쓴다 (설계서 §13.4).
     setState(() => _paused = paused);
     // 핫시트는 두 사람이 함께 두므로 창을 열어도 턴 시계를 멈추지 않는다.
     _game.paused = paused && _session.humanSides.length < 2;
@@ -74,6 +121,7 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
   Widget build(BuildContext context) {
     // 저사양 모드는 설정에서 바로 전장에 반영한다.
     _game.lowEnd.value = ref.watch(lowEndProvider);
+    _session.autoEnd.enabled = ref.watch(autoEndTurnProvider);
     final l10n = AppLocalizations.of(context);
     final number = NumberFormat.decimalPattern(
       Localizations.localeOf(context).toLanguageTag(),

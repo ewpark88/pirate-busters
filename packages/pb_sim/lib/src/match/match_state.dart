@@ -1,10 +1,15 @@
 import 'package:pb_sim/src/match/rules.dart';
 import 'package:pb_sim/src/match/sim_event.dart';
+import 'package:pb_sim/src/match/turn_effects.dart';
 import 'package:pb_sim/src/pirate/crew.dart';
 import 'package:pb_sim/src/pirate/pirate_spec.dart';
+import 'package:pb_sim/src/projectile/shot_trace.dart';
 import 'package:pb_sim/src/random/xorshift32.dart';
 import 'package:pb_sim/src/ship/blueprint.dart';
+import 'package:pb_sim/src/ship/module.dart';
+import 'package:pb_sim/src/ship/module_state.dart';
 import 'package:pb_sim/src/ship/ship_grid.dart';
+import 'package:pb_sim/src/ship/ship_stats.dart';
 import 'package:pb_sim/src/world/world.dart';
 
 /// 판의 진행 상태. 순서(index)는 해시에 들어가므로 새 값은 뒤에 붙인다.
@@ -42,22 +47,26 @@ class SideState {
   }) : grid = ShipGrid.fromBlueprint(blueprint),
        cabins = blueprint.cabins,
        crew = Crew(lineup),
-       fuel = blueprint.hull.fuelTank * fuelUnit,
+       modules = ShipModules(blueprint),
+       fuel = _startTank(blueprint),
        waterline = waterlineOf(blueprint, rules);
+
+  static int _startTank(Blueprint blueprint) {
+    var tanks = 0;
+    for (final m in blueprint.modules) {
+      if (m.kind == ModuleKind.fuelTank) tanks++;
+    }
+    return (blueprint.hull.fuelTank + tanks * ModuleNumbers.fuelTankBonus) *
+        fuelUnit;
+  }
 
   /// 연료 1 의 내부 단위. 1/10칸 이동의 연료도 정수로 셈한다.
   static const int fuelUnit = 1000;
 
   /// 설계도의 흘수선 높이(1/1000칸, 용골 바닥 기준): (총무게 − 부력재) ÷ (선형 폭 ×
   /// [MatchRules.waterlineDivisor]) (설계서 §3.4). 무게는 ×1000 이라 그대로 1/1000칸이다.
-  static int waterlineOf(Blueprint blueprint, MatchRules rules) {
-    var weight = 0;
-    for (final c in blueprint.cells) {
-      weight += c.material.weight;
-    }
-    final h = weight ~/ (blueprint.hull.width * rules.waterlineDivisor);
-    return h < 0 ? 0 : h;
-  }
+  static int waterlineOf(Blueprint blueprint, MatchRules rules) =>
+      waterlineOfWeight(blueprint.hull, totalWeight(blueprint.cells), rules);
 
   final int side;
   final ShipGrid grid;
@@ -92,6 +101,44 @@ class SideState {
   final List<CabinCell> cabins;
 
   final Crew crew;
+
+  /// 기능 모듈 (설계서 §3.3).
+  final ShipModules modules;
+
+  /// 연료 탱크 상한(×[fuelUnit]): 선형 탱크 + 남은 연료통 × 40 (설계서 §2.7).
+  int get tank =>
+      (grid.hull.fuelTank +
+          modules.intactCount(ModuleKind.fuelTank) *
+              ModuleNumbers.fuelTankBonus) *
+      fuelUnit;
+
+  /// 돛대가 부러졌다: 1칸당 연료 2배, 속도 절반 (BALANCE.md A2.6).
+  bool get mastBroken => modules.anyLost(ModuleKind.mast);
+
+  /// 1칸당 연료(×[fuelUnit]): 선형 소모 × 무게 배율 × 돛대 (설계서 §2.7).
+  int get fuelPerCell {
+    final base = grid.hull.fuelPerCell * fuelUnit * modules.weightPermille;
+    return base ~/ 1000 * (mastBroken ? ModuleNumbers.mastFuelFactor : 1);
+  }
+
+  /// [slot] 해적의 모듈 피해 보너스(%): 그 선실 포문 +10, 화약고가 남아 있으면 +10.
+  int damageBonusPercent(int slot) {
+    final c = cabins[slot];
+    var bonus = 0;
+    if (modules.hasAt(c.x, c.y, ModuleKind.gunPort)) {
+      bonus += ModuleNumbers.gunPortPercent;
+    }
+    if (modules.intactCount(ModuleKind.magazine) > 0) {
+      bonus += ModuleNumbers.magazinePercent;
+    }
+    return bonus;
+  }
+
+  /// [slot] 선실에 망루가 있다: 궤적 표시 50% (설계서 §3.3).
+  bool hasLookout(int slot) {
+    final c = cabins[slot];
+    return modules.hasAt(c.x, c.y, ModuleKind.lookout);
+  }
 
   /// 뱃머리 월드 x.
   int get bowX => startBowX(side) + facingOf(side) * offset;
@@ -177,6 +224,12 @@ class MatchState {
 
   /// 이번 턴에 일어난 렌더용 이벤트. 해시에 넣지 않는다.
   final List<SimEvent> events = [];
+
+  /// 턴 시작에 터지도록 예약한 효과 (설계서 §4.3 턴 효과). 예약 순서대로 처리한다.
+  final List<TurnEffect> effects = [];
+
+  /// 마지막 발사(또는 턴 효과)에서 난 탄들의 틱별 위치. 렌더용이라 해시에 넣지 않는다.
+  List<ShotTrace> lastTraces = const [];
 
   bool get isOver => outcome != MatchOutcome.ongoing;
 
