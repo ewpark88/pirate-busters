@@ -88,5 +88,27 @@ void main() {
       await tester.pump();
       expect(session.state.activeSide, 1 - side);
     });
+
+    testWidgets('카드를 누르면 해적을 고르고, 카드를 끌어도 쏘지 않는다 (ADR-033)', (
+      tester,
+    ) async {
+      final session = await _pumpHud(tester, const Locale('en'));
+      final side = session.state.activeSide;
+      // 카드는 해적 초상 그림으로 찾는다.
+      final card = find
+          .byWidgetPredicate(
+            (w) =>
+                w is Image &&
+                w.image is AssetImage &&
+                (w.image as AssetImage).assetName.contains('portraits'),
+          )
+          .first;
+      await tester.tap(card);
+      await tester.pump();
+      expect(session.selected, isNotNull);
+      await tester.drag(card, const Offset(-80, 80));
+      await tester.pump();
+      expect(session.state.sides[side].shotsFired, 0);
+    });
   });
 }

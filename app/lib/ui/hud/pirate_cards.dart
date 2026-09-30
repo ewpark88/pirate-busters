@@ -2,12 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:pb_sim/pb_sim.dart';
 import 'package:pirate_busters/battle/battle_session.dart';
 import 'package:pirate_busters/battle/battle_setup.dart';
-import 'package:pirate_busters/input/pull_aim.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
 import 'package:pirate_busters/ui/hud/hud_style.dart';
 
-/// 아래 가운데: 선실 해적 카드 (설계서 §13.4). 카드를 누른 채 당기면 조준하고 놓으면
-/// 쏜다 (설계서 §2.2). 쿨다운·잠긴 선실·쓰러진 해적은 흐리게 잠근다.
+/// 아래 가운데: 선실 해적 카드 (설계서 §13.4). 카드를 누르면 그 해적을 고르고
+/// 카메라가 줌인한다(설계서 §2.2). 쿨다운·잠긴 선실·쓰러진 해적은 흐리게 보인다.
 class PirateCards extends StatelessWidget {
   const PirateCards({required this.session, required this.side, super.key});
 
@@ -62,35 +61,10 @@ class _PirateCard extends StatefulWidget {
 }
 
 class _PirateCardState extends State<_PirateCard> {
-  late final PullAim _aim = PullAim(facing: facingOf(widget.side));
-  Offset _start = Offset.zero;
-
   BattleSession get _s => widget.session;
 
   bool get _ready =>
       _s.state.activeSide == widget.side && _s.canFire(widget.slot);
-
-  void _onStart(DragStartDetails d) {
-    if (!_ready) return;
-    _start = d.localPosition;
-    _aim.start();
-  }
-
-  void _onUpdate(DragUpdateDetails d) {
-    if (!_aim.isActive) return;
-    final delta = d.localPosition - _start;
-    _aim.drag(delta.dx, delta.dy);
-    _s.setAim(widget.slot, _aim.shot, _aim.stretch);
-  }
-
-  void _onEnd(DragEndDetails d) {
-    final shot = _aim.release();
-    if (shot == null || !_ready) {
-      _s.clearAim();
-      return;
-    }
-    _s.fire(widget.slot, shot.angle, shot.power);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -110,14 +84,11 @@ class _PirateCardState extends State<_PirateCard> {
       PirateStatus.aboard => null,
     };
     final aiming = _s.aim?.slot == widget.slot;
-    final picked = _s.preselected == widget.slot;
+    final picked = _s.selected == widget.slot && _s.selectedSide == widget.side;
     return GestureDetector(
-      // 상대 턴에는 다음 턴 해적을 미리 고를 수 있다 (설계서 §13.4).
-      onTap: _s.isHumanTurn ? null : () => _s.preselect(widget.slot),
-      onPanStart: _onStart,
-      onPanUpdate: _onUpdate,
-      onPanEnd: _onEnd,
-      onPanCancel: _s.clearAim,
+      // 카드는 고르기만 한다: 고르면 그 해적으로 줌인하고, 쏘기는 배 위 해적을
+      // 당겨서 한다 (설계서 §2.2, §13.4, ADR-033). 상대 턴에 고르면 다음 턴까지 남는다.
+      onTap: () => _s.select(widget.slot),
       child: Opacity(
         opacity: _ready ? 1 : 0.45,
         child: Container(

@@ -5,8 +5,8 @@ import 'package:pirate_busters/battle/battle_session.dart';
 import 'package:pirate_busters/game/battle_game.dart';
 import 'package:pirate_busters/input/pull_aim.dart';
 
-/// 전장 위 제스처 (설계서 §2.1, §2.2): 배 위 해적을 한 손가락으로 끌면 조준하고
-/// 놓으면 쏜다. 두 손가락은 핀치 줌. 탭은 비행 중 `TAP`.
+/// 전장 위 제스처 (설계서 §2.1, §2.2, ADR-033): 배 위 해적을 한 손가락으로 끌면
+/// 조준하고 놓으면 쏜다. 두 손가락은 핀치 줌. 탭은 해적 고르기·선택 풀기, 비행 중이면 `TAP`.
 /// mozzi lib/game/input/play_input.dart 의 라우팅(발사 전 당기기 / 비행 중 탭)을 따른다.
 class FieldGestures extends StatefulWidget {
   const FieldGestures({
@@ -42,6 +42,7 @@ class _FieldGesturesState extends State<FieldGestures> {
       Vector2(d.localFocalPoint.dx, d.localFocalPoint.dy),
     );
     if (slot == null || !_s.canFire(slot)) return;
+    _s.select(slot, toggle: false);
     _slot = slot;
     _start = d.localFocalPoint;
     _aim = PullAim(facing: facingOf(_s.state.activeSide))..start();
@@ -75,6 +76,19 @@ class _FieldGesturesState extends State<FieldGestures> {
     _s.fire(_slot, shot.angle, shot.power);
   }
 
+  /// 탭: 비행 중이면 `TAP`, 아니면 배 위 해적을 고르거나 빈 곳이면 선택을 푼다
+  /// (설계서 §2.2, §13.4).
+  void _onTap(TapUpDetails d) {
+    if (_s.playback != null) {
+      widget.game.tap();
+      return;
+    }
+    final slot = widget.game.pirateAt(
+      Vector2(d.localPosition.dx, d.localPosition.dy),
+    );
+    _s.select(slot, toggle: false);
+  }
+
   void _cancelAim() {
     _aim = null;
     _s.clearAim();
@@ -83,7 +97,7 @@ class _FieldGesturesState extends State<FieldGestures> {
   @override
   Widget build(BuildContext context) => GestureDetector(
     behavior: HitTestBehavior.opaque,
-    onTapDown: (_) => widget.game.tap(),
+    onTapUp: _onTap,
     onScaleStart: _onStart,
     onScaleUpdate: _onUpdate,
     onScaleEnd: _onEnd,

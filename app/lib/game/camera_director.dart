@@ -26,6 +26,12 @@ class CameraDirector {
 
   bool overview = false;
 
+  /// 고른 해적의 발 위치(월드 px). 있으면 그 해적으로 다가가 줌인한다
+  /// (설계서 §2.2, ADR-033). 에셋 tokens.json `camera.aimZoom*` 값.
+  Vector2? focusFeet;
+  static const double focusWidth = 440;
+  static final Vector2 focusOffset = Vector2(50, -10);
+
   Vector2? _impact;
   double _impactLeft = 0;
 
@@ -67,6 +73,18 @@ class CameraDirector {
       );
       final double y = math.min(-120, projectile.y * 0.6);
       return (Vector2((projectile.x + aimX) / 2, y), w);
+    }
+    final feet = focusFeet;
+    if (feet != null) {
+      // 당기는 만큼 이 폭에서 줌아웃하고 앞(상대 쪽)을 더 보여준다.
+      final fw = focusWidth * (1 + 0.8 * aimStretch);
+      return (
+        Vector2(
+          feet.x + facing * (focusOffset.x + 200 * aimStretch),
+          feet.y + focusOffset.y,
+        ),
+        fw,
+      );
     }
     final w = (baseWidth * (1 + 0.6 * aimStretch) / userZoom).clamp(
       minWidth,

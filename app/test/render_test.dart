@@ -90,6 +90,20 @@ void main() {
       expect(center.x + w / 2, greaterThan(960 + 192));
     });
 
+    test('해적을 고르면 그 해적 발 앞으로 폭 440 까지 줌인한다 (ADR-033)', () {
+      final c = CameraDirector()..focusFeet = Vector2(-500, -64);
+      final (center, w) = c.target(myX: -600, enemyX: 600, facing: 1);
+      expect(w, CameraDirector.focusWidth);
+      expect(center, Vector2(-450, -74));
+      final (_, pulled) = c.target(
+        myX: -600,
+        enemyX: 600,
+        facing: 1,
+        aimStretch: 1,
+      );
+      expect(pulled, greaterThan(w));
+    });
+
     test('착탄 지점을 1.3초 보여준 뒤 돌아간다', () {
       final c = CameraDirector()..impact(Vector2(300, -40));
       final (a, _) = c.target(myX: 0, enemyX: 900, facing: 1);

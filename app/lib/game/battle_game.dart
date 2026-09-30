@@ -117,6 +117,11 @@ class BattleGame extends FlameGame {
     final me = viewSide;
     final aim = session.aim;
     final shot = session.playback;
+    // 카드로 고른 해적이 있으면 그 해적으로 줌인 (설계서 §2.2, ADR-033).
+    final focus = session.focusSlot;
+    director.focusFeet = focus != null && focus < _ships[me].rigs.length
+        ? _ships[me].rigs[focus].absolutePosition
+        : null;
     final goal = director.target(
       myX: _shipCenterX(me),
       enemyX: _shipCenterX(1 - me),

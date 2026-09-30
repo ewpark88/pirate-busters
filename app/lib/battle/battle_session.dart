@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:pb_sim/pb_sim.dart';
 import 'package:pirate_busters/battle/playback.dart';
 import 'package:pirate_busters/battle/shot_path.dart';
-import 'package:pirate_busters/input/pull_aim.dart';
+import 'package:pirate_busters/battle/ui_state.dart';
 
 /// 한 판의 진행 (개발 계획서 M4). 판정은 모두 [Match] 가 하고, 여기서는 시각을 세고
 /// 입력을 커맨드로 바꾸고 연출 순서를 정한다 (CLAUDE.md 절대 규칙 3).
@@ -11,12 +11,13 @@ import 'package:pirate_busters/input/pull_aim.dart';
 /// - 상대 턴: [opponent] 컨트롤러의 턴 묶음을 `t` 타이밍대로 재생한다.
 /// - 연출([playback]) 동안에는 입력을 받지 않는다. 턴 시계는 계속 흐르고, 시뮬레이션이
 ///   탄 비행 시간만큼 턴 제한 시간을 멈춘다.
-class BattleSession extends ChangeNotifier {
+class BattleSession extends ChangeNotifier with SessionUiState {
   BattleSession(this.match, {required this.humanSides, this.opponent});
 
   final Match match;
 
   /// 사람이 두는 진영. 허수아비전은 {0}, 핫시트는 {0, 1}.
+  @override
   final Set<int> humanSides;
 
   /// 사람이 아닌 진영의 컨트롤러.
@@ -24,20 +25,14 @@ class BattleSession extends ChangeNotifier {
 
   MatchState get state => match.state;
 
+  @override
+  int get activeSide => state.activeSide;
+
   /// 지금 턴이 시작된 뒤 흐른 실제 시간(밀리초). 커맨드 `t` 가 된다.
   int turnMs = 0;
 
   /// 지금 보여주는 연출. 없으면 null.
   Playback? playback;
-
-  /// 조준 중인 해적 슬롯과 값. 궤적 미리보기·자동 줌아웃에 쓴다.
-  ({int slot, AimShot shot, double stretch})? aim;
-
-  /// 이동 버튼을 누르고 있다. 그동안은 쏠 수 없다 (ADR-027).
-  bool moveHeld = false;
-
-  /// 이동 버튼을 누르고 있는 동안 갈 수 있는 끝(1/10칸, 전진 +). 끝 지점 점선용.
-  int movePreviewDx = 0;
 
   /// 착탄 등 효과를 낼 이벤트. 렌더가 [takeCues] 로 가져간다.
   final List<SimEvent> _cues = [];
@@ -48,6 +43,7 @@ class BattleSession extends ChangeNotifier {
 
   bool get isOver => state.isOver;
 
+  @override
   bool get isHumanTurn => humanSides.contains(state.activeSide);
 
   /// 사람이 지금 조작할 수 있는가.
@@ -66,6 +62,7 @@ class BattleSession extends ChangeNotifier {
   }
 
   /// [slot] 해적을 지금 쏠 수 있는가.
+  @override
   bool canFire(int slot) =>
       canAct &&
       !moveHeld &&
@@ -83,22 +80,6 @@ class BattleSession extends ChangeNotifier {
     final left = c.t - turnMs;
     if (left > 1200) return null;
     return (slot: c.slot, progress: (1 - left / 1200).clamp(0.0, 1.0));
-  }
-
-  void setAim(int slot, AimShot shot, double stretch) {
-    if (!canFire(slot)) return;
-    aim = (slot: slot, shot: shot, stretch: stretch);
-    notifyListeners();
-  }
-
-  void clearAim() {
-    aim = null;
-    notifyListeners();
-  }
-
-  void setMovePreview(int dx) {
-    movePreviewDx = dx;
-    notifyListeners();
   }
 
   /// 쌓인 효과 이벤트를 꺼낸다.
@@ -143,18 +124,9 @@ class BattleSession extends ChangeNotifier {
   /// [slot] 해적을 쏜다.
   void fire(int slot, int angle, int power) {
     aim = null;
-    if (preselected == slot) preselected = null;
+    if (selected == slot) selected = null;
     if (!canFire(slot)) return;
     _apply(FireCommand(t: turnMs, slot: slot, angle: angle, power: power));
-  }
-
-  /// 상대 턴에 미리 골라 둔 다음 턴 해적 슬롯 (설계서 §13.4). 내 턴이 오면 그 카드를
-  /// 강조하고, 쏘거나 내 턴이 끝나면 풀린다.
-  int? preselected;
-
-  void preselect(int slot) {
-    preselected = preselected == slot ? null : slot;
-    notifyListeners();
   }
 
   /// 비행 중 탭 (설계서 §2.2). 내 탄이 날고 있을 때만 `TAP` 을 기록한다.
@@ -206,7 +178,8 @@ class BattleSession extends ChangeNotifier {
     if (playback != null || state.turn == _turnOfClock) return;
     _turnOfClock = state.turn;
     turnMs = 0;
-    if (!isHumanTurn) preselected = null;
+    // 고른 진영의 턴이 끝났으면 선택을 푼다(상대 턴에 고른 것은 남는다).
+    if (selectedSide != state.activeSide) selected = null;
     _script = null;
     _scriptIndex = 0;
   }

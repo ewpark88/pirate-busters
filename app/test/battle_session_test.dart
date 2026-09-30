@@ -130,21 +130,40 @@ void main() {
       expect(s.state.winner, 1);
     });
 
-    test('상대 턴에 미리 고른 해적은 내 턴에도 강조되고, 그 해적을 쏘면 풀린다', () {
+    test('상대 턴에 고른 해적은 내 턴에 줌인 대상이 되고, 그 해적을 쏘면 풀린다 (ADR-033)', () {
       final s = _humanFirst()
         ..update(100)
         ..endTurn()
-        ..preselect(2);
-      expect(s.preselected, 2);
+        ..select(2);
+      expect(s.selected, 2);
+      expect(s.focusSlot, isNull, reason: '상대 턴에는 줌인하지 않는다');
       var guard = 0;
       while (!s.isHumanTurn && guard++ < 2000) {
         s.update(100);
       }
       _drain(s);
       s.update(10);
-      expect(s.preselected, 2);
+      expect(s.focusSlot, 2);
       s.fire(2, 30000, 8000);
-      expect(s.preselected, isNull);
+      expect(s.selected, isNull);
+    });
+
+    test('같은 카드를 다시 누르면 선택이 풀리고, 내 턴이 끝나면 풀린다', () {
+      final s = _humanFirst()
+        ..update(100)
+        ..select(1);
+      expect(s.focusSlot, 1);
+      s.select(1);
+      expect(s.selected, isNull);
+      s
+        ..select(3)
+        ..select(0, toggle: false)
+        ..select(0, toggle: false);
+      expect(s.selected, 0, reason: '해적을 끌 때는 풀리지 않는다');
+      s
+        ..endTurn()
+        ..update(10);
+      expect(s.selected, isNull);
     });
 
     test('핫시트에서는 양쪽 모두 사람이 두고 컨트롤러를 부르지 않는다', () {
