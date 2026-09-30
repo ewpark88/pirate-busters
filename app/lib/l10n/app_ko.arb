@@ -43,5 +43,6 @@
   "outcomeTimeDecision": "시간 판정",
   "outcomeSurrender": "항복",
   "playAgain": "다시 하기",
-  "playerWins": "플레이어 {side} 승리!"
+  "playerWins": "플레이어 {side} 승리!",
+  "lowEndMode": "저사양 모드"
 }

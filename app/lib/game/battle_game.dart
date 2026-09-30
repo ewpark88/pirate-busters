@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/foundation.dart';
@@ -25,6 +27,11 @@ class BattleGame extends FlameGame with ScaleDetector {
   /// ‘전체 보기’ (설계서 §2.1). HUD 버튼이 바꾼다.
   final ValueNotifier<bool> overview = ValueNotifier(false);
 
+  /// 저사양 모드: 바다 굴절 셰이더를 끈다 (설계서 §10.2).
+  final ValueNotifier<bool> lowEnd = ValueNotifier(false);
+
+  static const String seaShaderAsset = 'shaders/sea_refraction.frag';
+
   late final List<ShipView> _ships;
   late final ShotView _shot;
   late final FxLayer _fx;
@@ -40,6 +47,15 @@ class BattleGame extends FlameGame with ScaleDetector {
     final anims = PbAnims.fromJsonString(
       await rootBundle.loadString(PbAnims.path),
     );
+    FragmentShader? seaShader;
+    try {
+      seaShader = (await FragmentProgram.fromAsset(
+        seaShaderAsset,
+      )).fragmentShader();
+    } on Object catch (e) {
+      // 셰이더를 못 쓰는 기기는 그라데이션 바다로 그린다.
+      debugPrint('바다 셰이더 없음: $e');
+    }
     camera.backdrop.add(SkyBackdrop());
     _ships = [
       for (final side in const [0, 1])
@@ -52,7 +68,7 @@ class BattleGame extends FlameGame with ScaleDetector {
       ParallaxScenery(factor: 0.4, seed: 2, priority: -20),
       SeaView(front: false, priority: -10),
       ..._ships,
-      SeaView(front: true, priority: 10),
+      SeaView(front: true, shader: seaShader, lowEnd: lowEnd, priority: 10),
       _shot,
       _fx,
     ]);

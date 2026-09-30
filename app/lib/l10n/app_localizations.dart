@@ -361,6 +361,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Player {side} wins!'**
   String playerWins(int side);
+
+  /// No description provided for @lowEndMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Low-end mode'**
+  String get lowEndMode;
 }
 
 class _AppLocalizationsDelegate

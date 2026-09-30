@@ -7,10 +7,9 @@ class BattleSprites {
   BattleSprites._(this._images);
 
   static final List<String> files = [
-    for (final m in ['pine', 'oak', 'iron', 'cork', 'bottom'])
-      for (final s in ['0', '1', '2', 'v0', 'v1', 'v2'])
-        if (!(m == 'iron' && s.startsWith('v'))) 'ship/tiles/block_${m}_$s.png',
-    'ship/tiles/hole.png',
+    for (final m in ['pine', 'oak', 'cork', 'bottom'])
+      for (final s in ['v0', 'v1', 'v2']) 'ship/tiles/block_${m}_$s.png',
+    'ship/tiles/block_iron_0.png',
     'ship/rig/mast.png',
     'ship/rig/sail_blue.png',
     'ship/rig/sail_red.png',
@@ -37,21 +36,12 @@ class BattleSprites {
 
   Sprite get(String file) => Sprite(_images.fromCache(file));
 
-  /// 재질·손상 단계 타일. 멀쩡한 칸은 [variant](0~2)로 무늬를 바꾼다. 망사는 null(코드로 그림).
-  Sprite? tile(
-    BlockMaterial m,
-    DamageStage stage, {
-    int variant = 0,
-    bool keel = false,
-  }) {
-    if (m == BlockMaterial.net || stage == DamageStage.destroyed) return null;
+  /// 재질 타일 하나(멀쩡한 모습). 손상 단계는 ShipView 가 코드로 덧그린다
+  /// (설계서 §10.2, ADR-030). [variant] 로 무늬를 바꾼다. 망사는 null(코드로 그림).
+  Sprite? tile(BlockMaterial m, {int variant = 0, bool keel = false}) {
+    if (m == BlockMaterial.net) return null;
     final name = keel ? 'bottom' : m.name;
-    final s = switch (stage) {
-      DamageStage.intact when m != BlockMaterial.iron => 'v${variant % 3}',
-      DamageStage.intact => '0',
-      DamageStage.cracked => '1',
-      _ => '2',
-    };
+    final s = m == BlockMaterial.iron && !keel ? '0' : 'v${variant % 3}';
     return get('ship/tiles/block_${name}_$s.png');
   }
 }

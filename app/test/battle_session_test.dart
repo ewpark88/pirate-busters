@@ -120,6 +120,21 @@ void main() {
       expect(s.state.winner, 1);
     });
 
+    test('이동 버튼을 누르는 동안은 1/10칸씩 이어서 움직이고 쏠 수 없다 (ADR-030)', () {
+      final s = _humanFirst()
+        ..update(100)
+        ..moveHeld = true;
+      expect(s.canFire(0), isFalse);
+      for (var i = 0; i < 10; i++) {
+        if (s.playback == null) s.move(1);
+        s.update(40);
+      }
+      expect(s.state.sides[0].offset, greaterThanOrEqualTo(800));
+      s.moveHeld = false;
+      _drain(s);
+      expect(s.canFire(0), isTrue);
+    });
+
     test('누르고 있을 때의 이동 끝 지점은 시뮬레이션의 이동 거리와 같다', () {
       final s = _humanFirst()..update(100);
       s.state.sides[0].fuel = 10 * SideState.fuelUnit; // 2.5칸

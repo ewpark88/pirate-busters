@@ -33,7 +33,10 @@ class BattleSession extends ChangeNotifier {
   /// 조준 중인 해적 슬롯과 값. 궤적 미리보기·자동 줌아웃에 쓴다.
   ({int slot, AimShot shot, double stretch})? aim;
 
-  /// 이동 버튼을 누르고 있는 동안의 이동 예정량(1/10칸, 전진 +). 끝 지점 점선용.
+  /// 이동 버튼을 누르고 있다. 그동안은 쏠 수 없다 (ADR-027).
+  bool moveHeld = false;
+
+  /// 이동 버튼을 누르고 있는 동안 갈 수 있는 끝(1/10칸, 전진 +). 끝 지점 점선용.
   int movePreviewDx = 0;
 
   /// 착탄 등 효과를 낼 이벤트. 렌더가 [takeCues] 로 가져간다.
@@ -65,6 +68,7 @@ class BattleSession extends ChangeNotifier {
   /// [slot] 해적을 지금 쏠 수 있는가.
   bool canFire(int slot) =>
       canAct &&
+      !moveHeld &&
       state.firesThisTurn < state.rules.firesPerTurn &&
       state.sides[state.activeSide].canFire(slot);
 

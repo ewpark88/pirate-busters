@@ -6,6 +6,11 @@ abstract interface class SettingsStore {
   LanguageChoice get language;
 
   Future<void> setLanguage(LanguageChoice choice);
+
+  /// 저사양 모드: 셰이더 효과를 끈다 (설계서 §10.2, §13.8).
+  bool get lowEnd;
+
+  Future<void> setLowEnd({required bool on});
 }
 
 /// Hive CE 상자 하나(`settings`)에 둔다.
@@ -14,6 +19,7 @@ class HiveSettingsStore implements SettingsStore {
 
   static const String boxName = 'settings';
   static const String _languageKey = 'language';
+  static const String _lowEndKey = 'lowEnd';
 
   final Box<String> _box;
 
@@ -27,6 +33,13 @@ class HiveSettingsStore implements SettingsStore {
   @override
   Future<void> setLanguage(LanguageChoice choice) =>
       _box.put(_languageKey, choice.name);
+
+  @override
+  bool get lowEnd => _box.get(_lowEndKey) == 'on';
+
+  @override
+  Future<void> setLowEnd({required bool on}) =>
+      _box.put(_lowEndKey, on ? 'on' : 'off');
 }
 
 /// 메모리에만 두는 저장소. 테스트용.
@@ -37,5 +50,11 @@ class MemorySettingsStore implements SettingsStore {
   LanguageChoice language;
 
   @override
+  bool lowEnd = false;
+
+  @override
   Future<void> setLanguage(LanguageChoice choice) async => language = choice;
+
+  @override
+  Future<void> setLowEnd({required bool on}) async => lowEnd = on;
 }

@@ -57,6 +57,13 @@ class PauseMenu extends ConsumerWidget {
                     ),
                 ],
               ),
+              const SizedBox(height: 8),
+              FilterChip(
+                label: Text(l10n.lowEndMode),
+                selected: ref.watch(lowEndProvider),
+                onSelected: (on) =>
+                    ref.read(lowEndProvider.notifier).set(on: on),
+              ),
               const SizedBox(height: 12),
               Text(
                 l10n.opponent,

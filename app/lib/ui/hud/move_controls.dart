@@ -4,13 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:pb_sim/pb_sim.dart';
 import 'package:pirate_busters/battle/battle_session.dart';
+import 'package:pirate_busters/battle/playback.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
 import 'package:pirate_busters/ui/hud/hud_style.dart';
 
-/// 아래 왼쪽: ◀ 후퇴 · 연료 게이지 · 전진 ▶ (설계서 §2.6, §2.7, §13.4).
+/// 아래 왼쪽: ◀ 후퇴 · 연료 게이지 · 전진 ▶ (설계서 §2.2, §2.6, §2.7, §13.4).
 ///
-/// 누르고 있는 동안 이동 예정량이 배 속도만큼 늘고(끝 지점은 전장에 점선), 떼면 그만큼
-/// `MOVE(dx)` 를 한 번 낸다. 연료가 0 이면 버튼을 잠그고 게이지를 깜빡인다.
+/// 버튼을 누르고 있는 동안 배가 움직이고 그동안 턴 타이머도 흐른다 (ADR-030).
+/// 앞 이동이 끝날 때마다 1/10칸짜리 `MOVE` 를 이어서 낸다. 누르고 있으면 갈 수 있는
+/// 끝 지점을 전장에 점선으로 보여준다. 연료가 0 이면 버튼을 잠그고 게이지를 깜빡인다.
 class MoveControls extends StatefulWidget {
   const MoveControls({required this.session, required this.side, super.key});
 
@@ -25,7 +27,6 @@ class _MoveControlsState extends State<MoveControls>
     with SingleTickerProviderStateMixin {
   late final Ticker _ticker;
   int _dir = 0;
-  Duration _held = Duration.zero;
 
   @override
   void initState() {
@@ -38,35 +39,34 @@ class _MoveControlsState extends State<MoveControls>
   SideState get _me => _s.state.sides[widget.side];
 
   bool get _enabled =>
-      _s.canAct && _s.state.activeSide == widget.side && _me.fuel > 0;
+      !_s.isOver &&
+      _s.isHumanTurn &&
+      _s.state.activeSide == widget.side &&
+      _me.fuel > 0 &&
+      _s.playback is! ShotPlayback;
 
   void _press(int dir) {
     if (!_enabled) return;
     _dir = dir;
-    _held = Duration.zero;
+    _s.moveHeld = true;
     unawaited(_ticker.start());
   }
 
   void _onTick(Duration elapsed) {
-    _held = elapsed;
-    _s.setMovePreview(_requestedDx());
-  }
-
-  /// 누른 시간 × 배 속도 → 1/10칸.
-  int _requestedDx() {
-    final tenths = _held.inMilliseconds * moveSpeedOf(_me) ~/ 1000 ~/ moveStep;
-    final want = _dir * (tenths < 1 ? 1 : tenths);
-    return _s.reach(want) ~/ moveStep;
+    if (_dir == 0) return;
+    // 갈 수 있는 끝 지점(연료·한계선·남은 시간).
+    _s.setMovePreview(_s.reach(_dir * 1000) ~/ moveStep);
+    if (_s.playback == null) _s.move(_dir);
+    if (!_enabled || _s.reach(_dir) == 0) _release();
   }
 
   void _release() {
     if (_dir == 0) return;
-    final dx = _requestedDx();
     _ticker.stop();
     _dir = 0;
     _s
-      ..setMovePreview(0)
-      ..move(dx);
+      ..moveHeld = false
+      ..setMovePreview(0);
   }
 
   @override

@@ -155,4 +155,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String playerWins(int side) {
     return '플레이어 $side 승리!';
   }
+
+  @override
+  String get lowEndMode => '저사양 모드';
 }

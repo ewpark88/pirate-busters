@@ -102,5 +102,6 @@
         "type": "int"
       }
     }
-  }
+  },
+  "lowEndMode": "Low-end mode"
 }

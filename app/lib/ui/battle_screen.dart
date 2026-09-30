@@ -1,5 +1,7 @@
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pirate_busters/app/providers.dart';
 import 'package:pirate_busters/battle/battle_session.dart';
 import 'package:pirate_busters/battle/battle_setup.dart';
 import 'package:pirate_busters/battle/dummy_controller.dart';
@@ -8,7 +10,7 @@ import 'package:pirate_busters/ui/hud/battle_hud.dart';
 
 /// 전투 화면: 전장(Flame) 위에 HUD(Flutter 위젯)를 겹친다 (설계서 §13.4).
 /// 전장의 게임 루프가 매 프레임 [BattleSession] 을 진행한다.
-class BattleScreen extends StatefulWidget {
+class BattleScreen extends ConsumerStatefulWidget {
   const BattleScreen({super.key, this.seed = 20260930, this.hotseat = false});
 
   final int seed;
@@ -17,10 +19,10 @@ class BattleScreen extends StatefulWidget {
   final bool hotseat;
 
   @override
-  State<BattleScreen> createState() => _BattleScreenState();
+  ConsumerState<BattleScreen> createState() => _BattleScreenState();
 }
 
-class _BattleScreenState extends State<BattleScreen> {
+class _BattleScreenState extends ConsumerState<BattleScreen> {
   late BattleSession _session;
   late BattleGame _game;
   bool _paused = false;
@@ -65,7 +67,13 @@ class _BattleScreenState extends State<BattleScreen> {
   }
 
   @override
-  Widget build(BuildContext context) => Scaffold(
+  Widget build(BuildContext context) {
+    // 저사양 모드는 설정에서 바로 전장에 반영한다.
+    _game.lowEnd.value = ref.watch(lowEndProvider);
+    return _scaffold();
+  }
+
+  Widget _scaffold() => Scaffold(
     backgroundColor: Colors.black,
     body: Stack(
       children: [

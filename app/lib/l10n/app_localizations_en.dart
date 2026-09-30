@@ -155,4 +155,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String playerWins(int side) {
     return 'Player $side wins!';
   }
+
+  @override
+  String get lowEndMode => 'Low-end mode';
 }

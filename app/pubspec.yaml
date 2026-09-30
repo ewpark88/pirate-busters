@@ -36,6 +36,9 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   generate: true
+  # 바다 측면 굴절 (설계서 §10.2, ADR-030). 저사양 모드에서 끈다.
+  shaders:
+    - shaders/sea_refraction.frag
   # 한글·라틴을 모두 가진 OFL 글꼴 (설계서 §14.4). 라이선스: assets/fonts/OFL.txt
   fonts:
     - family: Jua

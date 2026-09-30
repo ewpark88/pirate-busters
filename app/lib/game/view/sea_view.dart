@@ -3,6 +3,7 @@ import 'dart:ui';
 
 import 'package:flame/components.dart';
 import 'package:flame/game.dart';
+import 'package:flutter/foundation.dart';
 
 /// 하늘·원경·바다 (설계서 §10.2, ADR-029). 셰이더 없이 코드 도형으로 그린다.
 /// 색은 에셋 tokens.json `palette`.
@@ -106,10 +107,15 @@ class ParallaxScenery extends PositionComponent
 }
 
 /// 바다. [front] 면 배 앞에 반투명으로 그려 물에 잠긴 부분을 물빛으로 덮는다.
+///
+/// 앞쪽 바다는 측면 굴절 셰이더([shader])로 그린다. [lowEnd] 가 켜져 있거나 셰이더를
+/// 쓸 수 없으면 그라데이션으로 그린다 (설계서 §10.2, ADR-030).
 class SeaView extends Component {
-  SeaView({required this.front, super.priority});
+  SeaView({required this.front, this.shader, this.lowEnd, super.priority});
 
   final bool front;
+  final FragmentShader? shader;
+  final ValueListenable<bool>? lowEnd;
   double _t = 0;
 
   @override
@@ -127,6 +133,27 @@ class SeaView extends Component {
     path
       ..lineTo(seaHalfWidth, seaDepth)
       ..close();
+    final fx = shader;
+    if (front && fx != null && !(lowEnd?.value ?? false)) {
+      // FlutterFragCoord 는 캔버스 로컬(= 월드 px) 좌표라 해수면 0, 배율 1 이다.
+      fx
+        ..setFloat(0, _t)
+        ..setFloat(1, 0)
+        ..setFloat(2, 0)
+        ..setFloat(3, 1);
+      canvas.drawPath(path, Paint()..shader = fx);
+    } else {
+      _renderGradient(canvas, path);
+    }
+    if (!front) return;
+    final foam = Paint()..color = SeaPalette.foam.withValues(alpha: 0.7);
+    for (var x = -seaHalfWidth; x <= seaHalfWidth; x += 53) {
+      final wobble = math.sin(x * 0.7 + _t * 2) * 6;
+      canvas.drawCircle(Offset(x + wobble, _surface(x) + 1), 2.2, foam);
+    }
+  }
+
+  void _renderGradient(Canvas canvas, Path path) {
     const rect = Rect.fromLTWH(-seaHalfWidth, 0, seaHalfWidth * 2, seaDepth);
     canvas.drawPath(
       path,
@@ -141,11 +168,5 @@ class SeaView extends Component {
           const [0, 0.35, 1],
         ),
     );
-    if (!front) return;
-    final foam = Paint()..color = SeaPalette.foam.withValues(alpha: 0.7);
-    for (var x = -seaHalfWidth; x <= seaHalfWidth; x += 53) {
-      final wobble = math.sin(x * 0.7 + _t * 2) * 6;
-      canvas.drawCircle(Offset(x + wobble, _surface(x) + 1), 2.2, foam);
-    }
   }
 }

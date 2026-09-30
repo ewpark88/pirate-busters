@@ -21,3 +21,18 @@ class LanguageNotifier extends Notifier<LanguageChoice> {
     await ref.read(settingsStoreProvider).setLanguage(choice);
   }
 }
+
+/// 저사양 모드 (설계서 §13.8). 켜면 바다 굴절 셰이더를 끈다.
+final lowEndProvider = NotifierProvider<LowEndNotifier, bool>(
+  LowEndNotifier.new,
+);
+
+class LowEndNotifier extends Notifier<bool> {
+  @override
+  bool build() => ref.read(settingsStoreProvider).lowEnd;
+
+  Future<void> set({required bool on}) async {
+    state = on;
+    await ref.read(settingsStoreProvider).setLowEnd(on: on);
+  }
+}

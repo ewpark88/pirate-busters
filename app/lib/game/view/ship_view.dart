@@ -10,6 +10,7 @@ import 'package:pirate_busters/game/anim/anim_data.dart';
 import 'package:pirate_busters/game/anim/character_rig.dart';
 import 'package:pirate_busters/game/coords.dart';
 import 'package:pirate_busters/game/sprites.dart';
+import 'package:pirate_busters/game/view/damage_painter.dart';
 
 /// 배 한 척: 격자 타일, 돛대, 선실의 해적. 시뮬레이션 상태를 그리기만 한다.
 ///
@@ -128,34 +129,34 @@ class ShipView extends PositionComponent with HasGameReference {
         final m = materials[i];
         if (m == ShipGrid.emptyCell) {
           if (_built.materials[i] != ShipGrid.emptyCell) {
-            sprites
-                .get('ship/tiles/hole.png')
-                .render(
-                  canvas,
-                  position: rect.topLeft.toVector2(),
-                  size: Vector2.all(_cell),
-                  overridePaint: _holePaint,
-                );
+            DamagePainter.broken(canvas, rect, i);
           }
           continue;
         }
         final mat = BlockMaterial.values[m];
         final stage = _stage(mat, hp[i]);
-        final tile = sprites.tile(mat, stage, variant: i * 7, keel: y == 0);
+        final tile = sprites.tile(mat, variant: i * 7, keel: y == 0);
         if (tile == null) {
           _renderNet(canvas, rect, stage);
-        } else {
-          tile.render(
-            canvas,
-            position: rect.topLeft.toVector2(),
-            size: Vector2.all(_cell),
-          );
+          continue;
+        }
+        tile.render(
+          canvas,
+          position: rect.topLeft.toVector2(),
+          size: Vector2.all(_cell),
+        );
+        switch (stage) {
+          case DamageStage.cracked:
+            DamagePainter.cracked(canvas, rect, i);
+          case DamageStage.holed:
+            DamagePainter.holed(canvas, rect, i);
+          case DamageStage.intact || DamageStage.destroyed:
+            break;
         }
       }
     }
   }
 
-  static final Paint _holePaint = Paint()..color = const Color(0x99FFFFFF);
   static final Paint _netPaint = Paint()
     ..color = const Color(0xFFD9CBA8)
     ..style = PaintingStyle.stroke
