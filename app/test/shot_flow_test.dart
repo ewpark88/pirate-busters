@@ -3,6 +3,7 @@ import 'package:pb_ai/pb_ai.dart';
 import 'package:pb_sim/pb_sim.dart';
 import 'package:pirate_busters/battle/battle_session.dart';
 import 'package:pirate_busters/battle/playback.dart';
+import 'package:pirate_busters/battle/session_views.dart';
 
 import 'test_catalog.dart';
 

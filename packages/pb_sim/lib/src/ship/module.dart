@@ -43,8 +43,8 @@ enum ModuleKind {
   /// 선실 칸에만 겹쳐 다는 선실 옵션인가 (포문·망루).
   final bool cabinOption;
 
-  /// 기능 모듈 한도에 세는가: 선장실만 빠진다 (선실은 모듈 목록에 없다).
-  bool get countsToLimit => this != captain;
+  /// 기능 모듈 한도에 세는가: 선장실과 선실 옵션(포문·망루)은 빠진다 (설계서 §3.3).
+  bool get countsToLimit => this != captain && !cabinOption;
 
   /// 데이터 이름으로 찾는다. 없으면 [FormatException].
   static ModuleKind byName(String name) {

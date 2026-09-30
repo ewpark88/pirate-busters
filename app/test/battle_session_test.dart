@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pb_ai/pb_ai.dart';
 import 'package:pb_sim/pb_sim.dart';
+import 'package:pirate_busters/battle/auto_end.dart';
 import 'package:pirate_busters/battle/battle_session.dart';
 import 'package:pirate_busters/battle/playback.dart';
 import 'package:pirate_busters/battle/session_views.dart';
@@ -59,13 +60,15 @@ void main() {
       );
     });
 
-    test('2발을 쏘면 턴이 넘어가고, 허수아비가 두고 다시 내 턴이 온다', () {
+    test('2발을 쏘면 유예 뒤 턴이 넘어가고, AI 가 두고 다시 내 턴이 온다 (ADR-042)', () {
       final s = _humanFirst()
         ..update(500)
         ..fire(0, 30000, 9000);
       _drain(s);
       s.fire(1, 35000, 9000);
       _drain(s);
+      expect(s.isHumanTurn, isTrue, reason: '유예 동안은 이동할 수 있다');
+      s.update(AutoEndClock.graceMs);
       expect(s.isHumanTurn, isFalse);
       var guard = 0;
       while (!s.isHumanTurn && !s.isOver && guard++ < 2000) {
@@ -115,7 +118,7 @@ void main() {
       _drain(s);
       s.endTurn();
       final taps = s.match.turnLog.first.commands.whereType<TapCommand>();
-      expect(taps.single.tick, 9);
+      expect(taps.single.ticks, 9);
     });
 
     test('상대 턴에 누른 항복은 내 턴이 오면 바로 낸다 (설계서 §13.4)', () {
@@ -249,5 +252,14 @@ void main() {
       );
       expect(m.state.sides[1].crew.size, 3);
     });
+  });
+
+  test('자동 턴 종료를 끄면 2발을 쏴도 턴이 넘어가지 않는다 (§2.2)', () {
+    final clock = AutoEndClock()..enabled = false;
+    expect(clock.tick(5000, done: true, held: false), isFalse);
+    clock.enabled = true;
+    expect(clock.tick(1000, done: true, held: true), isFalse, reason: '이동 중');
+    expect(clock.tick(1000, done: true, held: false), isFalse);
+    expect(clock.tick(600, done: true, held: false), isTrue);
   });
 }

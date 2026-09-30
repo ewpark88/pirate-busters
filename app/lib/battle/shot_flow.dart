@@ -46,7 +46,7 @@ ShotPlayback resolveSplit(Match match, ShotPlayback p, int? tick) {
   if (tick == null) {
     match.settlePending();
   } else {
-    match.apply(TapCommand(t: p.fireT, slot: p.slot, tick: tick));
+    match.apply(TapCommand(t: p.fireT, slot: p.slot, ticks: tick));
   }
   return resolvedShot(
     state,

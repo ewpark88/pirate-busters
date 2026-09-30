@@ -609,4 +609,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get levelHell => 'Hell';
+
+  @override
+  String get autoEndTurn => 'Auto end turn after 2 shots';
 }

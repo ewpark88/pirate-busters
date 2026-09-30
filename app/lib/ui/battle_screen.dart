@@ -94,6 +94,7 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
   Widget build(BuildContext context) {
     // 저사양 모드는 설정에서 바로 전장에 반영한다.
     _game.lowEnd.value = ref.watch(lowEndProvider);
+    _session.autoEnd.enabled = ref.watch(autoEndTurnProvider);
     final l10n = AppLocalizations.of(context);
     final number = NumberFormat.decimalPattern(
       Localizations.localeOf(context).toLanguageTag(),

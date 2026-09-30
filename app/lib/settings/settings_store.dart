@@ -11,6 +11,11 @@ abstract interface class SettingsStore {
   bool get lowEnd;
 
   Future<void> setLowEnd({required bool on});
+
+  /// 2발을 다 쏘면 유예 뒤 턴을 자동으로 끝낸다 (설계서 §2.2). 기본 켬.
+  bool get autoEndTurn;
+
+  Future<void> setAutoEndTurn({required bool on});
 }
 
 /// Hive CE 상자 하나(`settings`)에 둔다.
@@ -20,6 +25,7 @@ class HiveSettingsStore implements SettingsStore {
   static const String boxName = 'settings';
   static const String _languageKey = 'language';
   static const String _lowEndKey = 'lowEnd';
+  static const String _autoEndKey = 'autoEndTurn';
 
   final Box<String> _box;
 
@@ -40,6 +46,13 @@ class HiveSettingsStore implements SettingsStore {
   @override
   Future<void> setLowEnd({required bool on}) =>
       _box.put(_lowEndKey, on ? 'on' : 'off');
+
+  @override
+  bool get autoEndTurn => _box.get(_autoEndKey) != 'off';
+
+  @override
+  Future<void> setAutoEndTurn({required bool on}) =>
+      _box.put(_autoEndKey, on ? 'on' : 'off');
 }
 
 /// 메모리에만 두는 저장소. 테스트용.
@@ -57,4 +70,10 @@ class MemorySettingsStore implements SettingsStore {
 
   @override
   Future<void> setLowEnd({required bool on}) async => lowEnd = on;
+
+  @override
+  bool autoEndTurn = true;
+
+  @override
+  Future<void> setAutoEndTurn({required bool on}) async => autoEndTurn = on;
 }

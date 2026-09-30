@@ -64,7 +64,9 @@
       "ammo": {
         "type": "sniper"
       },
-      "projectile": {},
+      "projectile": {
+        "range": "short"
+      },
       "onHit": {
         "radiusCells": 0,
         "blockDmg": 60,

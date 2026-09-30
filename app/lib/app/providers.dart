@@ -50,6 +50,21 @@ class LowEndNotifier extends Notifier<bool> {
   }
 }
 
+/// 2발 뒤 자동 턴 종료 (설계서 §2.2, ADR-042).
+final autoEndTurnProvider = NotifierProvider<AutoEndTurnNotifier, bool>(
+  AutoEndTurnNotifier.new,
+);
+
+class AutoEndTurnNotifier extends Notifier<bool> {
+  @override
+  bool build() => ref.read(settingsStoreProvider).autoEndTurn;
+
+  Future<void> set({required bool on}) async {
+    state = on;
+    await ref.read(settingsStoreProvider).setAutoEndTurn(on: on);
+  }
+}
+
 /// 효과음. 부트스트랩에서 flutter_soloud 로 덮어쓴다. 기본은 소리 없음(테스트).
 final soundServiceProvider = Provider<SoundService>(
   (ref) => const SilentSoundService(),

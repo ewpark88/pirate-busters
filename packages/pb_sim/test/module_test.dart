@@ -312,4 +312,16 @@ void main() {
     m.turnLog.forEach(again.playTurn);
     expect(hashMatchState(again.state), hashMatchState(m.state));
   });
+
+  test('선실 옵션(포문·망루)은 기능 모듈 수에서 뺀다 (설계서 §3.3)', () {
+    final b = _ship(const [
+      ModuleCell(0, 1, ModuleKind.pump),
+      ModuleCell(2, 1, ModuleKind.workshop),
+      ModuleCell(9, 1, ModuleKind.fuelTank),
+      ModuleCell(10, 1, ModuleKind.mast),
+      ModuleCell(3, 1, ModuleKind.gunPort),
+      ModuleCell(5, 1, ModuleKind.lookout),
+    ]);
+    expect(ShipStats.of(b.hull, b.cells, b.modules).modulesCounted, 4);
+  });
 }

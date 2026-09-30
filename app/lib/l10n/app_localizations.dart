@@ -1111,6 +1111,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Hell'**
   String get levelHell;
+
+  /// No description provided for @autoEndTurn.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto end turn after 2 shots'**
+  String get autoEndTurn;
 }
 
 class _AppLocalizationsDelegate

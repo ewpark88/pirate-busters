@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:pb_ai/pb_ai.dart';
 import 'package:pb_sim/pb_sim.dart';
+import 'package:pirate_busters/battle/auto_end.dart';
 import 'package:pirate_busters/battle/playback.dart';
 import 'package:pirate_busters/battle/session_views.dart';
 import 'package:pirate_busters/battle/shot_flow.dart';
@@ -41,6 +42,9 @@ class BattleSession extends ChangeNotifier with SessionUiState {
   /// 지금 턴이 시작된 뒤 흐른 실제 시간(밀리초). 커맨드 `t` 가 된다.
   int turnMs = 0;
 
+  /// 2발 뒤 자동 턴 종료 유예 (설계서 §2.2). 설정에서 끈다.
+  final AutoEndClock autoEnd = AutoEndClock();
+
   /// 지금 보여주는 연출. 없으면 null.
   Playback? playback;
 
@@ -61,22 +65,6 @@ class BattleSession extends ChangeNotifier with SessionUiState {
 
   /// 사람이 지금 조작할 수 있는가.
   bool get canAct => !isOver && isHumanTurn && playback == null;
-
-  /// 남은 턴 시간(밀리초). 탄 비행 연출 중에는 줄지 않는다.
-  int get remainingMs {
-    final shot = playback;
-    final flightLeft = shot is ShotPlayback
-        ? shot.durationMs - shot.elapsedMs
-        : 0;
-    // 탭을 기다리는 분열탄은 아직 계산 전이라 비행 시간이 멈춤에 들어가 있지 않다.
-    final pending = shot is ShotPlayback && shot.awaitingTap
-        ? shot.flightMs
-        : 0;
-    final paused = state.pausedMs + pending - flightLeft;
-    final used = turnMs - paused;
-    final left = state.rules.turnTimeFor(state.turn) - used;
-    return left < 0 ? 0 : left;
-  }
 
   /// [slot] 해적을 지금 쏠 수 있는가.
   @override
@@ -123,13 +111,23 @@ class BattleSession extends ChangeNotifier with SessionUiState {
         surrenderQueued = false;
         _apply(SurrenderCommand(t: turnMs));
       } else if (isHumanTurn) {
-        if (remainingMs <= 0) _apply(EndTurnCommand(t: turnMs));
+        if (remainingMs <= 0) {
+          _apply(EndTurnCommand(t: turnMs));
+        } else if (_autoEndDue(dtMs)) {
+          _apply(EndTurnCommand(t: turnMs));
+        }
       } else {
         _playScript();
       }
     }
     notifyListeners();
   }
+
+  bool _autoEndDue(int dtMs) => autoEnd.tick(
+    dtMs,
+    done: state.firesThisTurn >= state.rules.firesPerTurn,
+    held: moveHeld,
+  );
 
   /// 배를 [dx](1/10칸, 전진 +)만큼 움직인다.
   void move(int dx) {
@@ -154,7 +152,7 @@ class BattleSession extends ChangeNotifier with SessionUiState {
     if (shot.awaitingTap) {
       if (tick >= 1 && tick < shot.lastTick) _resolveSplit(shot, tick);
     } else {
-      match.apply(TapCommand(t: turnMs, slot: shot.slot, tick: tick));
+      match.apply(TapCommand(t: turnMs, slot: shot.slot, ticks: tick));
     }
     notifyListeners();
   }
@@ -215,6 +213,7 @@ class BattleSession extends ChangeNotifier with SessionUiState {
     if (playback != null || state.turn == _turnOfClock) return;
     _turnOfClock = state.turn;
     turnMs = 0;
+    autoEnd.reset();
     // 고른 진영의 턴이 끝났으면 선택을 푼다(상대 턴에 고른 것은 남는다).
     if (selectedSide != state.activeSide) selected = null;
     _script = null;

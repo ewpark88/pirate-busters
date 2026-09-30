@@ -168,5 +168,6 @@
   "levelEasy": "쉬움",
   "levelNormal": "보통",
   "levelHard": "어려움",
-  "levelHell": "지옥"
+  "levelHell": "지옥",
+  "autoEndTurn": "2발 뒤 자동 턴 종료"
 }

@@ -130,10 +130,10 @@ void main() {
       expect(c.byId('p01_octo').hp, 240);
     });
 
-    test('사거리는 계열 기본 등급, 히포만 짧음 (설계서 §2.8)', () {
+    test('사거리는 계열 기본 등급, 히포·팡은 짧음 (설계서 §2.8, A2.8 예외)', () {
       final c = _load().catalog;
       expect(c.byId('p01_octo').range, RangeGrade.long);
-      expect(c.byId('p06_pang').range, RangeGrade.medium);
+      expect(c.byId('p06_pang').range, RangeGrade.short);
       expect(c.byId('p07_hippo').range, RangeGrade.short);
       expect(c.byId('p26_polly').range, RangeGrade.veryLong);
       expect(c.byId('p31_sharky').range, RangeGrade.short);

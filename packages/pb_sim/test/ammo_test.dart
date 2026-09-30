@@ -57,7 +57,7 @@ void _passTo(Match m, int side) {
   while (m.state.activeSide != side) {
     m.apply(const EndTurnCommand(t: 1000));
   }
-  m.apply(const TapCommand(t: 0, slot: 9, tick: 0));
+  m.apply(const TapCommand(t: 0, slot: 9, ticks: 0));
 }
 
 List<SimEvent> _of(Match m, SimEventKind kind) =>
@@ -89,7 +89,7 @@ void main() {
       m.apply(_atCabin(m));
       expect(m.pendingSlot, 0);
       expect(_of(m, SimEventKind.impact), isEmpty, reason: '아직 계산 전');
-      m.apply(const TapCommand(t: 1000, slot: 0, tick: 20));
+      m.apply(const TapCommand(t: 1000, slot: 0, ticks: 20));
       expect(m.pendingSlot, -1);
       final divide = _of(m, SimEventKind.divide);
       expect(divide, hasLength(1));
@@ -130,7 +130,7 @@ void main() {
       final before = m.state.nextProjectileId;
       m
         ..apply(_atCabin(m))
-        ..apply(const TapCommand(t: 1000, slot: 0, tick: 10));
+        ..apply(const TapCommand(t: 1000, slot: 0, ticks: 10));
       expect(m.state.nextProjectileId - before, 5);
       expect(perShotDamage(40, 0, 4), 14);
     });
@@ -139,7 +139,7 @@ void main() {
       final m = _duel(uni);
       m
         ..apply(_atCabin(m))
-        ..apply(const TapCommand(t: 1000, slot: 0, tick: 18))
+        ..apply(const TapCommand(t: 1000, slot: 0, ticks: 18))
         ..apply(const EndTurnCommand(t: 9000));
       final log = m.turnLog;
       final again = Match.start(
@@ -416,5 +416,21 @@ void main() {
       expect(delay(28), 1);
       expect(delay(40), 2);
     });
+  });
+
+  test('지원 해적의 FIRE 는 0~180° 만 받는다 (설계서 §7.2)', () {
+    PirateSpec tok() => _ammoPirate(
+      AmmoType.support,
+      value: 100,
+      param: 3,
+      family: Family.support,
+      blockDamage: 0,
+      pirateDamage: 0,
+    );
+    final m = _duel(tok())
+      ..apply(const FireCommand(t: 1000, slot: 0, angle: 190000, power: 5000));
+    expect(m.state.sides[0].shotsFired, 0);
+    m.apply(const FireCommand(t: 1100, slot: 0, angle: 170000, power: 5000));
+    expect(m.state.sides[0].shotsFired, 1);
   });
 }

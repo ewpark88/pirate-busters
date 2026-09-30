@@ -7,7 +7,7 @@
   "hash": "348b3e74"
  },
  "replay": {
-  "version": 6,
+  "version": 7,
   "seed": 11,
   "rules": {
    "maxTurns": 30,
@@ -36,6 +36,17 @@
    "maxTilt": 6000,
    "breakPauseMs": 600,
    "limitSlowZone": 500
+  },
+  "params": {
+   "hullPermille": [
+    1000,
+    1000
+   ],
+   "sets": [
+    [],
+    []
+   ],
+   "dataVersion": ""
   },
   "blueprints": [
    {
@@ -505,6 +516,10 @@
       "slot": 1,
       "angle": 65000,
       "power": 10000
+     },
+     {
+      "t": 9000,
+      "type": "END_TURN"
      }
     ],
     "hash": "b46dfd8b"

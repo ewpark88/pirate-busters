@@ -7,7 +7,7 @@
   "hash": "32d54cd6"
  },
  "replay": {
-  "version": 6,
+  "version": 7,
   "seed": 11,
   "rules": {
    "maxTurns": 30,
@@ -36,6 +36,17 @@
    "maxTilt": 6000,
    "breakPauseMs": 600,
    "limitSlowZone": 500
+  },
+  "params": {
+   "hullPermille": [
+    1000,
+    1000
+   ],
+   "sets": [
+    [],
+    []
+   ],
+   "dataVersion": ""
   },
   "blueprints": [
    {
@@ -505,6 +516,10 @@
       "slot": 1,
       "angle": 18500,
       "power": 10000
+     },
+     {
+      "t": 9000,
+      "type": "END_TURN"
      }
     ],
     "hash": "eafd140d"
@@ -537,6 +552,10 @@
       "slot": 1,
       "angle": 19500,
       "power": 10000
+     },
+     {
+      "t": 9000,
+      "type": "END_TURN"
      }
     ],
     "hash": "d79adb62"
@@ -569,6 +588,10 @@
       "slot": 1,
       "angle": 21750,
       "power": 10000
+     },
+     {
+      "t": 9000,
+      "type": "END_TURN"
      }
     ],
     "hash": "0cfd2394"
@@ -601,6 +624,10 @@
       "slot": 1,
       "angle": 22750,
       "power": 10000
+     },
+     {
+      "t": 9000,
+      "type": "END_TURN"
      }
     ],
     "hash": "2fca4253"
@@ -633,6 +660,10 @@
       "slot": 1,
       "angle": 23750,
       "power": 10000
+     },
+     {
+      "t": 9000,
+      "type": "END_TURN"
      }
     ],
     "hash": "e5f184d2"
@@ -665,6 +696,10 @@
       "slot": 1,
       "angle": 24000,
       "power": 10000
+     },
+     {
+      "t": 9000,
+      "type": "END_TURN"
      }
     ],
     "hash": "910f10e9"
@@ -697,6 +732,10 @@
       "slot": 1,
       "angle": 22000,
       "power": 10000
+     },
+     {
+      "t": 9000,
+      "type": "END_TURN"
      }
     ],
     "hash": "b904ebb8"

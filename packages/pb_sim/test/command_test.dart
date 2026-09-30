@@ -11,7 +11,7 @@ void main() {
       _map('''
 { "turn": 7, "side": 0, "cmds": [
   { "t": 9800,  "type": "FIRE", "slot": 3, "angle": 41250, "power": 7800 },
-  { "t": 10900, "type": "TAP",  "slot": 3, "tick": 25 },
+  { "t": 10900, "type": "TAP",  "slot": 3, "ticks": 25, "dir": 1 },
   { "t": 16400, "type": "FIRE", "slot": 1, "angle": 30500, "power": 6100 },
   { "t": 21000, "type": "END_TURN" }
 ], "hash": "9f3a1c07" }'''),
@@ -28,7 +28,8 @@ void main() {
     );
     final fire = b.commands.first as FireCommand;
     expect([fire.t, fire.slot, fire.angle, fire.power], [9800, 3, 41250, 7800]);
-    expect((b.commands[1] as TapCommand).tick, 25);
+    final tap = b.commands[1] as TapCommand;
+    expect([tap.ticks, tap.dir], [25, 1]);
   });
 
   test('턴 묶음은 JSON 으로 저장했다 읽어도 같다', () {
@@ -37,7 +38,7 @@ void main() {
       side: 1,
       commands: const [
         FireCommand(t: 100, slot: 2, angle: 1000, power: 5000),
-        TapCommand(t: 200, slot: 2, tick: 3),
+        TapCommand(t: 200, slot: 2, ticks: 3),
         SurrenderCommand(t: 300),
       ],
       hash: 0x0000abcd,

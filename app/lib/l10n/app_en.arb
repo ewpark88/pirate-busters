@@ -407,5 +407,6 @@
   "levelEasy": "Easy",
   "levelNormal": "Normal",
   "levelHard": "Hard",
-  "levelHell": "Hell"
+  "levelHell": "Hell",
+  "autoEndTurn": "Auto end turn after 2 shots"
 }

@@ -139,4 +139,28 @@ void main() {
       expect(() => Replay.fromJson(json), throwsFormatException, reason: key);
     }
   });
+
+  test('리플레이는 매치 파라미터를 담고, 아직 못 쓰는 보정·세트는 재생을 거부한다 (§7.2)', () {
+    final m = newSampleMatch(3);
+    runMatch(m, RandomController(1), RandomController(2));
+    final replay = Replay.fromMatch(
+      blueprints: [sampleBlueprint(), sampleBlueprint()],
+      decks: sampleDecks,
+      costLimits: sampleCostLimits,
+      match: m,
+      params: const MatchParams(dataVersion: 'test'),
+    );
+    final back = Replay.fromJson(replay.toJson());
+    expect(back.params.dataVersion, 'test');
+    expect(back.params.hullPermille, [1000, 1000]);
+    final strong = Replay(
+      seed: 3,
+      blueprints: [sampleBlueprint(), sampleBlueprint()],
+      decks: sampleDecks,
+      costLimits: sampleCostLimits,
+      turns: const [],
+      params: const MatchParams(hullPermille: [1200, 1000]),
+    );
+    expect(() => strong.play(pirates: sampleCatalog), throwsArgumentError);
+  });
 }

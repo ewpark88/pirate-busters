@@ -91,7 +91,7 @@ class RandomController implements Controller {
     for (var i = 0; i < actions; i++) {
       final slot = rng.nextInt(5);
       if (rng.nextChance(1, 5)) {
-        commands.add(TapCommand(t: t, slot: slot, tick: rng.nextInt(40)));
+        commands.add(TapCommand(t: t, slot: slot, ticks: rng.nextInt(40)));
       } else if (rng.nextChance(1, 3)) {
         commands.add(MoveCommand(t: t, dx: rng.nextRange(-60, 61)));
       } else {

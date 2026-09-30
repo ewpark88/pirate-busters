@@ -58,7 +58,7 @@ bool _someShot(
       setup?.call(m.state);
       m.apply(FireCommand(t: 1000, slot: 0, angle: deg * 1000, power: power));
       if (m.pendingSlot >= 0) {
-        m.apply(TapCommand(t: 1000, slot: 0, tick: tapTick));
+        m.apply(TapCommand(t: 1000, slot: 0, ticks: tapTick));
       }
       if (ok(m.state)) return true;
     }
@@ -92,13 +92,13 @@ void main() {
       );
     });
 
-    test('팡(저격탄, 보통): 간격 20칸에서 적 배에 맞는다, 치명 배율 ×1.5', () {
+    test('팡(저격탄, 짧음): 간격 12칸에서 적 배에 맞는다, 치명 배율 ×1.5', () {
       expect(_data.catalog.byId('p06_pang').ammoValue, 150);
       expect(
         _someShot(
           'p06_pang',
           (s) => _has(s, SimEventKind.impact, side: 1),
-          gap: 20000,
+          gap: 12000,
         ),
         isTrue,
       );
@@ -213,7 +213,7 @@ void main() {
   test('우니의 탭 분열은 리플레이에서 같은 해시로 재현된다 (완료 조건)', () {
     final m = _start('p04_uni')
       ..apply(const FireCommand(t: 1000, slot: 0, angle: 45000, power: 9000))
-      ..apply(const TapCommand(t: 1000, slot: 0, tick: 20))
+      ..apply(const TapCommand(t: 1000, slot: 0, ticks: 20))
       ..apply(const EndTurnCommand(t: 9000));
     expect(m.turnLog.last.commands.whereType<TapCommand>(), hasLength(1));
     final again = _start('p04_uni');

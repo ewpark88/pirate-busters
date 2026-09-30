@@ -105,7 +105,7 @@ void main() {
     ]);
     expect(near.preferred, PreferredRange.near);
     expect(near.families, {Family.lob: 1, Family.direct: 1, Family.assault: 1});
-    expect(near.ranges[RangeGrade.short], 1);
+    expect(near.ranges[RangeGrade.short], 2, reason: '팡·샤키 (A2.8 예외)');
     expect(near.cost, 9);
     final far = DeckEval([pirates.byId('p01_octo'), pirates.byId('p16_suri')]);
     expect(far.preferred, PreferredRange.far);

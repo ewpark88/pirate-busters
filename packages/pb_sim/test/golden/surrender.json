@@ -7,7 +7,7 @@
   "hash": "0ed5b97c"
  },
  "replay": {
-  "version": 6,
+  "version": 7,
   "seed": 6,
   "rules": {
    "maxTurns": 30,
@@ -36,6 +36,17 @@
    "maxTilt": 6000,
    "breakPauseMs": 600,
    "limitSlowZone": 500
+  },
+  "params": {
+   "hullPermille": [
+    1000,
+    1000
+   ],
+   "sets": [
+    [],
+    []
+   ],
+   "dataVersion": ""
   },
   "blueprints": [
    {

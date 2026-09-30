@@ -581,4 +581,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get levelHell => '지옥';
+
+  @override
+  String get autoEndTurn => '2발 뒤 자동 턴 종료';
 }

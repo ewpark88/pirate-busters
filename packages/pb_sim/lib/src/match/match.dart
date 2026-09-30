@@ -96,7 +96,7 @@ class Match {
       final turn = state.turn;
       if (c is TapCommand && c.slot == pendingSlot) {
         _current.add(c);
-        _resolve(pending, c.tick);
+        _resolve(pending, c.ticks);
         return;
       }
       _resolve(pending, -1);
@@ -189,6 +189,9 @@ class Match {
     if (state.firesThisTurn >= state.rules.firesPerTurn) return;
     if (!side.canFire(c.slot)) return;
     if (c.angle < 0 || c.angle >= fullTurnMdeg) return;
+    // 지원 해적은 0~180° 로 제 배 쪽까지 쏜다 (설계서 §7.2).
+    final spec = side.crew.pirates[c.slot].spec;
+    if (spec.ammo == AmmoType.support && c.angle > fullTurnMdeg ~/ 2) return;
     if (c.power < 0 || c.power > maxFirePower) return;
     final ms = realMs(state, at);
     final shots = launchVolley(
@@ -231,11 +234,9 @@ class Match {
         roundDiv(ticks * 1000, simTickHz) + breakPauseOf(state, from: before);
     judgeInstant(state);
     if (!closeTurn) return;
-    if (state.isOver) {
-      _endTurn(TurnEndReason.matchOver);
-    } else if (state.firesThisTurn >= state.rules.firesPerTurn) {
-      _endTurn(TurnEndReason.firesUsed);
-    }
+    // 2발을 다 쏴도 턴은 닫지 않는다: 유예 뒤 END_TURN 은 컨트롤러가 낸다
+    // (설계서 §2.2, ADR-042).
+    if (state.isOver) _endTurn(TurnEndReason.matchOver);
   }
 
   /// 턴 끝 처리 (설계서 §2.3): 화재(M5) → 침수 → 수리·펌프(M5) → 쿨다운 → 바람.
