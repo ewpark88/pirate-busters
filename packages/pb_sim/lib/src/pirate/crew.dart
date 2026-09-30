@@ -46,10 +46,16 @@ class Crew {
   PirateState? pirateAt(int slot) =>
       slot >= 0 && slot < pirates.length ? pirates[slot] : null;
 
-  /// 슬롯 해적이 선실에 타 있고 쿨다운이 끝났는가.
+  /// 이번 턴에 이미 쏜 슬롯 (설계서 §2.3 “서로 다른 해적”). 턴이 끝나면 비운다.
+  late final List<bool> firedThisTurn = List.filled(pirates.length, false);
+
+  /// 슬롯 해적이 선실에 타 있고 쿨다운이 끝났고 이번 턴에 아직 안 쐈는가.
   bool canFire(int slot) {
     final p = pirateAt(slot);
-    return p != null && p.status == PirateStatus.aboard && p.cooldown == 0;
+    return p != null &&
+        p.status == PirateStatus.aboard &&
+        p.cooldown == 0 &&
+        !firedThisTurn[slot];
   }
 
   /// 전멸: 모두 KO (설계서 §2.4).
@@ -59,6 +65,7 @@ class Crew {
   void markFired(int slot) {
     final p = pirates[slot];
     p.cooldown = p.spec.cooldownTurns + 1;
+    firedThisTurn[slot] = true;
   }
 
   /// 슬롯 해적에게 [amount] 피해. [side] 는 이벤트용 진영.
@@ -98,8 +105,10 @@ class Crew {
 
   /// 내 턴 끝: 쿨다운을 1 줄인다 (턴 끝 처리 4번째, 설계서 §2.3).
   void endOwnTurn() {
-    for (final p in pirates) {
+    for (var slot = 0; slot < pirates.length; slot++) {
+      final p = pirates[slot];
       if (p.cooldown > 0) p.cooldown--;
+      firedThisTurn[slot] = false;
     }
   }
 }

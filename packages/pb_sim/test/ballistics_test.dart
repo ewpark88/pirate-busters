@@ -29,7 +29,7 @@ void main() {
     expect([up.vx, up.vy], [0, 707]);
   });
 
-  test('탄도는 속도에 바람과 중력을 더한 뒤 위치를 옮기는 정수 적분과 정확히 같다', () {
+  test('탄도는 가로는 바람을 더한 속도로, 세로는 반 스텝 보정한 속도로 옮기는 정수 적분과 같다', () {
     const wind = 3;
     final p = _launch(angle: 45000);
     final vx0 = p.vx;
@@ -38,7 +38,12 @@ void main() {
       p.advance(wind);
       final tri = n * (n + 1) ~/ 2;
       expect(p.x, n * vx0 + wind * tri, reason: 'tick $n');
-      expect(p.y, 2500 + n * vy0 - gravityPerTick * tri, reason: 'tick $n');
+      // 세로는 반 스텝 보정: y = y0 + n·vy0 − g·n²/2.
+      expect(
+        p.y,
+        2500 + n * vy0 - gravityPerTick * n * n ~/ 2,
+        reason: 'tick $n',
+      );
     }
   });
 

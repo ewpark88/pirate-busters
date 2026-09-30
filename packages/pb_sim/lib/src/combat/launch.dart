@@ -1,6 +1,7 @@
 import 'package:pb_sim/src/match/match_state.dart';
 import 'package:pb_sim/src/match/rules.dart';
 import 'package:pb_sim/src/math/fx.dart';
+import 'package:pb_sim/src/math/trig.dart';
 import 'package:pb_sim/src/projectile/projectile.dart';
 import 'package:pb_sim/src/ship/flooding.dart';
 import 'package:pb_sim/src/world/wave.dart';
@@ -22,10 +23,48 @@ ShipFrame frameAtMs(MatchState state, int side, int ms) {
   return state.sides[side].frameAt(wave.heave(side, ms));
 }
 
+/// [side] 배의 [ms](실제 시각) 기울기(밀리도, 뱃머리가 들리면 +): 파도 + 침수
+/// (설계서 §2.5). 발사 각도·발사 위치·충돌에 모두 같은 값을 쓴다.
+int tiltAtMs(MatchState state, int side, int ms) =>
+    Wave(state.rules, state.turn).roll(side, ms) +
+    floodTilt(state.sides[side], state.rules);
+
+/// 배의 기울기 회전 중심: 배 가운데 용골 바닥(로컬 x = 폭 / 2, y = 0).
+int _pivotX(SideState s) => s.grid.width * cellUnit ~/ 2;
+
+/// 월드 점 ([wx], [wy]) → [side] 배의 로컬 좌표. 파도 위아래와 기울기를 되돌린다.
+(int, int) toShipLocal(MatchState state, int side, int ms, int wx, int wy) {
+  final frame = frameAtMs(state, side, ms);
+  final px = _pivotX(state.sides[side]);
+  final dx = frame.toLocalX(wx) - px;
+  final dy = frame.toLocalY(wy);
+  final t = tiltAtMs(state, side, ms);
+  final c = cosMicro(t);
+  final s = sinMicro(t);
+  return (
+    px + roundDiv(dx * c + dy * s, trigScale),
+    roundDiv(-dx * s + dy * c, trigScale),
+  );
+}
+
+/// [side] 배의 로컬 점 ([lx], [ly]) → 월드 좌표 (기울기·파도 포함).
+(int, int) fromShipLocal(MatchState state, int side, int ms, int lx, int ly) {
+  final frame = frameAtMs(state, side, ms);
+  final px = _pivotX(state.sides[side]);
+  final dx = lx - px;
+  final t = tiltAtMs(state, side, ms);
+  final c = cosMicro(t);
+  final s = sinMicro(t);
+  return (
+    frame.toWorldX(px + roundDiv(dx * c - ly * s, trigScale)),
+    frame.toWorldY(roundDiv(dx * s + ly * c, trigScale)),
+  );
+}
+
 /// 지금 턴 진영의 [slot] 해적이 [ms](실제 시각)에 [angle]·[power] 로 쏜 탄.
 ///
-/// 발사 위치는 파도에 흔들린 선실 중심, 각도에는 파도 기울기와 침수 기울기를
-/// 더한다 (설계서 §2.5). 사람·AI·재생 모두 이 계산을 쓴다. 쏠 수 있는지(물에 잠긴
+/// 발사 위치는 파도에 흔들리고 기울어진 배의 선실 중심, 각도에는 파도 기울기와
+/// 침수 기울기를 더한다 (설계서 §2.5). 사람·AI·재생 모두 이 계산을 쓴다. 쏠 수 있는지(물에 잠긴
 /// 선실 등)는 [SideState.canFire] 로 먼저 본다. 파도가 선실 중심을 잠깐 물 아래로
 /// 내리면 해수면에서 쏜다.
 Projectile launchShot(
@@ -38,11 +77,15 @@ Projectile launchShot(
 }) {
   final active = state.activeSide;
   final side = state.sides[active];
-  final wave = Wave(state.rules, state.turn);
   final cabin = side.cabins[slot];
-  final frame = side.frameAt(wave.heave(active, ms));
-  final (x, y) = frame.cellCenter(cabin.x, cabin.y);
-  final tilt = wave.roll(active, ms) + floodTilt(side, state.rules);
+  final (x, y) = fromShipLocal(
+    state,
+    active,
+    ms,
+    cabin.x * cellUnit + cellUnit ~/ 2,
+    cabin.y * cellUnit + cellUnit ~/ 2,
+  );
+  final tilt = tiltAtMs(state, active, ms);
   return Projectile.launch(
     id: id,
     side: active,

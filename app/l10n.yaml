@@ -1,0 +1,6 @@
+# 다국어 (설계서 §14). 영어가 기준 파일이다. 생성 파일은 lib/l10n 에 둔다.
+arb-dir: lib/l10n
+template-arb-file: app_en.arb
+output-localization-file: app_localizations.dart
+output-class: AppLocalizations
+nullable-getter: false

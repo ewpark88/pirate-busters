@@ -67,6 +67,9 @@ class PirateSpec {
   int get cost => rarity.cost;
 }
 
+/// 해적 쿨다운 상한(턴) (설계서 §2.3 “쿨다운 해적마다 0~2턴”).
+const int maxCooldownTurns = 2;
+
 /// 해적 id → 정의. 매치가 덱 id 를 풀 때 쓴다.
 class PirateCatalog {
   /// id 가 겹치면 [ArgumentError].
@@ -100,6 +103,10 @@ void checkLineup(HullSpec hull, List<PirateSpec> lineup, int costLimit) {
   }
   var cost = 0;
   for (var i = 0; i < lineup.length; i++) {
+    final cd = lineup[i].cooldownTurns;
+    if (cd < 0 || cd > maxCooldownTurns) {
+      throw ArgumentError('쿨다운은 0~$maxCooldownTurns 턴: ${lineup[i].id} $cd');
+    }
     cost += lineup[i].cost;
     for (var j = 0; j < i; j++) {
       if (lineup[j].id == lineup[i].id) {

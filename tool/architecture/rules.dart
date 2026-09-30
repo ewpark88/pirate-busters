@@ -48,6 +48,7 @@ const Map<String, String> _forbiddenIdentifiers = {
   'DateTime': '실시간 시계 금지 — 틱 번호를 쓴다',
   'Stopwatch': '실시간 시계 금지 — 틱 번호를 쓴다',
   'identityHashCode': '실행마다 달라지는 해시 금지',
+  'hashCode': '실행마다 달라질 수 있는 Object.hashCode 금지 — 상태 해시는 FNV-1a',
 };
 
 final RegExp _importRe = RegExp(
@@ -56,7 +57,7 @@ final RegExp _importRe = RegExp(
 );
 final RegExp _identRe = RegExp(r'[A-Za-z_$][A-Za-z0-9_$]*');
 final RegExp _floatLiteralRe = RegExp(
-  r'(?<![A-Za-z0-9_$.])\d+(?:\.\d+[eE]?|[eE][+-]?\d)',
+  r'(?<![A-Za-z0-9_$.])(?:\d+(?:\.\d+[eE]?|[eE][+-]?\d)|\.\d)',
 );
 
 /// [relPath](워크스페이스 기준, 슬래시 구분) 파일의 위반 목록.
@@ -90,7 +91,9 @@ List<String> checkFile(String relPath, String source) {
   }
 
   final lines = '\n'.allMatches(source).length + 1;
-  if (relPath.contains('/lib/') && lines > maxLibLines) {
+  // gen-l10n 이 만드는 파일은 키 수만큼 길어진다 (ADR-029).
+  final generated = relPath.contains('/lib/l10n/app_localizations');
+  if (relPath.contains('/lib/') && !generated && lines > maxLibLines) {
     violations.add('$relPath — $lines 줄, lib 파일은 $maxLibLines 줄 이하');
   }
   return violations;

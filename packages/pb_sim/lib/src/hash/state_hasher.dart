@@ -72,6 +72,9 @@ int hashMatchState(MatchState state) {
         ..addInt(p.status.index)
         ..addInt(p.cooldown);
     }
+    for (final fired in side.crew.firedThisTurn) {
+      h.addInt(fired ? 1 : 0);
+    }
   }
   return h.value;
 }

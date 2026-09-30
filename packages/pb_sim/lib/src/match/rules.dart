@@ -58,6 +58,8 @@ class MatchRules {
     this.sinkAtFullFlood = 2000,
     this.tiltPerCell = 1000,
     this.maxTilt = 6000,
+    this.breakPauseMs = 600,
+    this.limitSlowZone = 500,
   });
 
   /// [toJson] 결과에서 읽는다. 빠진 키나 범위 밖 값은 [FormatException].
@@ -88,6 +90,8 @@ class MatchRules {
       sinkAtFullFlood: readInt(json, 'sinkAtFullFlood'),
       tiltPerCell: readInt(json, 'tiltPerCell'),
       maxTilt: readInt(json, 'maxTilt'),
+      breakPauseMs: readInt(json, 'breakPauseMs'),
+      limitSlowZone: readInt(json, 'limitSlowZone'),
     );
     return rules.._check();
   }
@@ -109,6 +113,11 @@ class MatchRules {
     need(ok: wavePeriodMs > 0, what: 'wavePeriodMs $wavePeriodMs');
     need(ok: waterlineDivisor > 0, what: 'waterlineDivisor $waterlineDivisor');
     need(ok: maxTilt >= 0, what: 'maxTilt $maxTilt');
+    need(ok: breakPauseMs >= 0, what: 'breakPauseMs $breakPauseMs');
+    need(
+      ok: limitSlowZone >= 0 && limitSlowZone <= moveRange,
+      what: 'limitSlowZone $limitSlowZone',
+    );
     need(ok: windAccel >= 0, what: 'windAccel $windAccel');
     need(
       ok: sunkHullPercent >= 0 && sunkHullPercent <= 100,
@@ -216,6 +225,14 @@ class MatchRules {
   /// 침수 기울기 상한(밀리도). 임시 값.
   final int maxTilt;
 
+  /// 블록이 부서지거나 무너진 발사는 그 연출만큼 턴 타이머를 더 멈춘다(밀리초)
+  /// (설계서 §2.3 “배가 부서지는 연출 동안 턴 타이머는 멈춘다”). 임시 값.
+  final int breakPauseMs;
+
+  /// 이동 한계선 앞 이 거리(1/1000칸)부터 감속해 절반 속도로 간다 (설계서 §2.6
+  /// “한계 0.5칸 앞부터 감속”). 연료는 거리만큼만 쓴다 (§2.7).
+  final int limitSlowZone;
+
   /// 폭풍 타임이 시작되는 턴 번호.
   int get stormStartTurn => maxTurns - stormTurns + 1;
 
@@ -259,5 +276,7 @@ class MatchRules {
     'sinkAtFullFlood': sinkAtFullFlood,
     'tiltPerCell': tiltPerCell,
     'maxTilt': maxTilt,
+    'breakPauseMs': breakPauseMs,
+    'limitSlowZone': limitSlowZone,
   };
 }

@@ -66,12 +66,15 @@ class Projectile {
   /// 날아간 틱 수.
   int age = 0;
 
-  /// 한 틱 진행한다: 속도에 바람(가로)과 중력을 더한 뒤 위치를 옮긴다.
+  /// 한 틱 진행한다: 속도에 바람(가로)과 중력을 더하고 위치를 옮긴다.
+  ///
+  /// 세로는 틱 앞뒤 속도의 평균으로 옮겨(반 스텝 보정) 사거리가 설계서 §2.8 의
+  /// 등급 거리에 맞는다. 중력은 짝수라 정수로 떨어진다.
   void advance(int wind) {
     vx += wind;
     vy -= gravityPerTick;
     x += vx;
-    y += vy;
+    y += vy + gravityPerTick ~/ 2;
     age++;
   }
 
