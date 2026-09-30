@@ -7,7 +7,8 @@ import 'package:pb_sim/src/world/world.dart';
 /// FIRE 힘의 상한(×1000).
 const int maxFirePower = 10000;
 
-/// 날아가는 포물선 탄 (설계서 §2.1). 위치는 월드 좌표(1/1000칸), 속도는 1/1000칸/틱.
+/// 날아가는 포물선 탄 (설계서 §2.1). 위치는 월드 좌표(1/1000칸), 속도는
+/// 1/[velocityScale] 월드 단위/틱(ADR-043).
 class Projectile {
   Projectile({
     required this.id,
@@ -33,7 +34,7 @@ class Projectile {
     required int power,
   }) {
     const den = maxFirePower * simTickHz * trigScale;
-    final speed = power * spec.launchSpeed;
+    final speed = power * spec.launchSpeed * velocityScale;
     return Projectile(
       id: id,
       side: side,
@@ -92,9 +93,27 @@ class Projectile {
     final g = gravity ? gravityPerTick : 0;
     vx += wind;
     vy -= g;
-    x += vx;
-    y += vy + g ~/ 2;
+    final dx = _rx + vx;
+    final dy = _ry + vy + g ~/ 2;
+    final mx = floorDiv(dx, velocityScale);
+    final my = floorDiv(dy, velocityScale);
+    x += mx;
+    y += my;
+    _rx = dx - mx * velocityScale;
+    _ry = dy - my * velocityScale;
     age++;
+  }
+
+  /// 위치 나머지(속도 단위). 해시에는 넣지 않는다(탄은 판 상태가 아니다).
+  int _rx = 0;
+  int _ry = 0;
+
+  /// 위치를 ([nx], [ny]) 로 옮기고 나머지를 버린다(수면 튕김).
+  void placeAt(int nx, int ny) {
+    x = nx;
+    y = ny;
+    _rx = 0;
+    _ry = 0;
   }
 
   /// 전장 밖으로 나갔거나 수명이 다했다.

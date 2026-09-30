@@ -14,8 +14,8 @@
    "turnTimeMs": 25000,
    "firesPerTurn": 2,
    "maxWind": 3,
-   "windAccel": 1,
-   "sunkHullPercent": 20,
+   "windAccel": 44,
+   "sunkHullPercent": 30,
    "fuelPerTurn": 30,
    "stormTurns": 4,
    "stormTurnTimeMs": 20000,
@@ -507,7 +507,7 @@
       "t": 1000,
       "type": "FIRE",
       "slot": 0,
-      "angle": 28500,
+      "angle": 28750,
       "power": 10000
      },
      {
@@ -543,7 +543,7 @@
       "t": 1000,
       "type": "FIRE",
       "slot": 0,
-      "angle": 27750,
+      "angle": 28000,
       "power": 10000
      },
      {
@@ -586,7 +586,7 @@
       "t": 2000,
       "type": "FIRE",
       "slot": 1,
-      "angle": 27000,
+      "angle": 27250,
       "power": 10000
      },
      {
@@ -615,7 +615,7 @@
       "t": 1000,
       "type": "FIRE",
       "slot": 0,
-      "angle": 27750,
+      "angle": 28000,
       "power": 10000
      },
      {
@@ -651,7 +651,7 @@
       "t": 1000,
       "type": "FIRE",
       "slot": 0,
-      "angle": 23500,
+      "angle": 23250,
       "power": 10000
      }
     ],

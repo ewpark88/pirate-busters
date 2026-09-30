@@ -36,13 +36,14 @@ class ShotView extends Component {
     ];
   }
 
-  /// 카메라가 따라갈 탄: 날고 있는 탄들의 가운데. 없으면 null.
+  /// 카메라가 따라갈 탄: 날고 있는 탄 중 가장 앞선(표적 쪽으로 가장 멀리 간) 탄.
+  /// 없으면 null (설계서 §2.1).
   Vector2? get projectile {
+    final p = session.playback;
     final all = projectiles;
-    if (all.isEmpty) return null;
-    final sum = Vector2.zero();
-    all.forEach(sum.add);
-    return sum..scale(1 / all.length);
+    if (p is! ShotPlayback || all.isEmpty) return null;
+    final facing = facingOf(p.side).toDouble();
+    return all.reduce((a, b) => a.x * facing >= b.x * facing ? a : b);
   }
 
   /// 날고 있는 탄마다 그 해적의 무기 그림(분열 조각·소형 폭탄은 따로)을 그린다.

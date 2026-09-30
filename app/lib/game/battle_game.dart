@@ -136,6 +136,8 @@ class BattleGame extends FlameGame {
       projectile: _shot.projectile,
       targetX: shot is ShotPlayback ? _shipCenterX(1 - shot.side) : null,
       aimStretch: aim?.stretch ?? 0,
+      holdImpact: shot is ShotPlayback && shot.landed && !shot.isDone,
+      aspect: size.x > 0 ? size.y / size.x : 0.46,
     );
     director.update(dt, goal);
     final shake = _fx.shake;

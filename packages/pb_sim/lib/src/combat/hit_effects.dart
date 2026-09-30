@@ -139,8 +139,7 @@ bool bounceOffSea(Projectile p, int x) {
   p
     ..bouncesLeft -= 1
     ..bounced = true
-    ..x = x
-    ..y = 0
+    ..placeAt(x, 0)
     ..vy = -p.vy * 55 ~/ 100
     ..vx = p.vx * 85 ~/ 100;
   return true;
