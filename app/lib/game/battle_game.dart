@@ -85,7 +85,7 @@ class BattleGame extends FlameGame {
       weapons: weapons,
       priority: 20,
     );
-    _fx = FxLayer(sprites: sprites, priority: 30);
+    _fx = FxLayer(sprites: sprites, lowEnd: lowEnd, priority: 30);
     await world.addAll([
       ParallaxScenery(theme: theme, factor: 0.15, seed: 1, priority: -30),
       ParallaxScenery(theme: theme, factor: 0.4, seed: 2, priority: -20),
