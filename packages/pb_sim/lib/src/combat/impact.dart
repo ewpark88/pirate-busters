@@ -1,13 +1,19 @@
 import 'package:pb_sim/src/match/match_state.dart';
 import 'package:pb_sim/src/match/sim_event.dart';
 import 'package:pb_sim/src/math/fx.dart';
+import 'package:pb_sim/src/pirate/ammo.dart';
 import 'package:pb_sim/src/pirate/crew.dart';
 import 'package:pb_sim/src/pirate/pirate_spec.dart';
 import 'package:pb_sim/src/ship/support.dart';
 import 'package:pb_sim/src/world/world.dart';
 
-/// 착탄 칸 밖 폭발 피해 비율(%). 착탄 칸은 100%.
+/// 폭발탄이 아닌 탄의 착탄 칸 밖 폭발 피해 비율(%). 착탄 칸은 100%.
+/// 폭발탄은 사다리 값(§4.8)을 쓴다.
 const int blastEdgePercent = 50;
+
+/// [spec] 의 바깥 칸 피해 비율(%).
+int edgePercentOf(PirateSpec spec) =>
+    spec.ammo == AmmoType.explosive ? spec.ammoValue : blastEdgePercent;
 
 /// 바다에 빠진 해적이 폭발·물보라에 맞는 최소 거리: 1칸.
 const int swimmerHitRange = cellUnit;
@@ -27,13 +33,14 @@ void resolveImpact(
 }) {
   final grid = target.grid;
   final side = target.side;
-  final r = spec.blastRadius;
+  final r = cappedBlastRadius(spec.blastRadius);
+  final edge = edgePercentOf(spec);
   final hadCabin = [for (final c in target.cabins) grid.hasBlock(c.x, c.y)];
 
   for (var by = cy - r; by <= cy + r; by++) {
     for (var bx = cx - r; bx <= cx + r; bx++) {
       if (!_inBlast(bx - cx, by - cy, r) || !grid.inBounds(bx, by)) continue;
-      final dmg = _falloff(spec.blockDamage, bx == cx && by == cy);
+      final dmg = _falloff(spec.blockDamage, bx == cx && by == cy, edge);
       if (grid.damage(bx, by, dmg)) {
         events.add(
           SimEvent(
@@ -54,7 +61,7 @@ void resolveImpact(
     final c = target.cabins[slot];
     if (crew.pirates[slot].status != PirateStatus.aboard) continue;
     if (!_inBlast(c.x - cx, c.y - cy, r)) continue;
-    final dmg = _falloff(spec.pirateDamage, c.x == cx && c.y == cy);
+    final dmg = _falloff(spec.pirateDamage, c.x == cx && c.y == cy, edge);
     crew.damage(slot, dmg, side, events);
   }
   _hitSwimmers(target, x, y, r, events);
@@ -102,5 +109,5 @@ void _hitSwimmers(
 /// 칸 단위 원형 폭발 범위 (dx² + dy² ≤ r²).
 bool _inBlast(int dx, int dy, int r) => dx * dx + dy * dy <= r * r;
 
-int _falloff(int damage, bool center) =>
-    center ? damage : roundDiv(damage * blastEdgePercent, 100);
+int _falloff(int damage, bool center, int edgePercent) =>
+    center ? damage : roundDiv(damage * edgePercent, 100);

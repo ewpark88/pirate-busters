@@ -1,0 +1,311 @@
+{
+  "_comment": "MVP 해적 12명 (설계서 §4.2, §4.3 계열별 기준 수치, 등급 배율은 pb_data 가 곱한다).",
+  "pirates": [
+    {
+      "id": "p01_octo",
+      "nameKey": "pirate_p01_name",
+      "descKey": "pirate_p01_desc",
+      "loreKey": "pirate_p01_lore",
+      "family": "lob",
+      "rarity": "common",
+      "hp": 240,
+      "cooldownTurns": 0,
+      "ammo": {
+        "type": "explosive"
+      },
+      "projectile": {},
+      "onHit": {
+        "radiusCells": 1,
+        "blockDmg": 40,
+        "pirateDmg": 80
+      },
+      "growth": {},
+      "render": {
+        "species": "octo",
+        "props": [],
+        "teamColorPart": "bandana"
+      }
+    },
+    {
+      "id": "p04_uni",
+      "nameKey": "pirate_p04_name",
+      "descKey": "pirate_p04_desc",
+      "loreKey": "pirate_p04_lore",
+      "family": "lob",
+      "rarity": "hero",
+      "hp": 240,
+      "cooldownTurns": 1,
+      "ammo": {
+        "type": "split",
+        "spreadDeg": 25
+      },
+      "projectile": {},
+      "onHit": {
+        "radiusCells": 1,
+        "blockDmg": 40,
+        "pirateDmg": 80
+      },
+      "growth": {},
+      "render": {
+        "species": "uni",
+        "props": [],
+        "teamColorPart": "bandana"
+      }
+    },
+    {
+      "id": "p06_pang",
+      "nameKey": "pirate_p06_name",
+      "descKey": "pirate_p06_desc",
+      "loreKey": "pirate_p06_lore",
+      "family": "direct",
+      "rarity": "common",
+      "hp": 220,
+      "cooldownTurns": 0,
+      "ammo": {
+        "type": "sniper"
+      },
+      "projectile": {},
+      "onHit": {
+        "radiusCells": 0,
+        "blockDmg": 60,
+        "pirateDmg": 100
+      },
+      "growth": {},
+      "render": {
+        "species": "pang",
+        "props": [],
+        "teamColorPart": "bandana"
+      }
+    },
+    {
+      "id": "p07_hippo",
+      "nameKey": "pirate_p07_name",
+      "descKey": "pirate_p07_desc",
+      "loreKey": "pirate_p07_lore",
+      "family": "direct",
+      "rarity": "common",
+      "hp": 220,
+      "cooldownTurns": 0,
+      "ammo": {
+        "type": "burst",
+        "spreadDeg": 4
+      },
+      "projectile": {
+        "range": "short"
+      },
+      "onHit": {
+        "radiusCells": 0,
+        "blockDmg": 60,
+        "pirateDmg": 100
+      },
+      "growth": {},
+      "render": {
+        "species": "hippo",
+        "props": [],
+        "teamColorPart": "bandana"
+      }
+    },
+    {
+      "id": "p11_finn",
+      "nameKey": "pirate_p11_name",
+      "descKey": "pirate_p11_desc",
+      "loreKey": "pirate_p11_lore",
+      "family": "pierce",
+      "rarity": "common",
+      "hp": 260,
+      "cooldownTurns": 0,
+      "ammo": {
+        "type": "pierce"
+      },
+      "projectile": {},
+      "onHit": {
+        "radiusCells": 0,
+        "blockDmg": 50,
+        "pirateDmg": 70
+      },
+      "growth": {},
+      "render": {
+        "species": "sword",
+        "props": [],
+        "teamColorPart": "bandana"
+      }
+    },
+    {
+      "id": "p16_suri",
+      "nameKey": "pirate_p16_name",
+      "descKey": "pirate_p16_desc",
+      "loreKey": "pirate_p16_lore",
+      "family": "skip",
+      "rarity": "common",
+      "hp": 240,
+      "cooldownTurns": 0,
+      "ammo": {
+        "type": "skip"
+      },
+      "projectile": {},
+      "onHit": {
+        "radiusCells": 0,
+        "blockDmg": 30,
+        "pirateDmg": 60
+      },
+      "growth": {},
+      "render": {
+        "species": "otter",
+        "props": [],
+        "teamColorPart": "bandana"
+      }
+    },
+    {
+      "id": "p21_puffy",
+      "nameKey": "pirate_p21_name",
+      "descKey": "pirate_p21_desc",
+      "loreKey": "pirate_p21_lore",
+      "family": "underwater",
+      "rarity": "common",
+      "hp": 220,
+      "cooldownTurns": 1,
+      "ammo": {
+        "type": "mine"
+      },
+      "projectile": {},
+      "onHit": {
+        "radiusCells": 1,
+        "blockDmg": 40,
+        "pirateDmg": 50
+      },
+      "growth": {},
+      "render": {
+        "species": "puffer",
+        "props": [],
+        "teamColorPart": "bandana"
+      }
+    },
+    {
+      "id": "p26_polly",
+      "nameKey": "pirate_p26_name",
+      "descKey": "pirate_p26_desc",
+      "loreKey": "pirate_p26_lore",
+      "family": "air",
+      "rarity": "common",
+      "hp": 200,
+      "cooldownTurns": 0,
+      "ammo": {
+        "type": "homing"
+      },
+      "projectile": {},
+      "onHit": {
+        "radiusCells": 0,
+        "blockDmg": 50,
+        "pirateDmg": 90
+      },
+      "growth": {},
+      "render": {
+        "species": "polly",
+        "props": [],
+        "teamColorPart": "bandana"
+      }
+    },
+    {
+      "id": "p27_wing",
+      "nameKey": "pirate_p27_name",
+      "descKey": "pirate_p27_desc",
+      "loreKey": "pirate_p27_lore",
+      "family": "air",
+      "rarity": "common",
+      "hp": 200,
+      "cooldownTurns": 0,
+      "ammo": {
+        "type": "flock"
+      },
+      "projectile": {},
+      "onHit": {
+        "radiusCells": 0,
+        "blockDmg": 25,
+        "pirateDmg": 40
+      },
+      "growth": {},
+      "render": {
+        "species": "gull",
+        "props": [],
+        "teamColorPart": "bandana"
+      }
+    },
+    {
+      "id": "p28_pelly",
+      "nameKey": "pirate_p28_name",
+      "descKey": "pirate_p28_desc",
+      "loreKey": "pirate_p28_lore",
+      "family": "air",
+      "rarity": "rare",
+      "hp": 200,
+      "cooldownTurns": 1,
+      "ammo": {
+        "type": "flock",
+        "delayed": 1
+      },
+      "projectile": {},
+      "onHit": {
+        "radiusCells": 0,
+        "blockDmg": 25,
+        "pirateDmg": 40
+      },
+      "growth": {},
+      "render": {
+        "species": "pelly",
+        "props": [],
+        "teamColorPart": "bandana"
+      }
+    },
+    {
+      "id": "p31_sharky",
+      "nameKey": "pirate_p31_name",
+      "descKey": "pirate_p31_desc",
+      "loreKey": "pirate_p31_lore",
+      "family": "assault",
+      "rarity": "common",
+      "hp": 280,
+      "cooldownTurns": 1,
+      "ammo": {
+        "type": "assault"
+      },
+      "projectile": {},
+      "onHit": {
+        "radiusCells": 1,
+        "blockDmg": 20,
+        "pirateDmg": 90
+      },
+      "growth": {},
+      "render": {
+        "species": "shark",
+        "props": [],
+        "teamColorPart": "bandana"
+      }
+    },
+    {
+      "id": "p36_tok",
+      "nameKey": "pirate_p36_name",
+      "descKey": "pirate_p36_desc",
+      "loreKey": "pirate_p36_lore",
+      "family": "support",
+      "rarity": "common",
+      "hp": 260,
+      "cooldownTurns": 0,
+      "ammo": {
+        "type": "support",
+        "repairCells": 3
+      },
+      "projectile": {},
+      "onHit": {
+        "radiusCells": 0,
+        "blockDmg": 0,
+        "pirateDmg": 0
+      },
+      "growth": {},
+      "render": {
+        "species": "turtle",
+        "props": [],
+        "teamColorPart": "bandana"
+      }
+    }
+  ]
+}

@@ -1,4 +1,5 @@
 import 'package:pb_sim/src/match/rules.dart';
+import 'package:pb_sim/src/pirate/ammo.dart';
 import 'package:pb_sim/src/pirate/range_grade.dart';
 import 'package:pb_sim/src/ship/hull.dart';
 
@@ -15,6 +16,9 @@ enum Rarity {
   /// 출전 코스트. 해적 레벨과 관계없다.
   final int cost;
 
+  /// 등급 단계: 일반 0 … 신화 4 (설계서 §4.8 사다리 칸).
+  int get step => index;
+
   /// 데이터 이름으로 찾는다. 없으면 [FormatException].
   static Rarity byName(String name) {
     for (final r in values) {
@@ -26,8 +30,8 @@ enum Rarity {
 
 /// 해적 한 명의 전투 수치 (설계서 §4.3). 정수만 쓴다.
 ///
-/// M2 는 포물선 탄 + 착탄 폭발 한 가지 행동만 있다. 행동 모듈 조합(`projectile`,
-/// `onHit`, ...)은 M5 에서 `pb_data` 가 JSON 을 읽어 이 정의로 바꾼다.
+/// 행동은 탄종([ammo], 설계서 §4.8)이 정하고, 탄종의 등급 수치([ammoValue])는
+/// `pb_data` 가 `ammo.json` 사다리에서 등급으로 찾아 정수로 넣는다.
 class PirateSpec {
   const PirateSpec({
     required this.id,
@@ -38,6 +42,12 @@ class PirateSpec {
     required this.pirateDamage,
     this.blastRadius = 0,
     this.range = RangeGrade.medium,
+    this.family = Family.lob,
+    this.ammo = AmmoType.explosive,
+    this.ammoValue = 50,
+    this.ammoValue2 = 0,
+    this.spreadMdeg = 0,
+    this.ammoParam = 0,
   });
 
   final String id;
@@ -63,6 +73,26 @@ class PirateSpec {
 
   /// 힘 10000 일 때 탄 속도(1/1000칸/초).
   int get launchSpeed => range.launchSpeed;
+
+  /// 공격 계열 (설계서 §4.1).
+  final Family family;
+
+  /// 탄종 (설계서 §4.8).
+  final AmmoType ammo;
+
+  /// 탄종 등급 수치(사다리 값). 단위는 탄종마다 다르다: 비율·배율은 %, 개수는 개,
+  /// 선회력은 °/초, 설치탄은 지속 턴.
+  final int ammoValue;
+
+  /// 탄종의 둘째 수치(설치탄 폭발 때 침수 0.1%p 등). 없으면 0.
+  final int ammoValue2;
+
+  /// 탄종 고유 파라미터: 분열·연사 퍼짐 각(밀리도).
+  final int spreadMdeg;
+
+  /// 탄종 고유 파라미터 하나 (설계서 §4.3 `ammo`): 지원탄은 수리 칸 수, 다중투하는
+  /// 1 이면 다음 내 턴 시작에 투하(펠리). 쓰지 않는 탄종은 0.
+  final int ammoParam;
 
   int get cost => rarity.cost;
 }

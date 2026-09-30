@@ -3,8 +3,8 @@
  "expect": {
   "outcome": "sunk",
   "winner": 0,
-  "turns": 7,
-  "hash": "a840a38c"
+  "turns": 9,
+  "hash": "9cc443a4"
  },
  "replay": {
   "version": 5,
@@ -493,7 +493,7 @@
       "power": 10000
      }
     ],
-    "hash": "b6dde352"
+    "hash": "91191d76"
    },
    {
     "turn": 2,
@@ -504,7 +504,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "a02e8c11"
+    "hash": "05bba15d"
    },
    {
     "turn": 3,
@@ -525,7 +525,7 @@
       "power": 10000
      }
     ],
-    "hash": "1d57ffc9"
+    "hash": "fc18fb05"
    },
    {
     "turn": 4,
@@ -536,7 +536,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "a02267a8"
+    "hash": "7fe361fc"
    },
    {
     "turn": 5,
@@ -557,7 +557,7 @@
       "power": 10000
      }
     ],
-    "hash": "4b930038"
+    "hash": "ed899a82"
    },
    {
     "turn": 6,
@@ -568,7 +568,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "98925398"
+    "hash": "50669262"
    },
    {
     "turn": 7,
@@ -580,9 +580,41 @@
       "slot": 0,
       "angle": 27750,
       "power": 10000
+     },
+     {
+      "t": 2000,
+      "type": "FIRE",
+      "slot": 1,
+      "angle": 25750,
+      "power": 10000
      }
     ],
-    "hash": "a840a38c"
+    "hash": "c3ad958c"
+   },
+   {
+    "turn": 8,
+    "side": 1,
+    "cmds": [
+     {
+      "t": 1000,
+      "type": "END_TURN"
+     }
+    ],
+    "hash": "dba48ec7"
+   },
+   {
+    "turn": 9,
+    "side": 0,
+    "cmds": [
+     {
+      "t": 1000,
+      "type": "FIRE",
+      "slot": 0,
+      "angle": 23500,
+      "power": 10000
+     }
+    ],
+    "hash": "9cc443a4"
    }
   ]
  }
