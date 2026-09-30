@@ -7,6 +7,10 @@ uniform float uTime;
 uniform float uSeaY;     // 해수면의 화면 y (px)
 uniform float uWorldX0;  // 화면 x = 0 의 월드 x
 uniform float uZoom;     // 월드 px 당 화면 px
+uniform vec3 uTop;       // 해역 물색: 수면 · 중간 · 깊은 곳 (설계서 §10.2)
+uniform vec3 uMid;
+uniform vec3 uDeep;
+uniform vec3 uLight;     // 굴절 빛 띠 색
 
 out vec4 fragColor;
 
@@ -22,12 +26,9 @@ void main() {
   float band = sin(wx * 0.045 + bend + uTime * 0.9);
   float light = smoothstep(0.72, 1.0, band) * exp(-d / 90.0);
   float t = clamp(d / 300.0, 0.0, 1.0);
-  vec3 top = vec3(0.165, 0.290, 0.353);
-  vec3 mid = vec3(0.090, 0.204, 0.275);
-  vec3 deep = vec3(0.043, 0.106, 0.157);
-  vec3 col = mix(mix(top, mid, clamp(t * 2.0, 0.0, 1.0)), deep,
+  vec3 col = mix(mix(uTop, uMid, clamp(t * 2.0, 0.0, 1.0)), uDeep,
                  clamp(t * 2.0 - 1.0, 0.0, 1.0));
-  col += vec3(0.91, 0.79, 0.63) * light * 0.28;
+  col += uLight * light * 0.28;
   float a = mix(0.58, 0.9, t);
   fragColor = vec4(col * a, a);
 }

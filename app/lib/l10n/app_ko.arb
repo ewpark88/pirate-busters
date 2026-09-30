@@ -44,5 +44,8 @@
   "outcomeSurrender": "항복",
   "playAgain": "다시 하기",
   "playerWins": "플레이어 {side} 승리!",
-  "lowEndMode": "저사양 모드"
+  "lowEndMode": "저사양 모드",
+  "damagePopup": "-{amount}",
+  "sunkBanner": "격침!",
+  "surrenderQueued": "내 턴이 오면 항복합니다"
 }

@@ -1,0 +1,92 @@
+import 'package:flame/components.dart';
+import 'package:flutter/widgets.dart';
+import 'package:pb_sim/pb_sim.dart';
+import 'package:pirate_busters/battle/battle_session.dart';
+import 'package:pirate_busters/game/battle_game.dart';
+import 'package:pirate_busters/input/pull_aim.dart';
+
+/// 전장 위 제스처 (설계서 §2.1, §2.2): 배 위 해적을 한 손가락으로 끌면 조준하고
+/// 놓으면 쏜다. 두 손가락은 핀치 줌. 탭은 비행 중 `TAP`.
+/// mozzi lib/game/input/play_input.dart 의 라우팅(발사 전 당기기 / 비행 중 탭)을 따른다.
+class FieldGestures extends StatefulWidget {
+  const FieldGestures({
+    required this.game,
+    required this.session,
+    required this.child,
+    super.key,
+  });
+
+  final BattleGame game;
+  final BattleSession session;
+  final Widget child;
+
+  @override
+  State<FieldGestures> createState() => _FieldGesturesState();
+}
+
+class _FieldGesturesState extends State<FieldGestures> {
+  PullAim? _aim;
+  int _slot = 0;
+  Offset _start = Offset.zero;
+  bool _pinching = false;
+
+  BattleSession get _s => widget.session;
+
+  void _onStart(ScaleStartDetails d) {
+    if (d.pointerCount >= 2) {
+      _pinching = true;
+      widget.game.pinchStart();
+      return;
+    }
+    final slot = widget.game.pirateAt(
+      Vector2(d.localFocalPoint.dx, d.localFocalPoint.dy),
+    );
+    if (slot == null || !_s.canFire(slot)) return;
+    _slot = slot;
+    _start = d.localFocalPoint;
+    _aim = PullAim(facing: facingOf(_s.state.activeSide))..start();
+  }
+
+  void _onUpdate(ScaleUpdateDetails d) {
+    if (d.pointerCount >= 2) {
+      if (!_pinching) {
+        _pinching = true;
+        _cancelAim();
+        widget.game.pinchStart();
+      }
+      widget.game.pinchUpdate(d.scale);
+      return;
+    }
+    final aim = _aim;
+    if (aim == null) return;
+    final delta = d.localFocalPoint - _start;
+    aim.drag(delta.dx, delta.dy);
+    _s.setAim(_slot, aim.shot, aim.stretch);
+  }
+
+  void _onEnd(ScaleEndDetails d) {
+    _pinching = false;
+    final shot = _aim?.release();
+    _aim = null;
+    if (shot == null) {
+      _s.clearAim();
+      return;
+    }
+    _s.fire(_slot, shot.angle, shot.power);
+  }
+
+  void _cancelAim() {
+    _aim = null;
+    _s.clearAim();
+  }
+
+  @override
+  Widget build(BuildContext context) => GestureDetector(
+    behavior: HitTestBehavior.opaque,
+    onTapDown: (_) => widget.game.tap(),
+    onScaleStart: _onStart,
+    onScaleUpdate: _onUpdate,
+    onScaleEnd: _onEnd,
+    child: widget.child,
+  );
+}

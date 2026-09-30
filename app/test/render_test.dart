@@ -82,6 +82,14 @@ void main() {
       expect(wOut, CameraDirector.maxWidth);
     });
 
+    test('핀치로 끝까지 줄이면 간격 48칸의 두 배가 모두 보인다', () {
+      // 뱃머리 사이 48칸 + 배 폭 12칸: 두 배 가운데는 60칸(1920px) 떨어져 있다.
+      final c = CameraDirector()..setUserZoom(0.01);
+      final (center, w) = c.target(myX: -960, enemyX: 960, facing: 1);
+      expect(center.x - w / 2, lessThan(-960 - 192));
+      expect(center.x + w / 2, greaterThan(960 + 192));
+    });
+
     test('착탄 지점을 1.3초 보여준 뒤 돌아간다', () {
       final c = CameraDirector()..impact(Vector2(300, -40));
       final (a, _) = c.target(myX: 0, enemyX: 900, facing: 1);

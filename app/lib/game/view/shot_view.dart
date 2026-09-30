@@ -4,6 +4,7 @@ import 'package:flame/components.dart';
 import 'package:pb_sim/pb_sim.dart';
 import 'package:pirate_busters/battle/battle_session.dart';
 import 'package:pirate_busters/battle/playback.dart';
+import 'package:pirate_busters/battle/session_views.dart';
 import 'package:pirate_busters/game/coords.dart';
 import 'package:pirate_busters/game/sprites.dart';
 
@@ -81,19 +82,52 @@ class ShotView extends Component {
     }
   }
 
-  /// 전진·후퇴 한계 부표 (설계서 §2.6).
+  static final Paint _reef = Paint()..color = const Color(0xFF3A2E3F);
+  static final Paint _rope = Paint()
+    ..color = const Color(0xFFE8C9A0)
+    ..strokeWidth = 1.5;
+  static final Paint _buoyRed = Paint()..color = const Color(0xFFB3302B);
+
+  /// 한계선 (설계서 §2.6): 전진 한계는 암초와 부표 줄, 후퇴 한계는 부표.
   void _renderLimits(Canvas canvas) {
     final state = session.state;
     final (lo, hi) = moveLimits(state.rules, state.turn);
     for (final side in state.sides) {
       final facing = facingOf(side.side);
       final start = startBowX(side.side);
-      for (final off in [lo, hi]) {
-        final x = Coords.x(start + facing * off);
-        canvas
-          ..drawCircle(Offset(x, -4), 6, _limitPaint)
-          ..drawRect(Rect.fromLTWH(x - 1, -22, 2, 18), _limitPaint);
-      }
+      _renderReef(canvas, Coords.x(start + facing * hi), facing);
+      _renderBuoy(canvas, Coords.x(start + facing * lo));
     }
+  }
+
+  /// 전진 한계: 물 위로 솟은 암초 두 덩이와 그 사이 부표 줄.
+  void _renderReef(Canvas canvas, double x, int facing) {
+    final ahead = facing * 20.0;
+    canvas
+      ..drawPath(
+        Path()
+          ..moveTo(x + ahead - 16, 6)
+          ..lineTo(x + ahead - 8, -14)
+          ..lineTo(x + ahead + 2, -8)
+          ..lineTo(x + ahead + 12, -20)
+          ..lineTo(x + ahead + 20, 6)
+          ..close(),
+        _reef,
+      )
+      ..drawLine(Offset(x - 40, -3), Offset(x + 40, -3), _rope);
+    for (var d = -40.0; d <= 40; d += 20) {
+      canvas.drawCircle(Offset(x + d, -3), 3.5, _limitPaint);
+    }
+  }
+
+  /// 후퇴 한계: 줄무늬 부표 하나.
+  void _renderBuoy(Canvas canvas, double x) {
+    canvas
+      ..drawRect(Rect.fromLTWH(x - 1.5, -30, 3, 26), _limitPaint)
+      ..drawOval(
+        Rect.fromCenter(center: Offset(x, -6), width: 16, height: 12),
+        _buoyRed,
+      )
+      ..drawRect(Rect.fromLTWH(x - 8, -8, 16, 3), _limitPaint);
   }
 }

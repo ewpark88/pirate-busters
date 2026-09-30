@@ -23,6 +23,16 @@ void main() {
       expect(compareArb({'a': '{n}개'}, {'a': '{count} items'}), hasLength(1));
     });
 
+    test('ICU 복수형 본문은 플레이스홀더로 보지 않는다', () {
+      expect(
+        compareArb(
+          {'a': '쉬는 턴 {count}'},
+          {'a': '{count, plural, =1{Rest 1 turn} other{Rest {count} turns}}'},
+        ),
+        isEmpty,
+      );
+    });
+
     test('빈 값을 찾는다', () {
       expect(compareArb({'a': ''}, {'a': 'A'}), hasLength(1));
     });

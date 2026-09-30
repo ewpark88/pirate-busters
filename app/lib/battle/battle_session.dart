@@ -72,14 +72,18 @@ class BattleSession extends ChangeNotifier {
       state.firesThisTurn < state.rules.firesPerTurn &&
       state.sides[state.activeSide].canFire(slot);
 
-  /// 지금 쏘면 날아갈 궤적(미리보기).
-  ShotPath previewShot(int slot, int angle, int power) => ShotPath.predict(
-    state,
-    slot: slot,
-    angle: angle,
-    power: power,
-    ms: realMs(state, effectiveMs(state, turnMs)),
-  );
+  /// 상대가 곧 쏠 해적과 조준 진행(0~1). 상대 턴 재생에서 발사 1.2초 전부터
+  /// 조준 자세를 보여준다. 궤적 점선은 숨긴다 (설계서 §2.3).
+  ({int slot, double progress})? get opponentAim {
+    final bundle = _script;
+    if (isHumanTurn || bundle == null || playback != null) return null;
+    if (_scriptIndex >= bundle.commands.length) return null;
+    final c = bundle.commands[_scriptIndex];
+    if (c is! FireCommand) return null;
+    final left = c.t - turnMs;
+    if (left > 1200) return null;
+    return (slot: c.slot, progress: (1 - left / 1200).clamp(0.0, 1.0));
+  }
 
   void setAim(int slot, AimShot shot, double stretch) {
     if (!canFire(slot)) return;
@@ -95,18 +99,6 @@ class BattleSession extends ChangeNotifier {
   void setMovePreview(int dx) {
     movePreviewDx = dx;
     notifyListeners();
-  }
-
-  /// 지금 [dx](1/10칸)를 누르면 실제로 갈 거리(1/1000칸). 시뮬레이션의 [moveReach].
-  int reach(int dx) {
-    final at = effectiveMs(state, turnMs);
-    return moveReach(
-      state.sides[state.activeSide],
-      state.rules,
-      state.turn,
-      dx,
-      state.rules.turnTimeFor(state.turn) - at,
-    );
   }
 
   /// 쌓인 효과 이벤트를 꺼낸다.
@@ -130,7 +122,10 @@ class BattleSession extends ChangeNotifier {
     }
     turnMs += dtMs;
     if (!isOver && playback == null) {
-      if (isHumanTurn) {
+      if (isHumanTurn && surrenderQueued) {
+        surrenderQueued = false;
+        _apply(SurrenderCommand(t: turnMs));
+      } else if (isHumanTurn) {
         if (remainingMs <= 0) _apply(EndTurnCommand(t: turnMs));
       } else {
         _playScript();
@@ -148,11 +143,13 @@ class BattleSession extends ChangeNotifier {
   /// [slot] 해적을 쏜다.
   void fire(int slot, int angle, int power) {
     aim = null;
+    if (preselected == slot) preselected = null;
     if (!canFire(slot)) return;
     _apply(FireCommand(t: turnMs, slot: slot, angle: angle, power: power));
   }
 
-  /// 상대 턴에 미리 골라 둔 다음 턴 해적 슬롯 (설계서 §13.4). 표시만 한다.
+  /// 상대 턴에 미리 골라 둔 다음 턴 해적 슬롯 (설계서 §13.4). 내 턴이 오면 그 카드를
+  /// 강조하고, 쏘거나 내 턴이 끝나면 풀린다.
   int? preselected;
 
   void preselect(int slot) {
@@ -175,8 +172,17 @@ class BattleSession extends ChangeNotifier {
     if (canAct) _apply(EndTurnCommand(t: turnMs));
   }
 
+  /// 상대 턴에 누른 항복. 내 턴이 오면 바로 낸다 (설계서 §13.4 항복은 설정 안).
+  bool surrenderQueued = false;
+
   void surrender() {
-    if (!isOver && isHumanTurn) _apply(SurrenderCommand(t: turnMs));
+    if (isOver) return;
+    if (isHumanTurn && playback == null) {
+      _apply(SurrenderCommand(t: turnMs));
+    } else {
+      surrenderQueued = true;
+      notifyListeners();
+    }
   }
 
   void _playScript() {
@@ -200,7 +206,7 @@ class BattleSession extends ChangeNotifier {
     if (playback != null || state.turn == _turnOfClock) return;
     _turnOfClock = state.turn;
     turnMs = 0;
-    if (isHumanTurn) preselected = null;
+    if (!isHumanTurn) preselected = null;
     _script = null;
     _scriptIndex = 0;
   }

@@ -110,7 +110,7 @@ class _PirateCardState extends State<_PirateCard> {
       PirateStatus.aboard => null,
     };
     final aiming = _s.aim?.slot == widget.slot;
-    final picked = _s.preselected == widget.slot && !_s.isHumanTurn;
+    final picked = _s.preselected == widget.slot;
     return GestureDetector(
       // 상대 턴에는 다음 턴 해적을 미리 고를 수 있다 (설계서 §13.4).
       onTap: _s.isHumanTurn ? null : () => _s.preselect(widget.slot),

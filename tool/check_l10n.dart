@@ -10,7 +10,8 @@ import 'dart:io';
 const l10nDir = 'app/lib/l10n';
 const locales = ['ko', 'en'];
 
-final _placeholderRe = RegExp(r'\{([A-Za-z_][A-Za-z0-9_]*)');
+// `{name}` 또는 ICU `{name, plural, …}` 의 이름만 잡는다(복수형 본문 `{1 turn}` 은 뺀다).
+final _placeholderRe = RegExp(r'\{([A-Za-z_][A-Za-z0-9_]*)\s*[,}]');
 
 /// 두 ARB 맵을 비교해 위반 목록을 돌려준다. `@` 로 시작하는 메타 키는 비교하지 않는다.
 List<String> compareArb(Map<String, dynamic> ko, Map<String, dynamic> en) {

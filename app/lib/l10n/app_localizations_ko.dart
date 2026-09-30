@@ -158,4 +158,15 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get lowEndMode => '저사양 모드';
+
+  @override
+  String damagePopup(String amount) {
+    return '-$amount';
+  }
+
+  @override
+  String get sunkBanner => '격침!';
+
+  @override
+  String get surrenderQueued => '내 턴이 오면 항복합니다';
 }

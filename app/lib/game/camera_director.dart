@@ -73,7 +73,12 @@ class CameraDirector {
       maxWidth,
     );
     final ahead = 260 + 300 * aimStretch;
-    return (Vector2(myX + facing * ahead, -120), w);
+    // 줌아웃할수록 두 배 가운데로 옮겨, 최대 축소에서는 간격 48칸이어도 두 배가
+    // 모두 보인다 (설계서 §2.1).
+    final t = ((w - baseWidth) / (maxWidth - baseWidth)).clamp(0.0, 1.0);
+    final near = myX + facing * ahead;
+    final mid = (myX + enemyX) / 2;
+    return (Vector2(near + (mid - near) * t, -120), w);
   }
 
   /// 목표로 부드럽게 다가간다.

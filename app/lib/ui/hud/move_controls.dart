@@ -5,6 +5,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:pb_sim/pb_sim.dart';
 import 'package:pirate_busters/battle/battle_session.dart';
 import 'package:pirate_busters/battle/playback.dart';
+import 'package:pirate_busters/battle/session_views.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
 import 'package:pirate_busters/ui/hud/hud_style.dart';
 
@@ -37,6 +38,8 @@ class _MoveControlsState extends State<MoveControls>
   BattleSession get _s => widget.session;
 
   SideState get _me => _s.state.sides[widget.side];
+
+  int get _facing => facingOf(widget.side);
 
   bool get _enabled =>
       !_s.isOver &&
@@ -84,11 +87,12 @@ class _MoveControlsState extends State<MoveControls>
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
+          // 왼쪽 버튼은 화면 왼쪽으로 간다: 왼쪽 배는 후퇴, 오른쪽 배는 전진.
           _HoldButton(
-            label: l10n.retreat,
+            label: _facing > 0 ? l10n.retreat : l10n.advance,
             icon: Icons.chevron_left,
             enabled: _enabled,
-            onDown: () => _press(-1),
+            onDown: () => _press(-_facing),
             onUp: _release,
           ),
           const SizedBox(width: 8),
@@ -113,10 +117,10 @@ class _MoveControlsState extends State<MoveControls>
           ),
           const SizedBox(width: 8),
           _HoldButton(
-            label: l10n.advance,
+            label: _facing > 0 ? l10n.advance : l10n.retreat,
             icon: Icons.chevron_right,
             enabled: _enabled,
-            onDown: () => _press(1),
+            onDown: () => _press(_facing),
             onUp: _release,
           ),
         ],

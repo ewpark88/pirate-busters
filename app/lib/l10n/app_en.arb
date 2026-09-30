@@ -1,7 +1,7 @@
 {
   "@@locale": "en",
   "appTitle": "Pirate Busters",
-  "turnsLeft": "{count} turns left",
+  "turnsLeft": "{count, plural, =1{1 turn left} other{{count} turns left}}",
   "@turnsLeft": {
     "placeholders": {
       "count": {
@@ -43,7 +43,7 @@
   "retreat": "Back",
   "advance": "Ahead",
   "fuel": "Fuel",
-  "firesLeft": "{count} shots left",
+  "firesLeft": "{count, plural, =1{1 shot left} other{{count} shots left}}",
   "@firesLeft": {
     "placeholders": {
       "count": {
@@ -51,7 +51,7 @@
       }
     }
   },
-  "cooldown": "Rest {count}",
+  "cooldown": "{count, plural, =1{Rest 1 turn} other{Rest {count} turns}}",
   "@cooldown": {
     "placeholders": {
       "count": {
@@ -103,5 +103,15 @@
       }
     }
   },
-  "lowEndMode": "Low-end mode"
+  "lowEndMode": "Low-end mode",
+  "damagePopup": "-{amount}",
+  "@damagePopup": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "sunkBanner": "Sunk!",
+  "surrenderQueued": "You will surrender at the start of your turn"
 }

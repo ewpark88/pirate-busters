@@ -1,11 +1,14 @@
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 import 'package:pirate_busters/app/providers.dart';
 import 'package:pirate_busters/battle/battle_session.dart';
 import 'package:pirate_busters/battle/battle_setup.dart';
 import 'package:pirate_busters/battle/dummy_controller.dart';
 import 'package:pirate_busters/game/battle_game.dart';
+import 'package:pirate_busters/input/field_gestures.dart';
+import 'package:pirate_busters/l10n/app_localizations.dart';
 import 'package:pirate_busters/ui/hud/battle_hud.dart';
 
 /// 전투 화면: 전장(Flame) 위에 HUD(Flutter 위젯)를 겹친다 (설계서 §13.4).
@@ -71,6 +74,11 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
   Widget build(BuildContext context) {
     // 저사양 모드는 설정에서 바로 전장에 반영한다.
     _game.lowEnd.value = ref.watch(lowEndProvider);
+    final l10n = AppLocalizations.of(context);
+    final number = NumberFormat.decimalPattern(
+      Localizations.localeOf(context).toLanguageTag(),
+    );
+    _game.damageText = (amount) => l10n.damagePopup(number.format(amount));
     return _scaffold();
   }
 
@@ -79,7 +87,11 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
     body: Stack(
       children: [
         Positioned.fill(
-          child: GameWidget(key: ObjectKey(_game), game: _game),
+          child: FieldGestures(
+            game: _game,
+            session: _session,
+            child: GameWidget(key: ObjectKey(_game), game: _game),
+          ),
         ),
         Positioned.fill(
           child: BattleHud(

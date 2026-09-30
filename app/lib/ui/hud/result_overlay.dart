@@ -43,6 +43,13 @@ class ResultOverlay extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              if (state.outcome == MatchOutcome.sunk ||
+                  state.outcome == MatchOutcome.floodSunk)
+                // ‘격침!’ 배너 (설계서 §14.2).
+                Text(
+                  AppLocalizations.of(context).sunkBanner,
+                  style: const TextStyle(fontSize: 48, color: HudColors.warn),
+                ),
               Text(
                 title,
                 style: TextStyle(

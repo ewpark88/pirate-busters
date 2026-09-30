@@ -61,10 +61,14 @@ class BattleHud extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Expanded(child: TopBar(session: session)),
+                  // 일시정지는 AI 전만(§13.4). 핫시트에서는 설정 창만 연다.
                   IconButton(
-                    tooltip: l10n.pause,
+                    tooltip: _hotseat ? l10n.settings : l10n.pause,
                     onPressed: () => onPause(true),
-                    icon: const Icon(Icons.pause_circle, size: 34),
+                    icon: Icon(
+                      _hotseat ? Icons.settings : Icons.pause_circle,
+                      size: 34,
+                    ),
                     color: HudColors.text,
                   ),
                 ],
@@ -99,6 +103,26 @@ class BattleHud extends StatelessWidget {
           ),
         ),
       ),
+      if (myTurn && !session.isOver && session.remainingMs <= 5000)
+        // 5초부터 카운트다운 (설계서 §2.3).
+        Align(
+          alignment: const Alignment(0, -0.2),
+          child: IgnorePointer(
+            child: Text(
+              '${(session.remainingMs + 999) ~/ 1000}',
+              style: const TextStyle(
+                fontSize: 96,
+                color: HudColors.danger,
+                shadows: [Shadow(blurRadius: 8)],
+              ),
+            ),
+          ),
+        ),
+      if (session.surrenderQueued && !session.isOver)
+        Align(
+          alignment: const Alignment(0, 0.35),
+          child: HudPanel(child: Text(l10n.surrenderQueued)),
+        ),
       if (!myTurn && !session.isOver)
         Align(
           alignment: const Alignment(0, -0.45),

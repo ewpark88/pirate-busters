@@ -107,7 +107,7 @@ abstract class AppLocalizations {
   /// No description provided for @turnsLeft.
   ///
   /// In en, this message translates to:
-  /// **'{count} turns left'**
+  /// **'{count, plural, =1{1 turn left} other{{count} turns left}}'**
   String turnsLeft(int count);
 
   /// No description provided for @yourTurn.
@@ -173,13 +173,13 @@ abstract class AppLocalizations {
   /// No description provided for @firesLeft.
   ///
   /// In en, this message translates to:
-  /// **'{count} shots left'**
+  /// **'{count, plural, =1{1 shot left} other{{count} shots left}}'**
   String firesLeft(int count);
 
   /// No description provided for @cooldown.
   ///
   /// In en, this message translates to:
-  /// **'Rest {count}'**
+  /// **'{count, plural, =1{Rest 1 turn} other{Rest {count} turns}}'**
   String cooldown(int count);
 
   /// No description provided for @cabinFlooded.
@@ -367,6 +367,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Low-end mode'**
   String get lowEndMode;
+
+  /// No description provided for @damagePopup.
+  ///
+  /// In en, this message translates to:
+  /// **'-{amount}'**
+  String damagePopup(String amount);
+
+  /// No description provided for @sunkBanner.
+  ///
+  /// In en, this message translates to:
+  /// **'Sunk!'**
+  String get sunkBanner;
+
+  /// No description provided for @surrenderQueued.
+  ///
+  /// In en, this message translates to:
+  /// **'You will surrender at the start of your turn'**
+  String get surrenderQueued;
 }
 
 class _AppLocalizationsDelegate

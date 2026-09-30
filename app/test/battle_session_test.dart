@@ -4,6 +4,7 @@ import 'package:pirate_busters/battle/battle_session.dart';
 import 'package:pirate_busters/battle/battle_setup.dart';
 import 'package:pirate_busters/battle/dummy_controller.dart';
 import 'package:pirate_busters/battle/playback.dart';
+import 'package:pirate_busters/battle/session_views.dart';
 
 /// 사람이 선공인 시드를 찾아 허수아비전 세션을 만든다.
 BattleSession _humanFirst({bool hotseat = false}) {
@@ -114,7 +115,22 @@ void main() {
       expect(taps.single.tick, 9);
     });
 
-    test('상대 턴에는 다음 턴 해적을 미리 고르고, 내 턴이 오면 풀린다', () {
+    test('상대 턴에 누른 항복은 내 턴이 오면 바로 낸다 (설계서 §13.4)', () {
+      final s = _humanFirst()
+        ..update(100)
+        ..endTurn()
+        ..surrender();
+      expect(s.surrenderQueued, isTrue);
+      expect(s.isOver, isFalse);
+      var guard = 0;
+      while (!s.isOver && guard++ < 3000) {
+        s.update(100);
+      }
+      expect(s.state.outcome, MatchOutcome.surrender);
+      expect(s.state.winner, 1);
+    });
+
+    test('상대 턴에 미리 고른 해적은 내 턴에도 강조되고, 그 해적을 쏘면 풀린다', () {
       final s = _humanFirst()
         ..update(100)
         ..endTurn()
@@ -126,6 +142,8 @@ void main() {
       }
       _drain(s);
       s.update(10);
+      expect(s.preselected, 2);
+      s.fire(2, 30000, 8000);
       expect(s.preselected, isNull);
     });
 

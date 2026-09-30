@@ -97,27 +97,61 @@ class ShipView extends PositionComponent with HasGameReference {
         Wave(rules, session.state.turn).roll(side, session.turnMs) +
         floodTilt(_state, rules);
     angle = -facing * tilt * math.pi / 180000;
-    _updateCrew();
+    _updateCrew(dt);
   }
 
-  void _updateCrew() {
+  final List<Vector2> _targets = [];
+  double _t = 0;
+
+  /// 해적 자세 (설계서 §10.1): 선실에서 대기, 조준할 때 몸을 젖히고, 선실이
+  /// 부서지면 바다로 떨어져 헤엄치고, 돌아오면 선실로 올라가고, 쓰러지면 사라진다.
+  /// 착탄 전(탄 비행 중)에는 쏘기 전 자세를 유지한다.
+  void _updateCrew(double dt) {
+    _t += dt;
     final crew = _state.crew;
+    final shot = session.playback;
+    final frozen = shot is ShotPlayback && !shot.landed;
+    final k = 1 - math.exp(-6 * dt);
+    while (_targets.length < rigs.length) {
+      _targets.add(rigs[_targets.length].home.clone());
+    }
     for (var slot = 0; slot < rigs.length; slot++) {
       final rig = rigs[slot];
       final status = crew.pirates[slot].status;
-      rig.flip = false;
-      switch (status) {
-        case PirateStatus.aboard:
-          final cabin = _state.cabins[slot];
-          rig.home.setValues(_localX(cabin.x + 0.5), -cabin.y * _cell);
-        case PirateStatus.swimming:
-          // 뱃머리 1칸 앞 해수면(시뮬레이션 swimmerPosition)을 로컬로.
-          final sea = -(0 - (heave - _state.draft)) * _cell / cellUnit;
-          rig.home.setValues(_localX(_width + 1 + slot * 0.6), sea);
-        case PirateStatus.down:
-          rig.home.setValues(0, 99999);
+      if (!frozen) {
+        switch (status) {
+          case PirateStatus.aboard:
+            final cabin = _state.cabins[slot];
+            _targets[slot].setValues(_localX(cabin.x + 0.5), -cabin.y * _cell);
+          case PirateStatus.swimming:
+            // 뱃머리 1칸 앞 해수면(시뮬레이션 swimmerPosition), 물결에 까딱인다.
+            final sea = (heave - _state.draft) * _cell / cellUnit;
+            final bob = math.sin(_t * 3 + slot) * 2;
+            _targets[slot].setValues(
+              _localX(_width + 1 + slot * 0.6),
+              sea + bob,
+            );
+          case PirateStatus.down:
+            break;
+        }
+        rig.alpha += ((status == PirateStatus.down ? 0 : 1) - rig.alpha) * k;
       }
+      rig.home.add((_targets[slot] - rig.home) * k);
+      rig.lean = _leanOf(slot);
     }
+  }
+
+  /// 조준 자세: 사람은 당긴 만큼, 상대는 쏘기 직전에 몸을 젖힌다 (설계서 §2.3).
+  double _leanOf(int slot) {
+    final aim = session.aim;
+    if (aim != null && aim.slot == slot && session.state.activeSide == side) {
+      return 14 * aim.stretch;
+    }
+    final foe = session.opponentAim;
+    if (foe != null && foe.slot == slot && session.state.activeSide == side) {
+      return 14 * foe.progress;
+    }
+    return 0;
   }
 
   @override

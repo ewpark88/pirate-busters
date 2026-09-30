@@ -50,14 +50,14 @@ class FxLayer extends Component {
     unawaited(HapticFeedback.lightImpact());
   }
 
-  /// 피해 숫자 (숫자만이라 번역이 필요 없다, 설계서 §14).
-  void damageNumber(Vector2 at, int amount) {
+  /// 피해 숫자. 글자는 화면이 l10n 으로 만들어 넘긴다 (설계서 §14.2).
+  void damageNumber(Vector2 at, String label) {
     final text = TextComponent(
       children: [
         MoveByEffect(Vector2(0, -34), EffectController(duration: 0.9)),
         RemoveEffect(delay: 0.9),
       ],
-      text: '-$amount',
+      text: label,
       position: at.clone(),
       anchor: Anchor.center,
       priority: 10,

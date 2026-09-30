@@ -32,12 +32,12 @@ class PartComponent extends SpriteComponent {
   final String anim;
   final Vector2 base;
 
-  /// [unit] = 캔버스 1px 이 이 스프라이트에서 몇 px 인지.
-  void applyPose(PartPose p, double unit) {
+  /// [unit] = 캔버스 1px 이 이 스프라이트에서 몇 px 인지. [alpha] 는 캐릭터 전체 투명도.
+  void applyPose(PartPose p, double unit, {double alpha = 1}) {
     position.setValues(base.x + p.dx * unit, base.y + p.dy * unit);
     angle = p.rot * math.pi / 180;
     scale.setValues(p.sx, p.sy);
-    opacity = p.op.clamp(0.0, 1.0);
+    opacity = (p.op * alpha).clamp(0.0, 1.0);
   }
 }
 
@@ -57,8 +57,13 @@ class CharacterRig extends PositionComponent {
     String team, {
     double phase = 0,
     double battleScale = 0.16,
+    bool battleOutline = true,
   }) async {
+    // 전장에서는 전투 외곽선을 구운 부위를 쓴다(사방 14px 여백: offset −14,
+    // pivot +14, docs/ASSETS.md). 위치 정보는 일반 부위의 parts.json 을 쓴다.
     final dir = 'characters/$id/parts_$team';
+    final imageDir = battleOutline ? 'characters/$id/parts_battle_$team' : dir;
+    final pad = battleOutline ? 14.0 : 0.0;
     final j =
         jsonDecode(await rootBundle.loadString('assets/images/$dir/parts.json'))
             as Map<String, dynamic>;
@@ -72,13 +77,13 @@ class CharacterRig extends PositionComponent {
       .._phase = phase;
     for (final p in j['parts'] as List<dynamic>) {
       final m = p as Map<String, dynamic>;
-      final img = await images.load('$dir/${m['file']}');
+      final img = await images.load('$imageDir/${m['file']}');
       final c = PartComponent(
         partId: m['id'] as String,
         anim: m['anim'] as String,
         sprite: Sprite(img),
-        offset: v(m['offset']),
-        pivot: v(m['pivot']),
+        offset: v(m['offset']) - Vector2.all(pad),
+        pivot: v(m['pivot']) + Vector2.all(pad),
         z: m['z'] as int,
       );
       rig._parts[c.partId] = c;
@@ -99,6 +104,12 @@ class CharacterRig extends PositionComponent {
   /// 좌우를 뒤집는다(오른쪽 배 해적은 왼쪽을 본다).
   bool flip = false;
 
+  /// 캐릭터 전체 투명도(쓰러지면 사라진다).
+  double alpha = 1;
+
+  /// 몸을 뒤로 젖히는 각(도). 조준 자세에 쓴다 (설계서 §10.1).
+  double lean = 0;
+
   /// 발 위치(부모 좌표). 동작의 root 이동은 여기에 더한다.
   final Vector2 home = Vector2.zero();
 
@@ -113,7 +124,7 @@ class CharacterRig extends PositionComponent {
   void _applyRoot(PartPose r) {
     final s = _battleScale / _n;
     scale.setValues(s * r.sx * (flip ? -1 : 1), s * r.sy);
-    angle = r.rot * math.pi / 180;
+    angle = (r.rot - lean) * math.pi / 180;
     position.setValues(
       home.x + r.dx * _battleScale * (flip ? -1 : 1),
       home.y + r.dy * _battleScale,
@@ -153,7 +164,7 @@ class CharacterRig extends PositionComponent {
         case 'back':
           s.rot += 1.5 * math.sin((_idleT / 3 + _phase + .3) * 2 * math.pi);
       }
-      p.applyPose(s, _n.toDouble());
+      p.applyPose(s, _n.toDouble(), alpha: alpha);
     }
   }
 }

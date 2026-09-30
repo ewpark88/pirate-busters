@@ -13,7 +13,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String turnsLeft(int count) {
-    return '$count turns left';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count turns left',
+      one: '1 turn left',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -54,12 +60,24 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String firesLeft(int count) {
-    return '$count shots left';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count shots left',
+      one: '1 shot left',
+    );
+    return '$_temp0';
   }
 
   @override
   String cooldown(int count) {
-    return 'Rest $count';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Rest $count turns',
+      one: 'Rest 1 turn',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -158,4 +176,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get lowEndMode => 'Low-end mode';
+
+  @override
+  String damagePopup(String amount) {
+    return '-$amount';
+  }
+
+  @override
+  String get sunkBanner => 'Sunk!';
+
+  @override
+  String get surrenderQueued => 'You will surrender at the start of your turn';
 }
