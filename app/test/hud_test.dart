@@ -40,6 +40,7 @@ Future<BattleSession> _pumpHud(
         home: Scaffold(
           body: BattleHud(
             session: session,
+            overview: ValueNotifier(false),
             paused: paused,
             onPause: (_) {},
             onRestart: ({hotseat}) {},

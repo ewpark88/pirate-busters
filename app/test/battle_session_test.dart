@@ -40,13 +40,14 @@ void main() {
       expect(s.canAct, isTrue);
     });
 
-    test('쏘면 착탄 전까지 탄 비행 연출이 나오고, 끝나면 효과 이벤트가 나온다', () {
+    test('쏘면 발사 이벤트가 바로 나오고, 착탄 효과는 탄 비행 연출이 끝난 뒤 나온다', () {
       final s = _humanFirst()
         ..update(500)
         ..fire(0, 30000, 9000);
       final shot = s.playback! as ShotPlayback;
       expect(shot.path.lastTick, greaterThan(10));
-      expect(s.takeCues(), isEmpty);
+      // 발사 이벤트(공격 동작·포성)는 바로, 착탄 효과는 연출 뒤에 나온다.
+      expect(s.takeCues().map((e) => e.kind), [SimEventKind.fire]);
       _drain(s);
       final cues = s.takeCues().map((e) => e.kind);
       expect(

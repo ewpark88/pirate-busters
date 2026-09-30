@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pirate_busters/battle/battle_session.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
+import 'package:pirate_busters/ui/hud/gap_bar.dart';
 import 'package:pirate_busters/ui/hud/hud_scale.dart';
 import 'package:pirate_busters/ui/hud/hud_style.dart';
 import 'package:pirate_busters/ui/hud/move_controls.dart';
@@ -13,6 +14,7 @@ import 'package:pirate_busters/ui/hud/top_bar.dart';
 class BattleHud extends StatelessWidget {
   const BattleHud({
     required this.session,
+    required this.overview,
     required this.paused,
     required this.onPause,
     required this.onRestart,
@@ -20,6 +22,9 @@ class BattleHud extends StatelessWidget {
   });
 
   final BattleSession session;
+
+  /// ‘전체 보기’ 켜짐. 전장(카메라)이 읽는다.
+  final ValueNotifier<bool> overview;
   final bool paused;
   final ValueChanged<bool> onPause;
 
@@ -64,6 +69,8 @@ class BattleHud extends StatelessWidget {
                   ),
                 ],
               ),
+              const SizedBox(height: 4),
+              GapBar(state: session.state, overview: overview),
               const Spacer(),
               Opacity(
                 opacity: myTurn ? 1 : 0.5,

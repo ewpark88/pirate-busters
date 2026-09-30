@@ -242,12 +242,17 @@ class BattleSession extends ChangeNotifier {
         break;
       }
     }
+    // 발사 이벤트는 바로(공격 동작·포성), 나머지는 착탄 때 낸다.
+    _cues.addAll(events.where((e) => e.kind == SimEventKind.fire));
     return ShotPlayback(
       side: side,
       slot: c.slot,
       path: shotPath,
       before: before,
-      landing: events,
+      landing: [
+        for (final e in events)
+          if (e.kind != SimEventKind.fire) e,
+      ],
     );
   }
 

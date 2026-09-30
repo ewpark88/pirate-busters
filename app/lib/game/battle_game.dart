@@ -1,0 +1,154 @@
+import 'package:flame/events.dart';
+import 'package:flame/game.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart' show rootBundle;
+import 'package:pb_sim/pb_sim.dart';
+import 'package:pirate_busters/battle/battle_session.dart';
+import 'package:pirate_busters/battle/playback.dart';
+import 'package:pirate_busters/game/anim/anim_data.dart';
+import 'package:pirate_busters/game/camera_director.dart';
+import 'package:pirate_busters/game/coords.dart';
+import 'package:pirate_busters/game/sprites.dart';
+import 'package:pirate_busters/game/view/fx_layer.dart';
+import 'package:pirate_busters/game/view/sea_view.dart';
+import 'package:pirate_busters/game/view/ship_view.dart';
+import 'package:pirate_busters/game/view/shot_view.dart';
+
+/// 전장 (개발 계획서 M4). 매 프레임 [BattleSession] 을 진행하고 결과를 그린다.
+/// 판정은 하지 않는다 (CLAUDE.md 절대 규칙 3).
+class BattleGame extends FlameGame with ScaleDetector {
+  BattleGame(this.session);
+
+  final BattleSession session;
+  final CameraDirector director = CameraDirector();
+
+  /// ‘전체 보기’ (설계서 §2.1). HUD 버튼이 바꾼다.
+  final ValueNotifier<bool> overview = ValueNotifier(false);
+
+  late final List<ShipView> _ships;
+  late final ShotView _shot;
+  late final FxLayer _fx;
+  double _pinchStart = 1;
+
+  /// 사람이 보는 진영(허수아비전은 0, 핫시트는 지금 턴 진영).
+  int get viewSide =>
+      session.humanSides.length == 2 ? session.state.activeSide : 0;
+
+  @override
+  Future<void> onLoad() async {
+    final sprites = await BattleSprites.load(images);
+    final anims = PbAnims.fromJsonString(
+      await rootBundle.loadString(PbAnims.path),
+    );
+    camera.backdrop.add(SkyBackdrop());
+    _ships = [
+      for (final side in const [0, 1])
+        ShipView(session: session, side: side, sprites: sprites, anims: anims),
+    ];
+    _shot = ShotView(session: session, sprites: sprites, priority: 20);
+    _fx = FxLayer(sprites: sprites, priority: 30);
+    await world.addAll([
+      ParallaxScenery(factor: 0.15, seed: 1, priority: -30),
+      ParallaxScenery(factor: 0.4, seed: 2, priority: -20),
+      SeaView(front: false, priority: -10),
+      ..._ships,
+      SeaView(front: true, priority: 10),
+      _shot,
+      _fx,
+    ]);
+    overview.addListener(() => director.overview = overview.value);
+  }
+
+  @override
+  void update(double dt) {
+    session.update((dt * 1000).round().clamp(0, 100));
+    _dispatch(session.takeCues());
+    _updateCamera(dt);
+    super.update(dt);
+  }
+
+  double _shipCenterX(int side) =>
+      Coords.x(_ships[side].bowX) -
+      facingOf(side) * session.state.sides[side].grid.width * Coords.cell / 2;
+
+  void _updateCamera(double dt) {
+    final me = viewSide;
+    final aim = session.aim;
+    final shot = session.playback;
+    final goal = director.target(
+      myX: _shipCenterX(me),
+      enemyX: _shipCenterX(1 - me),
+      facing: facingOf(me),
+      projectile: _shot.projectile,
+      targetX: shot is ShotPlayback ? _shipCenterX(1 - shot.side) : null,
+      aimStretch: aim?.stretch ?? 0,
+    );
+    director.update(dt, goal);
+    final shake = _fx.shake;
+    camera.viewfinder
+      ..position =
+          director.center +
+          Vector2(
+            shake * ((session.turnMs ~/ 16).isEven ? 1 : -1),
+            shake * 0.5,
+          )
+      ..zoom = size.x / director.width;
+  }
+
+  Vector2 _cellWorld(int side, int cell) {
+    final s = session.state.sides[side];
+    final (x, y) = s.frame.cellCenter(
+      cell % s.grid.width,
+      cell ~/ s.grid.width,
+    );
+    return Coords.point(x, y);
+  }
+
+  void _dispatch(List<SimEvent> cues) {
+    for (final e in cues) {
+      switch (e.kind) {
+        case SimEventKind.fire:
+          _ships[e.side].playAttack(e.slot);
+        case SimEventKind.impact:
+          final at = Coords.point(e.x, e.y);
+          _fx.explosion(at);
+          director.impact(at);
+        case SimEventKind.splash:
+          final at = Coords.point(e.x, 0);
+          _fx.splash(at);
+          director.impact(at);
+        case SimEventKind.blockDestroyed:
+          _fx.blockBroken(_cellWorld(e.side, e.cell));
+        case SimEventKind.blockCollapsed:
+          _fx.collapsed(_cellWorld(e.side, e.cell));
+        case SimEventKind.pirateHit:
+          _ships[e.side].playHit(e.slot);
+          final rig = e.slot >= 0 && e.slot < _ships[e.side].rigs.length
+              ? _ships[e.side].rigs[e.slot]
+              : null;
+          if (rig != null) {
+            _fx.damageNumber(rig.absolutePosition - Vector2(0, 40), e.value);
+          }
+        case SimEventKind.turnStart ||
+            SimEventKind.turnEnd ||
+            SimEventKind.pirateFell ||
+            SimEventKind.pirateReturned ||
+            SimEventKind.pirateDown ||
+            SimEventKind.move ||
+            SimEventKind.flood ||
+            SimEventKind.stormStart:
+          break;
+      }
+    }
+  }
+
+  @override
+  void onScaleStart(ScaleStartInfo info) => _pinchStart = director.userZoom;
+
+  @override
+  void onScaleUpdate(ScaleUpdateInfo info) {
+    final s = info.scale.global;
+    if (s.x == 1 && s.y == 1) return;
+    director.setUserZoom(_pinchStart * (s.x + s.y) / 2);
+  }
+}
