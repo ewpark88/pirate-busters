@@ -584,4 +584,232 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get autoEndTurn => '2발 뒤 자동 턴 종료';
+
+  @override
+  String get sea_1_name => '열대 만';
+
+  @override
+  String get sea_1_faction => '붉은집게 초계대';
+
+  @override
+  String get mission_no_pirate_down => '내 해적이 한 명도 쓰러지지 않고 승리';
+
+  @override
+  String mission_flood_below(Object percent) {
+    return '내 침수량 $percent% 이하로 승리';
+  }
+
+  @override
+  String mission_hull_above(Object percent) {
+    return '내 선체 내구도 $percent% 이상으로 승리';
+  }
+
+  @override
+  String get mission_win_by_sink => '격침으로 승리 (전멸·시간 판정 제외)';
+
+  @override
+  String mission_turns_within(Object turns) {
+    return '$turns턴 안에 승리';
+  }
+
+  @override
+  String get story_t1_enemy => '초계대 신병: 항구는 봉쇄됐다! 돌아가라, 해적 놈들!';
+
+  @override
+  String get story_t1_ally => '옥토: 해적? 우린 그냥 배를 고치던 중인데… 좋아, 폭탄 맛 좀 봐라!';
+
+  @override
+  String get story_t2_enemy => '초계대 신병: 이번엔 둘이다. 거리를 벌려서 쏴 주지!';
+
+  @override
+  String get story_t2_ally => '톡: 연료를 아껴 두렴. 다가갈 때와 물러날 때를 골라야 해.';
+
+  @override
+  String get story_t3_enemy => '초계대 잠수부: 흘수선 아래를 뚫으면 배는 가라앉는 법이지.';
+
+  @override
+  String get story_t3_ally => '톡: 구멍은 내가 막을게. 물이 차기 전에 펌프를 돌려!';
+
+  @override
+  String get story_s1_1_enemy => '초계대 순찰병: 해적 단속이다. 그 낡은 배로 어딜 가려고?';
+
+  @override
+  String get story_s1_1_ally => '옥토: 우리 손으로 지은 배야. 낡았다고 얕보지 마!';
+
+  @override
+  String get story_s1_2_enemy => '초계대 순찰병: 작살꾼도 데려왔다. 벽 뒤에 숨어도 소용없어.';
+
+  @override
+  String get story_s1_2_ally => '수리: 저 돌팔매 솜씨 좀 보라구. 흘수선을 노리면 되지?';
+
+  @override
+  String get story_s1_3_enemy => '초계대 척후병: 앵무새가 너희를 찾아낼 거다. 숨을 곳은 없어.';
+
+  @override
+  String get story_s1_3_ally => '옥토: 그럼 물이 새기 전에 끝내자. 빠르게!';
+
+  @override
+  String get story_s1_4_enemy => '초계대 포수: 넷이 쏘면 너희 갑판은 남아나지 않는다.';
+
+  @override
+  String get story_s1_4_ally => '폴리: 하늘은 내 거야! 위에서 내리꽂아 줄게.';
+
+  @override
+  String get story_s1_5_enemy => '꽃게 부대장: 뱃머리 철판을 봐라. 직사탄 따위는 튕겨낸다!';
+
+  @override
+  String get story_s1_5_ally => '톡: 정면이 단단하면 위에서, 아래에서 치면 되지.';
+
+  @override
+  String get story_s1_12_enemy => '초계선 함장: 심장 조각은 넘길 수 없다. 초계선이 다가간다, 각오해라!';
+
+  @override
+  String get story_s1_12_ally => '옥토: 첫 조각은 우리가 가져간다. 다 같이, 쏴!';
+
+  @override
+  String portLevel(Object level) {
+    return 'Lv $level';
+  }
+
+  @override
+  String portXp(Object next, Object xp) {
+    return '경험치 $xp / $next';
+  }
+
+  @override
+  String get portSail => '출항';
+
+  @override
+  String get portShipyardLocked => '조선소는 4판째부터 열려요';
+
+  @override
+  String get soundOn => '효과음';
+
+  @override
+  String get vibrationOn => '진동';
+
+  @override
+  String get campaignTitle => '캠페인';
+
+  @override
+  String get stageLocked => '앞 스테이지를 먼저 깨세요';
+
+  @override
+  String get stageKindMidBoss => '중간 보스';
+
+  @override
+  String get stageKindBoss => '해역 보스';
+
+  @override
+  String get prepTitle => '전투 준비';
+
+  @override
+  String prepBlueprintSlot(Object slot) {
+    return '설계도 $slot';
+  }
+
+  @override
+  String get prepBlueprintEmpty => '빈 칸 (추천 밸런스)';
+
+  @override
+  String get prepDeck => '출전 해적';
+
+  @override
+  String prepCost(Object limit, Object used) {
+    return '코스트 $used / $limit';
+  }
+
+  @override
+  String get prepEnemy => '상대';
+
+  @override
+  String prepEnemyCount(Object count) {
+    return '적 해적 $count명';
+  }
+
+  @override
+  String prepWeather(Object wave, Object wind) {
+    return '파도 $wave · 바람 최대 $wind';
+  }
+
+  @override
+  String get prepEditDeck => '덱 수정';
+
+  @override
+  String get prepSail => '출항';
+
+  @override
+  String get dialogueTap => '탭하여 계속';
+
+  @override
+  String get personality_bombard => '포격형';
+
+  @override
+  String get personality_hunter => '사냥형';
+
+  @override
+  String get personality_sinker => '침몰형';
+
+  @override
+  String get personality_rusher => '돌격형';
+
+  @override
+  String get gimmick_bow_iron_shield => '뱃머리 철판 방패: 정면 직사 피해가 크게 줄어든다';
+
+  @override
+  String get gimmick_patrol_closing_in => '초계선이 턴마다 다가오고 쿨다운이 빨리 줄어든다';
+
+  @override
+  String resultMission(Object text) {
+    return '미션: $text';
+  }
+
+  @override
+  String resultInTurns(Object turns) {
+    return '$turns턴 안에 승리';
+  }
+
+  @override
+  String rewardGold(Object gold) {
+    return '골드 +$gold';
+  }
+
+  @override
+  String rewardXp(Object xp) {
+    return '경험치 +$xp';
+  }
+
+  @override
+  String rewardPirate(Object name) {
+    return '새 해적 합류: $name';
+  }
+
+  @override
+  String get rewardFirstClear => '첫 클리어 보너스';
+
+  @override
+  String get resultToPort => '항구로';
+
+  @override
+  String statTurns(Object turns) {
+    return '사용 턴 $turns';
+  }
+
+  @override
+  String statShots(Object shots) {
+    return '발사 $shots발';
+  }
+
+  @override
+  String statFlood(Object enemy, Object mine) {
+    return '침수 나 $mine% · 상대 $enemy%';
+  }
+
+  @override
+  String get resultDouble => '광고 보고 2배';
+
+  @override
+  String levelUpTo(Object level) {
+    return '레벨 업! Lv $level';
+  }
 }

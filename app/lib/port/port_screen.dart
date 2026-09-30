@@ -3,10 +3,10 @@ import 'dart:async';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pb_ai/pb_ai.dart';
 import 'package:pirate_busters/app/providers.dart';
 import 'package:pirate_busters/battle/battle_session.dart';
 import 'package:pirate_busters/battle/battle_setup.dart';
+import 'package:pirate_busters/campaign/campaign_map_screen.dart';
 import 'package:pirate_busters/crew/crew_screen.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
 import 'package:pirate_busters/meta/progress.dart';
@@ -65,24 +65,8 @@ class _PortScreenState extends ConsumerState<PortScreen> {
     if (mounted) setState(_rebuild);
   }
 
-  /// 출항 (설계서 §13.3). 캠페인 지도는 다음 묶음에서 붙인다. 지금은 AI 난이도만 고른다.
-  Future<void> _sail() async {
-    final l10n = AppLocalizations.of(context);
-    final level = await showDialog<AiLevel>(
-      context: context,
-      builder: (context) => SimpleDialog(
-        title: Text(l10n.chooseLevel),
-        children: [
-          for (final level in AiLevel.values)
-            SimpleDialogOption(
-              onPressed: () => Navigator.of(context).pop(level),
-              child: Text(levelLabel(l10n, level)),
-            ),
-        ],
-      ),
-    );
-    if (level != null) await _open(BattleScreen(level: level));
-  }
+  /// 출항 (설계서 §13.3): 캠페인 지도로 간다. 모드 선택(랭크·오늘의 해전)은 R4.
+  Future<void> _sail() => _open(const CampaignMapScreen());
 
   void _shipyard(PlayerProgress progress) {
     if (progress.shipyardUnlocked) {

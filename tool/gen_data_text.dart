@@ -7,15 +7,27 @@
 import 'dart:convert';
 import 'dart:io';
 
-const List<String> _prefixes = ['pirate_', 'blueprint_'];
+const List<String> _prefixes = [
+  'pirate_',
+  'blueprint_',
+  'mission_',
+  'story_',
+  'sea_',
+  'gimmick_',
+  'personality_',
+];
 
 void main() {
   final arb =
       jsonDecode(File('app/lib/l10n/app_en.arb').readAsStringSync())
           as Map<String, Object?>;
+  // 자리표시자가 있는 키(`{n}`)는 getter 가 아니라 함수라 표에 넣지 않는다.
   final keys = [
-    for (final k in arb.keys)
-      if (_prefixes.any(k.startsWith)) k,
+    for (final e in arb.entries)
+      if (_prefixes.any(e.key.startsWith) &&
+          e.value is String &&
+          !(e.value! as String).contains('{'))
+        e.key,
   ]..sort();
   final out = StringBuffer()
     ..writeln('// 생성 파일 — tool/gen_data_text.dart 로 다시 만든다. 직접 고치지 않는다.')

@@ -75,6 +75,7 @@ class StageSpec {
     required this.rewardGold,
     required this.rewardPirate,
     required this.tutorialStep,
+    this.gimmick,
   });
 
   factory StageSpec.fromJson(JsonReader r, {required int sea}) {
@@ -112,6 +113,7 @@ class StageSpec {
       rewardGold: reward.integerOr('gold', 0),
       rewardPirate: reward.stringOrNull('pirate'),
       tutorialStep: r.integerOr('tutorialStep', 0),
+      gimmick: r.stringOrNull('gimmick'),
     );
   }
 
@@ -153,6 +155,9 @@ class StageSpec {
 
   /// 튜토리얼 판 번호 1~3 (§13.1). 캠페인 스테이지는 0.
   final int tutorialStep;
+
+  /// 보스 기믹 id (§5.4). 글자는 ARB `gimmick_<id>`, 판정 반영은 R3.
+  final String? gimmick;
 
   bool get isBoss => kind == StageKind.boss || kind == StageKind.midBoss;
 }

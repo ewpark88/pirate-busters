@@ -612,4 +612,252 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get autoEndTurn => 'Auto end turn after 2 shots';
+
+  @override
+  String get sea_1_name => 'Tropic Bay';
+
+  @override
+  String get sea_1_faction => 'Red Claw Patrol';
+
+  @override
+  String get mission_no_pirate_down => 'Win with no pirate knocked out';
+
+  @override
+  String mission_flood_below(Object percent) {
+    return 'Win with flooding at $percent% or less';
+  }
+
+  @override
+  String mission_hull_above(Object percent) {
+    return 'Win with hull at $percent% or more';
+  }
+
+  @override
+  String get mission_win_by_sink => 'Win by sinking (not by wipeout or time)';
+
+  @override
+  String mission_turns_within(Object turns) {
+    return 'Win within $turns turns';
+  }
+
+  @override
+  String get story_t1_enemy =>
+      'Patrol recruit: The harbor is closed! Turn back, pirates!';
+
+  @override
+  String get story_t1_ally =>
+      'Octo: Pirates? We were just fixing our boat… Fine, have a bomb!';
+
+  @override
+  String get story_t2_enemy =>
+      'Patrol recruit: Two of us this time. We\'ll keep our distance and fire!';
+
+  @override
+  String get story_t2_ally =>
+      'Tok: Save your fuel. Choose when to close in and when to fall back.';
+
+  @override
+  String get story_t3_enemy =>
+      'Patrol diver: Punch a hole below the waterline and any ship goes down.';
+
+  @override
+  String get story_t3_ally =>
+      'Tok: I\'ll patch the holes. Run the pump before the water rises!';
+
+  @override
+  String get story_s1_1_enemy =>
+      'Patrol guard: Pirate inspection. Where are you going in that wreck?';
+
+  @override
+  String get story_s1_1_ally =>
+      'Octo: We built this ship with our own hands. Don\'t call it a wreck!';
+
+  @override
+  String get story_s1_2_enemy =>
+      'Patrol guard: We brought a harpooner. Hiding behind walls won\'t help.';
+
+  @override
+  String get story_s1_2_ally =>
+      'Suri: Watch my stone skip. Aim for the waterline, right?';
+
+  @override
+  String get story_s1_3_enemy =>
+      'Patrol scout: The parrot will find you. There\'s nowhere to hide.';
+
+  @override
+  String get story_s1_3_ally =>
+      'Octo: Then let\'s finish before we spring a leak. Fast!';
+
+  @override
+  String get story_s1_4_enemy =>
+      'Patrol gunner: Four of us firing and your deck won\'t survive.';
+
+  @override
+  String get story_s1_4_ally =>
+      'Polly: The sky is mine! I\'ll dive on them from above.';
+
+  @override
+  String get story_s1_5_enemy =>
+      'Crab Lieutenant: See the iron bow? Your bullets bounce right off!';
+
+  @override
+  String get story_s1_5_ally =>
+      'Tok: If the front is hard, hit from above or below.';
+
+  @override
+  String get story_s1_12_enemy =>
+      'Patrol captain: You\'ll never take the heart shard. The cutter is closing in!';
+
+  @override
+  String get story_s1_12_ally =>
+      'Octo: The first shard is ours. Everyone, fire!';
+
+  @override
+  String portLevel(Object level) {
+    return 'Lv $level';
+  }
+
+  @override
+  String portXp(Object next, Object xp) {
+    return 'XP $xp / $next';
+  }
+
+  @override
+  String get portSail => 'Set Sail';
+
+  @override
+  String get portShipyardLocked => 'The shipyard opens from your 4th battle';
+
+  @override
+  String get soundOn => 'Sound effects';
+
+  @override
+  String get vibrationOn => 'Vibration';
+
+  @override
+  String get campaignTitle => 'Campaign';
+
+  @override
+  String get stageLocked => 'Clear the previous stage first';
+
+  @override
+  String get stageKindMidBoss => 'Mid boss';
+
+  @override
+  String get stageKindBoss => 'Sea boss';
+
+  @override
+  String get prepTitle => 'Battle Prep';
+
+  @override
+  String prepBlueprintSlot(Object slot) {
+    return 'Blueprint $slot';
+  }
+
+  @override
+  String get prepBlueprintEmpty => 'Empty (Balanced preset)';
+
+  @override
+  String get prepDeck => 'Crew';
+
+  @override
+  String prepCost(Object limit, Object used) {
+    return 'Cost $used / $limit';
+  }
+
+  @override
+  String get prepEnemy => 'Opponent';
+
+  @override
+  String prepEnemyCount(Object count) {
+    return '$count enemy pirates';
+  }
+
+  @override
+  String prepWeather(Object wave, Object wind) {
+    return 'Waves $wave · Wind up to $wind';
+  }
+
+  @override
+  String get prepEditDeck => 'Edit crew';
+
+  @override
+  String get prepSail => 'Set sail';
+
+  @override
+  String get dialogueTap => 'Tap to continue';
+
+  @override
+  String get personality_bombard => 'Bombardier';
+
+  @override
+  String get personality_hunter => 'Hunter';
+
+  @override
+  String get personality_sinker => 'Sinker';
+
+  @override
+  String get personality_rusher => 'Rusher';
+
+  @override
+  String get gimmick_bow_iron_shield =>
+      'Iron bow shield: direct-fire damage from the front is greatly reduced';
+
+  @override
+  String get gimmick_patrol_closing_in =>
+      'The cutter closes in every turn and its cooldowns drop faster';
+
+  @override
+  String resultMission(Object text) {
+    return 'Mission: $text';
+  }
+
+  @override
+  String resultInTurns(Object turns) {
+    return 'Win within $turns turns';
+  }
+
+  @override
+  String rewardGold(Object gold) {
+    return 'Gold +$gold';
+  }
+
+  @override
+  String rewardXp(Object xp) {
+    return 'XP +$xp';
+  }
+
+  @override
+  String rewardPirate(Object name) {
+    return 'New pirate joined: $name';
+  }
+
+  @override
+  String get rewardFirstClear => 'First clear bonus';
+
+  @override
+  String get resultToPort => 'To port';
+
+  @override
+  String statTurns(Object turns) {
+    return 'Turns used $turns';
+  }
+
+  @override
+  String statShots(Object shots) {
+    return '$shots shots';
+  }
+
+  @override
+  String statFlood(Object enemy, Object mine) {
+    return 'Flooding you $mine% · enemy $enemy%';
+  }
+
+  @override
+  String get resultDouble => 'Watch ad for 2×';
+
+  @override
+  String levelUpTo(Object level) {
+    return 'Level up! Lv $level';
+  }
 }

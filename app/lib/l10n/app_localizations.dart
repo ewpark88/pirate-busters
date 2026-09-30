@@ -1117,6 +1117,390 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Auto end turn after 2 shots'**
   String get autoEndTurn;
+
+  /// No description provided for @sea_1_name.
+  ///
+  /// In en, this message translates to:
+  /// **'Tropic Bay'**
+  String get sea_1_name;
+
+  /// No description provided for @sea_1_faction.
+  ///
+  /// In en, this message translates to:
+  /// **'Red Claw Patrol'**
+  String get sea_1_faction;
+
+  /// No description provided for @mission_no_pirate_down.
+  ///
+  /// In en, this message translates to:
+  /// **'Win with no pirate knocked out'**
+  String get mission_no_pirate_down;
+
+  /// No description provided for @mission_flood_below.
+  ///
+  /// In en, this message translates to:
+  /// **'Win with flooding at {percent}% or less'**
+  String mission_flood_below(Object percent);
+
+  /// No description provided for @mission_hull_above.
+  ///
+  /// In en, this message translates to:
+  /// **'Win with hull at {percent}% or more'**
+  String mission_hull_above(Object percent);
+
+  /// No description provided for @mission_win_by_sink.
+  ///
+  /// In en, this message translates to:
+  /// **'Win by sinking (not by wipeout or time)'**
+  String get mission_win_by_sink;
+
+  /// No description provided for @mission_turns_within.
+  ///
+  /// In en, this message translates to:
+  /// **'Win within {turns} turns'**
+  String mission_turns_within(Object turns);
+
+  /// No description provided for @story_t1_enemy.
+  ///
+  /// In en, this message translates to:
+  /// **'Patrol recruit: The harbor is closed! Turn back, pirates!'**
+  String get story_t1_enemy;
+
+  /// No description provided for @story_t1_ally.
+  ///
+  /// In en, this message translates to:
+  /// **'Octo: Pirates? We were just fixing our boat… Fine, have a bomb!'**
+  String get story_t1_ally;
+
+  /// No description provided for @story_t2_enemy.
+  ///
+  /// In en, this message translates to:
+  /// **'Patrol recruit: Two of us this time. We\'ll keep our distance and fire!'**
+  String get story_t2_enemy;
+
+  /// No description provided for @story_t2_ally.
+  ///
+  /// In en, this message translates to:
+  /// **'Tok: Save your fuel. Choose when to close in and when to fall back.'**
+  String get story_t2_ally;
+
+  /// No description provided for @story_t3_enemy.
+  ///
+  /// In en, this message translates to:
+  /// **'Patrol diver: Punch a hole below the waterline and any ship goes down.'**
+  String get story_t3_enemy;
+
+  /// No description provided for @story_t3_ally.
+  ///
+  /// In en, this message translates to:
+  /// **'Tok: I\'ll patch the holes. Run the pump before the water rises!'**
+  String get story_t3_ally;
+
+  /// No description provided for @story_s1_1_enemy.
+  ///
+  /// In en, this message translates to:
+  /// **'Patrol guard: Pirate inspection. Where are you going in that wreck?'**
+  String get story_s1_1_enemy;
+
+  /// No description provided for @story_s1_1_ally.
+  ///
+  /// In en, this message translates to:
+  /// **'Octo: We built this ship with our own hands. Don\'t call it a wreck!'**
+  String get story_s1_1_ally;
+
+  /// No description provided for @story_s1_2_enemy.
+  ///
+  /// In en, this message translates to:
+  /// **'Patrol guard: We brought a harpooner. Hiding behind walls won\'t help.'**
+  String get story_s1_2_enemy;
+
+  /// No description provided for @story_s1_2_ally.
+  ///
+  /// In en, this message translates to:
+  /// **'Suri: Watch my stone skip. Aim for the waterline, right?'**
+  String get story_s1_2_ally;
+
+  /// No description provided for @story_s1_3_enemy.
+  ///
+  /// In en, this message translates to:
+  /// **'Patrol scout: The parrot will find you. There\'s nowhere to hide.'**
+  String get story_s1_3_enemy;
+
+  /// No description provided for @story_s1_3_ally.
+  ///
+  /// In en, this message translates to:
+  /// **'Octo: Then let\'s finish before we spring a leak. Fast!'**
+  String get story_s1_3_ally;
+
+  /// No description provided for @story_s1_4_enemy.
+  ///
+  /// In en, this message translates to:
+  /// **'Patrol gunner: Four of us firing and your deck won\'t survive.'**
+  String get story_s1_4_enemy;
+
+  /// No description provided for @story_s1_4_ally.
+  ///
+  /// In en, this message translates to:
+  /// **'Polly: The sky is mine! I\'ll dive on them from above.'**
+  String get story_s1_4_ally;
+
+  /// No description provided for @story_s1_5_enemy.
+  ///
+  /// In en, this message translates to:
+  /// **'Crab Lieutenant: See the iron bow? Your bullets bounce right off!'**
+  String get story_s1_5_enemy;
+
+  /// No description provided for @story_s1_5_ally.
+  ///
+  /// In en, this message translates to:
+  /// **'Tok: If the front is hard, hit from above or below.'**
+  String get story_s1_5_ally;
+
+  /// No description provided for @story_s1_12_enemy.
+  ///
+  /// In en, this message translates to:
+  /// **'Patrol captain: You\'ll never take the heart shard. The cutter is closing in!'**
+  String get story_s1_12_enemy;
+
+  /// No description provided for @story_s1_12_ally.
+  ///
+  /// In en, this message translates to:
+  /// **'Octo: The first shard is ours. Everyone, fire!'**
+  String get story_s1_12_ally;
+
+  /// No description provided for @portLevel.
+  ///
+  /// In en, this message translates to:
+  /// **'Lv {level}'**
+  String portLevel(Object level);
+
+  /// No description provided for @portXp.
+  ///
+  /// In en, this message translates to:
+  /// **'XP {xp} / {next}'**
+  String portXp(Object next, Object xp);
+
+  /// No description provided for @portSail.
+  ///
+  /// In en, this message translates to:
+  /// **'Set Sail'**
+  String get portSail;
+
+  /// No description provided for @portShipyardLocked.
+  ///
+  /// In en, this message translates to:
+  /// **'The shipyard opens from your 4th battle'**
+  String get portShipyardLocked;
+
+  /// No description provided for @soundOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Sound effects'**
+  String get soundOn;
+
+  /// No description provided for @vibrationOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Vibration'**
+  String get vibrationOn;
+
+  /// No description provided for @campaignTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Campaign'**
+  String get campaignTitle;
+
+  /// No description provided for @stageLocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear the previous stage first'**
+  String get stageLocked;
+
+  /// No description provided for @stageKindMidBoss.
+  ///
+  /// In en, this message translates to:
+  /// **'Mid boss'**
+  String get stageKindMidBoss;
+
+  /// No description provided for @stageKindBoss.
+  ///
+  /// In en, this message translates to:
+  /// **'Sea boss'**
+  String get stageKindBoss;
+
+  /// No description provided for @prepTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Battle Prep'**
+  String get prepTitle;
+
+  /// No description provided for @prepBlueprintSlot.
+  ///
+  /// In en, this message translates to:
+  /// **'Blueprint {slot}'**
+  String prepBlueprintSlot(Object slot);
+
+  /// No description provided for @prepBlueprintEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Empty (Balanced preset)'**
+  String get prepBlueprintEmpty;
+
+  /// No description provided for @prepDeck.
+  ///
+  /// In en, this message translates to:
+  /// **'Crew'**
+  String get prepDeck;
+
+  /// No description provided for @prepCost.
+  ///
+  /// In en, this message translates to:
+  /// **'Cost {used} / {limit}'**
+  String prepCost(Object limit, Object used);
+
+  /// No description provided for @prepEnemy.
+  ///
+  /// In en, this message translates to:
+  /// **'Opponent'**
+  String get prepEnemy;
+
+  /// No description provided for @prepEnemyCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} enemy pirates'**
+  String prepEnemyCount(Object count);
+
+  /// No description provided for @prepWeather.
+  ///
+  /// In en, this message translates to:
+  /// **'Waves {wave} · Wind up to {wind}'**
+  String prepWeather(Object wave, Object wind);
+
+  /// No description provided for @prepEditDeck.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit crew'**
+  String get prepEditDeck;
+
+  /// No description provided for @prepSail.
+  ///
+  /// In en, this message translates to:
+  /// **'Set sail'**
+  String get prepSail;
+
+  /// No description provided for @dialogueTap.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to continue'**
+  String get dialogueTap;
+
+  /// No description provided for @personality_bombard.
+  ///
+  /// In en, this message translates to:
+  /// **'Bombardier'**
+  String get personality_bombard;
+
+  /// No description provided for @personality_hunter.
+  ///
+  /// In en, this message translates to:
+  /// **'Hunter'**
+  String get personality_hunter;
+
+  /// No description provided for @personality_sinker.
+  ///
+  /// In en, this message translates to:
+  /// **'Sinker'**
+  String get personality_sinker;
+
+  /// No description provided for @personality_rusher.
+  ///
+  /// In en, this message translates to:
+  /// **'Rusher'**
+  String get personality_rusher;
+
+  /// No description provided for @gimmick_bow_iron_shield.
+  ///
+  /// In en, this message translates to:
+  /// **'Iron bow shield: direct-fire damage from the front is greatly reduced'**
+  String get gimmick_bow_iron_shield;
+
+  /// No description provided for @gimmick_patrol_closing_in.
+  ///
+  /// In en, this message translates to:
+  /// **'The cutter closes in every turn and its cooldowns drop faster'**
+  String get gimmick_patrol_closing_in;
+
+  /// No description provided for @resultMission.
+  ///
+  /// In en, this message translates to:
+  /// **'Mission: {text}'**
+  String resultMission(Object text);
+
+  /// No description provided for @resultInTurns.
+  ///
+  /// In en, this message translates to:
+  /// **'Win within {turns} turns'**
+  String resultInTurns(Object turns);
+
+  /// No description provided for @rewardGold.
+  ///
+  /// In en, this message translates to:
+  /// **'Gold +{gold}'**
+  String rewardGold(Object gold);
+
+  /// No description provided for @rewardXp.
+  ///
+  /// In en, this message translates to:
+  /// **'XP +{xp}'**
+  String rewardXp(Object xp);
+
+  /// No description provided for @rewardPirate.
+  ///
+  /// In en, this message translates to:
+  /// **'New pirate joined: {name}'**
+  String rewardPirate(Object name);
+
+  /// No description provided for @rewardFirstClear.
+  ///
+  /// In en, this message translates to:
+  /// **'First clear bonus'**
+  String get rewardFirstClear;
+
+  /// No description provided for @resultToPort.
+  ///
+  /// In en, this message translates to:
+  /// **'To port'**
+  String get resultToPort;
+
+  /// No description provided for @statTurns.
+  ///
+  /// In en, this message translates to:
+  /// **'Turns used {turns}'**
+  String statTurns(Object turns);
+
+  /// No description provided for @statShots.
+  ///
+  /// In en, this message translates to:
+  /// **'{shots} shots'**
+  String statShots(Object shots);
+
+  /// No description provided for @statFlood.
+  ///
+  /// In en, this message translates to:
+  /// **'Flooding you {mine}% · enemy {enemy}%'**
+  String statFlood(Object enemy, Object mine);
+
+  /// No description provided for @resultDouble.
+  ///
+  /// In en, this message translates to:
+  /// **'Watch ad for 2×'**
+  String get resultDouble;
+
+  /// No description provided for @levelUpTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Level up! Lv {level}'**
+  String levelUpTo(Object level);
 }
 
 class _AppLocalizationsDelegate

@@ -1,4 +1,5 @@
 import 'package:pb_sim/pb_sim.dart';
+import 'package:pirate_busters/campaign/stage_spec.dart';
 import 'package:pirate_busters/data/game_catalog.dart';
 
 /// 전투 판 구성 (개발 계획서 M5). 해적과 추천 설계도는 게임 데이터에서 온다.
@@ -38,6 +39,7 @@ class BattleSetup {
     Blueprint? enemyBlueprint,
     List<String>? enemyDeck,
     MatchRules rules = const MatchRules(),
+    int? costLimit,
   }) => Match.start(
     seed: seed,
     rules: rules,
@@ -46,9 +48,32 @@ class BattleSetup {
       enemyBlueprint ?? defaultBlueprint,
     ],
     decks: [deck, enemyDeck ?? aiDeck.take(deck.length).toList()],
-    costLimits: [costLimit, costLimit],
+    costLimits: [costLimit ?? BattleSetup.costLimit, BattleSetup.costLimit],
     pirates: catalog.pirates,
   );
+
+  /// 캠페인 스테이지 판 (설계서 §6.1): 적 설계도·덱·파도·바람은 스테이지 데이터에서.
+  Match newStageMatch(
+    int seed,
+    StageSpec stage, {
+    Blueprint? blueprint,
+    List<String>? deck,
+    int? costLimit,
+  }) {
+    final chosen = deck ?? starterDeck;
+    final mine = blueprint ?? defaultBlueprint;
+    final limit = costLimit ?? BattleSetup.costLimit;
+    final ok = deckProblem(mine.hull, catalog.pirates, chosen, limit) == null;
+    return newMatch(
+      seed,
+      blueprint: mine,
+      deck: ok ? chosen : starterDeck,
+      enemyBlueprint: catalog.preset(stage.enemyPreset).blueprint,
+      enemyDeck: stage.enemyDeck,
+      rules: MatchRules(waveLevel: stage.waveLevel, maxWind: stage.maxWind),
+      costLimit: limit,
+    );
+  }
 
   /// 저장한 설계도·덱으로 새 판. 없거나 규칙에 맞지 않으면(코스트 초과 등) 기본값.
   Match newMatchFor(int seed, {Blueprint? blueprint, List<String>? deck}) {
