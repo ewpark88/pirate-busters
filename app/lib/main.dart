@@ -6,6 +6,7 @@ import 'package:pirate_busters/app/app.dart';
 import 'package:pirate_busters/app/providers.dart';
 import 'package:pirate_busters/audio/sfx_bank.dart';
 import 'package:pirate_busters/audio/sound_service.dart';
+import 'package:pirate_busters/campaign/campaign_catalog.dart';
 import 'package:pirate_busters/data/fleet_store.dart';
 import 'package:pirate_busters/data/game_catalog.dart';
 import 'package:pirate_busters/meta/progress_store.dart';
@@ -23,6 +24,7 @@ Future<void> main() async {
   await Hive.initFlutter();
   final settings = await HiveSettingsStore.open();
   final catalog = await GameCatalog.load(rootBundle);
+  final campaign = await CampaignCatalog.load(rootBundle, catalog);
   final fleet = await HiveFleetStore.open();
   final progress = await HiveProgressStore.open();
   final sound = SoloudSoundService();
@@ -32,6 +34,7 @@ Future<void> main() async {
       overrides: [
         settingsStoreProvider.overrideWithValue(settings),
         gameCatalogProvider.overrideWithValue(catalog),
+        campaignProvider.overrideWithValue(campaign),
         fleetStoreProvider.overrideWithValue(fleet),
         progressStoreProvider.overrideWithValue(progress),
         soundServiceProvider.overrideWithValue(sound),

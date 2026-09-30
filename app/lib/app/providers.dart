@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pirate_busters/audio/sound_service.dart';
+import 'package:pirate_busters/campaign/campaign_catalog.dart';
 import 'package:pirate_busters/data/fleet_store.dart';
 import 'package:pirate_busters/data/game_catalog.dart';
 import 'package:pirate_busters/meta/progress.dart';
@@ -66,6 +67,11 @@ class AutoEndTurnNotifier extends Notifier<bool> {
     await ref.read(settingsStoreProvider).setAutoEndTurn(on: on);
   }
 }
+
+/// 캠페인 데이터(해역·스테이지). 부트스트랩에서 덮어쓴다.
+final campaignProvider = Provider<CampaignCatalog>(
+  (ref) => throw UnimplementedError('campaignProvider 를 덮어써야 한다'),
+);
 
 /// 진행 저장소. 부트스트랩에서 덮어쓴다.
 final progressStoreProvider = Provider<ProgressStore>(

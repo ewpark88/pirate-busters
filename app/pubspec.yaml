@@ -48,6 +48,7 @@ flutter:
   assets:
     - assets/data/
     - assets/game/
+    - assets/stages/
     - assets/images/ammo/icons/
     - assets/images/characters/alba/
     - assets/images/characters/alba/parts_battle_blue/

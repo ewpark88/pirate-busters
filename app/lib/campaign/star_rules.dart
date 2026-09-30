@@ -1,0 +1,80 @@
+import 'package:pb_sim/pb_sim.dart';
+import 'package:pirate_busters/campaign/stage_spec.dart';
+
+/// 한 판이 끝난 뒤 별 판정에 쓰는 요약 (설계서 §6.1, §13.5 전투 통계).
+class MatchSummary {
+  const MatchSummary({
+    required this.won,
+    required this.outcome,
+    required this.turns,
+    required this.floodPercent,
+    required this.hullPercent,
+    required this.piratesDown,
+    required this.shotsFired,
+  });
+
+  /// 끝난 판의 상태에서 [side] 기준으로 만든다.
+  factory MatchSummary.fromState(MatchState state, int side) {
+    final me = state.sides[side];
+    return MatchSummary(
+      won: state.winner == side,
+      outcome: state.outcome,
+      turns: state.turn,
+      floodPercent: me.flood * 100 ~/ fullFlood,
+      hullPercent: me.grid.initialTotalHp == 0
+          ? 0
+          : me.grid.totalHp * 100 ~/ me.grid.initialTotalHp,
+      piratesDown: me.crew.pirates
+          .where((p) => p.status == PirateStatus.down)
+          .length,
+      shotsFired: me.shotsFired,
+    );
+  }
+
+  final bool won;
+  final MatchOutcome outcome;
+
+  /// 판이 끝난 턴 번호 (양쪽 합산, 설계서 §2.4).
+  final int turns;
+  final int floodPercent;
+  final int hullPercent;
+  final int piratesDown;
+  final int shotsFired;
+}
+
+/// 별 3개 결과 (설계서 §6.1: 승리 / 정해진 턴 이내 / 스테이지 미션).
+class StarResult {
+  const StarResult({
+    required this.won,
+    required this.inTurns,
+    required this.mission,
+  });
+
+  final bool won;
+  final bool inTurns;
+  final bool mission;
+
+  /// 별 수 0~3. 승리하지 않으면 0.
+  int get count => !won ? 0 : 1 + (inTurns ? 1 : 0) + (mission ? 1 : 0);
+}
+
+/// 별 판정 (설계서 §6.1). 미션은 `MissionSpec.knownTypes`.
+class StarRules {
+  const StarRules();
+
+  StarResult evaluate(StageSpec stage, MatchSummary s) => StarResult(
+    won: s.won,
+    inTurns: s.won && s.turns <= stage.starTurns,
+    mission: s.won && missionDone(stage.mission, s),
+  );
+
+  bool missionDone(MissionSpec m, MatchSummary s) => switch (m.type) {
+    'no_pirate_down' => s.piratesDown == 0,
+    'flood_below' => s.floodPercent <= m.param('percent'),
+    'hull_above' => s.hullPercent >= m.param('percent'),
+    'win_by_sink' =>
+      s.outcome == MatchOutcome.sunk || s.outcome == MatchOutcome.floodSunk,
+    'turns_within' => s.turns <= m.param('turns'),
+    _ => false,
+  };
+}
