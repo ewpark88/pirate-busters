@@ -310,4 +310,13 @@ void main() {
     m.turnLog.forEach(again.playTurn);
     expect(hashMatchState(again.state), hashMatchState(m.state));
   });
+
+  test('사거리 밖 표시: 간격이 사거리 − 8칸보다 멀면 닿기 어렵다 (설계서 §2.8)', () {
+    expect(RangeGrade.short.hitGap, 14 * cellUnit);
+    expect(RangeGrade.medium.hitGap, 28 * cellUnit);
+    final m = _duel(testPirate('far', range: RangeGrade.short));
+    // 시작 간격 28칸: 짧음(14칸)은 밖, 긺(42칸)은 안.
+    expect(isOutOfRange(m.state, 0, 0), isTrue);
+    expect(isOutOfRange(m.state, 0, 1), isFalse);
+  });
 }

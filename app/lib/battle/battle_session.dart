@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:pb_sim/pb_sim.dart';
 import 'package:pirate_busters/battle/playback.dart';
-import 'package:pirate_busters/battle/shot_path.dart';
+import 'package:pirate_busters/battle/shot_flow.dart';
 import 'package:pirate_busters/battle/ui_state.dart';
 
 /// 한 판의 진행 (개발 계획서 M4). 판정은 모두 [Match] 가 하고, 여기서는 시각을 세고
@@ -63,7 +63,11 @@ class BattleSession extends ChangeNotifier with SessionUiState {
     final flightLeft = shot is ShotPlayback
         ? shot.durationMs - shot.elapsedMs
         : 0;
-    final paused = state.pausedMs - flightLeft;
+    // 탭을 기다리는 분열탄은 아직 계산 전이라 비행 시간이 멈춤에 들어가 있지 않다.
+    final pending = shot is ShotPlayback && shot.awaitingTap
+        ? shot.flightMs
+        : 0;
+    final paused = state.pausedMs + pending - flightLeft;
     final used = turnMs - paused;
     final left = state.rules.turnTimeFor(state.turn) - used;
     return left < 0 ? 0 : left;
@@ -103,11 +107,9 @@ class BattleSession extends ChangeNotifier with SessionUiState {
     final p = playback;
     if (p != null) {
       p.elapsedMs += dtMs;
-      if (p is ShotPlayback && !p.landed && p.elapsedMs >= p.flightMs) {
-        p.landed = true;
-        _cues.addAll(p.landing);
-      }
-      if (p.isDone) _finishPlayback(p);
+      if (p is ShotPlayback) _advanceShot(p);
+      final now = playback;
+      if (now != null && now.isDone) _finishPlayback(now);
     }
     turnMs += dtMs;
     if (!isOver && playback == null) {
@@ -137,16 +139,31 @@ class BattleSession extends ChangeNotifier with SessionUiState {
     _apply(FireCommand(t: turnMs, slot: slot, angle: angle, power: power));
   }
 
-  /// 비행 중 탭 (설계서 §2.2). 내 탄이 날고 있을 때만 `TAP` 을 기록한다.
-  /// MVP 에서는 효과가 없다(onTap 은 R1).
+  /// 비행 중 탭 (설계서 §2.2). 내 탄이 날고 있을 때만 `TAP` 을 낸다. 분열탄이면
+  /// 지금 틱에 갈라지고(설계서 §4.8), 다른 탄종에서는 효과가 없다.
   void tap() {
     final shot = playback;
     if (shot is! ShotPlayback || !humanSides.contains(shot.side)) return;
-    match.apply(
-      TapCommand(t: turnMs, slot: shot.slot, tick: shot.tick.floor()),
-    );
+    final tick = shot.tick.floor();
+    if (shot.awaitingTap) {
+      if (tick >= 1 && tick < shot.lastTick) _resolveSplit(shot, tick);
+    } else {
+      match.apply(TapCommand(t: turnMs, slot: shot.slot, tick: tick));
+    }
     notifyListeners();
   }
+
+  /// 탄 연출 한 프레임: 틱이 온 효과를 내고, 탭 없이 떨어지는 분열탄을 계산한다.
+  void _advanceShot(ShotPlayback p) {
+    if (p.awaitingTap) {
+      if (p.tick >= p.lastTick) _resolveSplit(p, 0);
+      return;
+    }
+    _cues.addAll(p.takeDue());
+  }
+
+  void _resolveSplit(ShotPlayback p, int tick) =>
+      playback = resolveSplit(match, p, tick);
 
   void endTurn() {
     if (canAct) _apply(EndTurnCommand(t: turnMs));
@@ -196,38 +213,38 @@ class BattleSession extends ChangeNotifier with SessionUiState {
     final side = state.activeSide;
     final turn = state.turn;
     final bowBefore = state.sides[side].bowX;
-    ShotPath? path;
-    List<GridSnapshot>? before;
-    if (c is FireCommand) {
-      path = ShotPath.predict(
-        state,
-        slot: c.slot,
-        angle: c.angle,
-        power: c.power,
-        ms: realMs(state, effectiveMs(state, c.t)),
-      );
-      before = [for (final s in state.sides) GridSnapshot(s.grid)];
-    }
+    // 분열탄은 탭 전까지 계산하지 않으므로 떨어질 곳을 미리 예측해 둔다.
+    final split = c is FireCommand ? splitPathFor(state, c) : null;
+    final before = [for (final s in state.sides) GridSnapshot(s.grid)];
     final start = _eventsStart(turn);
     final firedBefore = state.nextProjectileId;
     match.apply(c);
-    // 분열탄 탭 연출은 M5 앱 단계에서 붙인다. 그때까지는 갈라지지 않은 채 바로 계산한다.
-    if (match.pendingSlot >= 0) {
-      match.apply(TapCommand(t: c.t, slot: match.pendingSlot, tick: 0));
-    }
     // 턴이 끝나도 이벤트 목록은 다음 턴 첫 커맨드 때 비워진다.
     final events = state.events.sublist(start.clamp(0, state.events.length));
-    if (path != null && state.nextProjectileId > firedBefore) {
-      // 발사 이벤트는 바로(공격 동작·포성), 나머지는 착탄 때 낸다.
+    if (c is FireCommand && state.nextProjectileId > firedBefore) {
+      // 발사 이벤트는 바로(공격 동작·포성), 나머지는 착탄 틱에 낸다.
       _cues.addAll(events.where((e) => e.kind == SimEventKind.fire));
-      playback = ShotPlayback.fromEvents(
-        side: side,
-        slot: (c as FireCommand).slot,
-        path: path,
-        before: before!,
-        events: events,
-        breakPauseMs: state.rules.breakPauseMs,
-      );
+      final pending = match.pendingSlot >= 0;
+      if (pending && split != null && humanSides.contains(side)) {
+        playback = ShotPlayback.awaitingTap(
+          side: side,
+          slot: c.slot,
+          fireT: c.t,
+          path: split,
+          before: before,
+        );
+      } else {
+        // 컴퓨터는 탭하지 않는다(갈라지지 않은 채 계산).
+        if (pending) match.apply(TapCommand(t: c.t, slot: c.slot, tick: 0));
+        playback = resolvedShot(
+          state,
+          side: side,
+          slot: c.slot,
+          fireT: c.t,
+          before: before,
+          start: start,
+        );
+      }
     } else if (c is MoveCommand) {
       final move = events.where((e) => e.kind == SimEventKind.move);
       if (move.isNotEmpty) {
@@ -258,7 +275,7 @@ class BattleSession extends ChangeNotifier with SessionUiState {
 
   void _finishPlayback(Playback p) {
     playback = null;
-    if (p is ShotPlayback && !p.landed) _cues.addAll(p.landing);
+    if (p is ShotPlayback) _cues.addAll(p.takeDue(all: true));
     if (p is MovePlayback) {
       _cues.add(SimEvent(SimEventKind.move, side: p.side, x: p.toX));
     }

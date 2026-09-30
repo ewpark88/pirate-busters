@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pb_sim/pb_sim.dart';
 import 'package:pirate_busters/battle/battle_session.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
+import 'package:pirate_busters/ui/hud/ammo_label.dart';
 import 'package:pirate_busters/ui/hud/hud_style.dart';
 
 /// 아래 가운데: 선실 해적 카드 (설계서 §13.4). 카드를 누르면 그 해적을 고르고
@@ -82,6 +83,18 @@ class _PirateCardState extends State<_PirateCard> {
       ),
       PirateStatus.aboard => null,
     };
+    final locale = Localizations.localeOf(context).toLanguageTag();
+    final far =
+        pirate.status == PirateStatus.aboard &&
+        isOutOfRange(_s.state, widget.side, widget.slot);
+    // 아래 줄: 상태 > 사거리 밖 > 사거리 등급 (설계서 §2.8, §13.4).
+    final foot =
+        note ?? (far ? l10n.outOfRange : rangeLabel(l10n, pirate.spec.range));
+    final footColor = note != null
+        ? HudColors.text
+        : far
+        ? HudColors.danger
+        : HudColors.mute;
     final aiming = _s.aim?.slot == widget.slot;
     final picked = _s.selected == widget.slot && _s.selectedSide == widget.side;
     return GestureDetector(
@@ -115,25 +128,33 @@ class _PirateCardState extends State<_PirateCard> {
                   ),
                 ),
               ),
-              if (note != null)
-                Container(
-                  width: double.infinity,
-                  color: HudColors.panel,
-                  child: Text(
-                    note,
-                    textAlign: TextAlign.center,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      color: HudColors.text,
-                      fontSize: 11,
-                    ),
-                  ),
+              Positioned(
+                top: 0,
+                left: 0,
+                right: 0,
+                child: _strip(
+                  ammoLabel(l10n, pirate.spec, locale),
+                  HudColors.warn,
                 ),
+              ),
+              _strip(foot, footColor),
             ],
           ),
         ),
       ),
     );
   }
+
+  /// 카드 위·아래 한 줄 글자 띠.
+  Widget _strip(String text, Color color) => Container(
+    width: double.infinity,
+    color: HudColors.panel,
+    child: Text(
+      text,
+      textAlign: TextAlign.center,
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
+      style: TextStyle(color: color, fontSize: 10),
+    ),
+  );
 }

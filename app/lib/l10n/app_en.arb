@@ -155,5 +155,115 @@
   "blueprint_armored_name": "Ironclad",
   "blueprint_armored_desc": "Iron walls guard both sides of the cabins. Heavy and low in the water, so the pump keeps it afloat.",
   "blueprint_fast_name": "Swift",
-  "blueprint_fast_desc": "Pine and cork keep it light, and two fuel tanks let it roam far. It breaks easily."
+  "blueprint_fast_desc": "Pine and cork keep it light, and two fuel tanks let it roam far. It breaks easily.",
+  "ammoExplosive": "Blast {n}%",
+  "@ammoExplosive": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "ammoFire": "Fire {n}T",
+  "@ammoFire": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "ammoSplit": "Split ×{n}",
+  "@ammoSplit": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "ammoBurst": "Burst ×{n}",
+  "@ammoBurst": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "ammoSniper": "Crit ×{rate}",
+  "@ammoSniper": {
+    "placeholders": {
+      "rate": {
+        "type": "String"
+      }
+    }
+  },
+  "ammoChain": "Chain {n}",
+  "@ammoChain": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "ammoPierce": "Pierce {n}",
+  "@ammoPierce": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "ammoSkip": "Skip ×{n}",
+  "@ammoSkip": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "ammoMine": "Mine {n}T",
+  "@ammoMine": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "ammoFlock": "Drop ×{n}",
+  "@ammoFlock": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "ammoHoming": "Homing {n}°",
+  "@ammoHoming": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "ammoAssault": "Raid +{n}",
+  "@ammoAssault": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "ammoSupport": "Repair {n}%",
+  "@ammoSupport": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "rangeShort": "Short",
+  "rangeMedium": "Mid",
+  "rangeLong": "Long",
+  "rangeVeryLong": "Far",
+  "outOfRange": "Out of range",
+  "tapToSplit": "Tap to split!"
 }

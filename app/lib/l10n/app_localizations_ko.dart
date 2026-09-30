@@ -277,4 +277,108 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get pirate_p36_lore => '느리지만 꼼꼼하다. 배는 그가 지킨다.';
+
+  @override
+  String get blueprint_balanced_name => '밸런스';
+
+  @override
+  String get blueprint_balanced_desc =>
+      '참나무 용골에 펌프와 목수 공방을 단 기본형. 포문과 망루로 한 명을 키운다.';
+
+  @override
+  String get blueprint_armored_name => '철갑';
+
+  @override
+  String get blueprint_armored_desc =>
+      '선실 양옆을 철판으로 막은 튼튼한 배. 무거워서 깊이 잠기니 펌프로 버틴다.';
+
+  @override
+  String get blueprint_fast_name => '고속';
+
+  @override
+  String get blueprint_fast_desc =>
+      '소나무와 코르크로 가볍게 띄우고 연료통 둘로 멀리 움직인다. 대신 잘 부서진다.';
+
+  @override
+  String ammoExplosive(int n) {
+    return '폭발 $n%';
+  }
+
+  @override
+  String ammoFire(int n) {
+    return '화염 $n턴';
+  }
+
+  @override
+  String ammoSplit(int n) {
+    return '분열 ×$n';
+  }
+
+  @override
+  String ammoBurst(int n) {
+    return '연사 ×$n';
+  }
+
+  @override
+  String ammoSniper(String rate) {
+    return '치명 ×$rate';
+  }
+
+  @override
+  String ammoChain(int n) {
+    return '연쇄 $n';
+  }
+
+  @override
+  String ammoPierce(int n) {
+    return '관통 $n칸';
+  }
+
+  @override
+  String ammoSkip(int n) {
+    return '튕김 $n회';
+  }
+
+  @override
+  String ammoMine(int n) {
+    return '설치 $n턴';
+  }
+
+  @override
+  String ammoFlock(int n) {
+    return '투하 ×$n';
+  }
+
+  @override
+  String ammoHoming(int n) {
+    return '유도 $n°';
+  }
+
+  @override
+  String ammoAssault(int n) {
+    return '강습 +$n';
+  }
+
+  @override
+  String ammoSupport(int n) {
+    return '수리 $n%';
+  }
+
+  @override
+  String get rangeShort => '짧음';
+
+  @override
+  String get rangeMedium => '보통';
+
+  @override
+  String get rangeLong => '긺';
+
+  @override
+  String get rangeVeryLong => '매우 긺';
+
+  @override
+  String get outOfRange => '사거리 밖';
+
+  @override
+  String get tapToSplit => '탭해서 분열!';
 }

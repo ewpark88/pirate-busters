@@ -305,4 +305,108 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get pirate_p36_lore => 'Slow but careful. He keeps the ship afloat.';
+
+  @override
+  String get blueprint_balanced_name => 'Balanced';
+
+  @override
+  String get blueprint_balanced_desc =>
+      'Oak keel with a pump and a workshop. A gun port and a lookout back one star pirate.';
+
+  @override
+  String get blueprint_armored_name => 'Ironclad';
+
+  @override
+  String get blueprint_armored_desc =>
+      'Iron walls guard both sides of the cabins. Heavy and low in the water, so the pump keeps it afloat.';
+
+  @override
+  String get blueprint_fast_name => 'Swift';
+
+  @override
+  String get blueprint_fast_desc =>
+      'Pine and cork keep it light, and two fuel tanks let it roam far. It breaks easily.';
+
+  @override
+  String ammoExplosive(int n) {
+    return 'Blast $n%';
+  }
+
+  @override
+  String ammoFire(int n) {
+    return 'Fire ${n}T';
+  }
+
+  @override
+  String ammoSplit(int n) {
+    return 'Split ×$n';
+  }
+
+  @override
+  String ammoBurst(int n) {
+    return 'Burst ×$n';
+  }
+
+  @override
+  String ammoSniper(String rate) {
+    return 'Crit ×$rate';
+  }
+
+  @override
+  String ammoChain(int n) {
+    return 'Chain $n';
+  }
+
+  @override
+  String ammoPierce(int n) {
+    return 'Pierce $n';
+  }
+
+  @override
+  String ammoSkip(int n) {
+    return 'Skip ×$n';
+  }
+
+  @override
+  String ammoMine(int n) {
+    return 'Mine ${n}T';
+  }
+
+  @override
+  String ammoFlock(int n) {
+    return 'Drop ×$n';
+  }
+
+  @override
+  String ammoHoming(int n) {
+    return 'Homing $n°';
+  }
+
+  @override
+  String ammoAssault(int n) {
+    return 'Raid +$n';
+  }
+
+  @override
+  String ammoSupport(int n) {
+    return 'Repair $n%';
+  }
+
+  @override
+  String get rangeShort => 'Short';
+
+  @override
+  String get rangeMedium => 'Mid';
+
+  @override
+  String get rangeLong => 'Long';
+
+  @override
+  String get rangeVeryLong => 'Far';
+
+  @override
+  String get outOfRange => 'Out of range';
+
+  @override
+  String get tapToSplit => 'Tap to split!';
 }

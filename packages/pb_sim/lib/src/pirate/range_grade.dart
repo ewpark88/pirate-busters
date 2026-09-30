@@ -16,6 +16,10 @@ enum RangeGrade {
   /// 힘 10000 일 때 탄 속도(1/1000칸/초).
   final int launchSpeed;
 
+  /// 적 선체에 닿는 뱃머리 간격의 대략 상한(1/1000칸): 사거리 − 8칸 (BALANCE.md A2.8
+  /// ‘적 선체에 닿는 간격’). 카드의 ‘사거리 밖’ 표시에 쓴다. 발사는 막지 않는다.
+  int get hitGap => (cells - 8) * 1000;
+
   /// 데이터 이름(`short`·`medium`·`long`·`veryLong`)으로 찾는다. 없으면 [FormatException].
   static RangeGrade byName(String name) {
     for (final r in values) {

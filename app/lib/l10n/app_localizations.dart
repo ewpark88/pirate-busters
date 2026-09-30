@@ -601,6 +601,156 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Slow but careful. He keeps the ship afloat.'**
   String get pirate_p36_lore;
+
+  /// No description provided for @blueprint_balanced_name.
+  ///
+  /// In en, this message translates to:
+  /// **'Balanced'**
+  String get blueprint_balanced_name;
+
+  /// No description provided for @blueprint_balanced_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Oak keel with a pump and a workshop. A gun port and a lookout back one star pirate.'**
+  String get blueprint_balanced_desc;
+
+  /// No description provided for @blueprint_armored_name.
+  ///
+  /// In en, this message translates to:
+  /// **'Ironclad'**
+  String get blueprint_armored_name;
+
+  /// No description provided for @blueprint_armored_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Iron walls guard both sides of the cabins. Heavy and low in the water, so the pump keeps it afloat.'**
+  String get blueprint_armored_desc;
+
+  /// No description provided for @blueprint_fast_name.
+  ///
+  /// In en, this message translates to:
+  /// **'Swift'**
+  String get blueprint_fast_name;
+
+  /// No description provided for @blueprint_fast_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Pine and cork keep it light, and two fuel tanks let it roam far. It breaks easily.'**
+  String get blueprint_fast_desc;
+
+  /// No description provided for @ammoExplosive.
+  ///
+  /// In en, this message translates to:
+  /// **'Blast {n}%'**
+  String ammoExplosive(int n);
+
+  /// No description provided for @ammoFire.
+  ///
+  /// In en, this message translates to:
+  /// **'Fire {n}T'**
+  String ammoFire(int n);
+
+  /// No description provided for @ammoSplit.
+  ///
+  /// In en, this message translates to:
+  /// **'Split ×{n}'**
+  String ammoSplit(int n);
+
+  /// No description provided for @ammoBurst.
+  ///
+  /// In en, this message translates to:
+  /// **'Burst ×{n}'**
+  String ammoBurst(int n);
+
+  /// No description provided for @ammoSniper.
+  ///
+  /// In en, this message translates to:
+  /// **'Crit ×{rate}'**
+  String ammoSniper(String rate);
+
+  /// No description provided for @ammoChain.
+  ///
+  /// In en, this message translates to:
+  /// **'Chain {n}'**
+  String ammoChain(int n);
+
+  /// No description provided for @ammoPierce.
+  ///
+  /// In en, this message translates to:
+  /// **'Pierce {n}'**
+  String ammoPierce(int n);
+
+  /// No description provided for @ammoSkip.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip ×{n}'**
+  String ammoSkip(int n);
+
+  /// No description provided for @ammoMine.
+  ///
+  /// In en, this message translates to:
+  /// **'Mine {n}T'**
+  String ammoMine(int n);
+
+  /// No description provided for @ammoFlock.
+  ///
+  /// In en, this message translates to:
+  /// **'Drop ×{n}'**
+  String ammoFlock(int n);
+
+  /// No description provided for @ammoHoming.
+  ///
+  /// In en, this message translates to:
+  /// **'Homing {n}°'**
+  String ammoHoming(int n);
+
+  /// No description provided for @ammoAssault.
+  ///
+  /// In en, this message translates to:
+  /// **'Raid +{n}'**
+  String ammoAssault(int n);
+
+  /// No description provided for @ammoSupport.
+  ///
+  /// In en, this message translates to:
+  /// **'Repair {n}%'**
+  String ammoSupport(int n);
+
+  /// No description provided for @rangeShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Short'**
+  String get rangeShort;
+
+  /// No description provided for @rangeMedium.
+  ///
+  /// In en, this message translates to:
+  /// **'Mid'**
+  String get rangeMedium;
+
+  /// No description provided for @rangeLong.
+  ///
+  /// In en, this message translates to:
+  /// **'Long'**
+  String get rangeLong;
+
+  /// No description provided for @rangeVeryLong.
+  ///
+  /// In en, this message translates to:
+  /// **'Far'**
+  String get rangeVeryLong;
+
+  /// No description provided for @outOfRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Out of range'**
+  String get outOfRange;
+
+  /// No description provided for @tapToSplit.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to split!'**
+  String get tapToSplit;
 }
 
 class _AppLocalizationsDelegate

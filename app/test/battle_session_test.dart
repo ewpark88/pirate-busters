@@ -48,7 +48,7 @@ void main() {
         ..update(500)
         ..fire(0, 30000, 9000);
       final shot = s.playback! as ShotPlayback;
-      expect(shot.path.lastTick, greaterThan(10));
+      expect(shot.lastTick, greaterThan(10));
       // 발사 이벤트(공격 동작·포성)는 바로, 착탄 효과는 연출 뒤에 나온다.
       expect(s.takeCues().map((e) => e.kind), [SimEventKind.fire]);
       _drain(s);
@@ -100,9 +100,10 @@ void main() {
       final preview = s.previewShot(1, 25000, 8000);
       s.fire(1, 25000, 8000);
       final shot = s.playback! as ShotPlayback;
-      final n = shot.path.lastTick - 1;
-      expect(shot.path.xs.sublist(0, n), preview.xs.sublist(0, n));
-      expect(shot.path.ys.sublist(0, n), preview.ys.sublist(0, n));
+      final path = shot.traces.single;
+      final n = path.xs.length - 1;
+      expect(path.xs.sublist(0, n), preview.xs.sublist(0, n));
+      expect(path.ys.sublist(0, n), preview.ys.sublist(0, n));
     });
 
     test('내 탄이 나는 동안 탭하면 TAP 이 발사로부터의 틱 수로 기록된다', () {

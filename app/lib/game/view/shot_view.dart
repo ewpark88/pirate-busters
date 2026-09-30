@@ -16,18 +16,35 @@ class ShotView extends Component {
   final BattleSession session;
   final BattleSprites sprites;
 
-  /// 탄의 지금 월드 위치. 카메라가 따라간다. 날아가는 탄이 없으면 null.
-  Vector2? get projectile {
+  /// 지금 날고 있는 탄들의 월드 위치.
+  List<Vector2> get projectiles {
     final p = session.playback;
-    if (p is! ShotPlayback || p.landed) return null;
-    final path = p.path;
-    final t = p.tick.clamp(0, path.lastTick.toDouble());
+    if (p is! ShotPlayback) return const [];
+    final t = p.tick;
+    return [
+      for (final trace in p.traces)
+        if (t >= trace.startTick && t < trace.endTick) _at(trace, t),
+    ];
+  }
+
+  /// 카메라가 따라갈 탄: 날고 있는 탄들의 가운데. 없으면 null.
+  Vector2? get projectile {
+    final all = projectiles;
+    if (all.isEmpty) return null;
+    final sum = Vector2.zero();
+    all.forEach(sum.add);
+    return sum..scale(1 / all.length);
+  }
+
+  static Vector2 _at(ShotTrace trace, double tick) {
+    final last = trace.xs.length - 1;
+    final t = (tick - trace.startTick).clamp(0, last.toDouble());
     final i = t.floor();
-    final j = i + 1 > path.lastTick ? i : i + 1;
+    final j = i + 1 > last ? i : i + 1;
     final f = t - i;
     return Vector2(
-      Coords.x(path.xs[i] + (path.xs[j] - path.xs[i]) * f),
-      Coords.y(path.ys[i] + (path.ys[j] - path.ys[i]) * f),
+      Coords.x(trace.xs[i] + (trace.xs[j] - trace.xs[i]) * f),
+      Coords.y(trace.ys[i] + (trace.ys[j] - trace.ys[i]) * f),
     );
   }
 
@@ -41,16 +58,14 @@ class ShotView extends Component {
     _renderLimits(canvas);
     _renderMovePreview(canvas);
     _renderAim(canvas);
-    final pos = projectile;
-    if (pos != null) {
-      sprites
-          .get('fx/cannonball.png')
-          .render(
-            canvas,
-            position: pos,
-            size: Vector2.all(18),
-            anchor: Anchor.center,
-          );
+    final ball = sprites.get('fx/cannonball.png');
+    for (final pos in projectiles) {
+      ball.render(
+        canvas,
+        position: pos,
+        size: Vector2.all(18),
+        anchor: Anchor.center,
+      );
     }
   }
 
@@ -61,6 +76,7 @@ class ShotView extends Component {
     final path = session
         .previewShot(aim.slot, aim.shot.angle, aim.shot.power)
         .head(30);
+    _renderRangeEnd(canvas, aim.slot, path.xs.first);
     final dot = sprites.get('fx/trajectory_dot.png');
     for (var i = 0; i <= path.lastTick; i += 2) {
       dot.render(
@@ -70,6 +86,22 @@ class ShotView extends Component {
         anchor: Anchor.center,
       );
     }
+  }
+
+  static final Paint _rangePaint = Paint()
+    ..color = const Color(0xCCFFC24A)
+    ..strokeWidth = 2;
+
+  /// 사거리 끝: 발사 지점에서 사거리(칸)만큼 앞 물 위의 점선과 부표 (설계서 §2.8).
+  void _renderRangeEnd(Canvas canvas, int slot, int launchX) {
+    final state = session.state;
+    final side = state.activeSide;
+    final range = state.sides[side].crew.pirates[slot].spec.range;
+    final x = Coords.x(launchX + facingOf(side) * range.cells * cellUnit);
+    for (var y = -36.0; y < 8; y += 8) {
+      canvas.drawLine(Offset(x, y), Offset(x, y + 4), _rangePaint);
+    }
+    canvas.drawCircle(Offset(x, -40), 4, _rangePaint);
   }
 
   void _renderMovePreview(Canvas canvas) {
