@@ -119,9 +119,6 @@ class AppLocalizationsKo extends AppLocalizations {
   String get opponent => '상대';
 
   @override
-  String get opponentDummy => '허수아비';
-
-  @override
   String get opponentHotseat => '두 사람 (한 기기)';
 
   @override
@@ -383,9 +380,6 @@ class AppLocalizationsKo extends AppLocalizations {
   String get tapToSplit => '탭해서 분열!';
 
   @override
-  String get menuBattle => '허수아비와 해전';
-
-  @override
   String get menuHotseat => '둘이서 해전';
 
   @override
@@ -566,4 +560,25 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get rarityMyth => '신화';
+
+  @override
+  String get opponentAi => '컴퓨터 (AI)';
+
+  @override
+  String get menuBattleAi => 'AI 와 해전';
+
+  @override
+  String get chooseLevel => '난이도';
+
+  @override
+  String get levelEasy => '쉬움';
+
+  @override
+  String get levelNormal => '보통';
+
+  @override
+  String get levelHard => '어려움';
+
+  @override
+  String get levelHell => '지옥';
 }

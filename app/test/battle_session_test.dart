@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:pb_ai/pb_ai.dart';
 import 'package:pb_sim/pb_sim.dart';
 import 'package:pirate_busters/battle/battle_session.dart';
-import 'package:pirate_busters/battle/dummy_controller.dart';
 import 'package:pirate_busters/battle/playback.dart';
 import 'package:pirate_busters/battle/session_views.dart';
 
@@ -16,7 +16,7 @@ BattleSession _humanFirst({bool hotseat = false}) {
         m,
         humanSides: hotseat ? const {0, 1} : const {0},
         speciesOf: testCatalog.speciesOf,
-        opponent: hotseat ? null : const DummyController(),
+        opponent: hotseat ? null : const AiController(level: AiLevel.easy),
       );
     }
   }
@@ -211,25 +211,43 @@ void main() {
     });
   });
 
-  group('허수아비 (ADR-029)', () {
-    test('같은 판·같은 턴이면 같은 커맨드를 내고, 사람과 같은 커맨드만 쓴다', () {
-      final m = testSetup.newMatch(9);
-      const dummy = DummyController();
-      final a = dummy.turnFor(m.state).toJson();
-      final b = dummy.turnFor(m.state).toJson();
-      expect(a, b);
-      final bundle = dummy.turnFor(m.state);
-      expect(bundle.commands.last, isA<EndTurnCommand>());
+  group('AI 상대 (설계서 §5, ADR-040)', () {
+    test('AI 는 프레임마다 나눠 계획한 뒤 사람과 같은 커맨드로 두고 턴을 넘긴다', () {
+      final s = _humanFirst()
+        ..update(100)
+        ..endTurn();
+      expect(s.isHumanTurn, isFalse);
+      s.update(16);
+      expect(s.state.turn, 2, reason: '계획이 한 프레임에 끝나지 않는다');
+      var guard = 0;
+      while (!s.isHumanTurn && !s.isOver && guard++ < 5000) {
+        s.update(16);
+      }
+      expect(s.isHumanTurn || s.isOver, isTrue);
+      final log = s.match.turnLog[1];
       expect(
-        bundle.commands.whereType<FireCommand>().length,
-        lessThanOrEqualTo(2),
+        log.commands.every(
+          (c) =>
+              c is MoveCommand ||
+              c is FireCommand ||
+              c is TapCommand ||
+              c is EndTurnCommand,
+        ),
+        isTrue,
       );
     });
 
-    test('허수아비끼리 끝까지 두면 판이 끝난다', () {
-      final m = testSetup.newMatch(4);
-      runMatch(m, const DummyController(), const DummyController());
-      expect(m.state.isOver, isTrue);
+    test('AI 가 쏘기 전 조준 자세는 난이도별 생각 연출 시간만큼 보인다 (A5.2)', () {
+      final s = _humanFirst();
+      expect(s.aimShowMs, AiDials.of(AiLevel.easy).thinkMs);
+    });
+
+    test('AI 덱은 플레이어 덱과 같은 인원이다', () {
+      final m = testSetup.newMatch(
+        4,
+        deck: const ['p01_octo', 'p06_pang', 'p16_suri'],
+      );
+      expect(m.state.sides[1].crew.size, 3);
     });
   });
 }

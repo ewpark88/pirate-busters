@@ -108,14 +108,7 @@ bool onSeaHit(
   int tick,
 ) {
   final spec = p.spec;
-  if (spec.ammo == AmmoType.skip && p.bouncesLeft > 0) {
-    p
-      ..bouncesLeft -= 1
-      ..bounced = true
-      ..x = x
-      ..y = 0
-      ..vy = -p.vy * 55 ~/ 100
-      ..vx = p.vx * 85 ~/ 100;
+  if (bounceOffSea(p, x)) {
     state.events.add(
       SimEvent(SimEventKind.bounce, side: target.side, x: x, value: tick),
     );
@@ -136,6 +129,20 @@ bool onSeaHit(
     SimEvent(SimEventKind.splash, side: target.side, x: x, value: tick),
   );
   resolveSplash(target, spec: spec, x: x, events: state.events);
+  return true;
+}
+
+/// 물수제비탄이 튕길 수 있으면 수면 ([x], 0) 에서 튕긴다: 세로 속도 ×0.55 로
+/// 뒤집고 가로 ×0.85 (ADR-035 임시값). 튕겼으면 true.
+bool bounceOffSea(Projectile p, int x) {
+  if (p.spec.ammo != AmmoType.skip || p.bouncesLeft <= 0) return false;
+  p
+    ..bouncesLeft -= 1
+    ..bounced = true
+    ..x = x
+    ..y = 0
+    ..vy = -p.vy * 55 ~/ 100
+    ..vx = p.vx * 85 ~/ 100;
   return true;
 }
 

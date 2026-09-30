@@ -1,5 +1,6 @@
 import 'package:pb_sim/src/combat/ammo_rules.dart';
 import 'package:pb_sim/src/combat/flight.dart';
+import 'package:pb_sim/src/combat/hit_effects.dart';
 import 'package:pb_sim/src/combat/launch.dart';
 import 'package:pb_sim/src/match/match_state.dart';
 import 'package:pb_sim/src/match/sim_event.dart';
@@ -14,11 +15,15 @@ import 'package:pb_sim/src/projectile/shot_trace.dart';
 /// 지나야 난다. 분열탄은 [tapTick] 틱에 조각으로 갈라지고(TAP, 설계서 §4.8),
 /// 다중투하는 꼭대기에서 폭탄으로 갈라진다. 경로는 [MatchState.lastTraces] 에 남긴다
 /// (렌더 전용, 해시 밖).
+///
+/// [dry] 가 있으면 미리 계산만 한다: 효과·이벤트·경로 기록 없이 탄마다 처음 닿는
+/// 곳을 [dry] 로 알리고 그 탄을 끝낸다(물수제비 튕김·갈라짐·유도는 그대로 따른다).
 int runVolley(
   MatchState state,
   List<Projectile> shots,
   int ms, {
   int tapTick = -1,
+  void Function(Projectile p, TraceStep step, int tick)? dry,
 }) {
   final wind = state.wind * state.rules.windAccel;
   final live = <Projectile>[...shots];
@@ -40,6 +45,18 @@ int runVolley(
       final at = msAfterTicks(ms, tick);
       if (p.spec.ammo == AmmoType.homing) steerHoming(state, p, at);
       final vyBefore = p.vy;
+      if (dry != null) {
+        final step = traceStep(state, p, wind, ms, tick);
+        final bounced = step.hit == null && step.sea && bounceOffSea(p, step.x);
+        if (step.hit != null || (step.sea && !bounced) || p.isExpired) {
+          if (step.hit != null || step.sea) dry(p, step, tick);
+          done[i] = true;
+          continue;
+        }
+        final kids = _divideAt(state, p, tick, vyBefore, tapTick);
+        if (kids.isNotEmpty) _replace(state, live, done, traces, i, kids);
+        continue;
+      }
       if (stepShot(state, p, wind, ms, tick)) {
         done[i] = true;
         traces[i].add(p.x, p.y < 0 ? 0 : p.y);
@@ -64,7 +81,7 @@ int runVolley(
     }
     if (!flying) break;
   }
-  state.lastTraces = [...state.lastTraces, ...traces];
+  if (dry == null) state.lastTraces = [...state.lastTraces, ...traces];
   return last;
 }
 

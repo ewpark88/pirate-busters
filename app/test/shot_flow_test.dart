@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:pb_ai/pb_ai.dart';
 import 'package:pb_sim/pb_sim.dart';
 import 'package:pirate_busters/battle/battle_session.dart';
-import 'package:pirate_busters/battle/dummy_controller.dart';
 import 'package:pirate_busters/battle/playback.dart';
 
 import 'test_catalog.dart';
@@ -15,7 +15,7 @@ BattleSession _session(List<String> deck) {
         m,
         humanSides: const {0},
         speciesOf: testCatalog.speciesOf,
-        opponent: const DummyController(),
+        opponent: const AiController(level: AiLevel.easy),
       )..update(300);
     }
   }

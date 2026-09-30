@@ -45,7 +45,7 @@ class BattleGame extends FlameGame {
   late final FxLayer _fx;
   double _pinchStart = 1;
 
-  /// 사람이 보는 진영(허수아비전은 0, 핫시트는 지금 턴 진영).
+  /// 사람이 보는 진영(AI 전은 0, 핫시트는 지금 턴 진영).
   int get viewSide =>
       session.humanSides.length == 2 ? session.state.activeSide : 0;
 

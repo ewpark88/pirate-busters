@@ -137,9 +137,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get opponent => 'Opponent';
 
   @override
-  String get opponentDummy => 'Training dummy';
-
-  @override
   String get opponentHotseat => 'Two players (one device)';
 
   @override
@@ -411,9 +408,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tapToSplit => 'Tap to split!';
 
   @override
-  String get menuBattle => 'Battle the dummy';
-
-  @override
   String get menuHotseat => 'Two players';
 
   @override
@@ -594,4 +588,25 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get rarityMyth => 'Myth';
+
+  @override
+  String get opponentAi => 'Computer (AI)';
+
+  @override
+  String get menuBattleAi => 'Battle the AI';
+
+  @override
+  String get chooseLevel => 'Difficulty';
+
+  @override
+  String get levelEasy => 'Easy';
+
+  @override
+  String get levelNormal => 'Normal';
+
+  @override
+  String get levelHard => 'Hard';
+
+  @override
+  String get levelHell => 'Hell';
 }

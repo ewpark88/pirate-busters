@@ -8,6 +8,7 @@ library;
 export 'src/combat/flight.dart' show predictFirstHit;
 export 'src/combat/impact.dart';
 export 'src/combat/launch.dart';
+export 'src/combat/preview.dart';
 export 'src/command/command.dart';
 export 'src/hash/state_hasher.dart';
 export 'src/match/controller.dart';

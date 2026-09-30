@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart';
+import 'package:pb_ai/pb_ai.dart';
 import 'package:pb_sim/pb_sim.dart';
 import 'package:pirate_busters/battle/playback.dart';
+import 'package:pirate_busters/battle/session_views.dart';
 import 'package:pirate_busters/battle/shot_flow.dart';
 import 'package:pirate_busters/battle/ui_state.dart';
 
@@ -21,7 +23,7 @@ class BattleSession extends ChangeNotifier with SessionUiState {
 
   final Match match;
 
-  /// 사람이 두는 진영. 허수아비전은 {0}, 핫시트는 {0, 1}.
+  /// 사람이 두는 진영. AI 전은 {0}, 핫시트는 {0, 1}.
   @override
   final Set<int> humanSides;
 
@@ -46,6 +48,9 @@ class BattleSession extends ChangeNotifier with SessionUiState {
   final List<SimEvent> _cues = [];
 
   TurnBundle? _script;
+
+  /// AI 상대의 이번 턴 계획기. 프레임마다 후보를 나눠 평가한다 (BALANCE.md A5.1).
+  AiPlanner? _planner;
   int _scriptIndex = 0;
   int _turnOfClock = 1;
 
@@ -90,8 +95,9 @@ class BattleSession extends ChangeNotifier with SessionUiState {
     final c = bundle.commands[_scriptIndex];
     if (c is! FireCommand) return null;
     final left = c.t - turnMs;
-    if (left > 1200) return null;
-    return (slot: c.slot, progress: (1 - left / 1200).clamp(0.0, 1.0));
+    final window = aimShowMs;
+    if (left > window) return null;
+    return (slot: c.slot, progress: (1 - left / window).clamp(0.0, 1.0));
   }
 
   /// 쌓인 효과 이벤트를 꺼낸다.
@@ -183,6 +189,12 @@ class BattleSession extends ChangeNotifier with SessionUiState {
   }
 
   void _playScript() {
+    final ai = opponent;
+    if (_script == null && ai is AiController) {
+      final planner = _planner ??= ai.planner(state);
+      if (!planner.step()) return;
+      _script = planner.bundle;
+    }
     final bundle = _script ??= opponent?.turnFor(state);
     if (bundle == null) return;
     while (playback == null && _scriptIndex < bundle.commands.length) {
@@ -206,6 +218,7 @@ class BattleSession extends ChangeNotifier with SessionUiState {
     // 고른 진영의 턴이 끝났으면 선택을 푼다(상대 턴에 고른 것은 남는다).
     if (selectedSide != state.activeSide) selected = null;
     _script = null;
+    _planner = null;
     _scriptIndex = 0;
   }
 

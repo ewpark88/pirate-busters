@@ -2,10 +2,10 @@ import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:pb_ai/pb_ai.dart';
 import 'package:pirate_busters/app/providers.dart';
 import 'package:pirate_busters/battle/battle_session.dart';
 import 'package:pirate_busters/battle/battle_setup.dart';
-import 'package:pirate_busters/battle/dummy_controller.dart';
 import 'package:pirate_busters/game/battle_game.dart';
 import 'package:pirate_busters/input/field_gestures.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
@@ -14,9 +14,17 @@ import 'package:pirate_busters/ui/hud/battle_hud.dart';
 /// 전투 화면: 전장(Flame) 위에 HUD(Flutter 위젯)를 겹친다 (설계서 §13.4).
 /// 전장의 게임 루프가 매 프레임 [BattleSession] 을 진행한다.
 class BattleScreen extends ConsumerStatefulWidget {
-  const BattleScreen({super.key, this.seed = 20260930, this.hotseat = false});
+  const BattleScreen({
+    super.key,
+    this.seed = 20260930,
+    this.hotseat = false,
+    this.level = AiLevel.normal,
+  });
 
   final int seed;
+
+  /// AI 상대 난이도 (설계서 §5.2).
+  final AiLevel level;
 
   /// 한 기기에서 두 사람이 번갈아 둔다(개발용, ADR-029).
   final bool hotseat;
@@ -47,7 +55,12 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
       ),
       humanSides: hotseat ? const {0, 1} : const {0},
       speciesOf: catalog.speciesOf,
-      opponent: hotseat ? null : const DummyController(),
+      opponent: hotseat
+          ? null
+          : AiController(
+              level: widget.level,
+              personality: Personality.values[seed % Personality.values.length],
+            ),
     );
     _game = BattleGame(_session, sound: ref.read(soundServiceProvider));
   }
@@ -65,7 +78,7 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
   }
 
   void _pause(bool paused) {
-    // 일시정지는 사람과 허수아비 판에서만 쓴다 (설계서 §13.4).
+    // 일시정지는 AI 전에서만 쓴다 (설계서 §13.4).
     setState(() => _paused = paused);
     // 핫시트는 두 사람이 함께 두므로 창을 열어도 턴 시계를 멈추지 않는다.
     _game.paused = paused && _session.humanSides.length < 2;

@@ -32,7 +32,6 @@
   "languageKorean": "한국어",
   "languageEnglish": "English",
   "opponent": "상대",
-  "opponentDummy": "허수아비",
   "opponentHotseat": "두 사람 (한 기기)",
   "resultWin": "승리!",
   "resultLose": "패배",
@@ -109,7 +108,6 @@
   "rangeVeryLong": "매우 긺",
   "outOfRange": "사거리 밖",
   "tapToSplit": "탭해서 분열!",
-  "menuBattle": "허수아비와 해전",
   "menuHotseat": "둘이서 해전",
   "menuShipyard": "조선소",
   "menuCrew": "선원",
@@ -163,5 +161,12 @@
   "rarityRare": "희귀",
   "rarityHero": "영웅",
   "rarityLegend": "전설",
-  "rarityMyth": "신화"
+  "rarityMyth": "신화",
+  "opponentAi": "컴퓨터 (AI)",
+  "menuBattleAi": "AI 와 해전",
+  "chooseLevel": "난이도",
+  "levelEasy": "쉬움",
+  "levelNormal": "보통",
+  "levelHard": "어려움",
+  "levelHell": "지옥"
 }

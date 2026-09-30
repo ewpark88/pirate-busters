@@ -1,3 +1,4 @@
+import 'package:pb_ai/pb_ai.dart';
 import 'package:pb_sim/pb_sim.dart';
 import 'package:pirate_busters/battle/battle_session.dart';
 import 'package:pirate_busters/battle/shot_path.dart';
@@ -23,5 +24,12 @@ extension BattleSessionViews on BattleSession {
       dx,
       state.rules.turnTimeFor(state.turn) - at,
     );
+  }
+
+  /// 상대가 쏘기 전 조준 자세를 보여주는 시간: AI 는 난이도별 생각 연출 시간
+  /// (BALANCE.md A5.2), 그 밖에는 1.2초.
+  int get aimShowMs {
+    final ai = opponent;
+    return ai is AiController ? AiDials.of(ai.level).thinkMs : 1200;
   }
 }

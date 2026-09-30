@@ -290,12 +290,6 @@ abstract class AppLocalizations {
   /// **'Opponent'**
   String get opponent;
 
-  /// No description provided for @opponentDummy.
-  ///
-  /// In en, this message translates to:
-  /// **'Training dummy'**
-  String get opponentDummy;
-
   /// No description provided for @opponentHotseat.
   ///
   /// In en, this message translates to:
@@ -752,12 +746,6 @@ abstract class AppLocalizations {
   /// **'Tap to split!'**
   String get tapToSplit;
 
-  /// No description provided for @menuBattle.
-  ///
-  /// In en, this message translates to:
-  /// **'Battle the dummy'**
-  String get menuBattle;
-
   /// No description provided for @menuHotseat.
   ///
   /// In en, this message translates to:
@@ -1081,6 +1069,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Myth'**
   String get rarityMyth;
+
+  /// No description provided for @opponentAi.
+  ///
+  /// In en, this message translates to:
+  /// **'Computer (AI)'**
+  String get opponentAi;
+
+  /// No description provided for @menuBattleAi.
+  ///
+  /// In en, this message translates to:
+  /// **'Battle the AI'**
+  String get menuBattleAi;
+
+  /// No description provided for @chooseLevel.
+  ///
+  /// In en, this message translates to:
+  /// **'Difficulty'**
+  String get chooseLevel;
+
+  /// No description provided for @levelEasy.
+  ///
+  /// In en, this message translates to:
+  /// **'Easy'**
+  String get levelEasy;
+
+  /// No description provided for @levelNormal.
+  ///
+  /// In en, this message translates to:
+  /// **'Normal'**
+  String get levelNormal;
+
+  /// No description provided for @levelHard.
+  ///
+  /// In en, this message translates to:
+  /// **'Hard'**
+  String get levelHard;
+
+  /// No description provided for @levelHell.
+  ///
+  /// In en, this message translates to:
+  /// **'Hell'**
+  String get levelHell;
 }
 
 class _AppLocalizationsDelegate

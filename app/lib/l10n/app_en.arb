@@ -84,7 +84,6 @@
   "languageKorean": "한국어",
   "languageEnglish": "English",
   "opponent": "Opponent",
-  "opponentDummy": "Training dummy",
   "opponentHotseat": "Two players (one device)",
   "resultWin": "Victory!",
   "resultLose": "Defeat",
@@ -266,7 +265,6 @@
   "rangeVeryLong": "Far",
   "outOfRange": "Out of range",
   "tapToSplit": "Tap to split!",
-  "menuBattle": "Battle the dummy",
   "menuHotseat": "Two players",
   "menuShipyard": "Shipyard",
   "menuCrew": "Crew",
@@ -402,5 +400,12 @@
   "rarityRare": "Rare",
   "rarityHero": "Hero",
   "rarityLegend": "Legend",
-  "rarityMyth": "Myth"
+  "rarityMyth": "Myth",
+  "opponentAi": "Computer (AI)",
+  "menuBattleAi": "Battle the AI",
+  "chooseLevel": "Difficulty",
+  "levelEasy": "Easy",
+  "levelNormal": "Normal",
+  "levelHard": "Hard",
+  "levelHell": "Hell"
 }

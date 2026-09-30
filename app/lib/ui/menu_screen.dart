@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pb_ai/pb_ai.dart';
 import 'package:pirate_busters/crew/crew_screen.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
 import 'package:pirate_busters/shipyard/shipyard_screen.dart';
@@ -38,10 +39,16 @@ class MenuScreen extends StatelessWidget {
               Wrap(
                 alignment: WrapAlignment.center,
                 children: [
-                  button(
-                    l10n.menuBattle,
-                    Icons.sports_esports,
-                    const BattleScreen(),
+                  Padding(
+                    padding: const EdgeInsets.all(6),
+                    child: FilledButton.icon(
+                      onPressed: () => _chooseLevel(context, open),
+                      icon: const Icon(Icons.sports_esports),
+                      label: Text(l10n.menuBattleAi),
+                      style: FilledButton.styleFrom(
+                        minimumSize: const Size(220, 48),
+                      ),
+                    ),
                   ),
                   button(
                     l10n.menuHotseat,
@@ -61,5 +68,32 @@ class MenuScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  /// AI 난이도 4단계 고르기 (설계서 §5.2).
+  Future<void> _chooseLevel(
+    BuildContext context,
+    void Function(Widget screen) open,
+  ) async {
+    final l10n = AppLocalizations.of(context);
+    final level = await showDialog<AiLevel>(
+      context: context,
+      builder: (context) => SimpleDialog(
+        title: Text(l10n.chooseLevel),
+        children: [
+          for (final level in AiLevel.values)
+            SimpleDialogOption(
+              onPressed: () => Navigator.of(context).pop(level),
+              child: Text(switch (level) {
+                AiLevel.easy => l10n.levelEasy,
+                AiLevel.normal => l10n.levelNormal,
+                AiLevel.hard => l10n.levelHard,
+                AiLevel.hell => l10n.levelHell,
+              }),
+            ),
+        ],
+      ),
+    );
+    if (level != null) open(BattleScreen(level: level));
   }
 }

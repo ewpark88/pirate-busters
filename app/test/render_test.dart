@@ -7,10 +7,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:pb_ai/pb_ai.dart';
 import 'package:pirate_busters/app/providers.dart';
 import 'package:pirate_busters/audio/sound_service.dart';
 import 'package:pirate_busters/battle/battle_session.dart';
-import 'package:pirate_busters/battle/dummy_controller.dart';
 import 'package:pirate_busters/data/fleet_store.dart';
 import 'package:pirate_busters/game/anim/anim_data.dart';
 import 'package:pirate_busters/game/battle_game.dart';
@@ -155,7 +155,7 @@ void main() {
       testSetup.newMatch(7),
       humanSides: const {0},
       speciesOf: testCatalog.speciesOf,
-      opponent: const DummyController(),
+      opponent: const AiController(level: AiLevel.easy),
     );
     final sound = _RecordingSound();
     // 앞 테스트의 가짜 시간 영역에서 만든 자산 캐시(Future)는 여기서 끝나지 않는다.

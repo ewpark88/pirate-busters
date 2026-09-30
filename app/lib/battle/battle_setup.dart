@@ -13,8 +13,14 @@ class BattleSetup {
   /// 시작 해적 (설계서 §4.2, §4.6).
   static const List<String> starterDeck = ['p01_octo', 'p36_tok'];
 
-  /// 허수아비의 덱: 일반 2명 (개발 계획서 M4 허수아비, ADR-029).
-  static const List<String> dummyDeck = ['p06_pang', 'p16_suri'];
+  /// AI 상대의 덱 후보: 일반 4명. 플레이어 덱과 같은 인원만큼 앞에서부터 태운다.
+  /// 캠페인 적 덱은 M7 (§6.1).
+  static const List<String> aiDeck = [
+    'p06_pang',
+    'p16_suri',
+    'p26_polly',
+    'p11_finn',
+  ];
 
   /// 플레이어 레벨 1 출전 코스트 한도 (설계서 §4.5). 레벨은 R4 메타에서 붙는다.
   static final int costLimit = costLimitForLevel(1);
@@ -30,7 +36,7 @@ class BattleSetup {
     Blueprint? blueprint,
     List<String> deck = starterDeck,
     Blueprint? enemyBlueprint,
-    List<String> enemyDeck = dummyDeck,
+    List<String>? enemyDeck,
     MatchRules rules = const MatchRules(),
   }) => Match.start(
     seed: seed,
@@ -39,7 +45,7 @@ class BattleSetup {
       blueprint ?? defaultBlueprint,
       enemyBlueprint ?? defaultBlueprint,
     ],
-    decks: [deck, enemyDeck],
+    decks: [deck, enemyDeck ?? aiDeck.take(deck.length).toList()],
     costLimits: [costLimit, costLimit],
     pirates: catalog.pirates,
   );

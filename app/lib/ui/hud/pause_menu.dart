@@ -5,7 +5,7 @@ import 'package:pirate_busters/l10n/app_localizations.dart';
 import 'package:pirate_busters/settings/language.dart';
 import 'package:pirate_busters/ui/hud/hud_style.dart';
 
-/// 일시정지 창: 언어, 상대(허수아비·두 사람), 항복 (설계서 §13.4, §14.1).
+/// 일시정지 창: 언어, 상대(AI·두 사람), 항복 (설계서 §13.4, §14.1).
 class PauseMenu extends ConsumerWidget {
   const PauseMenu({
     required this.hotseat,
@@ -73,7 +73,7 @@ class PauseMenu extends ConsumerWidget {
                 spacing: 6,
                 children: [
                   ChoiceChip(
-                    label: Text(l10n.opponentDummy),
+                    label: Text(l10n.opponentAi),
                     selected: !hotseat,
                     onSelected: (_) => onOpponent(false),
                   ),
