@@ -46,6 +46,7 @@ class Blueprint {
     if (cost > hull.buildPoints) {
       throw ArgumentError('건조 포인트 초과: $cost > ${hull.buildPoints}');
     }
+    _checkKeel(hull, sorted);
     _checkCabins(hull, sorted, cabins);
     return Blueprint._(
       hull,
@@ -90,6 +91,42 @@ class Blueprint {
       for (final c in cabins) [c.x, c.y],
     ],
   };
+
+  /// 모든 블록이 용골(y = 0 줄)과 상하좌우로 이어져 있어야 한다 (설계서 §3.4).
+  static void _checkKeel(HullSpec hull, List<BlockCell> sorted) {
+    final w = hull.width;
+    final filled = List<bool>.filled(w * hull.height, false);
+    for (final c in sorted) {
+      filled[c.y * w + c.x] = true;
+    }
+    final seen = List<bool>.filled(filled.length, false);
+    final queue = <int>[
+      for (var x = 0; x < w; x++)
+        if (filled[x]) x,
+    ];
+    if (queue.isEmpty) throw ArgumentError('용골 줄(y = 0)에 블록이 없다');
+    for (final i in queue) {
+      seen[i] = true;
+    }
+    for (var head = 0; head < queue.length; head++) {
+      final i = queue[head];
+      final x = i % w;
+      final y = i ~/ w;
+      for (final (nx, ny) in [(x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1)]) {
+        if (nx < 0 || nx >= w || ny < 0 || ny >= hull.height) continue;
+        final j = ny * w + nx;
+        if (filled[j] && !seen[j]) {
+          seen[j] = true;
+          queue.add(j);
+        }
+      }
+    }
+    for (final c in sorted) {
+      if (!seen[c.y * w + c.x]) {
+        throw ArgumentError('용골과 이어지지 않은 블록: (${c.x}, ${c.y})');
+      }
+    }
+  }
 
   static void _checkCabins(
     HullSpec hull,

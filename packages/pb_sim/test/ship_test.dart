@@ -39,6 +39,7 @@ void main() {
       const [
         BlockCell(3, 1, BlockMaterial.iron),
         BlockCell(0, 0, BlockMaterial.oak),
+        BlockCell(3, 0, BlockMaterial.oak),
         BlockCell(5, 0, BlockMaterial.pine),
         BlockCell(6, 0, BlockMaterial.pine),
       ],
@@ -49,10 +50,10 @@ void main() {
         CabinCell(6, 0),
       ],
     );
-    expect(b.cost, 8);
+    expect(b.cost, 10);
     expect(
       [for (final c in b.cells) '${c.x},${c.y}'],
-      ['0,0', '5,0', '6,0', '3,1'],
+      ['0,0', '3,0', '5,0', '6,0', '3,1'],
     );
     // 선실은 입력 순서가 슬롯 번호다.
     expect(
@@ -65,6 +66,59 @@ void main() {
       ],
     );
     expect(sampleBlueprint().cost, 57);
+  });
+
+  test('용골과 이어지지 않은 블록이나 빈 용골 줄은 거부한다 (설계서 §3.4)', () {
+    const cabins = [
+      CabinCell(0, 0),
+      CabinCell(1, 0),
+      CabinCell(2, 0),
+      CabinCell(3, 0),
+    ];
+    final keel = [
+      for (var x = 0; x < 4; x++) BlockCell(x, 0, BlockMaterial.oak),
+    ];
+    expect(
+      () => Blueprint(HullSpec.sloop, [
+        ...keel,
+        const BlockCell(8, 2, BlockMaterial.pine),
+      ], cabins: cabins),
+      throwsArgumentError,
+    );
+    expect(
+      () => Blueprint(
+        HullSpec.sloop,
+        const [
+          BlockCell(0, 1, BlockMaterial.oak),
+          BlockCell(1, 1, BlockMaterial.oak),
+          BlockCell(2, 1, BlockMaterial.oak),
+          BlockCell(3, 1, BlockMaterial.oak),
+        ],
+        cabins: const [
+          CabinCell(0, 1),
+          CabinCell(1, 1),
+          CabinCell(2, 1),
+          CabinCell(3, 1),
+        ],
+      ),
+      throwsArgumentError,
+    );
+    // 대각선은 이어진 것이 아니다.
+    expect(
+      () => Blueprint(HullSpec.sloop, [
+        ...keel,
+        const BlockCell(4, 1, BlockMaterial.pine),
+      ], cabins: cabins),
+      throwsArgumentError,
+    );
+    expect(
+      Blueprint(HullSpec.sloop, [
+        ...keel,
+        const BlockCell(3, 1, BlockMaterial.pine),
+        const BlockCell(4, 1, BlockMaterial.pine),
+      ], cabins: cabins).cells,
+      hasLength(6),
+    );
   });
 
   test('격자 밖 블록·같은 칸 중복·건조 포인트 초과는 거부한다', () {

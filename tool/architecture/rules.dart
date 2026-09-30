@@ -48,6 +48,7 @@ const Map<String, String> _forbiddenIdentifiers = {
   'DateTime': '실시간 시계 금지 — 틱 번호를 쓴다',
   'Stopwatch': '실시간 시계 금지 — 틱 번호를 쓴다',
   'identityHashCode': '실행마다 달라지는 해시 금지',
+  'hashCode': '실행마다 달라질 수 있는 Object.hashCode 금지 — 상태 해시는 FNV-1a',
 };
 
 final RegExp _importRe = RegExp(
@@ -56,7 +57,7 @@ final RegExp _importRe = RegExp(
 );
 final RegExp _identRe = RegExp(r'[A-Za-z_$][A-Za-z0-9_$]*');
 final RegExp _floatLiteralRe = RegExp(
-  r'(?<![A-Za-z0-9_$.])\d+(?:\.\d+[eE]?|[eE][+-]?\d)',
+  r'(?<![A-Za-z0-9_$.])(?:\d+(?:\.\d+[eE]?|[eE][+-]?\d)|\.\d)',
 );
 
 /// [relPath](워크스페이스 기준, 슬래시 구분) 파일의 위반 목록.
