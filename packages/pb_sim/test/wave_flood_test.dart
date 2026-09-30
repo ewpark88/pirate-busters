@@ -42,14 +42,14 @@ void main() {
   });
 
   group('흘수선과 침수 (설계서 §2.5, §3.4)', () {
-    test('흘수선 = (총무게 − 부력재) ÷ (선형 폭 × 4): 샘플 슬루프는 약 1.04칸', () {
+    test('흘수선 = (총무게 − 부력재) ÷ (선형 폭 × 4): 샘플 슬루프는 약 0.9칸', () {
       final side = newSampleMatch(1).state.sides[0];
       expect(
         SideState.waterlineOf(sampleBlueprint(), const MatchRules()),
-        1041,
+        895,
       );
-      expect(side.waterline, 1041);
-      expect(side.frame.baseY, -1041);
+      expect(side.waterline, 895);
+      expect(side.frame.baseY, -895);
     });
 
     test('잠긴 깊이로 줄마다 완전히·반쯤·안 잠김을 가른다', () {
@@ -74,14 +74,15 @@ void main() {
 
     test('완전히 잠긴 구멍은 턴마다 +3%p, 반쯤 잠긴 구멍은 +1.5%p', () {
       const rules = MatchRules();
-      final side = newSampleMatch(1).state.sides[0];
+      // 침수 50% 로 1칸 내려앉아 잠긴 깊이 1.895칸: 맨 아래 줄은 완전히, 둘째 줄은 반쯤.
+      final side = newSampleMatch(1).state.sides[0]..flood = 500;
       side.grid
         ..damage(3, 0, 100)
         ..damage(4, 1, 100);
       expect(floodGain(side, rules, 1), 30 + 15);
       expect(floodGain(side, rules, 27), (30 + 15) * 3 ~/ 2);
       expect(applyFlood(side, rules, 1), 45);
-      expect(side.flood, 45);
+      expect(side.flood, 545);
     });
 
     test('침수량은 100% 에서 멈추고, 그만큼 배가 내려앉는다(100% 에 2칸)', () {
@@ -93,14 +94,15 @@ void main() {
       side.flood = 990;
       applyFlood(side, rules, 1);
       expect(side.flood, fullFlood);
-      expect(side.draft, 1041 + 2000);
+      expect(side.draft, 895 + 2000);
       side.flood = 500;
-      expect(side.draft, 1041 + 1000);
+      expect(side.draft, 895 + 1000);
     });
 
     test('뱃머리 쪽만 뚫리면 뱃머리가 내려가고, 기울기는 ±6° 에서 멈춘다', () {
       const rules = MatchRules();
-      final side = newSampleMatch(1).state.sides[0];
+      // 둘째 줄까지 물에 잠기게 1칸 내려앉힌다.
+      final side = newSampleMatch(1).state.sides[0]..flood = 500;
       side.grid.damage(10, 0, 100);
       expect(floodTilt(side, rules), -1000);
       side.grid.damage(1, 0, 100);
@@ -118,11 +120,12 @@ void main() {
       m.state.sides[me].grid.damage(3, 0, 100);
       m.state.sides[1 - me].grid.damage(3, 0, 100);
       m.apply(const EndTurnCommand(t: 10));
-      expect(m.state.sides[me].flood, 30);
+      // 샘플 배 맨 아래 줄은 반쯤 잠겨 +1.5%p.
+      expect(m.state.sides[me].flood, 15);
       expect(m.state.sides[1 - me].flood, 0);
       expect(
         m.state.events.where((e) => e.kind == SimEventKind.flood).single.value,
-        30,
+        15,
       );
     });
 

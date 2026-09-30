@@ -58,7 +58,8 @@ MatchResult _versus(
   final enemy = s.sides[1];
   final grid = enemy.grid;
   for (var y = 0; y < grid.height; y++) {
-    if ((y + 1) * cellUnit <= enemy.draft) continue;
+    // 수면 위로 반 칸 이상 드러난 줄만 노린다(겨우 드러난 칸은 탄이 닿기 어렵다).
+    if ((y + 1) * cellUnit <= enemy.draft + cellUnit ~/ 2) continue;
     for (var x = grid.width - 1; x >= 0; x--) {
       if (grid.hasBlock(x, y)) return (x, y);
     }

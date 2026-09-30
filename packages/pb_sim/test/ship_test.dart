@@ -14,9 +14,9 @@ void main() {
         m.name: [m.durability, m.weight, m.cost],
     };
     expect(table, {
-      'pine': [40, 1000, 1],
+      'pine': [40, 500, 1],
       'oak': [80, 2000, 2],
-      'iron': [150, 4000, 4],
+      'iron': [160, 5000, 4],
       'cork': [30, -2000, 3],
       'net': [20, 500, 1],
     });
@@ -197,11 +197,11 @@ void main() {
     final g = ShipGrid.fromBlueprint(sampleBlueprint());
     expect(g.cellCount, 96);
     expect(g.materialAt(2, 2), BlockMaterial.iron);
-    expect(g.hpAt(2, 2), 150);
+    expect(g.hpAt(2, 2), 160);
     expect(g.materialAt(0, 7), isNull);
     expect(g.hpAt(0, 7), 0);
     expect(g.blockCount, 37);
-    expect(g.totalHp, 12 * 80 + 12 * 40 + 30 + 2 * 150 + 6 * 40 + 4 * 20);
+    expect(g.totalHp, 12 * 80 + 12 * 40 + 30 + 2 * 160 + 6 * 40 + 4 * 20);
     expect(g.rawMaterials[g.indexOf(1, 2)], BlockMaterial.cork.index);
   });
 }
