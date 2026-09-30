@@ -38,12 +38,16 @@ ShotPlayback resolvedShot(
   elapsedMs: elapsedMs,
 );
 
-/// 기다리던 분열탄 [p] 를 [tick] 틱에 갈라지게(0 이면 안 갈라지게) `TAP` 으로
-/// 계산하고, 같은 시각에서 계산된 경로로 잇는 연출을 돌려준다.
-ShotPlayback resolveSplit(Match match, ShotPlayback p, int tick) {
+/// 기다리던 분열탄 [p] 를 [tick] 틱에 갈라지게 `TAP` 으로 계산하고(null 이면
+/// 탭 없이 안 갈라진 채), 같은 시각에서 계산된 경로로 잇는 연출을 돌려준다.
+ShotPlayback resolveSplit(Match match, ShotPlayback p, int? tick) {
   final state = match.state;
   final start = state.events.length;
-  match.apply(TapCommand(t: p.fireT, slot: p.slot, tick: tick));
+  if (tick == null) {
+    match.settlePending();
+  } else {
+    match.apply(TapCommand(t: p.fireT, slot: p.slot, tick: tick));
+  }
   return resolvedShot(
     state,
     side: p.side,

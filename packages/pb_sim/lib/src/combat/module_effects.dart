@@ -59,6 +59,8 @@ void settleModules(SideState ship, List<SimEvent> events) {
         _explode(ship, m, _fuelTankBlast, events);
       case ModuleKind.mast:
         _breakMast(ship, m, events);
+        // 무너진 블록 위의 모듈도 부서진다: 처음부터 다시 훑는다.
+        settleModules(ship, events);
       case ModuleKind.gunPort ||
           ModuleKind.pump ||
           ModuleKind.workshop ||

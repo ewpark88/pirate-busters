@@ -1,5 +1,4 @@
 import 'package:pb_sim/src/combat/ammo_rules.dart';
-import 'package:pb_sim/src/combat/effect_runner.dart';
 import 'package:pb_sim/src/combat/flight.dart';
 import 'package:pb_sim/src/combat/launch.dart';
 import 'package:pb_sim/src/combat/module_effects.dart';
@@ -10,6 +9,7 @@ import 'package:pb_sim/src/match/judge.dart';
 import 'package:pb_sim/src/match/match_state.dart';
 import 'package:pb_sim/src/match/rules.dart';
 import 'package:pb_sim/src/match/sim_event.dart';
+import 'package:pb_sim/src/match/turn_start.dart';
 import 'package:pb_sim/src/math/fx.dart';
 import 'package:pb_sim/src/math/trig.dart';
 import 'package:pb_sim/src/pirate/ammo.dart';
@@ -71,6 +71,14 @@ class Match {
 
   /// 분열탄이 날아가며 TAP 을 기다리는 중이면 그 해적 슬롯, 아니면 −1.
   int get pendingSlot => _pending?.shots.first.slot ?? -1;
+
+  /// 기다리던 분열탄을 갈라지지 않은 채 지금 계산한다(커맨드는 남기지 않는다).
+  /// 다음 커맨드가 와서 계산될 때와 결과가 같다(발사 시각으로 계산하므로).
+  /// 컴퓨터가 탭하지 않을 때, 사람이 탭하지 않고 착탄할 때 쓴다.
+  void settlePending() {
+    final pending = _pending;
+    if (pending != null) _resolve(pending, -1);
+  }
 
   /// 지금 턴의 커맨드 하나를 적용한다. 판이 끝났으면 무시한다.
   ///
@@ -153,32 +161,9 @@ class Match {
     return false;
   }
 
-  /// 턴 시작: 폭풍 타임 시작(양쪽 연료·후퇴 한계) → 내 연료 회복 → 해적 복귀.
   void _beginTurn() {
     _turnOpen = true;
-    final side = state.activeSide;
-    final turn = state.turn;
-    final rules = state.rules;
-    state.events
-      ..clear()
-      ..add(SimEvent(SimEventKind.turnStart, side: side, value: turn));
-    if (turn == rules.stormStartTurn) {
-      for (final s in state.sides) {
-        final moved = startStorm(s, rules, turn);
-        if (moved != 0) {
-          state.events.add(
-            SimEvent(SimEventKind.move, side: s.side, x: s.bowX, value: moved),
-          );
-        }
-      }
-      state.events.add(
-        SimEvent(SimEventKind.stormStart, side: side, value: turn),
-      );
-    }
-    refuel(state.sides[side], rules.fuelPerTurn);
-    state.sides[side].crew.startOwnTurn(side, state.events);
-    runTurnEffects(state);
-    judgeInstant(state);
+    beginTurn(state);
   }
 
   void _move(MoveCommand c, int at) {

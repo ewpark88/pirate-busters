@@ -1,4 +1,6 @@
 import 'package:pb_sim/pb_sim.dart';
+import 'package:pb_sim/src/combat/ammo_rules.dart';
+import 'package:pb_sim/src/combat/hit_effects.dart';
 import 'package:test/test.dart';
 
 import 'aim.dart';
@@ -109,6 +111,18 @@ void main() {
       expect(commands.whereType<FireCommand>(), hasLength(1));
       expect(commands.last, isA<EndTurnCommand>());
       expect(_of(m, SimEventKind.divide), isEmpty);
+    });
+
+    test('기다리던 분열탄을 지금 계산해도 다음 커맨드에서 계산한 것과 해시가 같다', () {
+      final a = _duel(uni)
+        ..apply(_atCabin(_duel(uni)))
+        ..settlePending();
+      expect(a.pendingSlot, -1);
+      a.apply(const EndTurnCommand(t: 9000));
+      final b = _duel(uni)
+        ..apply(_atCabin(_duel(uni)))
+        ..apply(const EndTurnCommand(t: 9000));
+      expect(hashMatchState(a.state), hashMatchState(b.state));
     });
 
     test('분열 조각 피해는 합계 140% 를 4조각에 나눈다', () {
@@ -318,5 +332,89 @@ void main() {
     // 시작 간격 28칸: 짧음(14칸)은 밖, 긺(42칸)은 안.
     expect(isOutOfRange(m.state, 0, 0), isTrue);
     expect(isOutOfRange(m.state, 0, 1), isFalse);
+  });
+
+  group('거리에 따른 계열 상성 (설계서 §2.6, BALANCE.md A2.6)', () {
+    /// 두 배를 같은 거리만큼 옮겨 뱃머리 간격을 [gap] 칸으로.
+    void setGap(Match m, int gap) {
+      final now = (m.state.sides[0].bowX - m.state.sides[1].bowX).abs();
+      for (final s in m.state.sides) {
+        s.offset += (now - gap * cellUnit) ~/ 2;
+      }
+    }
+
+    List<Projectile> volley(PirateSpec spec, int gap) {
+      final m = _duel(spec);
+      setGap(m, gap);
+      return launchVolley(
+        m.state,
+        slot: 0,
+        angle: 30000,
+        power: 9000,
+        ms: 0,
+      );
+    }
+
+    test('간격 16칸 이하 가까움, 36칸 이상 멂', () {
+      final m = _duel(testPirate('x'));
+      setGap(m, 16);
+      expect(reachOf(m.state), Reach.near);
+      setGap(m, 17);
+      expect(reachOf(m.state), Reach.mid);
+      setGap(m, 36);
+      expect(reachOf(m.state), Reach.far);
+    });
+
+    test('직사: 가까우면 피해 +20%, 멀면 −20% 에 매치 난수로 각도가 흔들린다', () {
+      final direct = _ammoPirate(
+        AmmoType.explosive,
+        value: 50,
+        family: Family.direct,
+        blockDamage: 60,
+        pirateDamage: 100,
+      );
+      expect(volley(direct, 16).single.spec.blockDamage, 72);
+      expect(volley(direct, 28).single.spec.blockDamage, 60);
+      expect(volley(direct, 36).single.spec.pirateDamage, 80);
+      // 먼 거리 흔들림은 매치 난수를 쓴다: 같은 시드면 같은 각도.
+      final a = volley(direct, 40).single;
+      final b = volley(direct, 40).single;
+      expect([a.vx, a.vy], [b.vx, b.vy]);
+      final lob = volley(_ammoPirate(AmmoType.explosive, value: 50), 40);
+      expect(lob.single.spec.blockDamage, 40, reason: '투척은 거리 영향 없음');
+    });
+
+    test('관통: 가까우면 +1칸, 멀면 −1칸 (최소 1)', () {
+      final finn = _ammoPirate(AmmoType.pierce, value: 2);
+      expect(volley(finn, 16).single.pierceLeft, 3);
+      expect(volley(finn, 28).single.pierceLeft, 2);
+      expect(volley(finn, 36).single.pierceLeft, 1);
+    });
+
+    test('설치탄: 멀면 도달에 1턴 더 걸린다', () {
+      const mine = PirateSpec(
+        id: 'far_mine',
+        rarity: Rarity.common,
+        hp: 300,
+        cooldownTurns: 0,
+        blockDamage: 40,
+        pirateDamage: 50,
+        blastRadius: 1,
+        range: RangeGrade.veryLong,
+        family: Family.underwater,
+        ammo: AmmoType.mine,
+        ammoValue: 1,
+        ammoValue2: 20,
+      );
+      int delay(int gap) {
+        final m = _duel(mine);
+        setGap(m, gap);
+        m.apply(_atCabin(m));
+        return m.state.effects.single.turnsLeft;
+      }
+
+      expect(delay(28), 1);
+      expect(delay(40), 2);
+    });
   });
 }

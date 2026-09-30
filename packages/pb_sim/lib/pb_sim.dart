@@ -5,6 +5,7 @@
 /// (`tool/check_architecture.dart` 가 검사한다).
 library;
 
+export 'src/combat/flight.dart' show predictFirstHit;
 export 'src/combat/impact.dart';
 export 'src/combat/launch.dart';
 export 'src/command/command.dart';

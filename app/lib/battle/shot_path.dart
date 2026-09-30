@@ -28,9 +28,8 @@ class ShotPath {
     return ShotPath._(xs, ys);
   }
 
-  /// [ShotPath.predict] 와 같지만 상대 배(블록·드러난 해적)에 처음 닿는 곳이나
-  /// 해수면에서 끝난다. 시뮬레이션의 비행 판정(`stepShot`)과 같은 격자 추적을 쓴다.
-  /// 계산을 미룬 분열탄이 탭 없이 떨어질 틱을 알 때 쓴다(렌더 전용).
+  /// 처음 닿는 곳(상대 배 또는 해수면)에서 끝나는 예측. 판정과 같은
+  /// `pb_sim` 의 [predictFirstHit] 를 쓴다(렌더 전용, 분열탄 탭 대기).
   factory ShotPath.predictToHit(
     MatchState state, {
     required int slot,
@@ -38,44 +37,14 @@ class ShotPath {
     required int power,
     required int ms,
   }) {
-    final p = launchShot(state, slot: slot, angle: angle, power: power, ms: ms);
-    final wind = state.wind * state.rules.windAccel;
-    final target = state.sides[1 - p.side];
-    final grid = target.grid;
-    final xs = <int>[p.x];
-    final ys = <int>[p.y];
-    while (!p.isExpired) {
-      final x0 = p.x;
-      final y0 = p.y;
-      p.advance(wind);
-      var x1 = p.x;
-      var y1 = p.y;
-      final sea = y1 < 0;
-      if (sea) {
-        x1 = y0 <= 0 ? x0 : x0 + roundDiv((x1 - x0) * y0, y0 - y1);
-        y1 = 0;
-      }
-      final at = msAfterTicks(ms, p.age);
-      final (lx0, ly0) = toShipLocal(state, target.side, at, x0, y0);
-      final (lx1, ly1) = toShipLocal(state, target.side, at, x1, y1);
-      final hit = traceCells(
-        lx0,
-        ly0,
-        lx1,
-        ly1,
-        (cx, cy) => grid.hasBlock(cx, cy) || target.isExposedPirateAt(cx, cy),
-      );
-      if (hit != null) {
-        final (wx, wy) = fromShipLocal(state, target.side, at, hit.x, hit.y);
-        xs.add(wx);
-        ys.add(wy);
-        break;
-      }
-      xs.add(x1);
-      ys.add(y1);
-      if (sea) break;
-    }
-    return ShotPath._(xs, ys);
+    final p = predictFirstHit(
+      state,
+      slot: slot,
+      angle: angle,
+      power: power,
+      ms: ms,
+    );
+    return ShotPath._(p.xs, p.ys);
   }
 
   /// 틱 0(발사)부터의 위치.

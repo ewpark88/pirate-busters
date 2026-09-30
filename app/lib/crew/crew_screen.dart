@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pb_data/pb_data.dart';
+import 'package:pb_sim/pb_sim.dart';
 import 'package:pirate_busters/app/providers.dart';
 import 'package:pirate_busters/battle/battle_setup.dart';
 import 'package:pirate_busters/crew/crew_widgets.dart';
@@ -20,13 +21,15 @@ class CrewScreen extends ConsumerStatefulWidget {
 
 class _CrewScreenState extends ConsumerState<CrewScreen> {
   late final List<String?> _slots;
+  late final HullSpec _hull;
 
   @override
   void initState() {
     super.initState();
     final fleet = ref.read(fleetStoreProvider);
     final hull = fleet.blueprint(fleet.activeSlot)?.hull;
-    final size = hull?.cabinSlots ?? 4;
+    _hull = hull ?? HullSpec.sloop;
+    final size = _hull.cabinSlots;
     final deck = fleet.deck ?? BattleSetup.starterDeck;
     _slots = [for (var i = 0; i < size; i++) i < deck.length ? deck[i] : null];
   }
@@ -44,7 +47,9 @@ class _CrewScreenState extends ConsumerState<CrewScreen> {
     final from = next.indexOf(id);
     if (from >= 0) next[from] = next[slot];
     next[slot] = id;
-    return _costOf(next.whereType<String>()) <= BattleSetup.costLimit;
+    final deck = next.whereType<String>().toList();
+    final catalog = ref.read(gameCatalogProvider).pirates;
+    return deckProblem(_hull, catalog, deck, BattleSetup.costLimit) == null;
   }
 
   void _place(String id, int slot) {

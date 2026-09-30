@@ -156,13 +156,13 @@ class BattleSession extends ChangeNotifier with SessionUiState {
   /// 탄 연출 한 프레임: 틱이 온 효과를 내고, 탭 없이 떨어지는 분열탄을 계산한다.
   void _advanceShot(ShotPlayback p) {
     if (p.awaitingTap) {
-      if (p.tick >= p.lastTick) _resolveSplit(p, 0);
+      if (p.tick >= p.lastTick) _resolveSplit(p, null);
       return;
     }
     _cues.addAll(p.takeDue());
   }
 
-  void _resolveSplit(ShotPlayback p, int tick) =>
+  void _resolveSplit(ShotPlayback p, int? tick) =>
       playback = resolveSplit(match, p, tick);
 
   void endTurn() {
@@ -235,7 +235,7 @@ class BattleSession extends ChangeNotifier with SessionUiState {
         );
       } else {
         // 컴퓨터는 탭하지 않는다(갈라지지 않은 채 계산).
-        if (pending) match.apply(TapCommand(t: c.t, slot: c.slot, tick: 0));
+        if (pending) match.settlePending();
         playback = resolvedShot(
           state,
           side: side,

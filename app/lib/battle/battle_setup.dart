@@ -16,8 +16,8 @@ class BattleSetup {
   /// 허수아비의 덱: 일반 2명 (개발 계획서 M4 허수아비, ADR-029).
   static const List<String> dummyDeck = ['p06_pang', 'p16_suri'];
 
-  /// 플레이어 레벨 1 출전 코스트 한도 (설계서 §4.5, BALANCE.md A4.5).
-  static const int costLimit = 15;
+  /// 플레이어 레벨 1 출전 코스트 한도 (설계서 §4.5). 레벨은 R4 메타에서 붙는다.
+  static final int costLimit = costLimitForLevel(1);
 
   /// 추천 설계도 중 기본으로 쓰는 것.
   static const String defaultPreset = 'balanced';
@@ -40,21 +40,15 @@ class BattleSetup {
       enemyBlueprint ?? defaultBlueprint,
     ],
     decks: [deck, enemyDeck],
-    costLimits: const [costLimit, costLimit],
+    costLimits: [costLimit, costLimit],
     pirates: catalog.pirates,
   );
 
   /// 저장한 설계도·덱으로 새 판. 없거나 규칙에 맞지 않으면(코스트 초과 등) 기본값.
   Match newMatchFor(int seed, {Blueprint? blueprint, List<String>? deck}) {
-    final pirates = catalog.pirates;
     final chosen = deck ?? starterDeck;
     final hull = (blueprint ?? defaultBlueprint).hull;
-    final ok =
-        chosen.isNotEmpty &&
-        chosen.length <= hull.cabinSlots &&
-        chosen.toSet().length == chosen.length &&
-        chosen.every(pirates.has) &&
-        chosen.fold(0, (s, id) => s + pirates.byId(id).cost) <= costLimit;
+    final ok = deckProblem(hull, catalog.pirates, chosen, costLimit) == null;
     return newMatch(
       seed,
       blueprint: blueprint,

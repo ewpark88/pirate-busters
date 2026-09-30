@@ -150,26 +150,46 @@ class PirateCatalog {
 /// 인원은 1명 이상, 선형 선실 수 이하, 최대 [maxLineup] 명. 코스트 합계는
 /// [costLimit](플레이어 레벨로 정해지는 출전 코스트 한도) 이하. 같은 해적은 한 번만.
 void checkLineup(HullSpec hull, List<PirateSpec> lineup, int costLimit) {
-  if (lineup.isEmpty) throw ArgumentError('출전 해적이 없다');
+  final problem = lineupProblem(hull, lineup, costLimit);
+  if (problem != null) throw ArgumentError(problem);
+}
+
+/// [checkLineup] 의 규칙 문제(개발용 글), 없으면 null. 편성 화면이 예외 없이 쓴다.
+String? lineupProblem(HullSpec hull, List<PirateSpec> lineup, int costLimit) {
+  if (lineup.isEmpty) return '출전 해적이 없다';
   if (lineup.length > hull.cabinSlots || lineup.length > maxLineup) {
-    throw ArgumentError(
-      '출전 인원 초과: ${lineup.length} (선실 ${hull.cabinSlots}, 최대 $maxLineup)',
-    );
+    return '출전 인원 초과: ${lineup.length} (선실 ${hull.cabinSlots}, 최대 $maxLineup)';
   }
   var cost = 0;
   for (var i = 0; i < lineup.length; i++) {
     final cd = lineup[i].cooldownTurns;
     if (cd < 0 || cd > maxCooldownTurns) {
-      throw ArgumentError('쿨다운은 0~$maxCooldownTurns 턴: ${lineup[i].id} $cd');
+      return '쿨다운은 0~$maxCooldownTurns 턴: ${lineup[i].id} $cd';
     }
     cost += lineup[i].cost;
     for (var j = 0; j < i; j++) {
-      if (lineup[j].id == lineup[i].id) {
-        throw ArgumentError('같은 해적이 둘: ${lineup[i].id}');
-      }
+      if (lineup[j].id == lineup[i].id) return '같은 해적이 둘: ${lineup[i].id}';
     }
   }
-  if (cost > costLimit) {
-    throw ArgumentError('출전 코스트 초과: $cost > $costLimit');
-  }
+  if (cost > costLimit) return '출전 코스트 초과: $cost > $costLimit';
+  return null;
 }
+
+/// 해적 id 덱의 규칙 문제: 모르는 해적이면 그것, 아니면 [lineupProblem].
+String? deckProblem(
+  HullSpec hull,
+  PirateCatalog catalog,
+  List<String> deck,
+  int costLimit,
+) {
+  for (final id in deck) {
+    if (!catalog.has(id)) return '알 수 없는 해적: $id';
+  }
+  return lineupProblem(hull, [
+    for (final id in deck) catalog.byId(id),
+  ], costLimit);
+}
+
+/// 플레이어 레벨 [level] 의 출전 코스트 한도: Lv1 15 에서 레벨마다 +1
+/// (설계서 §4.5, BALANCE.md A4.5).
+int costLimitForLevel(int level) => 15 + (level < 1 ? 0 : level - 1);

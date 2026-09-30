@@ -267,6 +267,21 @@ void main() {
       expect(moveSpeedOf(s), speed ~/ 2);
     });
 
+    test('돛대가 부러져 무너진 블록 위의 모듈도 그 자리에서 부서진다', () {
+      final s = _side(
+        _ship(const [
+          ModuleCell(1, 1, ModuleKind.mast),
+          ModuleCell(1, 3, ModuleKind.pump),
+        ]),
+      );
+      final events = _smash(s, 1, 1);
+      expect(s.modules.intactCount(ModuleKind.pump), 0);
+      expect(
+        events.where((e) => e.kind == SimEventKind.moduleDestroyed),
+        hasLength(2),
+      );
+    });
+
     test('선장실을 잃으면 쏜 해적의 쿨다운이 1턴 더 길다', () {
       final s = _side(_ship(const []));
       markFiredWithModules(s, 0);

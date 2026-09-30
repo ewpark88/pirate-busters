@@ -17,25 +17,38 @@ int resolveShot(MatchState state, Projectile p, int ms) =>
 int targetSideOf(Projectile p) =>
     p.spec.ammo == AmmoType.support ? p.side : 1 - p.side;
 
-/// 탄 [p] 를 한 틱 진행한다. 끝났으면 true.
-///
-/// 틱 사이 구간을 맞는 배 로컬 격자에서 DDA 로 훑고, 해수면(y = 0) 아래로 내려가면
-/// 바다에 닿는다. 맞는 배는 파도에 흔들리므로 발사 시각 [ms](실제 시각)부터 [tick]
-/// 틱 뒤의 위치를 다시 잡는다. 이벤트의 [SimEvent.value] 에 [tick] 을 넣는다.
-bool stepShot(MatchState state, Projectile p, int wind, int ms, int tick) {
+/// 한 틱 진행한 결과: 맞은 칸(없으면 null), 해수면에 닿았는지, 끝 지점.
+typedef TraceStep = ({
+  TraceHit? hit,
+  bool sea,
+  int x,
+  int y,
+  SideState target,
+  int at,
+});
+
+/// 탄 [p] 를 한 틱 옮기고 그 구간이 맞는 배·해수면에 닿는지 본다(상태·이벤트는
+/// 바꾸지 않는다). 틱 사이 구간을 맞는 배 로컬 격자에서 DDA 로 훑는다. 맞는 배는
+/// 파도에 흔들리므로 발사 시각 [ms](실제 시각)부터 [tick] 틱 뒤의 위치를 다시 잡는다.
+TraceStep traceStep(
+  MatchState state,
+  Projectile p,
+  int wind,
+  int ms,
+  int tick,
+) {
   final x0 = p.x;
   final y0 = p.y;
   p.advance(wind);
   var x1 = p.x;
   var y1 = p.y;
-  final hitsSea = y1 < 0;
-  if (hitsSea) {
+  final sea = y1 < 0;
+  if (sea) {
     // 해수면과 만나는 지점까지만 배를 훑는다. 발사는 해수면 위에서만 하므로
     // y0 ≥ 0 > y1 이라 나누는 수가 0 이 아니다.
     x1 = y0 <= 0 ? x0 : x0 + roundDiv((x1 - x0) * y0, y0 - y1);
     y1 = 0;
   }
-
   final target = state.sides[targetSideOf(p)];
   // 지원탄은 제 배에서 떠나므로 내려올 때만 닿는다.
   final canHit = target.side != p.side || p.vy < 0;
@@ -52,13 +65,22 @@ bool stepShot(MatchState state, Projectile p, int wind, int ms, int tick) {
           (cx, cy) => grid.hasBlock(cx, cy) || target.isExposedPirateAt(cx, cy),
         )
       : null;
+  return (hit: hit, sea: sea, x: x1, y: y1, target: target, at: at);
+}
+
+/// 탄 [p] 를 한 틱 진행하고 닿은 곳의 효과를 낸다. 끝났으면 true.
+/// 이벤트의 [SimEvent.value] 에 [tick] 을 넣는다.
+bool stepShot(MatchState state, Projectile p, int wind, int ms, int tick) {
+  final step = traceStep(state, p, wind, ms, tick);
+  final target = step.target;
+  final hit = step.hit;
   if (hit != null) {
-    final (wx, wy) = fromShipLocal(state, target.side, at, hit.x, hit.y);
+    final (wx, wy) = fromShipLocal(state, target.side, step.at, hit.x, hit.y);
     state.events.add(
       SimEvent(
         SimEventKind.impact,
         side: target.side,
-        cell: grid.indexOf(hit.cx, hit.cy),
+        cell: target.grid.indexOf(hit.cx, hit.cy),
         x: wx,
         y: wy,
         value: tick,
@@ -66,8 +88,44 @@ bool stepShot(MatchState state, Projectile p, int wind, int ms, int tick) {
     );
     return onHullHit(state, p, target, cx: hit.cx, cy: hit.cy, x: wx, y: wy);
   }
-  if (hitsSea) return onSeaHit(state, p, target, x1, tick);
+  if (step.sea) return onSeaHit(state, p, target, step.x, tick);
   return p.isExpired;
+}
+
+/// 발사 전 [state] 에서 지금 턴 진영의 [slot] 해적이 쏠 탄의, 처음 닿는 곳(배 또는
+/// 해수면)까지의 틱별 월드 위치 (렌더용 예측). 판정과 같은 [traceStep] 을 쓰므로
+/// 계산을 미룬 분열탄이 탭 없이 떨어질 틱과 같다. 상태는 바꾸지 않는다.
+({List<int> xs, List<int> ys}) predictFirstHit(
+  MatchState state, {
+  required int slot,
+  required int angle,
+  required int power,
+  required int ms,
+}) {
+  final p = launchShot(state, slot: slot, angle: angle, power: power, ms: ms);
+  final wind = state.wind * state.rules.windAccel;
+  final xs = <int>[p.x];
+  final ys = <int>[p.y];
+  for (var tick = 1; !p.isExpired; tick++) {
+    final step = traceStep(state, p, wind, ms, tick);
+    final hit = step.hit;
+    if (hit != null) {
+      final (wx, wy) = fromShipLocal(
+        state,
+        step.target.side,
+        step.at,
+        hit.x,
+        hit.y,
+      );
+      xs.add(wx);
+      ys.add(wy);
+      break;
+    }
+    xs.add(step.x);
+    ys.add(step.y);
+    if (step.sea) break;
+  }
+  return (xs: xs, ys: ys);
 }
 
 /// [from] 번째 이벤트부터(이번 발사) 블록이 부서지거나 무너졌으면 부서지는 연출만큼
