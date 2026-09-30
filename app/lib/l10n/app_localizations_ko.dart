@@ -169,4 +169,112 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get surrenderQueued => '내 턴이 오면 항복합니다';
+
+  @override
+  String get pirate_p01_name => '문어 폭탄병 옥토';
+
+  @override
+  String get pirate_p01_desc => '포물선 폭탄, 착탄 반경 1칸';
+
+  @override
+  String get pirate_p01_lore => '산호 항구에서 자란 문어. 여덟 팔로 폭탄을 한꺼번에 굴린다.';
+
+  @override
+  String get pirate_p04_name => '성게 폭탄 우니';
+
+  @override
+  String get pirate_p04_desc => '비행 중 탭 → 가시 4갈래 분열';
+
+  @override
+  String get pirate_p04_lore => '가시만큼 성미도 뾰족하다. 터질 때를 스스로 고른다.';
+
+  @override
+  String get pirate_p06_name => '딱총새우 팡';
+
+  @override
+  String get pirate_p06_desc => '집게로 쏜 물방울 총알, 해적 명중 시 치명';
+
+  @override
+  String get pirate_p06_lore => '집게를 딱 튕기면 물방울 총알이 날아간다.';
+
+  @override
+  String get pirate_p07_name => '해마 쌍권총 히포';
+
+  @override
+  String get pirate_p07_desc => '짧은 사거리 3연사';
+
+  @override
+  String get pirate_p07_lore => '꼬리로 몸을 지탱하고 쌍권총을 쏜다.';
+
+  @override
+  String get pirate_p11_name => '황새치 작살꾼 핀';
+
+  @override
+  String get pirate_p11_desc => '코 작살로 돌진, 블록 2칸 관통';
+
+  @override
+  String get pirate_p11_lore => '긴 코가 곧 작살이다. 벽 뒤에 숨어도 소용없다.';
+
+  @override
+  String get pirate_p16_name => '해달 돌팔매 수리';
+
+  @override
+  String get pirate_p16_desc => '돌이 수면 2회 튕겨 흘수선 명중';
+
+  @override
+  String get pirate_p16_lore => '배 위에서 조개를 깨던 솜씨로 돌을 튕긴다.';
+
+  @override
+  String get pirate_p21_name => '복어 자폭병 퍼피';
+
+  @override
+  String get pirate_p21_desc => '흘수선 아래에 붙어 다음 내 턴 시작에 폭발';
+
+  @override
+  String get pirate_p21_lore => '잔뜩 부풀어 배 밑에 달라붙는다. 그다음은 펑.';
+
+  @override
+  String get pirate_p26_name => '앵무새 폴리';
+
+  @override
+  String get pirate_p26_desc => '가장 가까운 해적을 자동으로 쫓아 쪼기';
+
+  @override
+  String get pirate_p26_lore => '선장의 어깨를 떠나 적 선원을 쫓는다.';
+
+  @override
+  String get pirate_p27_name => '갈매기 폭격수 윙';
+
+  @override
+  String get pirate_p27_desc => '급강하하며 소형 폭탄 3개';
+
+  @override
+  String get pirate_p27_lore => '바다 위를 맴돌다 한순간에 내리꽂힌다.';
+
+  @override
+  String get pirate_p28_name => '펠리컨 수송대 펠리';
+
+  @override
+  String get pirate_p28_desc => '다음 내 턴 시작에 부리 주머니에서 소형 폭탄 4개';
+
+  @override
+  String get pirate_p28_lore => '부리 주머니에 무엇이 들었는지는 아무도 모른다.';
+
+  @override
+  String get pirate_p31_name => '상어 난동꾼 샤키';
+
+  @override
+  String get pirate_p31_desc => '적 갑판에 뛰어들어 반경 1칸 해적을 물어뜯음';
+
+  @override
+  String get pirate_p31_lore => '적 배에 뛰어드는 것을 무엇보다 좋아한다.';
+
+  @override
+  String get pirate_p36_name => '거북 목수 톡';
+
+  @override
+  String get pirate_p36_desc => '아군 배에 쏘면 구멍 난 블록 3칸 수리';
+
+  @override
+  String get pirate_p36_lore => '느리지만 꼼꼼하다. 배는 그가 지킨다.';
 }

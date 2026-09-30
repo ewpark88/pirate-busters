@@ -187,4 +187,122 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get surrenderQueued => 'You will surrender at the start of your turn';
+
+  @override
+  String get pirate_p01_name => 'Octo the Bomber';
+
+  @override
+  String get pirate_p01_desc => 'Lobbed bomb that bursts in a 1-cell radius';
+
+  @override
+  String get pirate_p01_lore =>
+      'Raised in Coral Harbor, Octo juggles bombs with all eight arms.';
+
+  @override
+  String get pirate_p04_name => 'Uni the Urchin';
+
+  @override
+  String get pirate_p04_desc => 'Tap in flight to split into 4 spikes';
+
+  @override
+  String get pirate_p04_lore =>
+      'As prickly as her spines. She picks the moment to burst.';
+
+  @override
+  String get pirate_p06_name => 'Pang the Pistol Shrimp';
+
+  @override
+  String get pirate_p06_desc => 'Claw-snap water bullet, critical on pirates';
+
+  @override
+  String get pirate_p06_lore => 'One snap of his claw fires a bubble bullet.';
+
+  @override
+  String get pirate_p07_name => 'Hippo the Gunslinger';
+
+  @override
+  String get pirate_p07_desc => 'Short-range triple shot';
+
+  @override
+  String get pirate_p07_lore =>
+      'Anchors with his tail and fires two pistols at once.';
+
+  @override
+  String get pirate_p11_name => 'Finn the Harpooner';
+
+  @override
+  String get pirate_p11_desc => 'Harpoon charge that pierces 2 blocks';
+
+  @override
+  String get pirate_p11_lore =>
+      'His long nose is the harpoon. Hiding behind walls won\'t help.';
+
+  @override
+  String get pirate_p16_name => 'Suri the Slinger';
+
+  @override
+  String get pirate_p16_desc => 'Stone skips twice and hits the waterline';
+
+  @override
+  String get pirate_p16_lore =>
+      'Skips stones with the same knack she uses to crack clams.';
+
+  @override
+  String get pirate_p21_name => 'Puffy the Blaster';
+
+  @override
+  String get pirate_p21_desc => 'Clings below the waterline, bursts next turn';
+
+  @override
+  String get pirate_p21_lore =>
+      'Puffs up, sticks under the hull, and then... boom.';
+
+  @override
+  String get pirate_p26_name => 'Polly the Parrot';
+
+  @override
+  String get pirate_p26_desc => 'Homes in on the nearest pirate and pecks';
+
+  @override
+  String get pirate_p26_lore =>
+      'Leaves the captain\'s shoulder to chase enemy crew.';
+
+  @override
+  String get pirate_p27_name => 'Wing the Bombardier';
+
+  @override
+  String get pirate_p27_desc => 'Dives and drops 3 small bombs';
+
+  @override
+  String get pirate_p27_lore => 'Circles the sea, then dives in a flash.';
+
+  @override
+  String get pirate_p28_name => 'Pelly the Pelican';
+
+  @override
+  String get pirate_p28_desc => 'Drops 4 small bombs from her pouch next turn';
+
+  @override
+  String get pirate_p28_lore =>
+      'Nobody knows what\'s in her pouch until it drops.';
+
+  @override
+  String get pirate_p31_name => 'Sharky the Brawler';
+
+  @override
+  String get pirate_p31_desc =>
+      'Leaps onto the deck and bites pirates within 1 cell';
+
+  @override
+  String get pirate_p31_lore =>
+      'Nothing makes him happier than jumping aboard.';
+
+  @override
+  String get pirate_p36_name => 'Tok the Shipwright';
+
+  @override
+  String get pirate_p36_desc => 'Fire at your ship to patch 3 holed blocks';
+
+  @override
+  String get pirate_p36_lore => 'Slow but careful. He keeps the ship afloat.';
 }

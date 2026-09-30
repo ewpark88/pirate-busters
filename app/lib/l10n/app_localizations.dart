@@ -385,6 +385,222 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'You will surrender at the start of your turn'**
   String get surrenderQueued;
+
+  /// No description provided for @pirate_p01_name.
+  ///
+  /// In en, this message translates to:
+  /// **'Octo the Bomber'**
+  String get pirate_p01_name;
+
+  /// No description provided for @pirate_p01_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Lobbed bomb that bursts in a 1-cell radius'**
+  String get pirate_p01_desc;
+
+  /// No description provided for @pirate_p01_lore.
+  ///
+  /// In en, this message translates to:
+  /// **'Raised in Coral Harbor, Octo juggles bombs with all eight arms.'**
+  String get pirate_p01_lore;
+
+  /// No description provided for @pirate_p04_name.
+  ///
+  /// In en, this message translates to:
+  /// **'Uni the Urchin'**
+  String get pirate_p04_name;
+
+  /// No description provided for @pirate_p04_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap in flight to split into 4 spikes'**
+  String get pirate_p04_desc;
+
+  /// No description provided for @pirate_p04_lore.
+  ///
+  /// In en, this message translates to:
+  /// **'As prickly as her spines. She picks the moment to burst.'**
+  String get pirate_p04_lore;
+
+  /// No description provided for @pirate_p06_name.
+  ///
+  /// In en, this message translates to:
+  /// **'Pang the Pistol Shrimp'**
+  String get pirate_p06_name;
+
+  /// No description provided for @pirate_p06_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Claw-snap water bullet, critical on pirates'**
+  String get pirate_p06_desc;
+
+  /// No description provided for @pirate_p06_lore.
+  ///
+  /// In en, this message translates to:
+  /// **'One snap of his claw fires a bubble bullet.'**
+  String get pirate_p06_lore;
+
+  /// No description provided for @pirate_p07_name.
+  ///
+  /// In en, this message translates to:
+  /// **'Hippo the Gunslinger'**
+  String get pirate_p07_name;
+
+  /// No description provided for @pirate_p07_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Short-range triple shot'**
+  String get pirate_p07_desc;
+
+  /// No description provided for @pirate_p07_lore.
+  ///
+  /// In en, this message translates to:
+  /// **'Anchors with his tail and fires two pistols at once.'**
+  String get pirate_p07_lore;
+
+  /// No description provided for @pirate_p11_name.
+  ///
+  /// In en, this message translates to:
+  /// **'Finn the Harpooner'**
+  String get pirate_p11_name;
+
+  /// No description provided for @pirate_p11_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Harpoon charge that pierces 2 blocks'**
+  String get pirate_p11_desc;
+
+  /// No description provided for @pirate_p11_lore.
+  ///
+  /// In en, this message translates to:
+  /// **'His long nose is the harpoon. Hiding behind walls won\'t help.'**
+  String get pirate_p11_lore;
+
+  /// No description provided for @pirate_p16_name.
+  ///
+  /// In en, this message translates to:
+  /// **'Suri the Slinger'**
+  String get pirate_p16_name;
+
+  /// No description provided for @pirate_p16_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Stone skips twice and hits the waterline'**
+  String get pirate_p16_desc;
+
+  /// No description provided for @pirate_p16_lore.
+  ///
+  /// In en, this message translates to:
+  /// **'Skips stones with the same knack she uses to crack clams.'**
+  String get pirate_p16_lore;
+
+  /// No description provided for @pirate_p21_name.
+  ///
+  /// In en, this message translates to:
+  /// **'Puffy the Blaster'**
+  String get pirate_p21_name;
+
+  /// No description provided for @pirate_p21_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Clings below the waterline, bursts next turn'**
+  String get pirate_p21_desc;
+
+  /// No description provided for @pirate_p21_lore.
+  ///
+  /// In en, this message translates to:
+  /// **'Puffs up, sticks under the hull, and then... boom.'**
+  String get pirate_p21_lore;
+
+  /// No description provided for @pirate_p26_name.
+  ///
+  /// In en, this message translates to:
+  /// **'Polly the Parrot'**
+  String get pirate_p26_name;
+
+  /// No description provided for @pirate_p26_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Homes in on the nearest pirate and pecks'**
+  String get pirate_p26_desc;
+
+  /// No description provided for @pirate_p26_lore.
+  ///
+  /// In en, this message translates to:
+  /// **'Leaves the captain\'s shoulder to chase enemy crew.'**
+  String get pirate_p26_lore;
+
+  /// No description provided for @pirate_p27_name.
+  ///
+  /// In en, this message translates to:
+  /// **'Wing the Bombardier'**
+  String get pirate_p27_name;
+
+  /// No description provided for @pirate_p27_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Dives and drops 3 small bombs'**
+  String get pirate_p27_desc;
+
+  /// No description provided for @pirate_p27_lore.
+  ///
+  /// In en, this message translates to:
+  /// **'Circles the sea, then dives in a flash.'**
+  String get pirate_p27_lore;
+
+  /// No description provided for @pirate_p28_name.
+  ///
+  /// In en, this message translates to:
+  /// **'Pelly the Pelican'**
+  String get pirate_p28_name;
+
+  /// No description provided for @pirate_p28_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Drops 4 small bombs from her pouch next turn'**
+  String get pirate_p28_desc;
+
+  /// No description provided for @pirate_p28_lore.
+  ///
+  /// In en, this message translates to:
+  /// **'Nobody knows what\'s in her pouch until it drops.'**
+  String get pirate_p28_lore;
+
+  /// No description provided for @pirate_p31_name.
+  ///
+  /// In en, this message translates to:
+  /// **'Sharky the Brawler'**
+  String get pirate_p31_name;
+
+  /// No description provided for @pirate_p31_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Leaps onto the deck and bites pirates within 1 cell'**
+  String get pirate_p31_desc;
+
+  /// No description provided for @pirate_p31_lore.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing makes him happier than jumping aboard.'**
+  String get pirate_p31_lore;
+
+  /// No description provided for @pirate_p36_name.
+  ///
+  /// In en, this message translates to:
+  /// **'Tok the Shipwright'**
+  String get pirate_p36_name;
+
+  /// No description provided for @pirate_p36_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Fire at your ship to patch 3 holed blocks'**
+  String get pirate_p36_desc;
+
+  /// No description provided for @pirate_p36_lore.
+  ///
+  /// In en, this message translates to:
+  /// **'Slow but careful. He keeps the ship afloat.'**
+  String get pirate_p36_lore;
 }
 
 class _AppLocalizationsDelegate
