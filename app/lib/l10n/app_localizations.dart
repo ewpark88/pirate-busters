@@ -751,6 +751,336 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Tap to split!'**
   String get tapToSplit;
+
+  /// No description provided for @menuBattle.
+  ///
+  /// In en, this message translates to:
+  /// **'Battle the dummy'**
+  String get menuBattle;
+
+  /// No description provided for @menuHotseat.
+  ///
+  /// In en, this message translates to:
+  /// **'Two players'**
+  String get menuHotseat;
+
+  /// No description provided for @menuShipyard.
+  ///
+  /// In en, this message translates to:
+  /// **'Shipyard'**
+  String get menuShipyard;
+
+  /// No description provided for @menuCrew.
+  ///
+  /// In en, this message translates to:
+  /// **'Crew'**
+  String get menuCrew;
+
+  /// No description provided for @statPoints.
+  ///
+  /// In en, this message translates to:
+  /// **'Points {used}/{max}'**
+  String statPoints(int used, int max);
+
+  /// No description provided for @statWaterline.
+  ///
+  /// In en, this message translates to:
+  /// **'Draft {cells}'**
+  String statWaterline(String cells);
+
+  /// No description provided for @statFuelPerCell.
+  ///
+  /// In en, this message translates to:
+  /// **'Fuel/cell {fuel}'**
+  String statFuelPerCell(String fuel);
+
+  /// No description provided for @statTank.
+  ///
+  /// In en, this message translates to:
+  /// **'Tank {n}'**
+  String statTank(int n);
+
+  /// No description provided for @statSpeed.
+  ///
+  /// In en, this message translates to:
+  /// **'Speed {speed}/s'**
+  String statSpeed(String speed);
+
+  /// No description provided for @statCabins.
+  ///
+  /// In en, this message translates to:
+  /// **'Cabins {n}/{max}'**
+  String statCabins(int n, int max);
+
+  /// No description provided for @statModules.
+  ///
+  /// In en, this message translates to:
+  /// **'Modules {n}/{max}'**
+  String statModules(int n, int max);
+
+  /// No description provided for @statCaptain.
+  ///
+  /// In en, this message translates to:
+  /// **'Captain {n}/1'**
+  String statCaptain(int n);
+
+  /// No description provided for @materialPine.
+  ///
+  /// In en, this message translates to:
+  /// **'Pine'**
+  String get materialPine;
+
+  /// No description provided for @materialOak.
+  ///
+  /// In en, this message translates to:
+  /// **'Oak'**
+  String get materialOak;
+
+  /// No description provided for @materialIron.
+  ///
+  /// In en, this message translates to:
+  /// **'Iron'**
+  String get materialIron;
+
+  /// No description provided for @materialCork.
+  ///
+  /// In en, this message translates to:
+  /// **'Cork'**
+  String get materialCork;
+
+  /// No description provided for @materialNet.
+  ///
+  /// In en, this message translates to:
+  /// **'Net'**
+  String get materialNet;
+
+  /// No description provided for @toolCabin.
+  ///
+  /// In en, this message translates to:
+  /// **'Cabin'**
+  String get toolCabin;
+
+  /// No description provided for @toolErase.
+  ///
+  /// In en, this message translates to:
+  /// **'Erase'**
+  String get toolErase;
+
+  /// No description provided for @moduleGunPort.
+  ///
+  /// In en, this message translates to:
+  /// **'Gun port'**
+  String get moduleGunPort;
+
+  /// No description provided for @moduleMagazine.
+  ///
+  /// In en, this message translates to:
+  /// **'Magazine'**
+  String get moduleMagazine;
+
+  /// No description provided for @modulePump.
+  ///
+  /// In en, this message translates to:
+  /// **'Pump'**
+  String get modulePump;
+
+  /// No description provided for @moduleWorkshop.
+  ///
+  /// In en, this message translates to:
+  /// **'Workshop'**
+  String get moduleWorkshop;
+
+  /// No description provided for @moduleMast.
+  ///
+  /// In en, this message translates to:
+  /// **'Mast'**
+  String get moduleMast;
+
+  /// No description provided for @moduleLookout.
+  ///
+  /// In en, this message translates to:
+  /// **'Lookout'**
+  String get moduleLookout;
+
+  /// No description provided for @moduleCaptain.
+  ///
+  /// In en, this message translates to:
+  /// **'Captain'**
+  String get moduleCaptain;
+
+  /// No description provided for @moduleFuelTank.
+  ///
+  /// In en, this message translates to:
+  /// **'Fuel tank'**
+  String get moduleFuelTank;
+
+  /// No description provided for @undo.
+  ///
+  /// In en, this message translates to:
+  /// **'Undo'**
+  String get undo;
+
+  /// No description provided for @save.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get save;
+
+  /// No description provided for @saved.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved'**
+  String get saved;
+
+  /// No description provided for @cannotSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Check the red cells and counts'**
+  String get cannotSave;
+
+  /// No description provided for @sailWithThis.
+  ///
+  /// In en, this message translates to:
+  /// **'Sail with this'**
+  String get sailWithThis;
+
+  /// No description provided for @sailing.
+  ///
+  /// In en, this message translates to:
+  /// **'Sailing'**
+  String get sailing;
+
+  /// No description provided for @loadPreset.
+  ///
+  /// In en, this message translates to:
+  /// **'Load preset'**
+  String get loadPreset;
+
+  /// No description provided for @planSlot.
+  ///
+  /// In en, this message translates to:
+  /// **'Plan {n}'**
+  String planSlot(int n);
+
+  /// No description provided for @crewCost.
+  ///
+  /// In en, this message translates to:
+  /// **'Cost {used}/{max}'**
+  String crewCost(int used, int max);
+
+  /// No description provided for @crewHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Drag pirates into the cabins'**
+  String get crewHint;
+
+  /// No description provided for @deckFamilies.
+  ///
+  /// In en, this message translates to:
+  /// **'Types'**
+  String get deckFamilies;
+
+  /// No description provided for @deckRanges.
+  ///
+  /// In en, this message translates to:
+  /// **'Range'**
+  String get deckRanges;
+
+  /// No description provided for @preferNear.
+  ///
+  /// In en, this message translates to:
+  /// **'Fights close'**
+  String get preferNear;
+
+  /// No description provided for @preferFar.
+  ///
+  /// In en, this message translates to:
+  /// **'Fights far'**
+  String get preferFar;
+
+  /// No description provided for @preferMixed.
+  ///
+  /// In en, this message translates to:
+  /// **'Any distance'**
+  String get preferMixed;
+
+  /// No description provided for @familyLob.
+  ///
+  /// In en, this message translates to:
+  /// **'Lob'**
+  String get familyLob;
+
+  /// No description provided for @familyDirect.
+  ///
+  /// In en, this message translates to:
+  /// **'Direct'**
+  String get familyDirect;
+
+  /// No description provided for @familyPierce.
+  ///
+  /// In en, this message translates to:
+  /// **'Pierce'**
+  String get familyPierce;
+
+  /// No description provided for @familySkip.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip'**
+  String get familySkip;
+
+  /// No description provided for @familyUnderwater.
+  ///
+  /// In en, this message translates to:
+  /// **'Underwater'**
+  String get familyUnderwater;
+
+  /// No description provided for @familyAir.
+  ///
+  /// In en, this message translates to:
+  /// **'Air'**
+  String get familyAir;
+
+  /// No description provided for @familyAssault.
+  ///
+  /// In en, this message translates to:
+  /// **'Assault'**
+  String get familyAssault;
+
+  /// No description provided for @familySupport.
+  ///
+  /// In en, this message translates to:
+  /// **'Support'**
+  String get familySupport;
+
+  /// No description provided for @rarityCommon.
+  ///
+  /// In en, this message translates to:
+  /// **'Common'**
+  String get rarityCommon;
+
+  /// No description provided for @rarityRare.
+  ///
+  /// In en, this message translates to:
+  /// **'Rare'**
+  String get rarityRare;
+
+  /// No description provided for @rarityHero.
+  ///
+  /// In en, this message translates to:
+  /// **'Hero'**
+  String get rarityHero;
+
+  /// No description provided for @rarityLegend.
+  ///
+  /// In en, this message translates to:
+  /// **'Legend'**
+  String get rarityLegend;
+
+  /// No description provided for @rarityMyth.
+  ///
+  /// In en, this message translates to:
+  /// **'Myth'**
+  String get rarityMyth;
 }
 
 class _AppLocalizationsDelegate

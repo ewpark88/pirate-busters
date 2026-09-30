@@ -138,6 +138,9 @@ class PirateCatalog {
   final Map<String, PirateSpec> _byId = {};
 
   /// 없으면 [ArgumentError].
+  /// [id] 해적이 있는가.
+  bool has(String id) => _byId.containsKey(id);
+
   PirateSpec byId(String id) =>
       _byId[id] ?? (throw ArgumentError('알 수 없는 해적: $id'));
 }

@@ -381,4 +381,189 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get tapToSplit => '탭해서 분열!';
+
+  @override
+  String get menuBattle => '허수아비와 해전';
+
+  @override
+  String get menuHotseat => '둘이서 해전';
+
+  @override
+  String get menuShipyard => '조선소';
+
+  @override
+  String get menuCrew => '선원';
+
+  @override
+  String statPoints(int used, int max) {
+    return '포인트 $used/$max';
+  }
+
+  @override
+  String statWaterline(String cells) {
+    return '흘수선 $cells칸';
+  }
+
+  @override
+  String statFuelPerCell(String fuel) {
+    return '1칸 연료 $fuel';
+  }
+
+  @override
+  String statTank(int n) {
+    return '탱크 $n';
+  }
+
+  @override
+  String statSpeed(String speed) {
+    return '속도 $speed칸/초';
+  }
+
+  @override
+  String statCabins(int n, int max) {
+    return '선실 $n/$max';
+  }
+
+  @override
+  String statModules(int n, int max) {
+    return '모듈 $n/$max';
+  }
+
+  @override
+  String statCaptain(int n) {
+    return '선장실 $n/1';
+  }
+
+  @override
+  String get materialPine => '소나무';
+
+  @override
+  String get materialOak => '참나무';
+
+  @override
+  String get materialIron => '철판';
+
+  @override
+  String get materialCork => '코르크';
+
+  @override
+  String get materialNet => '망사';
+
+  @override
+  String get toolCabin => '선실';
+
+  @override
+  String get toolErase => '지우기';
+
+  @override
+  String get moduleGunPort => '포문';
+
+  @override
+  String get moduleMagazine => '화약고';
+
+  @override
+  String get modulePump => '펌프';
+
+  @override
+  String get moduleWorkshop => '목수 공방';
+
+  @override
+  String get moduleMast => '돛대';
+
+  @override
+  String get moduleLookout => '망루';
+
+  @override
+  String get moduleCaptain => '선장실';
+
+  @override
+  String get moduleFuelTank => '연료통';
+
+  @override
+  String get undo => '되돌리기';
+
+  @override
+  String get save => '저장';
+
+  @override
+  String get saved => '저장했어요';
+
+  @override
+  String get cannotSave => '빨간 칸과 수치를 확인하세요';
+
+  @override
+  String get sailWithThis => '이 배로 출전';
+
+  @override
+  String get sailing => '출전 중';
+
+  @override
+  String get loadPreset => '추천 불러오기';
+
+  @override
+  String planSlot(int n) {
+    return '설계도 $n';
+  }
+
+  @override
+  String crewCost(int used, int max) {
+    return '코스트 $used/$max';
+  }
+
+  @override
+  String get crewHint => '해적을 선실로 끌어다 놓으세요';
+
+  @override
+  String get deckFamilies => '계열';
+
+  @override
+  String get deckRanges => '사거리';
+
+  @override
+  String get preferNear => '가까이 싸움';
+
+  @override
+  String get preferFar => '멀리 싸움';
+
+  @override
+  String get preferMixed => '거리 균형';
+
+  @override
+  String get familyLob => '투척';
+
+  @override
+  String get familyDirect => '직사';
+
+  @override
+  String get familyPierce => '관통';
+
+  @override
+  String get familySkip => '물수제비';
+
+  @override
+  String get familyUnderwater => '수중';
+
+  @override
+  String get familyAir => '공중';
+
+  @override
+  String get familyAssault => '강습';
+
+  @override
+  String get familySupport => '지원';
+
+  @override
+  String get rarityCommon => '일반';
+
+  @override
+  String get rarityRare => '희귀';
+
+  @override
+  String get rarityHero => '영웅';
+
+  @override
+  String get rarityLegend => '전설';
+
+  @override
+  String get rarityMyth => '신화';
 }

@@ -1,6 +1,7 @@
 import 'package:pb_sim/src/ship/blueprint.dart';
-import 'package:pb_sim/src/ship/material.dart';
 import 'package:pb_sim/src/ship/module.dart';
+import 'package:pb_sim/src/ship/ship_stats.dart';
+import 'package:pb_sim/src/ship/ship_stats.dart' as ss show fuelTankBonus;
 
 /// 모듈 효과 수치 (BALANCE.md A3.3, A2.6, A2.7). 선체 보정(§3.5)은 R4 라 ×1.00 이다.
 abstract final class ModuleNumbers {
@@ -19,12 +20,9 @@ abstract final class ModuleNumbers {
   static const int pumpFlood = 40;
 
   /// 연료통: 탱크 +40, 부서지면 주변 1칸 블록 40.
-  static const int fuelTankBonus = 40;
+  static const int fuelTankBonus = ss.fuelTankBonus;
   static const int fuelTankRadius = 1;
   static const int fuelTankBlockDamage = 40;
-
-  /// 무게 연료: 철판으로만 지은 배가 +20% (‰).
-  static const int weightFuelPermille = 200;
 
   /// 돛대가 부러지면 1칸당 연료 ×2, 속도 −50%.
   static const int mastFuelFactor = 2;
@@ -58,18 +56,9 @@ class ShipModules {
   /// 무게에 따른 1칸당 연료 배율(‰): 1000 + 200 × 총무게 ÷ 최대 무게 (설계서 §2.7).
   final int weightPermille;
 
-  /// 선형 최대 무게(건조 포인트를 모두 철판으로 채운 무게)에 대한 연료 배율(‰).
-  static int weightFuelPermilleOf(Blueprint blueprint) {
-    var weight = 0;
-    for (final c in blueprint.cells) {
-      weight += c.material.weight;
-    }
-    if (weight <= 0) return 1000;
-    const iron = BlockMaterial.iron;
-    final max = blueprint.hull.buildPoints ~/ iron.cost * iron.weight;
-    final w = weight > max ? max : weight;
-    return 1000 + ModuleNumbers.weightFuelPermille * w ~/ max;
-  }
+  /// 설계도의 무게 연료 배율(‰) ([weightFuelPermille]).
+  static int weightFuelPermilleOf(Blueprint blueprint) =>
+      weightFuelPermille(blueprint.hull, totalWeight(blueprint.cells));
 
   /// 남아 있는 [kind] 모듈 수.
   int intactCount(ModuleKind kind) {

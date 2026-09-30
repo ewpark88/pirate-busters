@@ -9,6 +9,7 @@ import 'package:pb_sim/src/ship/blueprint.dart';
 import 'package:pb_sim/src/ship/module.dart';
 import 'package:pb_sim/src/ship/module_state.dart';
 import 'package:pb_sim/src/ship/ship_grid.dart';
+import 'package:pb_sim/src/ship/ship_stats.dart';
 import 'package:pb_sim/src/world/world.dart';
 
 /// 판의 진행 상태. 순서(index)는 해시에 들어가므로 새 값은 뒤에 붙인다.
@@ -64,14 +65,8 @@ class SideState {
 
   /// 설계도의 흘수선 높이(1/1000칸, 용골 바닥 기준): (총무게 − 부력재) ÷ (선형 폭 ×
   /// [MatchRules.waterlineDivisor]) (설계서 §3.4). 무게는 ×1000 이라 그대로 1/1000칸이다.
-  static int waterlineOf(Blueprint blueprint, MatchRules rules) {
-    var weight = 0;
-    for (final c in blueprint.cells) {
-      weight += c.material.weight;
-    }
-    final h = weight ~/ (blueprint.hull.width * rules.waterlineDivisor);
-    return h < 0 ? 0 : h;
-  }
+  static int waterlineOf(Blueprint blueprint, MatchRules rules) =>
+      waterlineOfWeight(blueprint.hull, totalWeight(blueprint.cells), rules);
 
   final int side;
   final ShipGrid grid;

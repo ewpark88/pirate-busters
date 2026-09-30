@@ -11,6 +11,7 @@ import 'package:pirate_busters/app/providers.dart';
 import 'package:pirate_busters/audio/sound_service.dart';
 import 'package:pirate_busters/battle/battle_session.dart';
 import 'package:pirate_busters/battle/dummy_controller.dart';
+import 'package:pirate_busters/data/fleet_store.dart';
 import 'package:pirate_busters/game/anim/anim_data.dart';
 import 'package:pirate_busters/game/battle_game.dart';
 import 'package:pirate_busters/game/camera_director.dart';
@@ -124,6 +125,7 @@ void main() {
         overrides: [
           settingsStoreProvider.overrideWithValue(MemorySettingsStore()),
           gameCatalogProvider.overrideWithValue(testCatalog),
+          fleetStoreProvider.overrideWithValue(MemoryFleetStore()),
         ],
         child: const MaterialApp(
           locale: Locale('ko'),

@@ -38,6 +38,7 @@ export 'src/ship/module.dart';
 export 'src/ship/module_state.dart';
 export 'src/ship/motion.dart';
 export 'src/ship/ship_grid.dart';
+export 'src/ship/ship_stats.dart';
 export 'src/ship/support.dart';
 export 'src/world/wave.dart';
 export 'src/world/world.dart';

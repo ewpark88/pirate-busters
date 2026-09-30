@@ -409,4 +409,189 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tapToSplit => 'Tap to split!';
+
+  @override
+  String get menuBattle => 'Battle the dummy';
+
+  @override
+  String get menuHotseat => 'Two players';
+
+  @override
+  String get menuShipyard => 'Shipyard';
+
+  @override
+  String get menuCrew => 'Crew';
+
+  @override
+  String statPoints(int used, int max) {
+    return 'Points $used/$max';
+  }
+
+  @override
+  String statWaterline(String cells) {
+    return 'Draft $cells';
+  }
+
+  @override
+  String statFuelPerCell(String fuel) {
+    return 'Fuel/cell $fuel';
+  }
+
+  @override
+  String statTank(int n) {
+    return 'Tank $n';
+  }
+
+  @override
+  String statSpeed(String speed) {
+    return 'Speed $speed/s';
+  }
+
+  @override
+  String statCabins(int n, int max) {
+    return 'Cabins $n/$max';
+  }
+
+  @override
+  String statModules(int n, int max) {
+    return 'Modules $n/$max';
+  }
+
+  @override
+  String statCaptain(int n) {
+    return 'Captain $n/1';
+  }
+
+  @override
+  String get materialPine => 'Pine';
+
+  @override
+  String get materialOak => 'Oak';
+
+  @override
+  String get materialIron => 'Iron';
+
+  @override
+  String get materialCork => 'Cork';
+
+  @override
+  String get materialNet => 'Net';
+
+  @override
+  String get toolCabin => 'Cabin';
+
+  @override
+  String get toolErase => 'Erase';
+
+  @override
+  String get moduleGunPort => 'Gun port';
+
+  @override
+  String get moduleMagazine => 'Magazine';
+
+  @override
+  String get modulePump => 'Pump';
+
+  @override
+  String get moduleWorkshop => 'Workshop';
+
+  @override
+  String get moduleMast => 'Mast';
+
+  @override
+  String get moduleLookout => 'Lookout';
+
+  @override
+  String get moduleCaptain => 'Captain';
+
+  @override
+  String get moduleFuelTank => 'Fuel tank';
+
+  @override
+  String get undo => 'Undo';
+
+  @override
+  String get save => 'Save';
+
+  @override
+  String get saved => 'Saved';
+
+  @override
+  String get cannotSave => 'Check the red cells and counts';
+
+  @override
+  String get sailWithThis => 'Sail with this';
+
+  @override
+  String get sailing => 'Sailing';
+
+  @override
+  String get loadPreset => 'Load preset';
+
+  @override
+  String planSlot(int n) {
+    return 'Plan $n';
+  }
+
+  @override
+  String crewCost(int used, int max) {
+    return 'Cost $used/$max';
+  }
+
+  @override
+  String get crewHint => 'Drag pirates into the cabins';
+
+  @override
+  String get deckFamilies => 'Types';
+
+  @override
+  String get deckRanges => 'Range';
+
+  @override
+  String get preferNear => 'Fights close';
+
+  @override
+  String get preferFar => 'Fights far';
+
+  @override
+  String get preferMixed => 'Any distance';
+
+  @override
+  String get familyLob => 'Lob';
+
+  @override
+  String get familyDirect => 'Direct';
+
+  @override
+  String get familyPierce => 'Pierce';
+
+  @override
+  String get familySkip => 'Skip';
+
+  @override
+  String get familyUnderwater => 'Underwater';
+
+  @override
+  String get familyAir => 'Air';
+
+  @override
+  String get familyAssault => 'Assault';
+
+  @override
+  String get familySupport => 'Support';
+
+  @override
+  String get rarityCommon => 'Common';
+
+  @override
+  String get rarityRare => 'Rare';
+
+  @override
+  String get rarityHero => 'Hero';
+
+  @override
+  String get rarityLegend => 'Legend';
+
+  @override
+  String get rarityMyth => 'Myth';
 }

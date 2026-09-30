@@ -152,6 +152,17 @@ void main() {
       );
     });
 
+    test('조선소 수치는 완성 전 블록 목록으로도 전투와 같은 식으로 나온다 (§13.6)', () {
+      final b = _ship(const [ModuleCell(9, 1, ModuleKind.fuelTank)]);
+      final stats = ShipStats.of(b.hull, b.cells, b.modules);
+      final side = _side(b);
+      expect(stats.cost, b.cost);
+      expect(stats.waterline, side.waterline);
+      expect(stats.fuelPermille, side.modules.weightPermille);
+      expect(stats.tank * SideState.fuelUnit, side.tank);
+      expect([stats.modulesCounted, stats.captains], [1, 1]);
+    });
+
     test('모듈이 든 설계도는 JSON 으로 저장했다 읽어도 같다', () {
       final b = _ship(const [
         ModuleCell(0, 1, ModuleKind.pump),

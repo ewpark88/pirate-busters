@@ -4,9 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pirate_busters/app/providers.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
 import 'package:pirate_busters/settings/language.dart';
-import 'package:pirate_busters/ui/battle_screen.dart';
+import 'package:pirate_busters/ui/menu_screen.dart';
 
-/// 앱 루트. M4 는 바로 전투 화면으로 간다(메뉴는 M7).
+/// 앱 루트. M5 는 간이 메뉴에서 전투·조선소·선원으로 간다(항구는 M7).
 class PirateBustersApp extends ConsumerWidget {
   const PirateBustersApp({super.key});
 
@@ -32,7 +32,7 @@ class PirateBustersApp extends ConsumerWidget {
         fontFamily: 'Jua',
         colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF1E6FB8)),
       ),
-      home: const BattleScreen(),
+      home: const MenuScreen(),
     );
   }
 }

@@ -43,4 +43,22 @@ class BattleSetup {
     costLimits: const [costLimit, costLimit],
     pirates: catalog.pirates,
   );
+
+  /// 저장한 설계도·덱으로 새 판. 없거나 규칙에 맞지 않으면(코스트 초과 등) 기본값.
+  Match newMatchFor(int seed, {Blueprint? blueprint, List<String>? deck}) {
+    final pirates = catalog.pirates;
+    final chosen = deck ?? starterDeck;
+    final hull = (blueprint ?? defaultBlueprint).hull;
+    final ok =
+        chosen.isNotEmpty &&
+        chosen.length <= hull.cabinSlots &&
+        chosen.toSet().length == chosen.length &&
+        chosen.every(pirates.has) &&
+        chosen.fold(0, (s, id) => s + pirates.byId(id).cost) <= costLimit;
+    return newMatch(
+      seed,
+      blueprint: blueprint,
+      deck: ok ? chosen : starterDeck,
+    );
+  }
 }

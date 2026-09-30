@@ -38,8 +38,13 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
 
   void _start(int seed, {required bool hotseat}) {
     final catalog = ref.read(gameCatalogProvider);
+    final fleet = ref.read(fleetStoreProvider);
     _session = BattleSession(
-      BattleSetup(catalog).newMatch(seed),
+      BattleSetup(catalog).newMatchFor(
+        seed,
+        blueprint: fleet.blueprint(fleet.activeSlot),
+        deck: fleet.deck,
+      ),
       humanSides: hotseat ? const {0, 1} : const {0},
       speciesOf: catalog.speciesOf,
       opponent: hotseat ? null : const DummyController(),

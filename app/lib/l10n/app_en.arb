@@ -265,5 +265,142 @@
   "rangeLong": "Long",
   "rangeVeryLong": "Far",
   "outOfRange": "Out of range",
-  "tapToSplit": "Tap to split!"
+  "tapToSplit": "Tap to split!",
+  "menuBattle": "Battle the dummy",
+  "menuHotseat": "Two players",
+  "menuShipyard": "Shipyard",
+  "menuCrew": "Crew",
+  "statPoints": "Points {used}/{max}",
+  "@statPoints": {
+    "placeholders": {
+      "used": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "statWaterline": "Draft {cells}",
+  "@statWaterline": {
+    "placeholders": {
+      "cells": {
+        "type": "String"
+      }
+    }
+  },
+  "statFuelPerCell": "Fuel/cell {fuel}",
+  "@statFuelPerCell": {
+    "placeholders": {
+      "fuel": {
+        "type": "String"
+      }
+    }
+  },
+  "statTank": "Tank {n}",
+  "@statTank": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "statSpeed": "Speed {speed}/s",
+  "@statSpeed": {
+    "placeholders": {
+      "speed": {
+        "type": "String"
+      }
+    }
+  },
+  "statCabins": "Cabins {n}/{max}",
+  "@statCabins": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "statModules": "Modules {n}/{max}",
+  "@statModules": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "statCaptain": "Captain {n}/1",
+  "@statCaptain": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "materialPine": "Pine",
+  "materialOak": "Oak",
+  "materialIron": "Iron",
+  "materialCork": "Cork",
+  "materialNet": "Net",
+  "toolCabin": "Cabin",
+  "toolErase": "Erase",
+  "moduleGunPort": "Gun port",
+  "moduleMagazine": "Magazine",
+  "modulePump": "Pump",
+  "moduleWorkshop": "Workshop",
+  "moduleMast": "Mast",
+  "moduleLookout": "Lookout",
+  "moduleCaptain": "Captain",
+  "moduleFuelTank": "Fuel tank",
+  "undo": "Undo",
+  "save": "Save",
+  "saved": "Saved",
+  "cannotSave": "Check the red cells and counts",
+  "sailWithThis": "Sail with this",
+  "sailing": "Sailing",
+  "loadPreset": "Load preset",
+  "planSlot": "Plan {n}",
+  "@planSlot": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "crewCost": "Cost {used}/{max}",
+  "@crewCost": {
+    "placeholders": {
+      "used": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "crewHint": "Drag pirates into the cabins",
+  "deckFamilies": "Types",
+  "deckRanges": "Range",
+  "preferNear": "Fights close",
+  "preferFar": "Fights far",
+  "preferMixed": "Any distance",
+  "familyLob": "Lob",
+  "familyDirect": "Direct",
+  "familyPierce": "Pierce",
+  "familySkip": "Skip",
+  "familyUnderwater": "Underwater",
+  "familyAir": "Air",
+  "familyAssault": "Assault",
+  "familySupport": "Support",
+  "rarityCommon": "Common",
+  "rarityRare": "Rare",
+  "rarityHero": "Hero",
+  "rarityLegend": "Legend",
+  "rarityMyth": "Myth"
 }
