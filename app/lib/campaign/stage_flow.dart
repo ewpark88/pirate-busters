@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pb_sim/pb_sim.dart';
 import 'package:pirate_busters/app/providers.dart';
+import 'package:pirate_busters/battle/battle_stats.dart';
 import 'package:pirate_busters/campaign/rewards.dart';
 import 'package:pirate_busters/campaign/stage_result_screen.dart';
 import 'package:pirate_busters/campaign/stage_spec.dart';
 import 'package:pirate_busters/campaign/star_rules.dart';
+import 'package:pirate_busters/platform/analytics.dart';
 import 'package:pirate_busters/story/cutscene_screen.dart';
 import 'package:pirate_busters/story/story_data.dart';
 import 'package:pirate_busters/ui/battle_screen.dart';
@@ -23,12 +25,19 @@ abstract final class StageFlow {
     int? seed,
   }) {
     final navigator = Navigator.of(context);
+    final matchSeed = seed ?? newSeed();
+    final startedAt = DateTime.now();
+    ref.read(analyticsProvider).log(Events.matchStart, {
+      'stage': stage.id,
+      'seed': matchSeed,
+    });
     return navigator.push(
       MaterialPageRoute<void>(
         builder: (_) => BattleScreen(
-          seed: seed ?? newSeed(),
+          seed: matchSeed,
           stage: stage,
-          onOver: (state) => _finish(navigator, ref, stage, state),
+          onOver: (state, replay, stats) =>
+              _finish(navigator, ref, stage, state, replay, stats, startedAt),
         ),
       ),
     );
@@ -39,8 +48,17 @@ abstract final class StageFlow {
     WidgetRef ref,
     StageSpec stage,
     MatchState state,
+    Replay? replay,
+    BattleStats stats,
+    DateTime startedAt,
   ) async {
-    final mine = MatchSummary.fromState(state, 0);
+    final mine = MatchSummary.fromState(
+      state,
+      0,
+      hits: stats.hits[0],
+      damageDealt: stats.pirateDamage[0],
+      blocksDestroyed: stats.blocksDestroyed[0],
+    );
     final enemyFlood = state.sides[1].flood * 100 ~/ fullFlood;
     final stars = const StarRules().evaluate(stage, mine);
     late StageReward reward;
@@ -49,6 +67,21 @@ abstract final class StageFlow {
       reward = r.reward;
       return r.progress;
     });
+    final analytics = ref.read(analyticsProvider);
+    final progressNow = ref.read(progressProvider);
+    analytics.log(Events.matchEnd, {
+      'stage': stage.id,
+      'won': mine.won,
+      'outcome': state.outcome.name,
+      'turns': mine.turns,
+      'seconds': DateTime.now().difference(startedAt).inSeconds,
+    });
+    if (progressNow.matchesPlayed == 1) {
+      analytics.log(Events.firstMatchComplete);
+    }
+    if (reward.firstClear) {
+      analytics.log(Events.stageClear, {'stage': stage.id});
+    }
     // 보스를 이기면 결과 앞에 뒤 컷신 (설계서 §15.4). 한 번만.
     final after = StoryData.bossAfter(stage.id);
     final cuts = StoryData.of(after);
@@ -73,6 +106,7 @@ abstract final class StageFlow {
           summary: mine,
           enemyFloodPercent: enemyFlood,
           reward: reward,
+          replay: replay,
         ),
       ),
     );

@@ -931,4 +931,32 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get tutorial_hint_3 =>
       'Holes below the waterline mean flooding! Fire Tok at your own ship to repair';
+
+  @override
+  String get resultDoubleDone => 'Reward doubled';
+
+  @override
+  String get replaySave => 'Save replay';
+
+  @override
+  String get replaySaved => 'Replay saved';
+
+  @override
+  String statDamage(Object blocks, Object damage) {
+    return 'Damage dealt $damage · blocks broken $blocks';
+  }
+
+  @override
+  String statAccuracy(Object percent) {
+    return 'Accuracy $percent%';
+  }
+
+  @override
+  String get iapRemoveAds => 'Remove ads';
+
+  @override
+  String get iapBought => 'Purchased';
+
+  @override
+  String get iapBuy => 'Buy';
 }

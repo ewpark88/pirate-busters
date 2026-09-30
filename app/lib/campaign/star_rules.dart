@@ -11,10 +11,19 @@ class MatchSummary {
     required this.hullPercent,
     required this.piratesDown,
     required this.shotsFired,
+    this.hits = 0,
+    this.damageDealt = 0,
+    this.blocksDestroyed = 0,
   });
 
   /// 끝난 판의 상태에서 [side] 기준으로 만든다.
-  factory MatchSummary.fromState(MatchState state, int side) {
+  factory MatchSummary.fromState(
+    MatchState state,
+    int side, {
+    int hits = 0,
+    int damageDealt = 0,
+    int blocksDestroyed = 0,
+  }) {
     final me = state.sides[side];
     return MatchSummary(
       won: state.winner == side,
@@ -28,6 +37,9 @@ class MatchSummary {
           .where((p) => p.status == PirateStatus.down)
           .length,
       shotsFired: me.shotsFired,
+      hits: hits,
+      damageDealt: damageDealt,
+      blocksDestroyed: blocksDestroyed,
     );
   }
 
@@ -40,6 +52,14 @@ class MatchSummary {
   final int hullPercent;
   final int piratesDown;
   final int shotsFired;
+
+  /// 배에 맞은 발 수, 해적에게 준 피해, 부순 블록 수 (렌더 이벤트 집계).
+  final int hits;
+  final int damageDealt;
+  final int blocksDestroyed;
+
+  int get hitPercent =>
+      shotsFired == 0 ? 0 : (hits * 100 ~/ shotsFired).clamp(0, 100);
 }
 
 /// 별 3개 결과 (설계서 §6.1: 승리 / 정해진 턴 이내 / 스테이지 미션).

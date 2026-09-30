@@ -1609,6 +1609,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Holes below the waterline mean flooding! Fire Tok at your own ship to repair'**
   String get tutorial_hint_3;
+
+  /// No description provided for @resultDoubleDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Reward doubled'**
+  String get resultDoubleDone;
+
+  /// No description provided for @replaySave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save replay'**
+  String get replaySave;
+
+  /// No description provided for @replaySaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Replay saved'**
+  String get replaySaved;
+
+  /// No description provided for @statDamage.
+  ///
+  /// In en, this message translates to:
+  /// **'Damage dealt {damage} · blocks broken {blocks}'**
+  String statDamage(Object blocks, Object damage);
+
+  /// No description provided for @statAccuracy.
+  ///
+  /// In en, this message translates to:
+  /// **'Accuracy {percent}%'**
+  String statAccuracy(Object percent);
+
+  /// No description provided for @iapRemoveAds.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove ads'**
+  String get iapRemoveAds;
+
+  /// No description provided for @iapBought.
+  ///
+  /// In en, this message translates to:
+  /// **'Purchased'**
+  String get iapBought;
+
+  /// No description provided for @iapBuy.
+  ///
+  /// In en, this message translates to:
+  /// **'Buy'**
+  String get iapBuy;
 }
 
 class _AppLocalizationsDelegate

@@ -5,6 +5,7 @@ import 'package:pirate_busters/app/providers.dart';
 import 'package:pirate_busters/data/fleet_store.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
 import 'package:pirate_busters/l10n/data_text.dart';
+import 'package:pirate_busters/platform/analytics.dart';
 import 'package:pirate_busters/shipyard/ship_grid_editor.dart';
 import 'package:pirate_busters/shipyard/shipyard_model.dart';
 import 'package:pirate_busters/shipyard/tool_palette.dart';
@@ -47,6 +48,7 @@ class _ShipyardScreenState extends ConsumerState<ShipyardScreen> {
     final b = _model.toBlueprint();
     if (b == null) return;
     await _fleet.saveBlueprint(_slot, b);
+    ref.read(analyticsProvider).log(Events.shipyardSave, {'slot': _slot});
     if (!mounted) return;
     ScaffoldMessenger.of(
       context,

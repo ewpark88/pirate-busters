@@ -873,4 +873,32 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get tutorial_hint_3 => '흘수선 아래 구멍은 침수! 톡을 내 배에 쏴서 수리하세요';
+
+  @override
+  String get resultDoubleDone => '2배로 받았어요';
+
+  @override
+  String get replaySave => '리플레이 저장';
+
+  @override
+  String get replaySaved => '리플레이 저장됨';
+
+  @override
+  String statDamage(Object blocks, Object damage) {
+    return '준 피해 $damage · 부순 블록 $blocks';
+  }
+
+  @override
+  String statAccuracy(Object percent) {
+    return '명중률 $percent%';
+  }
+
+  @override
+  String get iapRemoveAds => '광고 제거';
+
+  @override
+  String get iapBought => '구매 완료';
+
+  @override
+  String get iapBuy => '구매';
 }

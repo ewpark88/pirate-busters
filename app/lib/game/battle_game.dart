@@ -6,6 +6,7 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'package:pb_sim/pb_sim.dart';
 import 'package:pirate_busters/audio/sound_service.dart';
 import 'package:pirate_busters/battle/battle_session.dart';
+import 'package:pirate_busters/battle/battle_stats.dart';
 import 'package:pirate_busters/battle/playback.dart';
 import 'package:pirate_busters/game/anim/anim_data.dart';
 import 'package:pirate_busters/game/camera_director.dart';
@@ -28,6 +29,12 @@ class BattleGame extends FlameGame {
   /// 코드 합성 효과음 (설계서 §10.3).
   final SoundService sound;
   final CameraDirector director = CameraDirector();
+
+  /// 전투 통계 (설계서 §13.5). 렌더 이벤트를 세기만 한다.
+  final BattleStats stats = BattleStats();
+
+  /// 턴이 끝날 때(분석 이벤트용). 판정과 무관하다.
+  void Function(SimEvent e)? onTurnEnd;
 
   /// ‘전체 보기’ (설계서 §2.1). HUD 버튼이 바꾼다.
   final ValueNotifier<bool> overview = ValueNotifier(false);
@@ -101,7 +108,12 @@ class BattleGame extends FlameGame {
   @override
   void update(double dt) {
     session.update((dt * 1000).round().clamp(0, 100));
-    _dispatch(session.takeCues());
+    final cues = session.takeCues();
+    for (final e in cues) {
+      stats.record(e);
+      if (e.kind == SimEventKind.turnEnd) onTurnEnd?.call(e);
+    }
+    _dispatch(cues);
     _updateCamera(dt);
     super.update(dt);
   }

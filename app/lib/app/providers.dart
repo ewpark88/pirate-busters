@@ -3,8 +3,13 @@ import 'package:pirate_busters/audio/sound_service.dart';
 import 'package:pirate_busters/campaign/campaign_catalog.dart';
 import 'package:pirate_busters/data/fleet_store.dart';
 import 'package:pirate_busters/data/game_catalog.dart';
+import 'package:pirate_busters/data/replay_store.dart';
 import 'package:pirate_busters/meta/progress.dart';
 import 'package:pirate_busters/meta/progress_store.dart';
+import 'package:pirate_busters/platform/ads.dart';
+import 'package:pirate_busters/platform/analytics.dart';
+import 'package:pirate_busters/platform/iap.dart';
+import 'package:pirate_busters/platform/remote_values.dart';
 import 'package:pirate_busters/settings/language.dart';
 import 'package:pirate_busters/settings/settings_store.dart';
 
@@ -122,6 +127,34 @@ class VibrationOnNotifier extends Notifier<bool> {
     await ref.read(settingsStoreProvider).setVibration(on: on);
   }
 }
+
+/// 분석·광고·결제·원격 설정 (개발 계획서 M7). 기본은 아무것도 안 하는 구현. 실제 SDK 는
+/// 설정 파일(google-services.json 등)이 들어온 뒤 부트스트랩에서 덮어쓴다.
+final analyticsProvider = Provider<Analytics>((ref) => const NoopAnalytics());
+final adsProvider = Provider<RewardedAds>((ref) => const NoAds());
+final iapProvider = Provider<Iap>((ref) => const NoIap());
+final remoteValuesProvider = Provider<RemoteValues>(
+  (ref) => const EmptyRemoteValues(),
+);
+
+/// 광고 제거 구매 상태 (설계서 §9).
+final adsRemovedProvider = NotifierProvider<AdsRemovedNotifier, bool>(
+  AdsRemovedNotifier.new,
+);
+
+class AdsRemovedNotifier extends Notifier<bool> {
+  @override
+  bool build() => ref.read(iapProvider).adsRemoved;
+
+  Future<void> buy() async {
+    if (!await ref.read(iapProvider).buyRemoveAds()) return;
+    state = true;
+    ref.read(analyticsProvider).log(Events.iapPurchase, {'item': 'remove_ads'});
+  }
+}
+
+/// 리플레이 저장소. 부트스트랩에서 덮어쓴다. 기본은 메모리.
+final replayStoreProvider = Provider<ReplayStore>((ref) => MemoryReplayStore());
 
 /// 효과음. 부트스트랩에서 flutter_soloud 로 덮어쓴다. 기본은 소리 없음(테스트).
 final soundServiceProvider = Provider<SoundService>(
