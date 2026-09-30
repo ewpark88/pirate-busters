@@ -8,6 +8,7 @@ import 'package:pirate_busters/audio/sfx_bank.dart';
 import 'package:pirate_busters/audio/sound_service.dart';
 import 'package:pirate_busters/data/fleet_store.dart';
 import 'package:pirate_busters/data/game_catalog.dart';
+import 'package:pirate_busters/meta/progress_store.dart';
 import 'package:pirate_busters/settings/settings_store.dart';
 
 /// 시작 순서: 화면 방향 → 저장소 → 효과음 합성·불러오기 → 앱.
@@ -23,6 +24,7 @@ Future<void> main() async {
   final settings = await HiveSettingsStore.open();
   final catalog = await GameCatalog.load(rootBundle);
   final fleet = await HiveFleetStore.open();
+  final progress = await HiveProgressStore.open();
   final sound = SoloudSoundService();
   await sound.load(SfxBank.build());
   runApp(
@@ -31,6 +33,7 @@ Future<void> main() async {
         settingsStoreProvider.overrideWithValue(settings),
         gameCatalogProvider.overrideWithValue(catalog),
         fleetStoreProvider.overrideWithValue(fleet),
+        progressStoreProvider.overrideWithValue(progress),
         soundServiceProvider.overrideWithValue(sound),
       ],
       child: const PirateBustersApp(),

@@ -16,6 +16,16 @@ abstract interface class SettingsStore {
   bool get autoEndTurn;
 
   Future<void> setAutoEndTurn({required bool on});
+
+  /// 효과음 (설계서 §13.8). 기본 켬.
+  bool get sound;
+
+  Future<void> setSound({required bool on});
+
+  /// 진동 (설계서 §13.8). 기본 켬.
+  bool get vibration;
+
+  Future<void> setVibration({required bool on});
 }
 
 /// Hive CE 상자 하나(`settings`)에 둔다.
@@ -53,6 +63,23 @@ class HiveSettingsStore implements SettingsStore {
   @override
   Future<void> setAutoEndTurn({required bool on}) =>
       _box.put(_autoEndKey, on ? 'on' : 'off');
+
+  @override
+  bool get sound => _box.get(_soundKey) != 'off';
+
+  @override
+  Future<void> setSound({required bool on}) =>
+      _box.put(_soundKey, on ? 'on' : 'off');
+
+  @override
+  bool get vibration => _box.get(_vibrationKey) != 'off';
+
+  @override
+  Future<void> setVibration({required bool on}) =>
+      _box.put(_vibrationKey, on ? 'on' : 'off');
+
+  static const String _soundKey = 'sound';
+  static const String _vibrationKey = 'vibration';
 }
 
 /// 메모리에만 두는 저장소. 테스트용.
@@ -76,4 +103,16 @@ class MemorySettingsStore implements SettingsStore {
 
   @override
   Future<void> setAutoEndTurn({required bool on}) async => autoEndTurn = on;
+
+  @override
+  bool sound = true;
+
+  @override
+  Future<void> setSound({required bool on}) async => sound = on;
+
+  @override
+  bool vibration = true;
+
+  @override
+  Future<void> setVibration({required bool on}) async => vibration = on;
 }
