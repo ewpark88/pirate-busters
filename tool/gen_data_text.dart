@@ -15,6 +15,7 @@ const List<String> _prefixes = [
   'sea_',
   'gimmick_',
   'personality_',
+  'tutorial_',
 ];
 
 void main() {

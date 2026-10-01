@@ -1501,6 +1501,162 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Level up! Lv {level}'**
   String levelUpTo(Object level);
+
+  /// No description provided for @storySkip.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip'**
+  String get storySkip;
+
+  /// No description provided for @story_prologue_1.
+  ///
+  /// In en, this message translates to:
+  /// **'A calm morning in Coral Harbor. Octo the octopus and Tok the turtle carpenter are fixing a small boat.'**
+  String get story_prologue_1;
+
+  /// No description provided for @story_prologue_2.
+  ///
+  /// In en, this message translates to:
+  /// **'The golden flagship appears and Goldfin shatters the Heart of the Sea. The sky darkens and a storm rises.'**
+  String get story_prologue_2;
+
+  /// No description provided for @story_prologue_3.
+  ///
+  /// In en, this message translates to:
+  /// **'The waves wreck our boat. Tok: “It\'s okay. We\'ll build a new one with our own hands!”'**
+  String get story_prologue_3;
+
+  /// No description provided for @story_prologue_4.
+  ///
+  /// In en, this message translates to:
+  /// **'The Red Claw Patrol blockades the harbor under the excuse of a “pirate crackdown”. The first shard of the broken Heart glows on their flagship.'**
+  String get story_prologue_4;
+
+  /// No description provided for @story_prologue_5.
+  ///
+  /// In en, this message translates to:
+  /// **'Octo: “Let\'s recover all six shards and sail to Golden Isle!” First we break through the patrol blocking the harbor.'**
+  String get story_prologue_5;
+
+  /// No description provided for @story_sea_1_intro_1.
+  ///
+  /// In en, this message translates to:
+  /// **'Red Claw Patrol: Tropic Bay is our sea. This is a pirate crackdown, turn your ship around!'**
+  String get story_sea_1_intro_1;
+
+  /// No description provided for @story_sea_1_intro_2.
+  ///
+  /// In en, this message translates to:
+  /// **'Tok: The first shard is glowing on their flagship. Let\'s take down the patrol boats one by one and reach it.'**
+  String get story_sea_1_intro_2;
+
+  /// No description provided for @story_s1_5_before.
+  ///
+  /// In en, this message translates to:
+  /// **'Crab Lieutenant: I\'ll give you credit for getting this far. But you\'ll never get through this iron bow!'**
+  String get story_s1_5_before;
+
+  /// No description provided for @story_s1_5_after.
+  ///
+  /// In en, this message translates to:
+  /// **'Crab Lieutenant: Argh… Retreat to the flagship! The captain won\'t let you get away with this!'**
+  String get story_s1_5_after;
+
+  /// No description provided for @story_s1_12_before_1.
+  ///
+  /// In en, this message translates to:
+  /// **'Patrol captain: With the shard\'s power this cutter never stops. I\'ll close in and crush you.'**
+  String get story_s1_12_before_1;
+
+  /// No description provided for @story_s1_12_before_2.
+  ///
+  /// In en, this message translates to:
+  /// **'Octo: Come closer, then. You\'ll get a taste of my bombs up close!'**
+  String get story_s1_12_before_2;
+
+  /// No description provided for @story_s1_12_after_1.
+  ///
+  /// In en, this message translates to:
+  /// **'Patrol captain: The shard… lost its light. The fleet of Fog Strait will be waiting for you.'**
+  String get story_s1_12_after_1;
+
+  /// No description provided for @story_s1_12_after_2.
+  ///
+  /// In en, this message translates to:
+  /// **'Tok: We got the first shard back! The Heart feels a little warmer.'**
+  String get story_s1_12_after_2;
+
+  /// No description provided for @story_s1_12_after_3.
+  ///
+  /// In en, this message translates to:
+  /// **'Octo: Next is Fog Strait. The skeletons want to lift their curse with a shard?'**
+  String get story_s1_12_after_3;
+
+  /// No description provided for @tutorial_hint_1.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap a pirate card, then pull the pirate on deck backwards to fire'**
+  String get tutorial_hint_1;
+
+  /// No description provided for @tutorial_hint_2.
+  ///
+  /// In en, this message translates to:
+  /// **'Move with the ◀ ▶ buttons. You only go as far as your fuel allows'**
+  String get tutorial_hint_2;
+
+  /// No description provided for @tutorial_hint_3.
+  ///
+  /// In en, this message translates to:
+  /// **'Holes below the waterline mean flooding! Fire Tok at your own ship to repair'**
+  String get tutorial_hint_3;
+
+  /// No description provided for @resultDoubleDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Reward doubled'**
+  String get resultDoubleDone;
+
+  /// No description provided for @replaySave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save replay'**
+  String get replaySave;
+
+  /// No description provided for @replaySaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Replay saved'**
+  String get replaySaved;
+
+  /// No description provided for @statDamage.
+  ///
+  /// In en, this message translates to:
+  /// **'Damage dealt {damage} · blocks broken {blocks}'**
+  String statDamage(Object blocks, Object damage);
+
+  /// No description provided for @statAccuracy.
+  ///
+  /// In en, this message translates to:
+  /// **'Accuracy {percent}%'**
+  String statAccuracy(Object percent);
+
+  /// No description provided for @iapRemoveAds.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove ads'**
+  String get iapRemoveAds;
+
+  /// No description provided for @iapBought.
+  ///
+  /// In en, this message translates to:
+  /// **'Purchased'**
+  String get iapBought;
+
+  /// No description provided for @iapBuy.
+  ///
+  /// In en, this message translates to:
+  /// **'Buy'**
+  String get iapBuy;
 }
 
 class _AppLocalizationsDelegate

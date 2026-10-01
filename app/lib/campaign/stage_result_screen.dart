@@ -11,6 +11,8 @@ import 'package:pirate_busters/campaign/stage_spec.dart';
 import 'package:pirate_busters/campaign/star_rules.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
 import 'package:pirate_busters/l10n/data_text.dart';
+import 'package:pirate_busters/platform/ads.dart';
+import 'package:pirate_busters/platform/analytics.dart';
 import 'package:pirate_busters/ui/hud/hud_style.dart';
 
 /// 결과 화면 (설계서 §13.5): 승패·승리 방식(시간 판정이면 침수량 막대), 별 3개, 보상,
@@ -21,6 +23,7 @@ class StageResultScreen extends ConsumerWidget {
     required this.summary,
     required this.enemyFloodPercent,
     required this.reward,
+    this.replay,
     super.key,
   });
 
@@ -28,6 +31,9 @@ class StageResultScreen extends ConsumerWidget {
   final MatchSummary summary;
   final int enemyFloodPercent;
   final StageReward reward;
+
+  /// 저장할 수 있는 리플레이 (설계서 §7.2). 없으면 버튼이 안 보인다.
+  final Replay? replay;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -78,28 +84,19 @@ class StageResultScreen extends ConsumerWidget {
                   const SizedBox(height: 6),
                   Text(
                     '${l10n.statTurns(summary.turns)} · '
-                    '${l10n.statShots(summary.shotsFired)}',
+                    '${l10n.statShots(summary.shotsFired)} · '
+                    '${l10n.statAccuracy(summary.hitPercent)}',
+                    style: const TextStyle(color: HudColors.mute, fontSize: 12),
+                  ),
+                  Text(
+                    l10n.statDamage(
+                      summary.damageDealt,
+                      summary.blocksDestroyed,
+                    ),
                     style: const TextStyle(color: HudColors.mute, fontSize: 12),
                   ),
                   const SizedBox(height: 14),
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      OutlinedButton(
-                        onPressed: () =>
-                            Navigator.of(context).popUntil((r) => r.isFirst),
-                        child: Text(l10n.resultToPort),
-                      ),
-                      const SizedBox(width: 12),
-                      FilledButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                          unawaited(StageFlow.play(context, ref, stage));
-                        },
-                        child: Text(l10n.playAgain),
-                      ),
-                    ],
-                  ),
+                  _ResultActions(stage: stage, reward: reward, replay: replay),
                 ],
               ),
             ),
@@ -188,4 +185,94 @@ class StageResultScreen extends ConsumerWidget {
             ),
         ],
       );
+}
+
+/// 아래 버튼: 광고 보고 2배(광고가 준비됐을 때만) · 리플레이 저장 · 항구로 · 다시 하기.
+class _ResultActions extends ConsumerStatefulWidget {
+  const _ResultActions({
+    required this.stage,
+    required this.reward,
+    required this.replay,
+  });
+
+  final StageSpec stage;
+  final StageReward reward;
+  final Replay? replay;
+
+  @override
+  ConsumerState<_ResultActions> createState() => _ResultActionsState();
+}
+
+class _ResultActionsState extends ConsumerState<_ResultActions> {
+  bool _doubled = false;
+  bool _saved = false;
+
+  Future<void> _double() async {
+    final ads = ref.read(adsProvider);
+    if (!await ads.show(AdPlacements.doubleReward)) return;
+    ref.read(analyticsProvider).log(Events.adRewardView, {
+      'placement': AdPlacements.doubleReward,
+      'gold': widget.reward.gold,
+    });
+    await ref
+        .read(progressProvider.notifier)
+        .update((p) => p.addGold(widget.reward.gold));
+    if (mounted) setState(() => _doubled = true);
+  }
+
+  Future<void> _saveReplay() async {
+    final replay = widget.replay;
+    if (replay == null) return;
+    final name = '${widget.stage.id}-${DateTime.now().millisecondsSinceEpoch}';
+    await ref.read(replayStoreProvider).save(name, replay);
+    if (mounted) setState(() => _saved = true);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final ads = ref.watch(adsProvider);
+    final canDouble = ads.available && widget.reward.gold > 0;
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (canDouble)
+              FilledButton.tonal(
+                onPressed: _doubled ? null : () => unawaited(_double()),
+                child: Text(
+                  _doubled ? l10n.resultDoubleDone : l10n.resultDouble,
+                ),
+              ),
+            if (canDouble && widget.replay != null) const SizedBox(width: 12),
+            if (widget.replay != null)
+              OutlinedButton(
+                onPressed: _saved ? null : () => unawaited(_saveReplay()),
+                child: Text(_saved ? l10n.replaySaved : l10n.replaySave),
+              ),
+          ],
+        ),
+        const SizedBox(height: 10),
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            OutlinedButton(
+              onPressed: () => Navigator.of(context).popUntil((r) => r.isFirst),
+              child: Text(l10n.resultToPort),
+            ),
+            const SizedBox(width: 12),
+            FilledButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                unawaited(StageFlow.play(context, ref, widget.stage));
+              },
+              child: Text(l10n.playAgain),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
 }

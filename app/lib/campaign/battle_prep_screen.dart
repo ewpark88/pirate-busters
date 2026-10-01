@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pb_ai/pb_ai.dart';
@@ -9,6 +11,8 @@ import 'package:pirate_busters/data/fleet_store.dart';
 import 'package:pirate_busters/data/game_catalog.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
 import 'package:pirate_busters/l10n/data_text.dart';
+import 'package:pirate_busters/story/cutscene_screen.dart';
+import 'package:pirate_busters/story/story_data.dart';
 import 'package:pirate_busters/ui/hud/hud_style.dart';
 
 /// 전투 준비 (설계서 §13.3): 왼쪽 설계도 선택, 가운데 상대 정보와 대사, 오른쪽 출전 해적
@@ -80,7 +84,7 @@ class _BattlePrepScreenState extends ConsumerState<BattlePrepScreen> {
                   ),
                   const SizedBox(width: 12),
                   FilledButton.icon(
-                    onPressed: () => StageFlow.play(context, ref, stage),
+                    onPressed: () => unawaited(_sail()),
                     icon: const Icon(Icons.sailing),
                     label: Text(l10n.prepSail),
                   ),
@@ -91,6 +95,23 @@ class _BattlePrepScreenState extends ConsumerState<BattlePrepScreen> {
         ),
       ),
     );
+  }
+
+  /// 보스전이면 앞 컷신을 한 번 보여준 뒤 출항 (설계서 §15.4).
+  Future<void> _sail() async {
+    final before = StoryData.bossBefore(stage.id);
+    final cuts = StoryData.of(before);
+    if (stage.isBoss &&
+        cuts != null &&
+        !ref.read(progressProvider).hasSeen(before)) {
+      await ref
+          .read(progressProvider.notifier)
+          .update((p) => p.seeStory(before));
+      if (!mounted) return;
+      await CutsceneScreen.show(context, cuts);
+      if (!mounted) return;
+    }
+    await StageFlow.play(context, ref, stage);
   }
 
   Future<void> _editDeck(BuildContext context) async {

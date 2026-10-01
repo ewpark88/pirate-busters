@@ -812,4 +812,93 @@ class AppLocalizationsKo extends AppLocalizations {
   String levelUpTo(Object level) {
     return '레벨 업! Lv $level';
   }
+
+  @override
+  String get storySkip => '건너뛰기';
+
+  @override
+  String get story_prologue_1 => '산호 항구의 평화로운 아침. 문어 옥토와 거북 목수 톡이 작은 배를 손본다.';
+
+  @override
+  String get story_prologue_2 =>
+      '황금 기함이 나타나 골드핀이 바다의 심장을 깨뜨린다. 하늘이 어두워지고 폭풍이 인다.';
+
+  @override
+  String get story_prologue_3 => '파도에 우리 배가 부서진다. 톡: “괜찮아. 우리 손으로 다시 짓자!”';
+
+  @override
+  String get story_prologue_4 =>
+      '붉은집게 초계대가 “해적 단속”을 핑계로 항구를 봉쇄한다. 부서진 심장의 첫 조각이 초계대 기함에서 빛난다.';
+
+  @override
+  String get story_prologue_5 =>
+      '옥토: “여섯 조각을 되찾아 황금 섬으로 가자!” 먼저 항구를 막은 초계대부터 뚫어야 한다.';
+
+  @override
+  String get story_sea_1_intro_1 => '붉은집게 초계대: 열대 만은 우리 바다다. 해적 단속이니 배를 돌려라!';
+
+  @override
+  String get story_sea_1_intro_2 =>
+      '톡: 저들 기함에서 첫 조각이 빛나. 순찰선을 하나씩 제치고 기함까지 가자.';
+
+  @override
+  String get story_s1_5_before =>
+      '꽃게 부대장: 여기까지 온 건 칭찬해 주지. 하지만 이 철판 뱃머리는 못 뚫는다!';
+
+  @override
+  String get story_s1_5_after => '꽃게 부대장: 크윽… 기함으로 후퇴다! 함장님이 너희를 가만두지 않을 거다!';
+
+  @override
+  String get story_s1_12_before_1 =>
+      '초계선 함장: 조각의 힘으로 이 초계선은 멈추지 않는다. 다가가서 짓밟아 주마.';
+
+  @override
+  String get story_s1_12_before_2 => '옥토: 다가온다면 오히려 좋아. 가까이서 폭탄 맛을 보여 주지!';
+
+  @override
+  String get story_s1_12_after_1 =>
+      '초계선 함장: 조각이… 빛을 잃었다. 안개 해협의 선단이 너희를 기다릴 것이다.';
+
+  @override
+  String get story_s1_12_after_2 => '톡: 첫 조각을 되찾았어! 심장이 조금 따뜻해졌어.';
+
+  @override
+  String get story_s1_12_after_3 => '옥토: 다음은 안개 해협이다. 해골들이 조각으로 저주를 풀려 한다고?';
+
+  @override
+  String get tutorial_hint_1 => '해적 카드를 누르고, 배 위 해적을 뒤로 당겨서 쏘세요';
+
+  @override
+  String get tutorial_hint_2 => '◀ ▶ 버튼으로 움직이세요. 연료가 남은 만큼만 갑니다';
+
+  @override
+  String get tutorial_hint_3 => '흘수선 아래 구멍은 침수! 톡을 내 배에 쏴서 수리하세요';
+
+  @override
+  String get resultDoubleDone => '2배로 받았어요';
+
+  @override
+  String get replaySave => '리플레이 저장';
+
+  @override
+  String get replaySaved => '리플레이 저장됨';
+
+  @override
+  String statDamage(Object blocks, Object damage) {
+    return '준 피해 $damage · 부순 블록 $blocks';
+  }
+
+  @override
+  String statAccuracy(Object percent) {
+    return '명중률 $percent%';
+  }
+
+  @override
+  String get iapRemoveAds => '광고 제거';
+
+  @override
+  String get iapBought => '구매 완료';
+
+  @override
+  String get iapBuy => '구매';
 }

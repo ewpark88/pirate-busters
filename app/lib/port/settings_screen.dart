@@ -13,6 +13,7 @@ class SettingsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     final language = ref.watch(languageProvider);
+    final iap = ref.watch(iapProvider);
     return Scaffold(
       appBar: AppBar(toolbarHeight: 40, title: Text(l10n.settings)),
       body: SafeArea(
@@ -64,6 +65,18 @@ class SettingsScreen extends ConsumerWidget {
               onChanged: (on) =>
                   ref.read(autoEndTurnProvider.notifier).set(on: on),
             ),
+            // 광고 제거 (설계서 §9). 스토어 연결 전에는 안 보인다.
+            if (iap.available)
+              ListTile(
+                title: Text(l10n.iapRemoveAds),
+                trailing: ref.watch(adsRemovedProvider)
+                    ? Text(l10n.iapBought)
+                    : FilledButton(
+                        onPressed: () =>
+                            ref.read(adsRemovedProvider.notifier).buy(),
+                        child: Text(l10n.iapBuy),
+                      ),
+              ),
           ],
         ),
       ),

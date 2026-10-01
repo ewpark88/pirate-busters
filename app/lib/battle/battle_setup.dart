@@ -59,19 +59,45 @@ class BattleSetup {
     Blueprint? blueprint,
     List<String>? deck,
     int? costLimit,
+  }) => prepareStage(
+    seed,
+    stage,
+    blueprint: blueprint,
+    deck: deck,
+    costLimit: costLimit,
+  ).match;
+
+  /// [newStageMatch] 와 같되 리플레이(§7.2)를 만들 입력을 같이 돌려준다. [tune] 으로
+  /// 규칙을 덮어쓸 수 있다(원격 설정).
+  PreparedMatch prepareStage(
+    int seed,
+    StageSpec stage, {
+    Blueprint? blueprint,
+    List<String>? deck,
+    int? costLimit,
+    MatchRules Function(MatchRules rules)? tune,
   }) {
     final chosen = deck ?? starterDeck;
     final mine = blueprint ?? defaultBlueprint;
     final limit = costLimit ?? BattleSetup.costLimit;
     final ok = deckProblem(mine.hull, catalog.pirates, chosen, limit) == null;
-    return newMatch(
-      seed,
-      blueprint: mine,
-      deck: ok ? chosen : starterDeck,
-      enemyBlueprint: catalog.preset(stage.enemyPreset).blueprint,
-      enemyDeck: stage.enemyDeck,
-      rules: MatchRules(waveLevel: stage.waveLevel, maxWind: stage.maxWind),
-      costLimit: limit,
+    final base = MatchRules(waveLevel: stage.waveLevel, maxWind: stage.maxWind);
+    final blueprints = [mine, catalog.preset(stage.enemyPreset).blueprint];
+    final decks = [if (ok) chosen else starterDeck, stage.enemyDeck];
+    final limits = [limit, BattleSetup.costLimit];
+    final match = Match.start(
+      seed: seed,
+      rules: tune == null ? base : tune(base),
+      blueprints: blueprints,
+      decks: decks,
+      costLimits: limits,
+      pirates: catalog.pirates,
+    );
+    return PreparedMatch(
+      match,
+      blueprints: blueprints,
+      decks: decks,
+      costLimits: limits,
     );
   }
 
@@ -86,4 +112,26 @@ class BattleSetup {
       deck: ok ? chosen : starterDeck,
     );
   }
+}
+
+/// 판과 그 판을 만든 입력. 리플레이 = 시드 + 설계도 + 덱 + 매치 파라미터 + 턴 묶음 (§7.2).
+class PreparedMatch {
+  const PreparedMatch(
+    this.match, {
+    required this.blueprints,
+    required this.decks,
+    required this.costLimits,
+  });
+
+  final Match match;
+  final List<Blueprint> blueprints;
+  final List<List<String>> decks;
+  final List<int> costLimits;
+
+  Replay replay() => Replay.fromMatch(
+    blueprints: blueprints,
+    decks: decks,
+    costLimits: costLimits,
+    match: match,
+  );
 }

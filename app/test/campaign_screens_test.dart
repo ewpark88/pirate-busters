@@ -10,9 +10,12 @@ import 'package:pirate_busters/campaign/rewards.dart';
 import 'package:pirate_busters/campaign/stage_result_screen.dart';
 import 'package:pirate_busters/campaign/star_rules.dart';
 import 'package:pirate_busters/data/fleet_store.dart';
+import 'package:pirate_busters/data/replay_store.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
 import 'package:pirate_busters/meta/progress.dart';
 import 'package:pirate_busters/meta/progress_store.dart';
+import 'package:pirate_busters/platform/ads.dart';
+import 'package:pirate_busters/platform/analytics.dart';
 import 'package:pirate_busters/settings/language.dart';
 import 'package:pirate_busters/settings/settings_store.dart';
 
@@ -23,6 +26,10 @@ Future<void> _pump(
   Widget screen,
   Locale locale, {
   PlayerProgress progress = const PlayerProgress(),
+  MemoryProgressStore? progressStore,
+  RewardedAds? ads,
+  MemoryAnalytics? analytics,
+  ReplayStore? replays,
 }) async {
   tester.view.physicalSize = const Size(1280, 720);
   tester.view.devicePixelRatio = 2;
@@ -35,7 +42,12 @@ Future<void> _pump(
         gameCatalogProvider.overrideWithValue(testCatalog),
         campaignProvider.overrideWithValue(testCampaign),
         fleetStoreProvider.overrideWithValue(MemoryFleetStore()),
-        progressStoreProvider.overrideWithValue(MemoryProgressStore(progress)),
+        progressStoreProvider.overrideWithValue(
+          progressStore ?? MemoryProgressStore(progress),
+        ),
+        if (ads != null) adsProvider.overrideWithValue(ads),
+        if (analytics != null) analyticsProvider.overrideWithValue(analytics),
+        if (replays != null) replayStoreProvider.overrideWithValue(replays),
       ],
       child: MaterialApp(
         locale: locale,
@@ -91,14 +103,34 @@ void main() {
     });
   }
 
-  testWidgets('지도: 첫 스테이지만 열려 있고, 깬 뒤에는 다음 노드가 열린다', (tester) async {
+  testWidgets('지도: 튜토리얼을 마치기 전에는 튜토리얼 노드 3개만 보인다 (설계서 §13.1)', (
+    tester,
+  ) async {
     await _pump(tester, const CampaignMapScreen(), const Locale('ko'));
+    expect(find.text('t-1'), findsOneWidget);
+    expect(find.byIcon(Icons.lock), findsNWidgets(2));
+    expect(find.text('1-1'), findsNothing);
+  });
+
+  testWidgets('지도: 첫 스테이지만 열려 있고, 깬 뒤에는 다음 노드가 열린다', (tester) async {
+    await _pump(
+      tester,
+      const CampaignMapScreen(),
+      const Locale('ko'),
+      progress: const PlayerProgress(
+        tutorialDone: 3,
+        seenStories: ['sea_1_intro'],
+      ),
+    );
     expect(find.byIcon(Icons.lock), findsNWidgets(5));
     await _pump(
       tester,
       const CampaignMapScreen(),
       const Locale('ko'),
-      progress: const PlayerProgress().recordStage('1-1', 2),
+      progress: const PlayerProgress(
+        tutorialDone: 3,
+        seenStories: ['sea_1_intro'],
+      ).recordStage('1-1', 2),
     );
     expect(find.byIcon(Icons.lock), findsNWidgets(4));
     expect(find.byIcon(Icons.star), findsNWidgets(2));
@@ -131,5 +163,57 @@ void main() {
     await tester.tap(find.text(l10n.story_s1_2_enemy));
     await tester.pump();
     expect(find.text(l10n.story_s1_2_ally), findsOneWidget);
+  });
+
+  testWidgets('결과: 광고가 준비되면 2배 버튼이 보이고 보면 골드가 두 배가 된다 (설계서 §9)', (
+    tester,
+  ) async {
+    final ads = FakeAds();
+    final analytics = MemoryAnalytics();
+    final store = MemoryProgressStore(const PlayerProgress(gold: 100));
+    await _pump(
+      tester,
+      StageResultScreen(
+        stage: stage,
+        summary: summary,
+        enemyFloodPercent: 45,
+        reward: reward,
+      ),
+      const Locale('ko'),
+      ads: ads,
+      analytics: analytics,
+      progressStore: store,
+    );
+    final l10n = await AppLocalizations.delegate.load(const Locale('ko'));
+    await tester.ensureVisible(find.text(l10n.resultDouble));
+    await tester.tap(find.text(l10n.resultDouble));
+    await tester.pumpAndSettle();
+    expect(find.text(l10n.resultDoubleDone), findsOneWidget);
+    expect(store.progress.gold, 100 + reward.gold);
+    expect(analytics.names, contains(Events.adRewardView));
+    expect(ads.shown, [AdPlacements.doubleReward]);
+  });
+
+  testWidgets('결과: 리플레이 저장 버튼은 저장소에 한 번만 넣는다', (tester) async {
+    final replays = MemoryReplayStore();
+    final prepared = testSetup.prepareStage(5, stage);
+    await _pump(
+      tester,
+      StageResultScreen(
+        stage: stage,
+        summary: summary,
+        enemyFloodPercent: 45,
+        reward: reward,
+        replay: prepared.replay(),
+      ),
+      const Locale('ko'),
+      replays: replays,
+    );
+    final l10n = await AppLocalizations.delegate.load(const Locale('ko'));
+    await tester.ensureVisible(find.text(l10n.replaySave));
+    await tester.tap(find.text(l10n.replaySave));
+    await tester.pumpAndSettle();
+    expect(find.text(l10n.replaySaved), findsOneWidget);
+    expect(replays.names, hasLength(1));
   });
 }

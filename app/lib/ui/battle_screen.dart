@@ -7,10 +7,14 @@ import 'package:pb_sim/pb_sim.dart';
 import 'package:pirate_busters/app/providers.dart';
 import 'package:pirate_busters/battle/battle_session.dart';
 import 'package:pirate_busters/battle/battle_setup.dart';
+import 'package:pirate_busters/battle/battle_stats.dart';
 import 'package:pirate_busters/campaign/stage_spec.dart';
 import 'package:pirate_busters/game/battle_game.dart';
 import 'package:pirate_busters/input/field_gestures.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
+import 'package:pirate_busters/l10n/data_text.dart';
+import 'package:pirate_busters/platform/analytics.dart';
+import 'package:pirate_busters/platform/remote_values.dart';
 import 'package:pirate_busters/ui/hud/battle_hud.dart';
 
 /// 전투 화면: 전장(Flame) 위에 HUD(Flutter 위젯)를 겹친다 (설계서 §13.4).
@@ -31,7 +35,8 @@ class BattleScreen extends ConsumerStatefulWidget {
   final StageSpec? stage;
 
   /// 판이 끝났을 때 한 번 부른다(결과 화면, 보상). 없으면 간이 결과 창만 띄운다.
-  final void Function(MatchState state)? onOver;
+  final void Function(MatchState state, Replay? replay, BattleStats stats)?
+  onOver;
 
   /// AI 상대 난이도 (설계서 §5.2).
   final AiLevel level;
@@ -48,6 +53,7 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
   late BattleGame _game;
   bool _paused = false;
   bool _reported = false;
+  PreparedMatch? _prepared;
 
   @override
   void initState() {
@@ -61,15 +67,20 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
     final stage = widget.stage;
     final setup = BattleSetup(catalog);
     final blueprint = fleet.blueprint(fleet.activeSlot);
+    final remote = ref.read(remoteValuesProvider);
+    _prepared = stage == null
+        ? null
+        : setup.prepareStage(
+            seed,
+            stage,
+            blueprint: blueprint,
+            deck: fleet.deck,
+            costLimit: ref.read(progressProvider).costLimit,
+            tune: (r) => applyRemoteRules(r, remote),
+          );
     _session = BattleSession(
-      stage == null
-          ? setup.newMatchFor(seed, blueprint: blueprint, deck: fleet.deck)
-          : setup.newStageMatch(
-              seed,
-              stage,
-              blueprint: blueprint,
-              deck: fleet.deck,
-            ),
+      _prepared?.match ??
+          setup.newMatchFor(seed, blueprint: blueprint, deck: fleet.deck),
       humanSides: hotseat ? const {0, 1} : const {0},
       speciesOf: catalog.speciesOf,
       opponent: hotseat
@@ -83,13 +94,23 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
     );
     _reported = false;
     _session.addListener(_checkOver);
+    final analytics = ref.read(analyticsProvider);
     _game = BattleGame(_session, sound: ref.read(soundServiceProvider));
+    _game.onTurnEnd = (e) {
+      if (!_session.humanSides.contains(e.side)) return;
+      analytics.log(Events.turnEnd, {
+        'turn': e.value,
+        'reason': e.cell,
+        'ms': _session.turnMs,
+        'shots': _game.stats.shots[e.side],
+      });
+    };
   }
 
   void _checkOver() {
     if (_reported || !_session.isOver) return;
     _reported = true;
-    widget.onOver?.call(_session.state);
+    widget.onOver?.call(_session.state, _prepared?.replay(), _game.stats);
   }
 
   void _restart({bool? hotseat}) {
@@ -130,6 +151,12 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
     return _scaffold();
   }
 
+  /// 튜토리얼 판이면 안내 한 줄 (설계서 §13.1).
+  String? _hint(AppLocalizations l10n) {
+    final step = widget.stage?.tutorialStep ?? 0;
+    return step == 0 ? null : dataText(l10n, 'tutorial_hint_$step');
+  }
+
   Widget _scaffold() => Scaffold(
     backgroundColor: Colors.black,
     body: Stack(
@@ -148,6 +175,7 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
             paused: _paused,
             onPause: _pause,
             onRestart: _restart,
+            hint: _hint(AppLocalizations.of(context)),
           ),
         ),
       ],
