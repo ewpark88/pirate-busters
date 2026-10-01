@@ -68,6 +68,12 @@ void main() {
       expect(campaign.stage('1-3').personality, Personality.hunter);
     });
 
+    test('일반 모드 해역 1 은 보스까지 모두 쉬움 AI 다 (설계서 §6.1)', () {
+      for (final stage in sea1.stages) {
+        expect(stage.aiLevel, AiLevel.easy, reason: stage.id);
+      }
+    });
+
     test('대사·미션 글자 키가 한국어·영어 ARB 에 모두 있다 (§14.3, §15.4)', () {
       final ko =
           jsonDecode(

@@ -132,15 +132,17 @@ List<Projectile> splitFragments(MatchState state, Projectile p, int tick) {
 }
 
 /// 다중투하: 꼭대기에서 [PirateSpec.ammoValue] 개의 소형 폭탄으로 갈라진다.
-/// 폭탄마다 데이터 피해를 그대로 쓴다. 가로 속도를 0.5~1.5 배로 벌려 궤적 따라 흩는다.
+/// 폭탄 피해는 여러 발 규칙으로 합계를 나눈 값 (§4.8, ADR-050). 가로 속도를 0.5~1.5
+/// 배로 벌려 궤적 따라 흩는다.
 List<Projectile> flockBombs(MatchState state, Projectile p, int tick) {
   final n = p.spec.ammoValue;
+  final bomb = _scaled(p.spec, n, 100);
   return [
     for (var i = 0; i < n; i++)
       _child(
         state,
         p,
-        p.spec,
+        bomb,
         tick,
         (p.vx * (50 + (n <= 1 ? 50 : 100 * i ~/ (n - 1))) ~/ 100, 0),
       ),
@@ -156,13 +158,14 @@ List<Projectile> dropBombs(
   required int x,
 }) {
   final n = spec.ammoValue;
+  final bomb = _scaled(spec, n, 100);
   return [
     for (var i = 0; i < n; i++)
       Projectile(
         id: state.nextProjectileId++,
         side: side,
         slot: slot,
-        spec: spec,
+        spec: bomb,
         x: x + (2 * i - (n - 1)) * cellUnit ~/ 2,
         y: flockDropHeight,
         vx: 0,

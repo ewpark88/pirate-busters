@@ -56,7 +56,7 @@ void main() {
 
   test('최대 힘·45° 비행 시간이 BALANCE.md A2.8 표와 같다(±1틱)', () {
     const seconds = {
-      RangeGrade.short: 17,
+      RangeGrade.short: 18,
       RangeGrade.medium: 21,
       RangeGrade.long: 25,
       RangeGrade.veryLong: 29,

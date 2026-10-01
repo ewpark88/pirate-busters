@@ -617,7 +617,7 @@ abstract class AppLocalizations {
   /// No description provided for @blueprint_armored_desc.
   ///
   /// In en, this message translates to:
-  /// **'Iron walls guard both sides of the cabins. Heavy and low in the water, so the pump keeps it afloat.'**
+  /// **'Iron walls guard both sides of the cabins, and a magazine adds firepower. Heavy and low in the water, so watch the flooding.'**
   String get blueprint_armored_desc;
 
   /// No description provided for @blueprint_fast_name.

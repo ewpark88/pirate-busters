@@ -78,7 +78,10 @@ void main() {
     testWidgets('일시정지 창이 두 언어로 나오고 넘치지 않는다', (tester) async {
       for (final locale in supportedLocales) {
         await _pumpHud(tester, locale, paused: true);
-        expect(find.byType(ChoiceChip), findsNWidgets(5));
+        // 상대 선택 2개뿐. 언어는 전투 중에 바꾸지 않는다(설계서 §14.1).
+        expect(find.byType(ChoiceChip), findsNWidgets(2));
+        final l10n = await AppLocalizations.delegate.load(locale);
+        expect(find.text(l10n.language), findsNothing);
         expect(tester.takeException(), isNull);
       }
     });

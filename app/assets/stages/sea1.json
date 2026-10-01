@@ -62,7 +62,7 @@
     {
       "id": "1-5", "kind": "midBoss", "gimmick": "bow_iron_shield",
       "enemyPreset": "armored", "enemyDeck": ["p06_pang", "p07_hippo", "p11_finn", "p31_sharky"],
-      "aiLevel": "normal", "personality": "bombard", "waveLevel": 2, "maxWind": 3,
+      "aiLevel": "easy", "personality": "bombard", "waveLevel": 2, "maxWind": 3,
       "starTurns": 12, "mission": { "type": "no_pirate_down" },
       "dialogueKeys": ["story_s1_5_enemy", "story_s1_5_ally"],
       "reward": { "gold": 300, "pirate": "p06_pang" }
@@ -70,7 +70,7 @@
     {
       "id": "1-12", "kind": "boss", "gimmick": "patrol_closing_in",
       "enemyPreset": "armored", "enemyDeck": ["p06_pang", "p04_uni", "p11_finn", "p31_sharky"],
-      "aiLevel": "normal", "personality": "bombard", "waveLevel": 3, "maxWind": 3,
+      "aiLevel": "easy", "personality": "bombard", "waveLevel": 3, "maxWind": 3,
       "starTurns": 12, "mission": { "type": "turns_within", "turns": 10 },
       "dialogueKeys": ["story_s1_12_enemy", "story_s1_12_ally"],
       "reward": { "gold": 500, "pirate": "p31_sharky" }

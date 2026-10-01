@@ -7,6 +7,8 @@ import 'package:pb_sim/src/math/fx.dart';
 import 'package:pb_sim/src/pirate/ammo.dart';
 import 'package:pb_sim/src/projectile/grid_trace.dart';
 import 'package:pb_sim/src/projectile/projectile.dart';
+import 'package:pb_sim/src/ship/material.dart';
+import 'package:pb_sim/src/ship/support.dart';
 
 /// 탄 하나를 떨어질 때까지 틱 단위로 진행하고 날아간 틱 수를 돌려준다.
 /// 여러 발·갈라지는 탄종도 [runVolley] 로 함께 계산한다.
@@ -62,7 +64,9 @@ TraceStep traceStep(
           ly0,
           lx1,
           ly1,
-          (cx, cy) => grid.hasBlock(cx, cy) || target.isExposedPirateAt(cx, cy),
+          (cx, cy) =>
+              (grid.hasBlock(cx, cy) && grid.indexOf(cx, cy) != p.passedNet) ||
+              target.isExposedPirateAt(cx, cy),
         )
       : null;
   return (hit: hit, sea: sea, x: x1, y: y1, target: target, at: at);
@@ -74,6 +78,9 @@ bool stepShot(MatchState state, Projectile p, int wind, int ms, int tick) {
   final step = traceStep(state, p, wind, ms, tick);
   final target = step.target;
   final hit = step.hit;
+  if (hit != null && passNet(p, target, hit.cx, hit.cy, events: state.events)) {
+    return false;
+  }
   if (hit != null) {
     final (wx, wy) = fromShipLocal(state, target.side, step.at, hit.x, hit.y);
     state.events.add(
@@ -92,6 +99,43 @@ bool stepShot(MatchState state, Projectile p, int wind, int ms, int tick) {
   return p.isExpired;
 }
 
+/// 망사 칸 ([cx], [cy]) 에 걸린 탄 (설계서 §3.2, BALANCE.md A3.2): 공중 계열은
+/// 막혀 그 칸에 맞고(false), 나머지는 속도 50% 로 지나간다(true). [events] 가 있으면
+/// 망사를 탄의 블록 피해만큼 깎는다(미리 계산에는 null).
+bool passNet(
+  Projectile p,
+  SideState target,
+  int cx,
+  int cy, {
+  List<SimEvent>? events,
+}) {
+  final grid = target.grid;
+  if (grid.materialAt(cx, cy) != BlockMaterial.net) return false;
+  if (p.spec.family == Family.air) return false;
+  p
+    ..passedNet = grid.indexOf(cx, cy)
+    ..vx = p.vx * netSlowPercent ~/ 100
+    ..vy = p.vy * netSlowPercent ~/ 100;
+  if (events != null && grid.damage(cx, cy, p.spec.blockDamage)) {
+    events.add(
+      SimEvent(
+        SimEventKind.blockDestroyed,
+        side: target.side,
+        cell: grid.indexOf(cx, cy),
+      ),
+    );
+    for (final i in collapseUnsupported(grid)) {
+      events.add(
+        SimEvent(SimEventKind.blockCollapsed, side: target.side, cell: i),
+      );
+    }
+  }
+  return true;
+}
+
+/// 망사를 지나간 탄의 속도 비율(%) (BALANCE.md A3.2, 임시값 ADR-050).
+const int netSlowPercent = 50;
+
 /// 발사 전 [state] 에서 지금 턴 진영의 [slot] 해적이 쏠 탄의, 처음 닿는 곳(배 또는
 /// 해수면)까지의 틱별 월드 위치 (렌더용 예측). 판정과 같은 [traceStep] 을 쓰므로
 /// 계산을 미룬 분열탄이 탭 없이 떨어질 틱과 같다. 상태는 바꾸지 않는다.
@@ -109,6 +153,11 @@ bool stepShot(MatchState state, Projectile p, int wind, int ms, int tick) {
   for (var tick = 1; !p.isExpired; tick++) {
     final step = traceStep(state, p, wind, ms, tick);
     final hit = step.hit;
+    if (hit != null && passNet(p, step.target, hit.cx, hit.cy)) {
+      xs.add(step.x);
+      ys.add(step.y);
+      continue;
+    }
     if (hit != null) {
       final (wx, wy) = fromShipLocal(
         state,

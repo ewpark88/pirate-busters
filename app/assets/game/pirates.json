@@ -222,8 +222,8 @@
       "projectile": {},
       "onHit": {
         "radiusCells": 0,
-        "blockDmg": 25,
-        "pirateDmg": 40
+        "blockDmg": 50,
+        "pirateDmg": 90
       },
       "growth": {},
       "render": {
@@ -248,8 +248,8 @@
       "projectile": {},
       "onHit": {
         "radiusCells": 0,
-        "blockDmg": 25,
-        "pirateDmg": 40
+        "blockDmg": 50,
+        "pirateDmg": 90
       },
       "growth": {},
       "render": {

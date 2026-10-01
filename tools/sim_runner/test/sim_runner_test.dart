@@ -52,7 +52,7 @@ void main() {
     expect(a.every((r) => r.turns > 0 && r.turns <= 30), isTrue);
   });
 
-  test('요약: 승률 55% 초과 해적과 시간 판정 25% 초과를 경고한다', () {
+  test('요약: 같은 등급 평균보다 5%p 넘게 이기는 해적과 시간 판정 25% 초과를 경고한다', () {
     final setup = factory.setupFor(1, const [AiLevel.normal, AiLevel.normal]);
     GameResult game(MatchOutcome o, int winner) => GameResult(
       setup: setup,
@@ -73,14 +73,40 @@ void main() {
     final report = Report(results, factory.catalog)..build();
     expect(report.outcomeRate(MatchOutcome.timeDecision), 50);
     expect(report.warnings, contains(startsWith('time decision')));
-    // 왼쪽만 이긴 판들이라 왼쪽 덱에만 있는 해적은 승률 100% 로 경고된다.
-    final onlyLeft = setup.decks[0].where((id) => !setup.decks[1].contains(id));
+    // 왼쪽만 이긴 판들이라 왼쪽 덱에만 있는 일반 해적은 승률 100% 로, 같은 등급
+    // 평균(오른쪽 덱 해적 0% 와 섞임)보다 5%p 넘게 높아 경고된다.
+    final onlyLeft = setup.decks[0].where(
+      (id) =>
+          !setup.decks[1].contains(id) &&
+          factory.catalog.byId(id).rarity == Rarity.common,
+    );
+    expect(onlyLeft, isNotEmpty);
     for (final id in onlyLeft) {
       expect(report.warnings, contains(startsWith('pirate $id')));
     }
     expect(
       report.csv().split('\n').first,
       'kind,key,games,wins,draws,win_rate',
+    );
+  });
+
+  test('덱 풀·설계도 풀을 주면 그 안에서만 판을 만든다', () {
+    final o = SimOptions.parse([
+      '--pirates', 'p01_octo,p06_pang,p16_suri,p36_tok,p27_wing', //
+      '--blueprints', 'armored',
+      '--data', _dataDir,
+    ]);
+    final f = factoryFrom(data, pirates: o.pirates, blueprints: o.blueprints);
+    for (var seed = 1; seed < 20; seed++) {
+      final s = f.setupFor(seed, const [AiLevel.normal, AiLevel.normal]);
+      expect(s.blueprints, ['armored', 'armored']);
+      for (final deck in s.decks) {
+        expect(o.pirates, containsAll(deck));
+      }
+    }
+    expect(
+      () => factoryFrom(data, blueprints: const ['nope']),
+      throwsArgumentError,
     );
   });
 }

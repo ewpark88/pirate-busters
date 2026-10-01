@@ -108,13 +108,112 @@ void main() {
     });
   });
 
-  test('난이도가 올라갈수록 AI 대 AI 승률이 오른다 (완료 조건)', () {
-    const games = 20;
+  // 이웃한 난이도의 차이(보통 → 어려움 → 지옥)는 작은 테스트 배·2명 덱에서 판
+  // 수가 적으면 흔들리므로 `sim_runner` 1000판으로 잰다(PROGRESS, ADR-050).
+  // 여기서는 차이가 큰 쌍으로 서열이 뒤집히지 않는지만 본다.
+  test('난이도가 높은 AI 가 낮은 AI 를 이긴다 (보통 > 쉬움, 어려움 > 쉬움, 지옥 > 보통)', () {
+    const games = 40;
     expect(_wins(AiLevel.normal, AiLevel.easy, games), greaterThan(games ~/ 2));
-    expect(_wins(AiLevel.hard, AiLevel.normal, games), greaterThan(games ~/ 2));
+    expect(_wins(AiLevel.hard, AiLevel.easy, games), greaterThan(games ~/ 2));
+    expect(_wins(AiLevel.hell, AiLevel.normal, games), greaterThan(games ~/ 2));
+  });
+
+  test('프레임마다 나눠 계산해도 한 번에 계산한 것과 같은 턴 묶음이 나온다 (A5.1)', () {
+    for (final level in AiLevel.values) {
+      final m = newMatch(13, left: const ['uni', 'octo', 'pang']);
+      final whole = AiPlanner(m.state, level: level).plan().toJson();
+      final split = AiPlanner(m.state, level: level);
+      var frames = 0;
+      while (!split.step()) {
+        frames++;
+      }
+      expect(split.bundle!.toJson(), whole, reason: '$level');
+      expect(frames, greaterThan(0));
+    }
+  });
+
+  test('난이도 다이얼 표는 BALANCE.md A5.2·A5.5 와 같다', () {
+    List<Object> row(AiLevel l) {
+      final d = AiDials.of(l);
+      return [
+        d.angleErrorMdeg,
+        d.thinkMs,
+        d.pickTopPercent,
+        d.waveTiming,
+        d.support,
+        d.positions,
+        d.combo,
+        d.windCorrectionPercent,
+        d.timeMode,
+      ];
+    }
+
+    expect(row(AiLevel.easy), [
+      8000,
+      2500,
+      50,
+      false,
+      SupportUse.never,
+      0,
+      false,
+      50,
+      false,
+    ]);
+    expect(row(AiLevel.normal), [
+      4000,
+      1500,
+      20,
+      false,
+      SupportUse.timely,
+      3,
+      false,
+      75,
+      false,
+    ]);
+    expect(row(AiLevel.hard), [
+      2000,
+      800,
+      5,
+      true,
+      SupportUse.timely,
+      5,
+      true,
+      95,
+      true,
+    ]);
+    expect(row(AiLevel.hell), [
+      500,
+      300,
+      0,
+      true,
+      SupportUse.timely,
+      7,
+      true,
+      100,
+      true,
+    ]);
     expect(
-      _wins(AiLevel.hell, AiLevel.hard, games),
-      greaterThanOrEqualTo(games ~/ 2),
+      [AiDials.positionStepCells, AiDials.timeModeTurn, AiDials.fuelReserve],
+      [2, 22, 40],
     );
+  });
+
+  test('분열탄 해적이 있으면 AI 가 탭 시점을 골라 FIRE 뒤에 같은 t 의 TAP 을 낸다 (§4.8)', () {
+    var taps = 0;
+    for (var seed = 1; seed <= 20 && taps == 0; seed++) {
+      final m = newMatch(seed, left: const ['uni', 'octo']);
+      if (m.state.activeSide != 0) continue;
+      final bundle = const AiController(level: AiLevel.hell).turnFor(m.state);
+      final cmds = bundle.commands;
+      for (var i = 0; i < cmds.length; i++) {
+        final c = cmds[i];
+        if (c is! TapCommand) continue;
+        final fire = cmds[i - 1] as FireCommand;
+        expect([c.slot, c.t], [fire.slot, fire.t]);
+        expect(c.ticks, greaterThan(0));
+        taps++;
+      }
+    }
+    expect(taps, greaterThan(0));
   });
 }

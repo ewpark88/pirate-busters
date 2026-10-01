@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pirate_busters/app/providers.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
-import 'package:pirate_busters/settings/language.dart';
 import 'package:pirate_busters/ui/hud/hud_style.dart';
 
-/// 일시정지 창: 언어, 상대(AI·두 사람), 항복 (설계서 §13.4, §14.1).
+/// 일시정지 창: 저사양·자동 종료, 상대(AI·두 사람), 항복 (설계서 §13.4).
+///
+/// 언어는 전투 중에 바꾸지 않는다(설계서 §14.1). 설정 화면에서만 고른다.
 class PauseMenu extends ConsumerWidget {
   const PauseMenu({
     required this.hotseat,
@@ -25,7 +26,6 @@ class PauseMenu extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
-    final choice = ref.watch(languageProvider);
     return Center(
       child: HudPanel(
         padding: const EdgeInsets.all(16),
@@ -37,27 +37,6 @@ class PauseMenu extends ConsumerWidget {
             children: [
               Text(l10n.pause, style: const TextStyle(fontSize: 22)),
               const SizedBox(height: 12),
-              Text(
-                l10n.language,
-                style: const TextStyle(color: HudColors.mute),
-              ),
-              Wrap(
-                spacing: 6,
-                children: [
-                  for (final c in LanguageChoice.values)
-                    ChoiceChip(
-                      label: Text(switch (c) {
-                        LanguageChoice.system => l10n.languageSystem,
-                        LanguageChoice.ko => l10n.languageKorean,
-                        LanguageChoice.en => l10n.languageEnglish,
-                      }),
-                      selected: choice == c,
-                      onSelected: (_) =>
-                          ref.read(languageProvider.notifier).choose(c),
-                    ),
-                ],
-              ),
-              const SizedBox(height: 8),
               Wrap(
                 spacing: 6,
                 children: [

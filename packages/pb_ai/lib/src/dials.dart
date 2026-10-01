@@ -45,7 +45,7 @@ class AiDials {
       thinkMs: 1500,
       pickTopPercent: 20,
       waveTiming: false,
-      support: SupportUse.fromHalfFlood,
+      support: SupportUse.timely,
       positions: 3,
       combo: false,
       windCorrectionPercent: 75,

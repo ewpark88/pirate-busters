@@ -152,7 +152,7 @@
   "blueprint_balanced_name": "Balanced",
   "blueprint_balanced_desc": "Oak keel with a pump and a workshop. A gun port and a lookout back one star pirate.",
   "blueprint_armored_name": "Ironclad",
-  "blueprint_armored_desc": "Iron walls guard both sides of the cabins. Heavy and low in the water, so the pump keeps it afloat.",
+  "blueprint_armored_desc": "Iron walls guard both sides of the cabins, and a magazine adds firepower. Heavy and low in the water, so watch the flooding.",
   "blueprint_fast_name": "Swift",
   "blueprint_fast_desc": "Pine and cork keep it light, and two fuel tanks let it roam far. It breaks easily.",
   "ammoExplosive": "Blast {n}%",

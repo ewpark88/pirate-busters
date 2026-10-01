@@ -79,6 +79,13 @@ class Projectile {
   /// 남은 관통 칸 수 (관통탄).
   int pierceLeft = 0;
 
+  /// 지금까지 뚫은 칸 수(관통탄 두 번째 칸부터 피해 50%, ADR-050).
+  int piercedCells = 0;
+
+  /// 마지막으로 지나간 망사 칸(맞는 배 로컬 인덱스, 없으면 −1). 같은 칸에 다시
+  /// 걸리지 않게 한다 (설계서 §3.2, ADR-050).
+  int passedNet = -1;
+
   /// 한 번 쪼개졌는가 (분열탄·다중투하는 한 번만 갈라진다).
   bool divided = false;
 

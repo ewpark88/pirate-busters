@@ -4,7 +4,7 @@
 /// 최대 탄속 = √(사거리 × 중력 16칸/초²) 을 미리 계산한 정수 표로 둔다 (§7.1,
 /// BALANCE.md A2.8, ADR-043).
 enum RangeGrade {
-  short(22, 18762),
+  short(26, 20396),
   medium(36, 24000),
   long(50, 28284),
   veryLong(66, 32496);

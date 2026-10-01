@@ -315,7 +315,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get blueprint_armored_desc =>
-      'Iron walls guard both sides of the cabins. Heavy and low in the water, so the pump keeps it afloat.';
+      'Iron walls guard both sides of the cabins, and a magazine adds firepower. Heavy and low in the water, so watch the flooding.';
 
   @override
   String get blueprint_fast_name => 'Swift';
