@@ -3,7 +3,7 @@
 내가 지은 해적선으로 겨루는 1:1 턴제 해상 포격전(턴당 25초, 양쪽 합쳐 최대 30턴). Flutter + Flame, Android 먼저, 1인 개발.
 **`Pirate Busters 개발 계획서.md` 의 단계 순서대로만** 진행한다.
 
-**현재 단계: M6 — AI 턴 운영·sim_runner (`pb_ai`, `tools/sim_runner`)** (M5 완료, 표정 에셋·손맛 체크포인트 이월. 진행 기록: docs/PROGRESS.md)
+**현재 단계: A9 — 검토 지적 반영 (ADR-050·ADR-051: `pb_sim`, `pb_ai`, `pb_data` 데이터, `app`, 문서)** (M7·A5~A8 완료, 표정 에셋·손맛 체크포인트·실기기·스토어 항목 이월. 진행 기록: docs/PROGRESS.md)
 
 ## 기준 문서
 | 문서 | 역할 |

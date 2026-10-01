@@ -48,19 +48,42 @@ class GameResult {
 
 /// 게임 데이터로 판을 만들고 두는 도구.
 class GameFactory {
-  GameFactory(this.data, this.presets) : catalog = data.catalog;
+  /// [pirates]·[blueprints] 를 주면 덱 풀·설계도 풀을 그 id 로 좁힌다.
+  GameFactory(
+    this.data,
+    List<BlueprintPreset> presets, {
+    List<String>? pirates,
+    List<String>? blueprints,
+  }) : catalog = data.catalog,
+       presets = [
+         for (final p in presets)
+           if (blueprints == null || blueprints.contains(p.id)) p,
+       ],
+       pirateIds = [
+         for (final p in data.pirates)
+           if (pirates == null || pirates.contains(p.id)) p.id,
+       ] {
+    if (this.presets.isEmpty) throw ArgumentError('설계도 풀이 비었다: $blueprints');
+    if (pirateIds.isEmpty) throw ArgumentError('덱 풀이 비었다: $pirates');
+  }
 
   final GameData data;
+
+  /// 설계도 풀.
   final List<BlueprintPreset> presets;
+
+  /// 덱 풀(해적 id).
+  final List<String> pirateIds;
   final PirateCatalog catalog;
 
-  /// [seed] 로 덱(코스트 한도 안 4명)·설계도·성격을 고른다. 난이도는 [levels].
+  /// [seed] 로 덱(덱 풀에서 코스트 한도 안 4명)·설계도(설계도 풀)·성격을 고른다.
+  /// 난이도는 [levels].
   GameSetup setupFor(int seed, List<AiLevel> levels) {
     final rng = XorShift32(seed * 2654435761);
     List<String> deck() {
-      final ids = [for (final p in data.pirates) p.id];
+      final ids = pirateIds;
       // 선실 4칸을 코스트 한도 안에서 채운다(덱 크기가 승률을 흐리지 않게).
-      const size = 4;
+      final size = ids.length < 4 ? ids.length : 4;
       final out = <String>[];
       var guard = 0;
       while (out.length < size && guard++ < 200) {

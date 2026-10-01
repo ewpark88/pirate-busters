@@ -89,6 +89,26 @@ void main() {
       'kind,key,games,wins,draws,win_rate',
     );
   });
+
+  test('덱 풀·설계도 풀을 주면 그 안에서만 판을 만든다', () {
+    final o = SimOptions.parse([
+      '--pirates', 'p01_octo,p06_pang,p16_suri,p36_tok,p27_wing', //
+      '--blueprints', 'armored',
+      '--data', _dataDir,
+    ]);
+    final f = factoryFrom(data, pirates: o.pirates, blueprints: o.blueprints);
+    for (var seed = 1; seed < 20; seed++) {
+      final s = f.setupFor(seed, const [AiLevel.normal, AiLevel.normal]);
+      expect(s.blueprints, ['armored', 'armored']);
+      for (final deck in s.decks) {
+        expect(o.pirates, containsAll(deck));
+      }
+    }
+    expect(
+      () => factoryFrom(data, blueprints: const ['nope']),
+      throwsArgumentError,
+    );
+  });
 }
 
 class _Opts {

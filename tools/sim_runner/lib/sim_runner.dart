@@ -25,7 +25,9 @@ const String usage = '''
   --right LEVEL    오른쪽 AI 난이도 (기본 --left 와 같음). 다르면 판마다 좌우를 바꾼다
   --jobs J         isolate 수 (기본 CPU 수)
   --csv PATH       CSV 로도 쓴다
-  --data DIR       게임 데이터 폴더 (기본 app/assets/game)''';
+  --data DIR       게임 데이터 폴더 (기본 app/assets/game)
+  --pirates IDS    덱 풀: 쉼표로 나눈 해적 id (기본 전체)
+  --blueprints IDS 설계도 풀: 쉼표로 나눈 추천 설계도 id (기본 전체)''';
 
 /// 인자.
 class SimOptions {
@@ -37,6 +39,8 @@ class SimOptions {
     int? jobs,
     this.csv,
     this.dataDir = 'app/assets/game',
+    this.pirates,
+    this.blueprints,
   }) : right = right ?? left,
        jobs = jobs ?? Platform.numberOfProcessors;
 
@@ -63,6 +67,8 @@ class SimOptions {
       jobs: m.containsKey('jobs') ? int.parse(m['jobs']!) : null,
       csv: m['csv'],
       dataDir: m['data'] ?? 'app/assets/game',
+      pirates: m['pirates']?.split(','),
+      blueprints: m['blueprints']?.split(','),
     );
   }
 
@@ -73,6 +79,10 @@ class SimOptions {
   final int jobs;
   final String? csv;
   final String dataDir;
+
+  /// 덱 풀·설계도 풀(없으면 전체).
+  final List<String>? pirates;
+  final List<String>? blueprints;
 
   /// 판 [i] 의 [좌, 우] 난이도. 난이도가 다르면 판마다 좌우를 바꾼다.
   List<AiLevel> levelsFor(int i) =>
@@ -88,14 +98,20 @@ DataTexts readData(String dir) => (
   blueprints: File('$dir/blueprints.json').readAsStringSync(),
 );
 
-GameFactory factoryFrom(DataTexts t) => GameFactory(
+GameFactory factoryFrom(
+  DataTexts t, {
+  List<String>? pirates,
+  List<String>? blueprints,
+}) => GameFactory(
   GameData.parse(ammoJson: t.ammo, piratesJson: t.pirates),
   parsePresets(jsonDecode(t.blueprints)),
+  pirates: pirates,
+  blueprints: blueprints,
 );
 
 /// 판 [from] 부터 [to] 전까지 둔다.
 List<GameResult> runRange(DataTexts data, SimOptions o, int from, int to) {
-  final f = factoryFrom(data);
+  final f = factoryFrom(data, pirates: o.pirates, blueprints: o.blueprints);
   return [
     for (var i = from; i < to; i++)
       f.play(f.setupFor(o.seed + i, o.levelsFor(i))),
