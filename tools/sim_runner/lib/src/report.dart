@@ -24,8 +24,9 @@ class Report {
   final List<GameResult> results;
   final PirateCatalog catalog;
 
-  /// 경고 기준: 승률 55% 초과 해적, 시간 판정 25% 초과 (BALANCE.md B10).
-  static const double maxWinRate = 55;
+  /// 경고 기준: 같은 등급 평균보다 5%p 넘게 높은 해적(평균 50% 이면 55%),
+  /// 시간 판정 25% 초과 (BALANCE.md B10, ADR-048).
+  static const double maxWinMargin = 5;
   static const double maxTimeDecision = 25;
 
   /// 해적별 승률을 믿을 최소 출전 수.
@@ -86,9 +87,22 @@ class Report {
   /// 경고 목록.
   List<String> get warnings {
     final out = <String>[];
+    final byRarity = <String, List<double>>{};
     for (final e in _sorted(pirates)) {
-      if (e.value.games >= minGames && e.value.winRate > maxWinRate) {
-        out.add('pirate ${e.key} win ${_pct(e.value.winRate)} > $maxWinRate%');
+      if (e.value.games < minGames) continue;
+      final r = catalog.byId(e.key).rarity.name;
+      (byRarity[r] ??= []).add(e.value.winRate);
+    }
+    for (final e in _sorted(pirates)) {
+      if (e.value.games < minGames) continue;
+      final rates = byRarity[catalog.byId(e.key).rarity.name]!;
+      final mean = rates.reduce((a, b) => a + b) / rates.length;
+      final limit = mean + maxWinMargin;
+      if (e.value.winRate > limit) {
+        out.add(
+          'pirate ${e.key} win ${_pct(e.value.winRate)} > '
+          'same-rarity mean ${_pct(mean)} + $maxWinMargin%p',
+        );
       }
     }
     final time = outcomeRate(MatchOutcome.timeDecision);

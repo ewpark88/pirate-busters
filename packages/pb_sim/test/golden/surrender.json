@@ -4,7 +4,7 @@
   "outcome": "surrender",
   "winner": 1,
   "turns": 4,
-  "hash": "0ed5b97c"
+  "hash": "6c6257b3"
  },
  "replay": {
   "version": 7,
@@ -507,7 +507,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "c261709a"
+    "hash": "f4048e6a"
    },
    {
     "turn": 2,
@@ -523,7 +523,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "85c5f0c1"
+    "hash": "7713060a"
    },
    {
     "turn": 3,
@@ -534,7 +534,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "842c0bae"
+    "hash": "4ce3633d"
    },
    {
     "turn": 4,
@@ -545,7 +545,7 @@
       "type": "SURRENDER"
      }
     ],
-    "hash": "0ed5b97c"
+    "hash": "6c6257b3"
    }
   ]
  }

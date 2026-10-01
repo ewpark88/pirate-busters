@@ -10,8 +10,8 @@ import 'package:pb_sim/src/match/rules.dart';
 /// 1칸의 월드 단위.
 const int cellUnit = 1000;
 
-/// 판 시작 때 두 선체 끝(뱃머리) 사이 간격: 28칸 (설계서 §2.6, 범위 8~48칸).
-const int startGap = 28 * cellUnit;
+/// 판 시작 때 두 선체 끝(뱃머리) 사이 간격: 22칸 (설계서 §2.6, 범위 2~42칸, ADR-048).
+const int startGap = 22 * cellUnit;
 
 /// 배마다 시작 위치에서 전진·후퇴할 수 있는 거리: 10칸 (설계서 §2.6, 이동은 M3).
 const int moveRange = 10 * cellUnit;

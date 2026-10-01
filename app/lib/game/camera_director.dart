@@ -7,13 +7,13 @@ import 'package:flame/components.dart';
 /// 수치는 에셋 tokens.json `camera` 를 따른다: 착탄 뒤 1.3초 머묾, 착탄 화면 폭 700.
 /// 기본 화면은 내 배와 앞바다, 조준할수록 줌아웃. 탄을 쏘면 발사부터 착탄·파괴 연출이
 /// 끝날 때까지 탄을 따라가고 탄이 화면 밖으로 나가지 않는다(높이 올라가면 넓게 본다).
-/// 상대 턴도 같다 (설계서 §2.1, ADR-043). 핀치 줌은 1.5배 확대부터 간격 48칸까지.
+/// 상대 턴도 같다 (설계서 §2.1, ADR-043). 핀치 줌은 1.5배 확대부터 간격 42칸까지.
 class CameraDirector {
   /// 기본 화면 폭(월드 px, 약 28칸).
   static const double baseWidth = 900;
 
-  /// 가장 멀리 본 화면 폭: 간격 48칸 + 배 두 척 + 여백.
-  static const double maxWidth = 2720;
+  /// 가장 멀리 본 화면 폭: 간격 42칸 + 배 두 척 + 여백 (ADR-048).
+  static const double maxWidth = 2528;
   static const double minWidth = baseWidth / 1.5;
   static const double impactWidth = 700;
   static const double impactHoldSec = 1.3;
@@ -115,7 +115,7 @@ class CameraDirector {
       maxWidth,
     );
     final ahead = 260 + 300 * aimStretch;
-    // 줌아웃할수록 두 배 가운데로 옮겨, 최대 축소에서는 간격 48칸이어도 두 배가
+    // 줌아웃할수록 두 배 가운데로 옮겨, 최대 축소에서는 간격 42칸이어도 두 배가
     // 모두 보인다 (설계서 §2.1).
     final t = ((w - baseWidth) / (maxWidth - baseWidth)).clamp(0.0, 1.0);
     final near = myX + facing * ahead;

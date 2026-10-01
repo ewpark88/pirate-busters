@@ -12,10 +12,10 @@ SideState _me(Match m) => m.state.sides[m.state.activeSide];
 
 void main() {
   group('이동 (설계서 §2.6)', () {
-    test('시작 간격은 뱃머리 사이 28칸이다', () {
+    test('시작 간격은 뱃머리 사이 22칸이다 (ADR-048)', () {
       final m = _calm();
       final gap = (m.state.sides[1].bowX - m.state.sides[0].bowX).abs();
-      expect(gap, 28 * cellUnit);
+      expect(gap, 22 * cellUnit);
     });
 
     test('MOVE 는 1/10칸 단위로 전진하고, 전진하면 상대와 가까워진다', () {
@@ -26,7 +26,7 @@ void main() {
       expect(me.offset, 2500);
       expect((me.bowX - before).abs(), 2500);
       final gap = (m.state.sides[1].bowX - m.state.sides[0].bowX).abs();
-      expect(gap, 28 * cellUnit - 2500);
+      expect(gap, 22 * cellUnit - 2500);
     });
 
     test('전진·후퇴 한계선(±10칸)에서 멈추고, 막힌 거리는 연료를 쓰지 않는다', () {
@@ -143,7 +143,7 @@ void main() {
       expect(b.fuel, 30 * _fuel, reason: '폭풍 +30');
     });
 
-    test('폭풍 타임 최대 간격은 36칸이다', () {
+    test('폭풍 타임 최대 간격은 30칸이다', () {
       final m = _calm(rules: rules);
       for (var i = 0; i < 4; i++) {
         m.apply(const EndTurnCommand(t: 10));
@@ -153,7 +153,7 @@ void main() {
         ..apply(const EndTurnCommand(t: 3000))
         ..apply(const MoveCommand(t: 10, dx: -100));
       final gap = (m.state.sides[1].bowX - m.state.sides[0].bowX).abs();
-      expect(gap, 36 * cellUnit);
+      expect(gap, 30 * cellUnit);
     });
 
     test('폭풍 타임 턴 제한 시간은 20초다', () {
