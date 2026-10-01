@@ -408,6 +408,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tapToSplit => 'Tap to split!';
 
   @override
+  String get aimCancel => 'Release to cancel';
+
+  @override
   String get menuHotseat => 'Two players';
 
   @override
@@ -959,4 +962,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get iapBuy => 'Buy';
+
+  @override
+  String get devTestBattle => 'Test battle';
+
+  @override
+  String get devMyDeck => 'My crew';
+
+  @override
+  String get devEnemyDeck => 'Enemy crew';
+
+  @override
+  String get devRandomEnemy => 'Empty enemy crew = 4 random pirates';
+
+  @override
+  String get devStart => 'Start';
 }

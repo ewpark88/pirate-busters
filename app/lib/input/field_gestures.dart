@@ -62,7 +62,7 @@ class _FieldGesturesState extends State<FieldGestures> {
     if (aim == null) return;
     final delta = d.localFocalPoint - _start;
     aim.drag(delta.dx, delta.dy);
-    _s.setAim(_slot, aim.shot, aim.stretch);
+    _s.setAim(_slot, aim.shot, aim.stretch, cancelling: aim.isCancelling);
   }
 
   void _onEnd(ScaleEndDetails d) {

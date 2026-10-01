@@ -17,7 +17,8 @@ mixin SessionUiState on ChangeNotifier {
   bool canFire(int slot);
 
   /// 조준 중인 해적 슬롯과 값. 궤적 미리보기·자동 줌아웃에 쓴다.
-  ({int slot, AimShot shot, double stretch})? aim;
+  /// `cancelling` 이면 당겼다가 되돌린 상태라 놓아도 쏘지 않는다.
+  ({int slot, AimShot shot, double stretch, bool cancelling})? aim;
 
   /// 이동 버튼을 누르고 있다. 그동안은 쏠 수 없다 (ADR-027).
   bool moveHeld = false;
@@ -25,9 +26,14 @@ mixin SessionUiState on ChangeNotifier {
   /// 이동 버튼을 누르고 있는 동안 갈 수 있는 끝(1/10칸, 전진 +). 끝 지점 점선용.
   int movePreviewDx = 0;
 
-  void setAim(int slot, AimShot shot, double stretch) {
+  void setAim(
+    int slot,
+    AimShot shot,
+    double stretch, {
+    bool cancelling = false,
+  }) {
     if (!canFire(slot)) return;
-    aim = (slot: slot, shot: shot, stretch: stretch);
+    aim = (slot: slot, shot: shot, stretch: stretch, cancelling: cancelling);
     notifyListeners();
   }
 

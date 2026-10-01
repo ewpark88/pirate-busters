@@ -40,6 +40,7 @@ class BattleSetup {
     List<String>? enemyDeck,
     MatchRules rules = const MatchRules(),
     int? costLimit,
+    int? enemyCostLimit,
   }) => Match.start(
     seed: seed,
     rules: rules,
@@ -48,7 +49,10 @@ class BattleSetup {
       enemyBlueprint ?? defaultBlueprint,
     ],
     decks: [deck, enemyDeck ?? aiDeck.take(deck.length).toList()],
-    costLimits: [costLimit ?? BattleSetup.costLimit, BattleSetup.costLimit],
+    costLimits: [
+      costLimit ?? BattleSetup.costLimit,
+      enemyCostLimit ?? BattleSetup.costLimit,
+    ],
     pirates: catalog.pirates,
   );
 

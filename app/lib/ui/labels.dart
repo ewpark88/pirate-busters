@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pb_ai/pb_ai.dart';
 import 'package:pb_sim/pb_sim.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
 
@@ -52,6 +53,13 @@ abstract final class Labels {
     Family.air => l10n.familyAir,
     Family.assault => l10n.familyAssault,
     Family.support => l10n.familySupport,
+  };
+
+  static String aiLevel(AppLocalizations l10n, AiLevel l) => switch (l) {
+    AiLevel.easy => l10n.levelEasy,
+    AiLevel.normal => l10n.levelNormal,
+    AiLevel.hard => l10n.levelHard,
+    AiLevel.hell => l10n.levelHell,
   };
 
   static String rarity(AppLocalizations l10n, Rarity r) => switch (r) {

@@ -153,6 +153,19 @@ class BattleHud extends StatelessWidget {
             ),
           ),
         ),
+      if (session.aim?.cancelling ?? false)
+        // 당겼다가 되돌렸다: 놓으면 쏘지 않고, 다른 해적을 고를 수 있다.
+        Align(
+          alignment: const Alignment(0, -0.45),
+          child: IgnorePointer(
+            child: HudPanel(
+              child: Text(
+                l10n.aimCancel,
+                style: const TextStyle(fontSize: 22),
+              ),
+            ),
+          ),
+        ),
       if (session.surrenderQueued && !session.isOver)
         Align(
           alignment: const Alignment(0, 0.35),

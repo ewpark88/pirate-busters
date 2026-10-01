@@ -746,6 +746,12 @@ abstract class AppLocalizations {
   /// **'Tap to split!'**
   String get tapToSplit;
 
+  /// No description provided for @aimCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Release to cancel'**
+  String get aimCancel;
+
   /// No description provided for @menuHotseat.
   ///
   /// In en, this message translates to:
@@ -1657,6 +1663,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Buy'**
   String get iapBuy;
+
+  /// No description provided for @devTestBattle.
+  ///
+  /// In en, this message translates to:
+  /// **'Test battle'**
+  String get devTestBattle;
+
+  /// No description provided for @devMyDeck.
+  ///
+  /// In en, this message translates to:
+  /// **'My crew'**
+  String get devMyDeck;
+
+  /// No description provided for @devEnemyDeck.
+  ///
+  /// In en, this message translates to:
+  /// **'Enemy crew'**
+  String get devEnemyDeck;
+
+  /// No description provided for @devRandomEnemy.
+  ///
+  /// In en, this message translates to:
+  /// **'Empty enemy crew = 4 random pirates'**
+  String get devRandomEnemy;
+
+  /// No description provided for @devStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Start'**
+  String get devStart;
 }
 
 class _AppLocalizationsDelegate

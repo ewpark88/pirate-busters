@@ -9,6 +9,7 @@ import 'package:pirate_busters/battle/battle_session.dart';
 import 'package:pirate_busters/battle/battle_setup.dart';
 import 'package:pirate_busters/battle/battle_stats.dart';
 import 'package:pirate_busters/campaign/stage_spec.dart';
+import 'package:pirate_busters/dev/test_battle.dart';
 import 'package:pirate_busters/game/battle_game.dart';
 import 'package:pirate_busters/input/field_gestures.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
@@ -27,6 +28,7 @@ class BattleScreen extends ConsumerStatefulWidget {
     this.level = AiLevel.normal,
     this.stage,
     this.onOver,
+    this.test,
   });
 
   final int seed;
@@ -43,6 +45,9 @@ class BattleScreen extends ConsumerStatefulWidget {
 
   /// 한 기기에서 두 사람이 번갈아 둔다(개발용, ADR-029).
   final bool hotseat;
+
+  /// 개발용 테스트 대전 (ADR-053). 있으면 고른 덱끼리 코스트 한도 없이 AI 와 붙는다.
+  final TestBattle? test;
 
   @override
   ConsumerState<BattleScreen> createState() => _BattleScreenState();
@@ -78,15 +83,17 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
             costLimit: ref.read(progressProvider).costLimit,
             tune: (r) => applyRemoteRules(r, remote),
           );
+    final test = widget.test;
     _session = BattleSession(
       _prepared?.match ??
+          test?.start(setup, seed, blueprint: blueprint) ??
           setup.newMatchFor(seed, blueprint: blueprint, deck: fleet.deck),
       humanSides: hotseat ? const {0, 1} : const {0},
       speciesOf: catalog.speciesOf,
       opponent: hotseat
           ? null
           : AiController(
-              level: stage?.aiLevel ?? widget.level,
+              level: stage?.aiLevel ?? test?.level ?? widget.level,
               personality:
                   stage?.personality ??
                   Personality.values[seed % Personality.values.length],

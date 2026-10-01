@@ -36,10 +36,20 @@ class PullAim {
   double _dy = 0;
   bool _active = false;
 
+  /// 한 번이라도 [minPower] 이상 당겼다.
+  bool _armed = false;
+
   bool get isActive => _active;
+
+  /// 지금 놓으면 쏘지 않는다(힘이 [minPower] 미만).
+  bool get isWeak => shot.power < minPower;
+
+  /// 충분히 당겼다가 누른 자리 가까이 되돌렸다: 놓으면 취소된다.
+  bool get isCancelling => _armed && isWeak;
 
   void start() {
     _active = true;
+    _armed = false;
     _dx = 0;
     _dy = 0;
   }
@@ -51,6 +61,7 @@ class PullAim {
     final k = len > maxPullPx ? maxPullPx / len : 1.0;
     _dx = dx * k;
     _dy = dy * k;
+    if (!isWeak) _armed = true;
   }
 
   /// 지금 당긴 상태의 발사 값.

@@ -265,6 +265,7 @@
   "rangeVeryLong": "Far",
   "outOfRange": "Out of range",
   "tapToSplit": "Tap to split!",
+  "aimCancel": "Release to cancel",
   "menuHotseat": "Two players",
   "menuShipyard": "Shipyard",
   "menuCrew": "Crew",
@@ -498,5 +499,10 @@
   "statAccuracy": "Accuracy {percent}%",
   "iapRemoveAds": "Remove ads",
   "iapBought": "Purchased",
-  "iapBuy": "Buy"
+  "iapBuy": "Buy",
+  "devTestBattle": "Test battle",
+  "devMyDeck": "My crew",
+  "devEnemyDeck": "Enemy crew",
+  "devRandomEnemy": "Empty enemy crew = 4 random pirates",
+  "devStart": "Start"
 }
