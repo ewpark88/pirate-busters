@@ -41,7 +41,7 @@ void main() {
       (int, int) v(AmmoType t, Rarity r) => l.valueOf(t, r);
       expect(
         [for (final r in Rarity.values) v(AmmoType.explosive, r).$1],
-        [50, 60, 70, 80, 90],
+        [40, 60, 70, 80, 90],
       );
       expect(
         [for (final r in Rarity.values) v(AmmoType.split, r).$1],

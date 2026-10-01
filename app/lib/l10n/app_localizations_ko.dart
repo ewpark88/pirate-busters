@@ -287,7 +287,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get blueprint_armored_desc =>
-      '선실 양옆을 철판으로 막은 튼튼한 배. 무거워서 깊이 잠기니 펌프로 버틴다.';
+      '선실 양옆을 철판으로 막은 튼튼한 배. 화약고로 화력을 더하지만, 무거워 깊이 잠기니 침수를 조심하자.';
 
   @override
   String get blueprint_fast_name => '고속';

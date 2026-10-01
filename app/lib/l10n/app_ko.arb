@@ -86,7 +86,7 @@
   "blueprint_balanced_name": "밸런스",
   "blueprint_balanced_desc": "참나무 용골에 펌프와 목수 공방을 단 기본형. 포문과 망루로 한 명을 키운다.",
   "blueprint_armored_name": "철갑",
-  "blueprint_armored_desc": "선실 양옆을 철판으로 막은 튼튼한 배. 무거워서 깊이 잠기니 펌프로 버틴다.",
+  "blueprint_armored_desc": "선실 양옆을 철판으로 막은 튼튼한 배. 화약고로 화력을 더하지만, 무거워 깊이 잠기니 침수를 조심하자.",
   "blueprint_fast_name": "고속",
   "blueprint_fast_desc": "소나무와 코르크로 가볍게 띄우고 연료통 둘로 멀리 움직인다. 대신 잘 부서진다.",
   "ammoExplosive": "폭발 {n}%",

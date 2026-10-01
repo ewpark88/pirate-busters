@@ -68,7 +68,7 @@ void main() {
   });
 
   group('BALANCE.md B4: 격침 속도 (설계서 §2.4)', () {
-    test('일반 폭발탄 한 발은 블록 피해 120(중심 40 + 바깥 4칸 × 20)', () {
+    test('일반 폭발탄 한 발은 블록 피해 104(중심 40 + 바깥 4칸 × 16, A4.8 바깥 40%)', () {
       const octo = PirateSpec(
         id: 'octo',
         rarity: Rarity.common,
@@ -77,6 +77,7 @@ void main() {
         blockDamage: 40,
         pirateDamage: 80,
         blastRadius: 1,
+        ammoValue: 40,
       );
       final ship = SideState(
         side: 1,
@@ -108,10 +109,10 @@ void main() {
         y: 0,
         events: [],
       );
-      expect(before - ship.grid.totalHp, 120);
+      expect(before - ship.grid.totalHp, 104);
     });
 
-    test('기준 배 A(테스트 슬루프): 내구도 2,110, 격침(30%)까지 1,478 → 일반 폭발탄 13발', () {
+    test('기준 배 A(테스트 슬루프): 내구도 2,110, 격침(30%)까지 1,478 → 일반 폭발탄 15발', () {
       final grid = ShipGrid.fromBlueprint(sampleBlueprint());
       expect(sampleBlueprint().cost, 57);
       expect(grid.initialTotalHp, 2110);
@@ -123,7 +124,7 @@ void main() {
         toCut++;
       }
       expect(toCut, 1478);
-      expect((toCut + 119) ~/ 120, 13);
+      expect((toCut + 103) ~/ 104, 15);
     });
   });
 }
