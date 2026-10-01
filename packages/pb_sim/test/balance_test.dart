@@ -110,8 +110,12 @@ void main() {
         events: [],
         rng: XorShift32(7),
       );
-      // 참나무 칸만 있어 조각 16 이 한 칸을 넘치게 깎지 않으므로 어느 시드든 104 다.
-      expect(before - ship.grid.totalHp, 104);
+      // 두 걸음 안이 모두 참나무라 조각 16 이 넘치지 않는다. (5, 2)·(7, 2) 가 비어
+      // 그쪽을 고른 조각은 바다로 흩어지므로 104 이하이고, 가득 찬 선체의 104 는
+      // crack_spread_test 가 본다.
+      final loss = before - ship.grid.totalHp;
+      expect(loss, lessThanOrEqualTo(104));
+      expect((loss - 40) % 16, 0);
     });
 
     test('기준 배 A(테스트 슬루프): 내구도 2,110, 격침(30%)까지 1,478 → 일반 폭발탄 15발', () {
