@@ -3,6 +3,7 @@ import 'package:pb_sim/src/match/match_state.dart';
 import 'package:pb_sim/src/match/rules.dart';
 import 'package:pb_sim/src/match/sim_event.dart';
 import 'package:pb_sim/src/pirate/pirate_spec.dart';
+import 'package:pb_sim/src/random/xorshift32.dart';
 import 'package:pb_sim/src/ship/flooding.dart';
 import 'package:pb_sim/src/ship/module.dart';
 import 'package:pb_sim/src/ship/module_state.dart';
@@ -40,10 +41,11 @@ const PirateSpec _fuelTankBlast = PirateSpec(
 /// 탱크에 맞춘다. 선장실·포문·망루·펌프·공방은 효과가 사라지기만 한다.
 ///
 /// 화약고는 블록이 남아도 [hit](이번에 피해를 받은 칸 인덱스)에 있으면 터진다
-/// (설계서 §3.3 “맞으면 폭발”, ADR-050).
+/// (설계서 §3.3 “맞으면 폭발”, ADR-050). 유폭의 균열 조각은 [rng] 로 흩뿌린다(§4.8).
 void settleModules(
   SideState ship,
   List<SimEvent> events, {
+  required XorShift32 rng,
   List<int> hit = const [],
 }) {
   final grid = ship.grid;
@@ -63,14 +65,14 @@ void settleModules(
     );
     switch (m.kind) {
       case ModuleKind.magazine:
-        _explode(ship, m, _magazineBlast, events);
+        _explode(ship, m, _magazineBlast, events, rng);
       case ModuleKind.fuelTank:
         if (ship.fuel > ship.tank) ship.fuel = ship.tank;
-        _explode(ship, m, _fuelTankBlast, events);
+        _explode(ship, m, _fuelTankBlast, events, rng);
       case ModuleKind.mast:
         _breakMast(ship, m, events);
         // 무너진 블록 위의 모듈도 부서진다: 처음부터 다시 훑는다.
-        settleModules(ship, events);
+        settleModules(ship, events, rng: rng);
       case ModuleKind.gunPort ||
           ModuleKind.pump ||
           ModuleKind.workshop ||
@@ -86,6 +88,7 @@ void _explode(
   ModuleState m,
   PirateSpec blast,
   List<SimEvent> events,
+  XorShift32 rng,
 ) {
   final (x, y) = ship.frame.cellCenter(m.x, m.y);
   resolveImpact(
@@ -96,6 +99,7 @@ void _explode(
     x: x,
     y: y,
     events: events,
+    rng: rng,
   );
 }
 

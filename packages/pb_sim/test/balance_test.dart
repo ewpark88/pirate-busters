@@ -68,7 +68,7 @@ void main() {
   });
 
   group('BALANCE.md B4: 격침 속도 (설계서 §2.4)', () {
-    test('일반 폭발탄 한 발은 블록 피해 104(중심 40 + 바깥 4칸 × 16, A4.8 바깥 40%)', () {
+    test('일반 폭발탄 한 발은 블록 피해 104(중심 40 + 균열 조각 4개 × 16, A4.8 바깥 40%)', () {
       const octo = PirateSpec(
         id: 'octo',
         rarity: Rarity.common,
@@ -108,7 +108,9 @@ void main() {
         x: 0,
         y: 0,
         events: [],
+        rng: XorShift32(7),
       );
+      // 참나무 칸만 있어 조각 16 이 한 칸을 넘치게 깎지 않으므로 어느 시드든 104 다.
       expect(before - ship.grid.totalHp, 104);
     });
 
