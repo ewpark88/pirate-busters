@@ -7,6 +7,7 @@ import 'package:pirate_busters/crew/crew_screen.dart';
 import 'package:pirate_busters/data/fleet_store.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
 import 'package:pirate_busters/l10n/data_text.dart';
+import 'package:pirate_busters/meta/progress_store.dart';
 import 'package:pirate_busters/port/settings_screen.dart';
 import 'package:pirate_busters/settings/language.dart';
 import 'package:pirate_busters/settings/settings_store.dart';
@@ -31,6 +32,9 @@ Future<MemoryFleetStore> _pump(
         settingsStoreProvider.overrideWithValue(MemorySettingsStore()),
         gameCatalogProvider.overrideWithValue(testCatalog),
         fleetStoreProvider.overrideWithValue(store),
+        progressStoreProvider.overrideWithValue(
+          MemoryProgressStore(),
+        ),
       ],
       child: MaterialApp(
         locale: locale,

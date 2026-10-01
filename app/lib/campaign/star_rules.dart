@@ -11,6 +11,7 @@ class MatchSummary {
     required this.hullPercent,
     required this.piratesDown,
     required this.shotsFired,
+    this.draw = false,
     this.hits = 0,
     this.damageDealt = 0,
     this.blocksDestroyed = 0,
@@ -27,6 +28,8 @@ class MatchSummary {
     final me = state.sides[side];
     return MatchSummary(
       won: state.winner == side,
+      // 무승부는 pb_sim 이 정한다(승자 −1). 앱이 침수 % 로 다시 재지 않는다 (§2.4).
+      draw: state.outcome != MatchOutcome.ongoing && state.winner < 0,
       outcome: state.outcome,
       turns: state.turn,
       floodPercent: me.flood * 100 ~/ fullFlood,
@@ -44,6 +47,9 @@ class MatchSummary {
   }
 
   final bool won;
+
+  /// 무승부 (pb_sim `winner` 가 −1, 설계서 §2.4).
+  final bool draw;
   final MatchOutcome outcome;
 
   /// 판이 끝난 턴 번호 (양쪽 합산, 설계서 §2.4).

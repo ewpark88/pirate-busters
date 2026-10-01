@@ -4,6 +4,8 @@ import 'package:flutter/services.dart';
 import 'package:pb_data/pb_data.dart';
 import 'package:pirate_busters/campaign/stage_spec.dart';
 import 'package:pirate_busters/data/game_catalog.dart';
+import 'package:pirate_busters/platform/remote_overrides.dart';
+import 'package:pirate_busters/platform/remote_values.dart';
 
 /// 캠페인 데이터 (설계서 §6.1). MVP 는 해역 1 하나다(§11.1). 에셋 `assets/stages/`
 /// 에서 읽고 게임 데이터와 맞는지 검증한다.
@@ -38,6 +40,17 @@ class CampaignCatalog {
   ) async => CampaignCatalog.parse([
     for (final f in files) await bundle.loadString('$_dir/$f'),
   ], game);
+
+  /// 원격 설정으로 스테이지 표를 덮어쓴 캠페인 (설계서 §7.4 `campaign_*`,
+  /// 개발 계획서 A9). 키: `stage_<id>_aiLevel`(난이도 이름)·`_waveLevel`·`_maxWind`·
+  /// `_starTurns`·`_rewardGold`. 범위 밖 값은 무시한다.
+  CampaignCatalog applyRemote(RemoteValues remote) => CampaignCatalog([
+    for (final sea in seas)
+      SeaSpec(
+        sea: sea.sea,
+        stages: [for (final s in sea.stages) applyRemoteStage(s, remote)],
+      ),
+  ]);
 
   final List<SeaSpec> seas;
 

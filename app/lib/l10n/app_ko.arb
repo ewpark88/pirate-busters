@@ -265,5 +265,16 @@
   "devMyDeck": "내 덱",
   "devEnemyDeck": "상대 덱",
   "devRandomEnemy": "상대 덱이 비어 있으면 무작위 4명",
-  "devStart": "시작"
+  "devStart": "시작",
+  "storyReplay": "이야기 다시 보기",
+  "storyReplayEmpty": "아직 본 이야기가 없습니다",
+  "storyTitlePrologue": "프롤로그",
+  "storyTitleSea1Intro": "해역 1 인트로",
+  "storyTitleMidBossBefore": "중간 보스 앞",
+  "storyTitleMidBossAfter": "중간 보스 뒤",
+  "storyTitleBossBefore": "해역 보스 앞",
+  "storyTitleBossAfter": "해역 보스 뒤",
+  "prepMyShip": "내 배",
+  "prepCabins": "선실 배치",
+  "prepCabinEmpty": "빈 선실"
 }

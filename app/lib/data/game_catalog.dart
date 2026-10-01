@@ -31,6 +31,10 @@ class GameCatalog {
         blueprintsJson: await bundle.loadString('$_dir/blueprints.json'),
       );
 
+  /// 원격 설정으로 해적 수치·탄종 사다리를 덮어쓴 카탈로그 (설계서 §7.4).
+  GameCatalog applyRemote(int? Function(String key) intOr) =>
+      GameCatalog._(data.withOverrides(intOr), presets);
+
   final GameData data;
 
   /// 추천 설계도 (밸런스·철갑·고속).

@@ -15,7 +15,8 @@ class AiPlanner {
     required this.level,
     this.personality = Personality.bombard,
     this.losses = 0,
-  }) : dials = AiDials.of(level),
+    AiDials? dials,
+  }) : dials = dials ?? AiDials.of(level),
        side = state.activeSide,
        rng = XorShift32(
          state.seed * 31 + state.turn * 1009 + state.activeSide * 7919 + 17,

@@ -121,6 +121,35 @@ class PirateDef {
   /// 화면에 보이는 글자의 키.
   List<String> get textKeys => [nameKey, descKey, loreKey];
 
+  /// 원격 설정으로 수치만 바꾼 정의 (설계서 §7.4, 개발 계획서 A9). 규칙 검사에
+  /// 걸리면 [DataFormatError].
+  PirateDef copyWith({
+    int? hp,
+    int? cooldownTurns,
+    int? blockDmg,
+    int? pirateDmg,
+  }) => PirateDef._(
+    id: id,
+    nameKey: nameKey,
+    descKey: descKey,
+    loreKey: loreKey,
+    family: family,
+    rarity: rarity,
+    hp: hp ?? this.hp,
+    cooldownTurns: cooldownTurns ?? this.cooldownTurns,
+    ammo: ammo,
+    spreadDeg: spreadDeg,
+    ammoParam: ammoParam,
+    range: range,
+    radiusCells: radiusCells,
+    blockDmg: blockDmg ?? this.blockDmg,
+    pirateDmg: pirateDmg ?? this.pirateDmg,
+    growth: growth,
+    species: species,
+    props: props,
+    teamColorPart: teamColorPart,
+  ).._check('remote.$id');
+
   /// `pb_sim` 정수 정의로 바꾼다: 등급 배율을 곱하고 탄종 등급 수치를 사다리에서 찾는다.
   PirateSpec toSpec(AmmoLadder ladder) {
     final mul = rarityPermille[rarity.step];

@@ -504,5 +504,16 @@
   "devMyDeck": "My crew",
   "devEnemyDeck": "Enemy crew",
   "devRandomEnemy": "Empty enemy crew = 4 random pirates",
-  "devStart": "Start"
+  "devStart": "Start",
+  "storyReplay": "Replay stories",
+  "storyReplayEmpty": "No stories seen yet",
+  "storyTitlePrologue": "Prologue",
+  "storyTitleSea1Intro": "Sea 1 intro",
+  "storyTitleMidBossBefore": "Before the mid-boss",
+  "storyTitleMidBossAfter": "After the mid-boss",
+  "storyTitleBossBefore": "Before the sea boss",
+  "storyTitleBossAfter": "After the sea boss",
+  "prepMyShip": "My ship",
+  "prepCabins": "Cabins",
+  "prepCabinEmpty": "Empty cabin"
 }

@@ -7,6 +7,11 @@ class BattleStats {
   final List<int> pirateDamage = [0, 0];
   final List<int> blocksDestroyed = [0, 0];
 
+  /// 마지막으로 끝난 턴에 움직인 거리(1/1000칸, 절댓값 합). 분석 이벤트
+  /// `turn_end` 가 쓴다 (개발 계획서 M7).
+  final List<int> lastTurnMoved = [0, 0];
+  final List<int> _movedThisTurn = [0, 0];
+
   /// [e] 를 센다. 맞은 배의 상대를 공격자로 본다.
   void record(SimEvent e) {
     if (e.side < 0 || e.side > 1) return;
@@ -19,6 +24,11 @@ class BattleStats {
       pirateDamage[attacker] += e.value;
     } else if (e.kind == SimEventKind.blockDestroyed) {
       blocksDestroyed[attacker]++;
+    } else if (e.kind == SimEventKind.move) {
+      _movedThisTurn[e.side] += e.value.abs();
+    } else if (e.kind == SimEventKind.turnEnd) {
+      lastTurnMoved[e.side] = _movedThisTurn[e.side];
+      _movedThisTurn[e.side] = 0;
     }
   }
 
