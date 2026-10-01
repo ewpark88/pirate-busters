@@ -1693,6 +1693,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Start'**
   String get devStart;
+
+  /// No description provided for @storyReplay.
+  ///
+  /// In en, this message translates to:
+  /// **'Replay stories'**
+  String get storyReplay;
+
+  /// No description provided for @storyReplayEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No stories seen yet'**
+  String get storyReplayEmpty;
+
+  /// No description provided for @storyTitlePrologue.
+  ///
+  /// In en, this message translates to:
+  /// **'Prologue'**
+  String get storyTitlePrologue;
+
+  /// No description provided for @storyTitleSea1Intro.
+  ///
+  /// In en, this message translates to:
+  /// **'Sea 1 intro'**
+  String get storyTitleSea1Intro;
+
+  /// No description provided for @storyTitleMidBossBefore.
+  ///
+  /// In en, this message translates to:
+  /// **'Before the mid-boss'**
+  String get storyTitleMidBossBefore;
+
+  /// No description provided for @storyTitleMidBossAfter.
+  ///
+  /// In en, this message translates to:
+  /// **'After the mid-boss'**
+  String get storyTitleMidBossAfter;
+
+  /// No description provided for @storyTitleBossBefore.
+  ///
+  /// In en, this message translates to:
+  /// **'Before the sea boss'**
+  String get storyTitleBossBefore;
+
+  /// No description provided for @storyTitleBossAfter.
+  ///
+  /// In en, this message translates to:
+  /// **'After the sea boss'**
+  String get storyTitleBossAfter;
+
+  /// No description provided for @prepMyShip.
+  ///
+  /// In en, this message translates to:
+  /// **'My ship'**
+  String get prepMyShip;
+
+  /// No description provided for @prepCabins.
+  ///
+  /// In en, this message translates to:
+  /// **'Cabins'**
+  String get prepCabins;
+
+  /// No description provided for @prepCabinEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Empty cabin'**
+  String get prepCabinEmpty;
 }
 
 class _AppLocalizationsDelegate

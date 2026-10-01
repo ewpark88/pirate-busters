@@ -39,12 +39,11 @@ class StageResultScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     final catalog = ref.watch(gameCatalogProvider);
+    // 승패·무승부는 pb_sim 의 판정을 그대로 쓴다 (설계서 §2.4, §13.5).
     final title = summary.won
         ? l10n.resultWin
-        : summary.outcome == MatchOutcome.timeDecision && !summary.won
-        ? (enemyFloodPercent == summary.floodPercent
-              ? l10n.resultDraw
-              : l10n.resultLose)
+        : summary.draw
+        ? l10n.resultDraw
         : l10n.resultLose;
     final how = switch (summary.outcome) {
       MatchOutcome.sunk => l10n.outcomeSunk,

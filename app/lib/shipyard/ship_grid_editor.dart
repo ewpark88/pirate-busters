@@ -43,7 +43,7 @@ class ShipGridEditor extends StatelessWidget {
             listenable: model,
             builder: (context, _) => CustomPaint(
               size: size,
-              painter: _GridPainter(model, cell),
+              painter: ShipGridPainter(model, cell),
             ),
           ),
         ),
@@ -52,8 +52,10 @@ class ShipGridEditor extends StatelessWidget {
   );
 }
 
-class _GridPainter extends CustomPainter {
-  _GridPainter(this.model, this.cell) : loose = model.loose;
+/// 설계도 격자 그림: 재질 칸, 선실 번호·사람, 모듈 아이콘, 흘수선. 조선소와 전투 준비
+/// 미리보기(`BlueprintPreview`)가 같이 쓴다.
+class ShipGridPainter extends CustomPainter {
+  ShipGridPainter(this.model, this.cell) : loose = model.loose;
 
   final ShipyardModel model;
   final double cell;
@@ -150,5 +152,5 @@ class _GridPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant _GridPainter old) => true;
+  bool shouldRepaint(covariant ShipGridPainter old) => true;
 }

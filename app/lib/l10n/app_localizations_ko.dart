@@ -919,4 +919,37 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get devStart => '시작';
+
+  @override
+  String get storyReplay => '이야기 다시 보기';
+
+  @override
+  String get storyReplayEmpty => '아직 본 이야기가 없습니다';
+
+  @override
+  String get storyTitlePrologue => '프롤로그';
+
+  @override
+  String get storyTitleSea1Intro => '해역 1 인트로';
+
+  @override
+  String get storyTitleMidBossBefore => '중간 보스 앞';
+
+  @override
+  String get storyTitleMidBossAfter => '중간 보스 뒤';
+
+  @override
+  String get storyTitleBossBefore => '해역 보스 앞';
+
+  @override
+  String get storyTitleBossAfter => '해역 보스 뒤';
+
+  @override
+  String get prepMyShip => '내 배';
+
+  @override
+  String get prepCabins => '선실 배치';
+
+  @override
+  String get prepCabinEmpty => '빈 선실';
 }

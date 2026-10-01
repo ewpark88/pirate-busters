@@ -75,6 +75,58 @@ class AiDials {
     ),
   };
 
+  /// 원격 값 `ai_<난이도>_<다이얼>` 로 [level] 표를 덮어쓴 다이얼 (설계서 §7.4,
+  /// 개발 계획서 A9). bool 은 0/1, `support` 는 [SupportUse] 순번이다. 범위 밖 값은
+  /// 무시한다.
+  factory AiDials.withOverrides(AiLevel level, int? Function(String) intOr) {
+    final base = AiDials.of(level);
+    int? at(String name, {int min = 0, int max = 1 << 30}) {
+      final v = intOr('ai_${level.name}_$name');
+      return v == null || v < min || v > max ? null : v;
+    }
+
+    bool? flag(String name) => switch (at(name, max: 1)) {
+      0 => false,
+      1 => true,
+      _ => null,
+    };
+    final support = at('support', max: SupportUse.values.length - 1);
+    return base.copyWith(
+      angleErrorMdeg: at('angleErrorMdeg', max: 90000),
+      thinkMs: at('thinkMs', max: 25000),
+      pickTopPercent: at('pickTopPercent', max: 100),
+      waveTiming: flag('waveTiming'),
+      support: support == null ? null : SupportUse.values[support],
+      positions: at('positions', max: 15),
+      combo: flag('combo'),
+      windCorrectionPercent: at('windCorrectionPercent', max: 100),
+      timeMode: flag('timeMode'),
+    );
+  }
+
+  /// 일부 다이얼만 바꾼 값.
+  AiDials copyWith({
+    int? angleErrorMdeg,
+    int? thinkMs,
+    int? pickTopPercent,
+    bool? waveTiming,
+    SupportUse? support,
+    int? positions,
+    bool? combo,
+    int? windCorrectionPercent,
+    bool? timeMode,
+  }) => AiDials(
+    angleErrorMdeg: angleErrorMdeg ?? this.angleErrorMdeg,
+    thinkMs: thinkMs ?? this.thinkMs,
+    pickTopPercent: pickTopPercent ?? this.pickTopPercent,
+    waveTiming: waveTiming ?? this.waveTiming,
+    support: support ?? this.support,
+    positions: positions ?? this.positions,
+    combo: combo ?? this.combo,
+    windCorrectionPercent: windCorrectionPercent ?? this.windCorrectionPercent,
+    timeMode: timeMode ?? this.timeMode,
+  );
+
   /// 쏠 때 섞는 각도 오차(±).
   final int angleErrorMdeg;
 

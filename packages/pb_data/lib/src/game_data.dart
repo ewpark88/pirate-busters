@@ -39,6 +39,22 @@ class GameData {
     orElse: () => throw ArgumentError('알 수 없는 해적: $id'),
   );
 
+  /// 원격 설정으로 수치를 덮어쓴 데이터 (설계서 §7.4, 개발 계획서 A9). 탄종 사다리는
+  /// `ammo_<탄종>_<등급>`, 해적은 `pirate_<id>_hp|cooldownTurns|blockDmg|pirateDmg`.
+  /// 규칙 검사에 걸리는 값은 [DataFormatError].
+  GameData withOverrides(int? Function(String key) intOr) => GameData._(
+    ladder.withOverrides(intOr),
+    List.unmodifiable([
+      for (final p in pirates)
+        p.copyWith(
+          hp: intOr('pirate_${p.id}_hp'),
+          cooldownTurns: intOr('pirate_${p.id}_cooldownTurns'),
+          blockDmg: intOr('pirate_${p.id}_blockDmg'),
+          pirateDmg: intOr('pirate_${p.id}_pirateDmg'),
+        ),
+    ]),
+  );
+
   /// `pb_sim` 해적 카탈로그.
   PirateCatalog get catalog => PirateCatalog([
     for (final p in pirates) p.toSpec(ladder),

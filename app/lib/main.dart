@@ -12,6 +12,7 @@ import 'package:pirate_busters/data/game_catalog.dart';
 import 'package:pirate_busters/data/replay_store.dart';
 import 'package:pirate_busters/meta/progress_store.dart';
 import 'package:pirate_busters/platform/crash_reporter.dart';
+import 'package:pirate_busters/platform/remote_values.dart';
 import 'package:pirate_busters/settings/settings_store.dart';
 
 /// 시작 순서: 화면 방향 → 저장소 → 효과음 합성·불러오기 → 앱.
@@ -27,8 +28,15 @@ Future<void> main() async {
   await SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
   await Hive.initFlutter();
   final settings = await HiveSettingsStore.open();
-  final catalog = await GameCatalog.load(rootBundle);
-  final campaign = await CampaignCatalog.load(rootBundle, catalog);
+  // 원격 값은 SDK 가 붙기 전까지 비어 있다 (ADR-047). 데이터·스테이지 표에 덮어쓴다.
+  const remote = EmptyRemoteValues();
+  final catalog = (await GameCatalog.load(
+    rootBundle,
+  )).applyRemote(remote.intOr);
+  final campaign = (await CampaignCatalog.load(
+    rootBundle,
+    catalog,
+  )).applyRemote(remote);
   final fleet = await HiveFleetStore.open();
   final progress = await HiveProgressStore.open();
   final replays = await HiveReplayStore.open();
@@ -44,6 +52,7 @@ Future<void> main() async {
         progressStoreProvider.overrideWithValue(progress),
         replayStoreProvider.overrideWithValue(replays),
         soundServiceProvider.overrideWithValue(sound),
+        remoteValuesProvider.overrideWithValue(remote),
       ],
       child: const PirateBustersApp(),
     ),

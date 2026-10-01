@@ -121,6 +121,12 @@ class SeaView extends Component {
   final List<_Foam> _foam = [];
   double _t = 0;
 
+  /// 포말 수. 저사양 모드에서는 절반 (설계서 §12).
+  int get foamTarget => (lowEnd?.value ?? false) ? 70 : 140;
+
+  @visibleForTesting
+  int get foamCount => _foam.length;
+
   @override
   void update(double dt) {
     _t += dt;
@@ -131,7 +137,7 @@ class SeaView extends Component {
         ..x += f.vx * dt;
     }
     _foam.removeWhere((f) => f.life <= 0);
-    while (_foam.length < 140) {
+    while (_foam.length < foamTarget) {
       _foam.add(
         _Foam(
           x: (_rnd.nextDouble() * 2 - 1) * seaHalfWidth,

@@ -12,8 +12,8 @@ import 'package:pirate_busters/story/cutscene_screen.dart';
 import 'package:pirate_busters/story/story_data.dart';
 import 'package:pirate_busters/ui/hud/hud_style.dart';
 
-/// 캠페인 지도 (설계서 §13.3). MVP 는 해역 1 일반 모드만: 스테이지 노드·별·보스 노드.
-/// 모드 탭·해역 넘기기·인트로 다시 보기는 R3.
+/// 캠페인 지도 (설계서 §13.3). MVP 는 해역 1 일반 모드만: 스테이지 노드·별·보스 노드,
+/// 본 이야기 다시 보기(§15.4). 모드 탭·해역 넘기기는 R3.
 class CampaignMapScreen extends ConsumerStatefulWidget {
   const CampaignMapScreen({super.key, this.sea = 1});
 
@@ -22,6 +22,31 @@ class CampaignMapScreen extends ConsumerStatefulWidget {
   /// 앞 스테이지를 깼을 때만 연다. 첫 스테이지는 항상 열려 있다.
   static bool unlocked(List<StageSpec> stages, int index, PlayerProgress p) =>
       index == 0 || p.hasCleared(stages[index - 1].id);
+
+  /// 본 이야기 목록. 순서는 이야기 순 (설계서 §15.4). 프롤로그는 따로 기록된다.
+  static List<String> seenStories(PlayerProgress p) => [
+    for (final id in [
+      StoryData.prologue,
+      StoryData.sea1Intro,
+      StoryData.bossBefore('1-5'),
+      StoryData.bossAfter('1-5'),
+      StoryData.bossBefore('1-12'),
+      StoryData.bossAfter('1-12'),
+    ])
+      if (StoryData.of(id) != null &&
+          (p.hasSeen(id) || (id == StoryData.prologue && p.prologueSeen)))
+        id,
+  ];
+
+  static String storyTitle(AppLocalizations l10n, String id) => switch (id) {
+    StoryData.prologue => l10n.storyTitlePrologue,
+    StoryData.sea1Intro => l10n.storyTitleSea1Intro,
+    's1_5_before' => l10n.storyTitleMidBossBefore,
+    's1_5_after' => l10n.storyTitleMidBossAfter,
+    's1_12_before' => l10n.storyTitleBossBefore,
+    's1_12_after' => l10n.storyTitleBossAfter,
+    _ => id,
+  };
 
   @override
   ConsumerState<CampaignMapScreen> createState() => _CampaignMapScreenState();
@@ -67,6 +92,13 @@ class _CampaignMapScreenState extends ConsumerState<CampaignMapScreen> {
         title: Text(
           '${l10n.campaignTitle} · ${dataText(l10n, 'sea_${widget.sea}_name')}',
         ),
+        actions: [
+          IconButton(
+            tooltip: l10n.storyReplay,
+            icon: const Icon(Icons.menu_book),
+            onPressed: () => unawaited(_replayStories(progress)),
+          ),
+        ],
       ),
       body: SafeArea(
         child: Center(
@@ -95,6 +127,34 @@ class _CampaignMapScreenState extends ConsumerState<CampaignMapScreen> {
         ),
       ),
     );
+  }
+
+  /// 본 이야기를 골라 다시 본다 (설계서 §13.3, §15.4).
+  Future<void> _replayStories(PlayerProgress progress) async {
+    final l10n = AppLocalizations.of(context);
+    final seen = CampaignMapScreen.seenStories(progress);
+    final picked = await showModalBottomSheet<String>(
+      context: context,
+      builder: (context) => SafeArea(
+        child: ListView(
+          shrinkWrap: true,
+          children: [
+            ListTile(
+              title: Text(l10n.storyReplay),
+              subtitle: seen.isEmpty ? Text(l10n.storyReplayEmpty) : null,
+            ),
+            for (final id in seen)
+              ListTile(
+                leading: const Icon(Icons.play_arrow),
+                title: Text(CampaignMapScreen.storyTitle(l10n, id)),
+                onTap: () => Navigator.of(context).pop(id),
+              ),
+          ],
+        ),
+      ),
+    );
+    final cuts = picked == null ? null : StoryData.of(picked);
+    if (cuts != null && mounted) await CutsceneScreen.show(context, cuts);
   }
 
   void _open(StageSpec stage, {required bool locked}) {

@@ -81,7 +81,8 @@ class _MoveControlsState extends State<MoveControls>
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final tank = _me.grid.hull.fuelTank * SideState.fuelUnit;
+    // 상한은 연료통 모듈까지 더한 pb_sim 의 탱크다 (설계서 §2.7, 절대 규칙 3).
+    final tank = _me.tank;
     final empty = _me.fuel <= 0;
     return HudPanel(
       child: Row(
@@ -106,7 +107,7 @@ class _MoveControlsState extends State<MoveControls>
                 child: _Blink(
                   on: empty,
                   child: LinearProgressIndicator(
-                    value: _me.fuel / tank,
+                    value: tank == 0 ? 0 : (_me.fuel / tank).clamp(0.0, 1.0),
                     minHeight: 8,
                     color: HudColors.warn,
                     backgroundColor: HudColors.panelHi,

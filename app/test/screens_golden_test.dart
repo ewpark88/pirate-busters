@@ -12,6 +12,7 @@ import 'package:pirate_busters/campaign/campaign_map_screen.dart';
 import 'package:pirate_busters/campaign/rewards.dart';
 import 'package:pirate_busters/campaign/stage_result_screen.dart';
 import 'package:pirate_busters/campaign/star_rules.dart';
+import 'package:pirate_busters/crew/crew_screen.dart';
 import 'package:pirate_busters/data/fleet_store.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
 import 'package:pirate_busters/meta/progress.dart';
@@ -20,6 +21,7 @@ import 'package:pirate_busters/port/port_widgets.dart';
 import 'package:pirate_busters/port/settings_screen.dart';
 import 'package:pirate_busters/settings/language.dart';
 import 'package:pirate_busters/settings/settings_store.dart';
+import 'package:pirate_busters/shipyard/shipyard_screen.dart';
 import 'package:pirate_busters/story/cutscene_screen.dart';
 import 'package:pirate_busters/story/story_data.dart';
 
@@ -65,24 +67,40 @@ void main() {
     blocksDestroyed: 11,
   );
   final screens = <String, Widget>{
-    'port': Scaffold(
-      backgroundColor: const Color(0xFF7FC0EC),
-      body: SafeArea(
-        child: Column(
-          children: [
-            PortTopBar(progress: progress, onSettings: () {}, onHotseat: () {}),
-            const Spacer(),
-            PortTabs(
-              shipyardLocked: false,
-              onShipyard: () {},
-              onCrew: () {},
-              onSail: () {},
-              labels: (shipyard: '조선소', crew: '선원', sail: '출항'),
+    'port': Builder(
+      builder: (context) {
+        final l10n = AppLocalizations.of(context);
+        return Scaffold(
+          backgroundColor: const Color(0xFF7FC0EC),
+          body: SafeArea(
+            child: Column(
+              children: [
+                PortTopBar(
+                  progress: progress,
+                  onSettings: () {},
+                  onHotseat: () {},
+                ),
+                const Spacer(),
+                PortTabs(
+                  shipyardLocked: false,
+                  onShipyard: () {},
+                  onCrew: () {},
+                  onSail: () {},
+                  // 탭 라벨은 화면과 같이 l10n 에서 (설계서 §14.4).
+                  labels: (
+                    shipyard: l10n.menuShipyard,
+                    crew: l10n.menuCrew,
+                    sail: l10n.portSail,
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     ),
+    'shipyard': const ShipyardScreen(),
+    'crew': const CrewScreen(),
     'settings': const SettingsScreen(),
     'map': const CampaignMapScreen(),
     'prep': BattlePrepScreen(stage: stage),

@@ -45,6 +45,10 @@ class BattleGame extends FlameGame {
   /// 저사양 모드: 바다 굴절 셰이더를 끈다 (설계서 §10.2).
   final ValueNotifier<bool> lowEnd = ValueNotifier(false);
 
+  /// 설정의 효과음·진동 (설계서 §13.8). 화면이 설정 값을 넣는다.
+  final ValueNotifier<bool> soundOn = ValueNotifier(true);
+  final ValueNotifier<bool> vibrationOn = ValueNotifier(true);
+
   static const String seaShaderAsset = 'shaders/sea_refraction.frag';
 
   late final List<ShipView> _ships;
@@ -85,7 +89,12 @@ class BattleGame extends FlameGame {
       weapons: weapons,
       priority: 20,
     );
-    _fx = FxLayer(sprites: sprites, lowEnd: lowEnd, priority: 30);
+    _fx = FxLayer(
+      sprites: sprites,
+      lowEnd: lowEnd,
+      vibration: vibrationOn,
+      priority: 30,
+    );
     await world.addAll([
       ParallaxScenery(theme: theme, factor: 0.15, seed: 1, priority: -30),
       ParallaxScenery(theme: theme, factor: 0.4, seed: 2, priority: -20),
@@ -172,18 +181,24 @@ class BattleGame extends FlameGame {
     return Coords.point(x, y);
   }
 
+  /// 효과음. 설정에서 끄면 내지 않는다 (설계서 §13.8).
+  @visibleForTesting
+  void playSfx(Sfx sfx, {double volume = 1}) {
+    if (soundOn.value) sound.play(sfx, volume: volume);
+  }
+
   void _dispatch(List<SimEvent> cues) {
     var woodPlayed = false;
     for (final e in cues) {
       switch (e.kind) {
         case SimEventKind.fire:
           _ships[e.side].playAttack(e.slot);
-          sound.play(Sfx.cannon);
+          playSfx(Sfx.cannon);
         case SimEventKind.impact:
           final at = Coords.point(e.x, e.y);
           _fx.explosion(at);
           director.impact(at);
-          sound.play(
+          playSfx(
             _ships[e.side].isIron(e.cell) ? Sfx.clang : Sfx.cannon,
             volume: 0.8,
           );
@@ -191,10 +206,10 @@ class BattleGame extends FlameGame {
           final at = Coords.point(e.x, 0);
           _fx.splash(at);
           director.impact(at);
-          sound.play(Sfx.splash);
+          playSfx(Sfx.splash);
         case SimEventKind.blockDestroyed:
           _fx.blockBroken(_cellWorld(e.side, e.cell));
-          if (!woodPlayed) sound.play(Sfx.wood);
+          if (!woodPlayed) playSfx(Sfx.wood);
           woodPlayed = true;
         case SimEventKind.blockCollapsed:
           _fx.collapsed(_cellWorld(e.side, e.cell));
@@ -207,7 +222,7 @@ class BattleGame extends FlameGame {
           }
         case SimEventKind.bounce:
           _fx.splash(Coords.point(e.x, 0));
-          sound.play(Sfx.splash, volume: 0.6);
+          playSfx(Sfx.splash, volume: 0.6);
         case SimEventKind.pirateHit:
           _ships[e.side].playHit(e.slot);
           final rig = e.slot >= 0 && e.slot < _ships[e.side].rigs.length

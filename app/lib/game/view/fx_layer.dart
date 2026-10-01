@@ -13,12 +13,24 @@ import 'package:pirate_busters/game/sprites.dart';
 
 /// 착탄 효과를 월드에 띄운다 (설계서 §10.3 타격감).
 class FxLayer extends Component {
-  FxLayer({required this.sprites, this.lowEnd, super.priority});
+  FxLayer({
+    required this.sprites,
+    this.lowEnd,
+    this.vibration,
+    super.priority,
+  });
 
   final BattleSprites sprites;
 
   /// 저사양 모드: 파티클 수를 절반으로 (설계서 §12, §13.8).
   final ValueListenable<bool>? lowEnd;
+
+  /// 설정의 진동 (설계서 §13.8). 끄면 햅틱을 내지 않는다.
+  final ValueListenable<bool>? vibration;
+
+  void _haptic(Future<void> Function() impact) {
+    if (vibration?.value ?? true) unawaited(impact());
+  }
 
   int _n(int count) => lowEnd?.value ?? false ? (count + 1) ~/ 2 : count;
   final math.Random _rnd = math.Random(7);
@@ -39,9 +51,7 @@ class FxLayer extends Component {
     _spawn(_debris(at, count: _n(6 + radius * 3)));
     _spawn(_puffs(at, count: _n(3 + radius)));
     shake = math.max(shake, heavy ? 9 : 6);
-    unawaited(
-      heavy ? HapticFeedback.heavyImpact() : HapticFeedback.mediumImpact(),
-    );
+    _haptic(heavy ? HapticFeedback.heavyImpact : HapticFeedback.mediumImpact);
   }
 
   /// 블록 하나가 부서짐: 나무 조각.
@@ -54,7 +64,7 @@ class FxLayer extends Component {
   /// 물보라.
   void splash(Vector2 at) {
     _spawn(_popSprite('fx/splash.png', at - Vector2(0, 30), 90, 0.6));
-    unawaited(HapticFeedback.lightImpact());
+    _haptic(HapticFeedback.lightImpact);
   }
 
   /// 피해 숫자. 글자는 화면이 l10n 으로 만들어 넘긴다 (설계서 §14.2).

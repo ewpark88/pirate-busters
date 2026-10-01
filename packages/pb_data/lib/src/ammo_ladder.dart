@@ -40,4 +40,21 @@ class AmmoLadder {
   /// [type] 탄종의 [rarity] 칸 (첫째, 둘째).
   (int, int) valueOf(AmmoType type, Rarity rarity) =>
       _rungs[type]![rarity.step];
+
+  /// 원격 값 `ammo_<탄종>_<등급>`(첫째)·`ammo_<탄종>_<등급>_2`(둘째)로 칸을 바꾼
+  /// 사다리 (설계서 §4.8, §7.4). [intOr] 가 null 이면 그대로.
+  AmmoLadder withOverrides(int? Function(String key) intOr) {
+    final rungs = <AmmoType, List<(int, int)>>{};
+    for (final type in AmmoType.values) {
+      rungs[type] = [
+        for (final rarity in Rarity.values)
+          () {
+            final (a, b) = _rungs[type]![rarity.step];
+            final key = 'ammo_${type.jsonName}_${rarity.name}';
+            return (intOr(key) ?? a, intOr('${key}_2') ?? b);
+          }(),
+      ];
+    }
+    return AmmoLadder._(rungs);
+  }
 }

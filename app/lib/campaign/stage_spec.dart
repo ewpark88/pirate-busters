@@ -160,6 +160,33 @@ class StageSpec {
   final String? gimmick;
 
   bool get isBoss => kind == StageKind.boss || kind == StageKind.midBoss;
+
+  /// 원격 설정으로 바꿀 수 있는 값만 바꾼 스테이지 (설계서 §7.4 `campaign_*`).
+  StageSpec copyWith({
+    AiLevel? aiLevel,
+    int? waveLevel,
+    int? maxWind,
+    int? starTurns,
+    int? rewardGold,
+  }) => StageSpec(
+    id: id,
+    sea: sea,
+    number: number,
+    kind: kind,
+    enemyPreset: enemyPreset,
+    enemyDeck: enemyDeck,
+    aiLevel: aiLevel ?? this.aiLevel,
+    personality: personality,
+    waveLevel: waveLevel ?? this.waveLevel,
+    maxWind: maxWind ?? this.maxWind,
+    starTurns: starTurns ?? this.starTurns,
+    mission: mission,
+    dialogueKeys: dialogueKeys,
+    rewardGold: rewardGold ?? this.rewardGold,
+    rewardPirate: rewardPirate,
+    tutorialStep: tutorialStep,
+    gimmick: gimmick,
+  );
 }
 
 /// 해역 하나의 스테이지 목록.

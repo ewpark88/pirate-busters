@@ -97,6 +97,11 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
               personality:
                   stage?.personality ??
                   Personality.values[seed % Personality.values.length],
+              // AI 다이얼 원격 덮어쓰기 (설계서 §7.4 `ai_*`).
+              dials: AiDials.withOverrides(
+                stage?.aiLevel ?? test?.level ?? widget.level,
+                ref.read(remoteValuesProvider).intOr,
+              ),
             ),
     );
     _reported = false;
@@ -110,6 +115,8 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
         'reason': e.cell,
         'ms': _session.turnMs,
         'shots': _game.stats.shots[e.side],
+        // 이번 턴에 움직인 거리(칸, 소수). 1/1000칸 단위를 칸으로 바꾼다.
+        'moved_cells': _game.stats.lastTurnMoved[e.side] / 1000,
       });
     };
   }
@@ -149,6 +156,8 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
   Widget build(BuildContext context) {
     // 저사양 모드는 설정에서 바로 전장에 반영한다.
     _game.lowEnd.value = ref.watch(lowEndProvider);
+    _game.soundOn.value = ref.watch(soundOnProvider);
+    _game.vibrationOn.value = ref.watch(vibrationOnProvider);
     _session.autoEnd.enabled = ref.watch(autoEndTurnProvider);
     final l10n = AppLocalizations.of(context);
     final number = NumberFormat.decimalPattern(

@@ -977,4 +977,37 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get devStart => 'Start';
+
+  @override
+  String get storyReplay => 'Replay stories';
+
+  @override
+  String get storyReplayEmpty => 'No stories seen yet';
+
+  @override
+  String get storyTitlePrologue => 'Prologue';
+
+  @override
+  String get storyTitleSea1Intro => 'Sea 1 intro';
+
+  @override
+  String get storyTitleMidBossBefore => 'Before the mid-boss';
+
+  @override
+  String get storyTitleMidBossAfter => 'After the mid-boss';
+
+  @override
+  String get storyTitleBossBefore => 'Before the sea boss';
+
+  @override
+  String get storyTitleBossAfter => 'After the sea boss';
+
+  @override
+  String get prepMyShip => 'My ship';
+
+  @override
+  String get prepCabins => 'Cabins';
+
+  @override
+  String get prepCabinEmpty => 'Empty cabin';
 }

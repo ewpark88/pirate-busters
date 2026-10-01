@@ -9,10 +9,14 @@ class AiController implements Controller {
     required this.level,
     this.personality = Personality.bombard,
     this.losses = 0,
+    this.dials,
   });
 
   final AiLevel level;
   final Personality personality;
+
+  /// 난이도 표 대신 쓸 다이얼(원격 설정 덮어쓰기). 없으면 [AiDials.of].
+  final AiDials? dials;
 
   /// 플레이어 연패 수 (연패 보정, BALANCE.md A5.2).
   final int losses;
@@ -23,6 +27,7 @@ class AiController implements Controller {
     level: level,
     personality: personality,
     losses: losses,
+    dials: dials,
   );
 
   @override
