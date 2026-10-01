@@ -10,6 +10,7 @@ import 'package:pirate_busters/game/anim/character_rig.dart';
 import 'package:pirate_busters/game/coords.dart';
 import 'package:pirate_busters/game/sprites.dart';
 import 'package:pirate_busters/game/view/damage_painter.dart';
+import 'package:pirate_busters/game/view/torn_edge_painter.dart';
 
 /// 배 한 척: 격자 타일, 돛대, 선실의 해적. 시뮬레이션 상태를 그리기만 한다.
 ///
@@ -176,7 +177,7 @@ class ShipView extends PositionComponent with HasGameReference {
           continue;
         }
         final mat = BlockMaterial.values[m];
-        final stage = _stage(mat, hp[i]);
+        final stage = ShipGrid.stageFor(hp[i], mat.durability);
         final tile = sprites.tile(mat, variant: i * 7, keel: y == 0);
         if (tile == null) {
           _renderNet(canvas, rect, stage);
@@ -187,29 +188,50 @@ class ShipView extends PositionComponent with HasGameReference {
           position: rect.topLeft.toVector2(),
           size: Vector2.all(_cell),
         );
-        switch (stage) {
-          case DamageStage.cracked:
-            DamagePainter.cracked(canvas, rect, i);
-          case DamageStage.holed:
-            DamagePainter.holed(canvas, rect, i);
-          case DamageStage.intact || DamageStage.destroyed:
-            break;
-        }
+        // 금은 이웃 부서진 칸 쪽에서 들어와 이어져 보인다 (설계서 §10.2).
+        TornEdgePainter.damage(canvas, rect, i, stage, _mask(materials, x, y));
       }
     }
+    // 부서진 칸의 가장자리는 타일을 모두 그린 뒤 이웃 블록 쪽으로 찢어 그린다.
+    for (var y = 0; y < grid.height; y++) {
+      for (var x = 0; x < grid.width; x++) {
+        final i = y * grid.width + x;
+        if (materials[i] != ShipGrid.emptyCell ||
+            _built.materials[i] == ShipGrid.emptyCell) {
+          continue;
+        }
+        final rect = Rect.fromLTWH(_localX(x), -(y + 1) * _cell, _cell, _cell);
+        TornEdgePainter.torn(
+          canvas,
+          rect,
+          i,
+          _mask(materials, x, y, block: true),
+        );
+      }
+    }
+  }
+
+  /// ([x], [y]) 의 상하좌우 이웃 마스크. [block] 이면 블록이 남은 이웃, 아니면
+  /// 설계도에 있었다가 부서진 이웃.
+  int _mask(List<int> materials, int x, int y, {bool block = false}) {
+    final grid = _state.grid;
+    bool at(int nx, int ny) {
+      if (!grid.inBounds(nx, ny)) return false;
+      final i = ny * grid.width + nx;
+      final has = materials[i] != ShipGrid.emptyCell;
+      return block ? has : !has && _built.materials[i] != ShipGrid.emptyCell;
+    }
+
+    return (at(x - 1, y) ? TornEdgePainter.left : 0) |
+        (at(x + 1, y) ? TornEdgePainter.right : 0) |
+        (at(x, y + 1) ? TornEdgePainter.up : 0) |
+        (at(x, y - 1) ? TornEdgePainter.down : 0);
   }
 
   static final Paint _netPaint = Paint()
     ..color = const Color(0xFFD9CBA8)
     ..style = PaintingStyle.stroke
     ..strokeWidth = 1.5;
-
-  DamageStage _stage(BlockMaterial m, int hp) {
-    final hp3 = hp * 3;
-    if (hp3 > m.durability * 2) return DamageStage.intact;
-    if (hp3 > m.durability) return DamageStage.cracked;
-    return DamageStage.holed;
-  }
 
   /// 망사(돛) 칸: 에셋에 없어 코드로 그린다 (ADR-029).
   void _renderNet(Canvas canvas, Rect r, DamageStage stage) {

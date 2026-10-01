@@ -43,6 +43,7 @@ bool onHullHit(
         x: x,
         y: y,
         events: events,
+        rng: state.rng,
         blockPercent: blockPercent,
         centerPiratePercent: piratePercent,
       );

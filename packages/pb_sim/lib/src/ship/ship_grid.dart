@@ -88,9 +88,15 @@ class ShipGrid {
   DamageStage stageAt(int x, int y) {
     final m = materialAt(x, y);
     if (m == null) return DamageStage.destroyed;
-    final hp3 = hpAt(x, y) * 3;
-    if (hp3 > m.durability * 2) return DamageStage.intact;
-    if (hp3 > m.durability) return DamageStage.cracked;
+    return stageFor(hpAt(x, y), m.durability);
+  }
+
+  /// 내구도 [durability] 인 블록이 [hp] 남았을 때의 손상 단계. 렌더도 이 함수를
+  /// 써서 경계를 복사하지 않는다 (설계서 §10.2).
+  static DamageStage stageFor(int hp, int durability) {
+    final hp3 = hp * 3;
+    if (hp3 > durability * 2) return DamageStage.intact;
+    if (hp3 > durability) return DamageStage.cracked;
     return DamageStage.holed;
   }
 

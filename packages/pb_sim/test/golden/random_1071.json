@@ -4,7 +4,7 @@
   "outcome": "timeDecision",
   "winner": 0,
   "turns": 30,
-  "hash": "61c2a11c"
+  "hash": "cd6dc208"
  },
  "replay": {
   "version": 7,
@@ -568,7 +568,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "dfbaced0"
+    "hash": "b2b80707"
    },
    {
     "turn": 3,
@@ -579,7 +579,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "1db6ac70"
+    "hash": "818845e7"
    },
    {
     "turn": 4,
@@ -600,7 +600,7 @@
       "power": 6255
      }
     ],
-    "hash": "09300e12"
+    "hash": "f01b82e5"
    },
    {
     "turn": 5,
@@ -617,7 +617,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "6746f1fa"
+    "hash": "04f1e55d"
    },
    {
     "turn": 6,
@@ -640,7 +640,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "9e346dee"
+    "hash": "7000c761"
    },
    {
     "turn": 7,
@@ -661,7 +661,7 @@
       "power": 9723
      }
     ],
-    "hash": "0d05a0ae"
+    "hash": "3d0bb2e1"
    },
    {
     "turn": 8,
@@ -695,7 +695,7 @@
       "ticks": 11
      }
     ],
-    "hash": "5be542c0"
+    "hash": "34fe657b"
    },
    {
     "turn": 9,
@@ -711,7 +711,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "0753ec84"
+    "hash": "104ee07f"
    },
    {
     "turn": 10,
@@ -727,7 +727,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "3022f7ce"
+    "hash": "88630285"
    },
    {
     "turn": 11,
@@ -745,7 +745,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "41fe90cf"
+    "hash": "4035cde4"
    },
    {
     "turn": 12,
@@ -756,7 +756,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "fb144ab9"
+    "hash": "36542fb2"
    },
    {
     "turn": 13,
@@ -777,7 +777,7 @@
       "power": 9301
      }
     ],
-    "hash": "ad11d782"
+    "hash": "c8e3d819"
    },
    {
     "turn": 14,
@@ -802,7 +802,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "a473031d"
+    "hash": "d9bb49b6"
    },
    {
     "turn": 15,
@@ -813,13 +813,13 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "8177518c"
+    "hash": "97c37af7"
    },
    {
     "turn": 16,
     "side": 1,
     "cmds": [],
-    "hash": "002c7e73"
+    "hash": "6d805550"
    },
    {
     "turn": 17,
@@ -856,7 +856,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "a16faad2"
+    "hash": "b5afe44f"
    },
    {
     "turn": 18,
@@ -880,7 +880,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "a5d4dd8a"
+    "hash": "a7e31757"
    },
    {
     "turn": 19,
@@ -901,7 +901,7 @@
       "power": 7444
      }
     ],
-    "hash": "6fca3192"
+    "hash": "a94abd2a"
    },
    {
     "turn": 20,
@@ -913,7 +913,7 @@
       "dx": -33
      }
     ],
-    "hash": "e6fc60ba"
+    "hash": "c3a7ca72"
    },
    {
     "turn": 21,
@@ -947,7 +947,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "aa680f0a"
+    "hash": "6ef015a2"
    },
    {
     "turn": 22,
@@ -979,7 +979,7 @@
       "dx": -53
      }
     ],
-    "hash": "9a6b947f"
+    "hash": "25ceaf07"
    },
    {
     "turn": 23,
@@ -995,7 +995,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "b835a5c3"
+    "hash": "613d273b"
    },
    {
     "turn": 24,
@@ -1006,7 +1006,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "e456be2d"
+    "hash": "4c824385"
    },
    {
     "turn": 25,
@@ -1017,7 +1017,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "a71ba44d"
+    "hash": "d471a885"
    },
    {
     "turn": 26,
@@ -1035,7 +1035,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "84ac4503"
+    "hash": "ba94d1d2"
    },
    {
     "turn": 27,
@@ -1069,7 +1069,7 @@
       "power": 7557
      }
     ],
-    "hash": "5bc2d7ed"
+    "hash": "fcb469a8"
    },
    {
     "turn": 28,
@@ -1089,7 +1089,7 @@
       "ticks": 38
      }
     ],
-    "hash": "8bc57b7f"
+    "hash": "dd72e30b"
    },
    {
     "turn": 29,
@@ -1107,7 +1107,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "0b2809fa"
+    "hash": "bb46fd8e"
    },
    {
     "turn": 30,
@@ -1143,7 +1143,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "61c2a11c"
+    "hash": "cd6dc208"
    }
   ]
  }

@@ -61,6 +61,7 @@ void _fire(MatchState state, TurnEffect e) {
         x: x,
         y: y,
         events: state.events,
+        rng: state.rng,
         // 물기는 해적만 문다.
         blockPercent: mine ? 100 : 0,
       );

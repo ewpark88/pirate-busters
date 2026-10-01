@@ -3,8 +3,8 @@
  "expect": {
   "outcome": "sunk",
   "winner": 0,
-  "turns": 9,
-  "hash": "3e3fe7a3"
+  "turns": 3,
+  "hash": "3c2cfd57"
  },
  "replay": {
   "version": 7,
@@ -522,7 +522,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "73d572eb"
+    "hash": "eb90d427"
    },
    {
     "turn": 2,
@@ -533,7 +533,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "f007c301"
+    "hash": "42d4243c"
    },
    {
     "turn": 3,
@@ -545,117 +545,9 @@
       "slot": 0,
       "angle": 22250,
       "power": 10000
-     },
-     {
-      "t": 2000,
-      "type": "FIRE",
-      "slot": 1,
-      "angle": 20500,
-      "power": 10000
-     },
-     {
-      "t": 9000,
-      "type": "END_TURN"
      }
     ],
-    "hash": "b6c1f921"
-   },
-   {
-    "turn": 4,
-    "side": 1,
-    "cmds": [
-     {
-      "t": 1000,
-      "type": "END_TURN"
-     }
-    ],
-    "hash": "e3eb5f04"
-   },
-   {
-    "turn": 5,
-    "side": 0,
-    "cmds": [
-     {
-      "t": 1000,
-      "type": "FIRE",
-      "slot": 0,
-      "angle": 23250,
-      "power": 10000
-     },
-     {
-      "t": 2000,
-      "type": "FIRE",
-      "slot": 1,
-      "angle": 21250,
-      "power": 10000
-     },
-     {
-      "t": 9000,
-      "type": "END_TURN"
-     }
-    ],
-    "hash": "32ba3760"
-   },
-   {
-    "turn": 6,
-    "side": 1,
-    "cmds": [
-     {
-      "t": 1000,
-      "type": "END_TURN"
-     }
-    ],
-    "hash": "a7cfc011"
-   },
-   {
-    "turn": 7,
-    "side": 0,
-    "cmds": [
-     {
-      "t": 1000,
-      "type": "FIRE",
-      "slot": 0,
-      "angle": 22250,
-      "power": 10000
-     },
-     {
-      "t": 2000,
-      "type": "FIRE",
-      "slot": 1,
-      "angle": 20500,
-      "power": 10000
-     },
-     {
-      "t": 9000,
-      "type": "END_TURN"
-     }
-    ],
-    "hash": "86748bd7"
-   },
-   {
-    "turn": 8,
-    "side": 1,
-    "cmds": [
-     {
-      "t": 1000,
-      "type": "END_TURN"
-     }
-    ],
-    "hash": "16b723ec"
-   },
-   {
-    "turn": 9,
-    "side": 0,
-    "cmds": [
-     {
-      "t": 1000,
-      "type": "FIRE",
-      "slot": 0,
-      "angle": 24250,
-      "power": 10000
-     }
-    ],
-    "hash": "3e3fe7a3"
+    "hash": "3c2cfd57"
    }
   ]
  }

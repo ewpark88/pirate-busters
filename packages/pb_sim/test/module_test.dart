@@ -51,9 +51,13 @@ List<SimEvent> _smash(SideState s, int cx, int cy) {
     x: 0,
     y: 0,
     events: events,
+    rng: XorShift32(1),
   );
   return events;
 }
+
+int _destroyedCount(List<SimEvent> events) =>
+    events.where((e) => e.kind == SimEventKind.blockDestroyed).length;
 
 void main() {
   group('모듈 배치 검사 (설계서 §3.3)', () {
@@ -202,6 +206,7 @@ void main() {
       final s = _side(_ship(const [ModuleCell(9, 1, ModuleKind.fuelTank)]));
       expect(s.tank, 120 * SideState.fuelUnit);
       expect(s.fuel, 120 * SideState.fuelUnit);
+      final before = s.grid.totalHp;
       final events = _smash(s, 9, 1);
       expect(s.tank, 80 * SideState.fuelUnit);
       expect(s.fuel, 80 * SideState.fuelUnit);
@@ -209,19 +214,22 @@ void main() {
         events.where((e) => e.kind == SimEventKind.moduleDestroyed),
         hasLength(1),
       );
-      // 옆 소나무(40)는 부서지고 아래 참나무(80)는 40 남는다.
-      expect(s.grid.hasBlock(10, 1), isFalse);
-      expect(s.grid.hpAt(9, 0), 40);
+      // 연료통 칸 소나무 40 + 균열 조각 4개 × 40 (§4.8 균열 피해). 조각은 블록이 있는
+      // 칸에만 떨어지고 한 조각이 한 칸을 넘치게 깎지 않는다. 조각이 받침을 부수면
+      // 위 칸이 무너져 더 깎일 수 있다(§3.4).
+      expect(before - s.grid.totalHp, greaterThanOrEqualTo(40 + 4 * 40));
     });
 
     test('화약고: 남아 있으면 모든 해적 피해 +10%, 부서지면 반경 2칸이 터진다', () {
       final s = _side(_ship(const [ModuleCell(10, 1, ModuleKind.magazine)]));
       expect(s.damageBonusPercent(0), 10);
-      _smash(s, 10, 1);
+      final events = _smash(s, 10, 1);
       expect(s.damageBonusPercent(0), 0);
-      // 반경 2칸 안 참나무(80)도 한 번에 부서진다.
-      expect(s.grid.hasBlock(10, 0), isFalse);
-      expect(s.grid.hasBlock(8, 1), isFalse);
+      // 균열 조각 12개 × 80 이라 조각이 닿는 칸은 참나무(80)도 한 번에 부서진다.
+      // 한 걸음 안 5칸이 남아 있는 동안 조각은 반드시 한 칸을 부수고, 두 걸음으로
+      // 닿는 (8, 0)·(8, 1) 까지 최대 7칸 (+ 화약고 칸) 이다.
+      expect(_destroyedCount(events), inInclusiveRange(1 + 5, 1 + 7));
+      expect(s.grid.hasBlock(10, 1), isFalse);
     });
 
     test('포문은 그 선실 해적만 +10%, 망루는 그 선실만 궤적 50%', () {
@@ -337,6 +345,7 @@ void main() {
       x: 0,
       y: 0,
       events: events,
+      rng: XorShift32(1),
     );
     expect(
       events.where(
@@ -347,6 +356,11 @@ void main() {
       hasLength(1),
     );
     expect(s.damageBonusPercent(0), 0);
-    expect(s.grid.hasBlock(10, 0), isFalse, reason: '반경 2칸 폭발');
+    expect(s.grid.hasBlock(10, 1), isFalse, reason: '유폭 중심 80');
+    expect(
+      _destroyedCount(events),
+      greaterThanOrEqualTo(1 + 5),
+      reason: '균열 조각 12개 × 80 (§4.8)',
+    );
   });
 }

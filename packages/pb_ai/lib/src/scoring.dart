@@ -75,6 +75,9 @@ ShotValue scoreLandings(
 bool _hasSwimmer(SideState s) =>
     s.crew.pirates.any((p) => p.status == PirateStatus.swimming);
 
+/// 착탄 칸 하나의 값. 블록 피해는 반경 안 균일 원형으로 어림한다: 실제 판정은 바깥
+/// 몫을 균열 조각으로 흩뿌리지만(설계서 §4.8 균열 피해, ADR-052) 기대값은 같고,
+/// AI 도 사람처럼 조각이 어디로 갈지 모른다(절대 규칙 4).
 void _impactValue(SideState target, ShotLanding l, ShotValue v) {
   final spec = l.spec;
   final grid = target.grid;
