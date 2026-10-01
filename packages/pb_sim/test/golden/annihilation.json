@@ -4,7 +4,7 @@
   "outcome": "annihilation",
   "winner": 0,
   "turns": 3,
-  "hash": "0635ad8e"
+  "hash": "64cb0678"
  },
  "replay": {
   "version": 7,
@@ -522,7 +522,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "7dbace31"
+    "hash": "61916353"
    },
    {
     "turn": 2,
@@ -533,7 +533,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "c618cf62"
+    "hash": "5a05c8a8"
    },
    {
     "turn": 3,
@@ -545,16 +545,9 @@
       "slot": 0,
       "angle": 72500,
       "power": 10000
-     },
-     {
-      "t": 2000,
-      "type": "FIRE",
-      "slot": 1,
-      "angle": 74000,
-      "power": 10000
      }
     ],
-    "hash": "0635ad8e"
+    "hash": "64cb0678"
    }
   ]
  }

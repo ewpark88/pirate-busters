@@ -324,4 +324,29 @@ void main() {
     ]);
     expect(ShipStats.of(b.hull, b.cells, b.modules).modulesCounted, 4);
   });
+
+  test('화약고는 블록이 남아도 맞으면 터진다 (설계서 §3.3, ADR-050)', () {
+    final s = _side(_ship(const [ModuleCell(10, 1, ModuleKind.magazine)]));
+    final events = <SimEvent>[];
+    // 소나무 화약고 칸에 5 피해: 블록은 남지만 화약고는 터진다.
+    resolveImpact(
+      s,
+      spec: testPirate('tap', blockDamage: 5, pirateDamage: 0, blastRadius: 0),
+      cx: 10,
+      cy: 1,
+      x: 0,
+      y: 0,
+      events: events,
+    );
+    expect(
+      events.where(
+        (e) =>
+            e.kind == SimEventKind.moduleDestroyed &&
+            e.value == ModuleKind.magazine.index,
+      ),
+      hasLength(1),
+    );
+    expect(s.damageBonusPercent(0), 0);
+    expect(s.grid.hasBlock(10, 0), isFalse, reason: '반경 2칸 폭발');
+  });
 }

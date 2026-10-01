@@ -4,7 +4,7 @@
   "outcome": "floodSunk",
   "winner": 0,
   "turns": 14,
-  "hash": "ef8eecfe"
+  "hash": "41f76486"
  },
  "replay": {
   "version": 7,
@@ -738,7 +738,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "a33096b0"
+    "hash": "b1dbfc88"
    },
    {
     "turn": 14,
@@ -749,7 +749,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "ef8eecfe"
+    "hash": "41f76486"
    }
   ]
  }

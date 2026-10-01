@@ -4,7 +4,7 @@
   "outcome": "timeDecision",
   "winner": 0,
   "turns": 30,
-  "hash": "17b9a7d9"
+  "hash": "14254e3c"
  },
  "replay": {
   "version": 7,
@@ -821,7 +821,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "c11eb68c"
+    "hash": "9bf4615c"
    },
    {
     "turn": 18,
@@ -854,7 +854,7 @@
       "dx": 10
      }
     ],
-    "hash": "a5023e1b"
+    "hash": "6acbdf2b"
    },
    {
     "turn": 19,
@@ -893,7 +893,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "694c64e1"
+    "hash": "925460cd"
    },
    {
     "turn": 20,
@@ -913,7 +913,7 @@
       "power": 8646
      }
     ],
-    "hash": "51baea36"
+    "hash": "989ce97b"
    },
    {
     "turn": 21,
@@ -948,7 +948,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "8cec68de"
+    "hash": "f2e2fe53"
    },
    {
     "turn": 22,
@@ -976,7 +976,7 @@
       "power": 7451
      }
     ],
-    "hash": "21f7cd0c"
+    "hash": "c658bd89"
    },
    {
     "turn": 23,
@@ -1001,7 +1001,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "35457ed3"
+    "hash": "64186fde"
    },
    {
     "turn": 24,
@@ -1023,7 +1023,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "c6443dc9"
+    "hash": "6c5aefe8"
    },
    {
     "turn": 25,
@@ -1047,7 +1047,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "ddbbea41"
+    "hash": "9a7304b0"
    },
    {
     "turn": 26,
@@ -1059,7 +1059,7 @@
       "dx": -45
      }
     ],
-    "hash": "b8ba1037"
+    "hash": "3107c82a"
    },
    {
     "turn": 27,
@@ -1092,7 +1092,7 @@
       "power": 8748
      }
     ],
-    "hash": "824d9ed1"
+    "hash": "74efa184"
    },
    {
     "turn": 28,
@@ -1130,7 +1130,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "15b4da48"
+    "hash": "78483421"
    },
    {
     "turn": 29,
@@ -1146,7 +1146,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "4b8b7278"
+    "hash": "7430af91"
    },
    {
     "turn": 30,
@@ -1164,7 +1164,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "17b9a7d9"
+    "hash": "14254e3c"
    }
   ]
  }

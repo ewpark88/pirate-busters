@@ -47,6 +47,8 @@ int runVolley(
       final vyBefore = p.vy;
       if (dry != null) {
         final step = traceStep(state, p, wind, ms, tick);
+        final net = step.hit;
+        if (net != null && passNet(p, step.target, net.cx, net.cy)) continue;
         final bounced = step.hit == null && step.sea && bounceOffSea(p, step.x);
         if (step.hit != null || (step.sea && !bounced) || p.isExpired) {
           if (step.hit != null || step.sea) dry(p, step, tick);

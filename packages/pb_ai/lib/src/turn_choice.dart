@@ -92,7 +92,7 @@ class TurnChooser {
     final good = [
       for (final s in plans)
         if (_total(s) > 0) s,
-    ]..sort((a, b) => _total(b) - _total(a));
+    ]..sort(_byScore);
     if (good.isEmpty) return null;
     final pct = p.dials.pickTopPercent;
     final pool = pct == 0
@@ -114,6 +114,16 @@ class TurnChooser {
       for (final s in plans)
         if (!overlaps(s)) s,
     ]);
+  }
+
+  /// 점수 높은 순. 같으면 각도 → 힘 → 탭 틱 순으로 정해 결과가 정렬 구현에
+  /// 기대지 않게 한다 (ADR-050).
+  int _byScore(ShotPlan a, ShotPlan b) {
+    final d = _total(b) - _total(a);
+    if (d != 0) return d;
+    if (a.angle != b.angle) return a.angle - b.angle;
+    if (a.power != b.power) return a.power - b.power;
+    return a.tapTick - b.tapTick;
   }
 
   /// 콤보: 첫 발이 부술 칸 바로 옆(안쪽)에 떨어지는 두 번째 발을 더 친다.

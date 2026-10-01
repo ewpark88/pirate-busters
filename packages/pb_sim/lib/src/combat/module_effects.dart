@@ -38,10 +38,20 @@ const PirateSpec _fuelTankBlast = PirateSpec(
 /// 설계도 순서로 본다. 화약고·연료통은 그 자리에서 터지고(다른 모듈을 연쇄로 부술
 /// 수 있다), 돛대는 위쪽 블록을 무너뜨린다. 연료통을 잃으면 남은 연료를 줄어든
 /// 탱크에 맞춘다. 선장실·포문·망루·펌프·공방은 효과가 사라지기만 한다.
-void settleModules(SideState ship, List<SimEvent> events) {
+///
+/// 화약고는 블록이 남아도 [hit](이번에 피해를 받은 칸 인덱스)에 있으면 터진다
+/// (설계서 §3.3 “맞으면 폭발”, ADR-050).
+void settleModules(
+  SideState ship,
+  List<SimEvent> events, {
+  List<int> hit = const [],
+}) {
   final grid = ship.grid;
   for (final m in ship.modules.list) {
-    if (!m.intact || grid.hasBlock(m.x, m.y)) continue;
+    if (!m.intact) continue;
+    final struck =
+        m.kind == ModuleKind.magazine && hit.contains(grid.indexOf(m.x, m.y));
+    if (grid.hasBlock(m.x, m.y) && !struck) continue;
     m.intact = false;
     events.add(
       SimEvent(

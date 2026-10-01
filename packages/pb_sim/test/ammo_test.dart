@@ -1,5 +1,6 @@
 import 'package:pb_sim/pb_sim.dart';
 import 'package:pb_sim/src/combat/ammo_rules.dart';
+import 'package:pb_sim/src/combat/flight.dart';
 import 'package:pb_sim/src/combat/hit_effects.dart';
 import 'package:test/test.dart';
 
@@ -58,6 +59,19 @@ void _passTo(Match m, int side) {
     m.apply(const EndTurnCommand(t: 1000));
   }
   m.apply(const TapCommand(t: 0, slot: 9, ticks: 0));
+}
+
+/// 상대 배에서 부서진 블록 중 망사가 아닌 것의 수. 샘플 배의 망사(4..7, 3)는
+/// 탄이 지나가며 부서진다 (설계서 §3.2).
+int _solidDestroyed(Match m) {
+  final w = m.state.sides[1].grid.width;
+  return _of(m, SimEventKind.blockDestroyed)
+      .where(
+        (e) =>
+            e.side == 1 &&
+            !(e.cell ~/ w == 3 && e.cell % w >= 4 && e.cell % w <= 7),
+      )
+      .length;
 }
 
 List<SimEvent> _of(Match m, SimEventKind kind) =>
@@ -189,7 +203,7 @@ void main() {
       final m = _duel(spec(a));
       final c = m.state.sides[1].cabins[0];
       m.apply(aimAt(m.state, slot: 0, tx: c.x, ty: c.y));
-      return _of(m, SimEventKind.blockDestroyed).length;
+      return _solidDestroyed(m);
     }
 
     expect(destroyed(AmmoType.explosive), 1);
@@ -215,7 +229,7 @@ void main() {
     final m = _duel(puffy);
     m.apply(_atCabin(m));
     expect(_of(m, SimEventKind.mineAttached), hasLength(1));
-    expect(_of(m, SimEventKind.blockDestroyed), isEmpty);
+    expect(_solidDestroyed(m), 0, reason: '지나간 망사만 부서진다');
     expect(m.state.effects, hasLength(1));
     final flood = m.state.sides[1].flood;
     m.apply(const EndTurnCommand(t: 9000));
@@ -432,5 +446,87 @@ void main() {
     expect(m.state.sides[0].shotsFired, 0);
     m.apply(const FireCommand(t: 1100, slot: 0, angle: 170000, power: 5000));
     expect(m.state.sides[0].shotsFired, 1);
+  });
+
+  group('검토 반영 규칙 (ADR-050)', () {
+    /// 오른쪽 배 망사 칸 (5, 3) 으로 곧게 날아가는 탄을 한 틱씩 진행한다.
+    (Projectile, List<SimEvent>) throughNet(Family family) {
+      final m = _duel(_ammoPirate(AmmoType.explosive, family: family));
+      final target = m.state.sides[1];
+      final (x, y) = target.frame.cellCenter(5, 3);
+      final p = Projectile(
+        id: 99,
+        side: 0,
+        slot: 0,
+        spec: _ammoPirate(AmmoType.explosive, family: family),
+        x: x - 3000,
+        y: y,
+        vx: 60000 * facingOf(0),
+        vy: 0,
+      )..gravity = false;
+      m.state.events.clear();
+      for (var tick = 1; tick < 10; tick++) {
+        if (stepShot(m.state, p, 0, 0, tick)) break;
+        if (p.passedNet >= 0) break;
+      }
+      return (p, m.state.events);
+    }
+
+    test('망사: 공중이 아닌 탄은 속도 50% 로 지나가고, 공중 탄은 막혀 맞는다 (§3.2)', () {
+      final (shot, _) = throughNet(Family.lob);
+      expect(shot.passedNet, isNonNegative);
+      expect(shot.vx.abs(), 30000);
+      final (bird, events) = throughNet(Family.air);
+      expect(bird.passedNet, -1);
+      expect(events.any((e) => e.kind == SimEventKind.impact), isTrue);
+    });
+
+    test('관통탄은 두 번째 칸부터 피해 50% (§4.8)', () {
+      expect(pierceFalloffPercent, 50);
+      final m = _duel(_ammoPirate(AmmoType.pierce, value: 3));
+      final grid = m.state.sides[1].grid;
+      final before = grid.totalHp;
+      final p = Projectile(
+        id: 1,
+        side: 0,
+        slot: 0,
+        spec: _ammoPirate(AmmoType.pierce, value: 3),
+        x: 0,
+        y: 0,
+        vx: 0,
+        vy: 0,
+      )..pierceLeft = 3;
+      // 소나무 두 칸을 차례로: 첫 칸 40(부서짐), 둘째 칸 20.
+      onHullHit(m.state, p, m.state.sides[1], cx: 3, cy: 1, x: 0, y: 0);
+      onHullHit(m.state, p, m.state.sides[1], cx: 4, cy: 1, x: 0, y: 0);
+      expect(before - grid.totalHp, 60);
+    });
+
+    test('다중투하는 합계를 폭탄 수로 나눈다 (§4.8)', () {
+      final wing = _ammoPirate(
+        AmmoType.flock,
+        value: 3,
+        family: Family.air,
+        blockDamage: 50,
+        pirateDamage: 90,
+      );
+      final m = _duel(wing);
+      final p = Projectile(
+        id: 1,
+        side: 0,
+        slot: 0,
+        spec: wing,
+        x: 0,
+        y: 5000,
+        vx: 30000,
+        vy: 0,
+      );
+      final bombs = flockBombs(m.state, p, 10);
+      expect(bombs, hasLength(3));
+      expect(
+        [bombs.first.spec.blockDamage, bombs.first.spec.pirateDamage],
+        [perShotDamage(50, 0, 3), perShotDamage(90, 0, 3)],
+      );
+    });
   });
 }

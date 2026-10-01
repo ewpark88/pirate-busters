@@ -42,6 +42,8 @@ void resolveImpact(
   final edge = edgePercentOf(spec);
   final hadCabin = [for (final c in target.cabins) grid.hasBlock(c.x, c.y)];
 
+  // 이번에 피해를 받은 칸(화약고는 맞으면 터진다, §3.3).
+  final hitCells = <int>[];
   for (var by = cy - r; by <= cy + r; by++) {
     for (var bx = cx - r; bx <= cx + r; bx++) {
       if (!_inBlast(bx - cx, by - cy, r) || !grid.inBounds(bx, by)) continue;
@@ -50,6 +52,7 @@ void resolveImpact(
         bx == cx && by == cy,
         edge,
       );
+      if (dmg > 0 && grid.hasBlock(bx, by)) hitCells.add(grid.indexOf(bx, by));
       if (grid.damage(bx, by, dmg)) {
         events.add(
           SimEvent(
@@ -65,7 +68,7 @@ void resolveImpact(
     events.add(SimEvent(SimEventKind.blockCollapsed, side: side, cell: i));
   }
   // 부서진 모듈의 효과(유폭·돛대 붕괴)는 해적 피해보다 먼저 (설계서 §3.3).
-  settleModules(target, events);
+  settleModules(target, events, hit: hitCells);
 
   final crew = target.crew;
   for (var slot = 0; slot < crew.size; slot++) {
