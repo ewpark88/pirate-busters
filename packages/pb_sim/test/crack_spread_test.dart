@@ -3,12 +3,18 @@ import 'package:test/test.dart';
 
 import 'fixtures.dart';
 
-/// 12 × 2 를 참나무로 채운 배(건조 포인트 48). 착탄 칸 (6, 1) 주변에 늘 블록이 있다.
+/// 12 × 3 을 소나무로 채우고 착탄 칸 (6, 1) 만 참나무인 배. 두 걸음 안이 모두 블록이라
+/// 조각이 바다로 흩어지지 않는다.
 Blueprint _fullOak() => Blueprint(
   HullSpec.sloop,
   [
-    for (var y = 0; y < 2; y++)
-      for (var x = 0; x < 12; x++) BlockCell(x, y, BlockMaterial.oak),
+    for (var y = 0; y < 3; y++)
+      for (var x = 0; x < 12; x++)
+        BlockCell(
+          x,
+          y,
+          x == 6 && y == 1 ? BlockMaterial.oak : BlockMaterial.pine,
+        ),
   ],
   cabins: const [
     CabinCell(0, 1),
@@ -61,16 +67,16 @@ void main() {
     });
 
     test('가득 찬 배에서는 어느 시드든 총피해 = 중심 + 조각 수 × 조각 피해 (반경 1·2)', () {
-      // 조각 5 는 12개가 한 칸에 겹쳐도 참나무 80 을 넘지 않아 피해가 새지 않는다.
+      // 조각 3 은 12개가 한 칸에 겹쳐도 소나무 40 을 넘지 않아 피해가 새지 않는다.
       for (final r in [1, 2]) {
-        final spec = testPirate('b', blockDamage: 10, blastRadius: r);
+        final spec = testPirate('b', blockDamage: 6, blastRadius: r);
         final expected =
-            10 + crackShardCount(r) * crackShardDamage(10, edgePercentOf(spec));
+            6 + crackShardCount(r) * crackShardDamage(6, edgePercentOf(spec));
         for (var seed = 1; seed <= 60; seed++) {
           final s = _side(_fullOak());
           expect(_impact(s, spec, seed), expected, reason: 'r $r seed $seed');
-          // 착탄 칸은 피해 전부(10)만 받고 조각은 돌아오지 않는다.
-          expect(s.grid.hpAt(6, 1), 80 - 10, reason: 'r $r seed $seed');
+          // 착탄 칸은 피해 전부(6)만 받고 조각은 돌아오지 않는다.
+          expect(s.grid.hpAt(6, 1), 80 - 6, reason: 'r $r seed $seed');
         }
       }
     });
@@ -79,9 +85,10 @@ void main() {
       for (var seed = 1; seed <= 100; seed++) {
         final s = _side(_fullOak());
         _impact(s, testPirate('b', blockDamage: 40), seed);
-        for (var y = 0; y < 2; y++) {
+        for (var y = 0; y < 3; y++) {
           for (var x = 0; x < 12; x++) {
-            if (s.grid.hpAt(x, y) == 80) continue;
+            final m = s.grid.materialAt(x, y);
+            if (m != null && s.grid.hpAt(x, y) == m.durability) continue;
             expect((x - 6).abs() <= 2, isTrue, reason: 'seed $seed ($x, $y)');
           }
         }
@@ -109,25 +116,34 @@ void main() {
       for (var seed = 1; seed <= 20; seed++) {
         expect(walkCrackShard(g, 0, 1, 1, XorShift32(seed)), -1);
       }
-      // 블록이 있는 쪽으로만 간다.
+      // 빈 쪽을 고른 조각은 사라지고, 남은 조각은 블록이 있는 칸에만 있다.
       final g2 = ShipGrid.fromBlueprint(sampleBlueprint());
+      var lost = 0;
       for (var seed = 1; seed <= 100; seed++) {
         final cell = walkCrackShard(g2, 4, 3, 1, XorShift32(seed));
+        if (cell < 0) {
+          lost++;
+          continue;
+        }
         expect(cell, isNot(g2.indexOf(4, 3)));
         expect(g2.hasBlockAt(cell), isTrue);
       }
+      // (4, 3) 망사 위·좌우 위 세 칸은 비어 있어 일부는 바다로 흩어진다.
+      expect(lost, greaterThan(0));
     });
 
-    test('도중에 후보가 없으면 그 자리에서 멈춘다', () {
+    test('도중에 빈 칸·착탄 칸을 고르면 그 자리에서 멈춘다', () {
       // (0, 1) 의 이웃은 (0, 0) 하나뿐이고 (0, 0) 의 이웃 중 착탄 칸이 아닌 블록은
-      // 없다 → 두 걸음 조각도 (0, 0) 에서 멈춘다.
+      // 없다 → 조각은 사라지거나 (0, 0) 에서 멈춘다. 다른 칸에는 가지 않는다.
       final g = ShipGrid.fromBlueprint(sampleBlueprint());
       for (final (x, y) in [(1, 0), (1, 1), (1, 2)]) {
         g.removeAt(g.indexOf(x, y));
       }
-      for (var seed = 1; seed <= 20; seed++) {
-        expect(walkCrackShard(g, 0, 1, 1, XorShift32(seed)), g.indexOf(0, 0));
+      final landed = <int>{};
+      for (var seed = 1; seed <= 40; seed++) {
+        landed.add(walkCrackShard(g, 0, 1, 1, XorShift32(seed)));
       }
+      expect(landed, {-1, g.indexOf(0, 0)});
     });
 
     test('일반 폭발탄(중심 40)은 참나무를 두 발에 부순다 — 조각이 중심에 겹치지 않는다', () {
@@ -155,7 +171,7 @@ void main() {
         events: [],
         rng: rng,
       );
-      expect(s.grid.totalHp, 24 * 80 - 60);
+      expect(s.grid.totalHp, 35 * 40 + 80 - 60);
       expect(rng.state, before);
     });
   });

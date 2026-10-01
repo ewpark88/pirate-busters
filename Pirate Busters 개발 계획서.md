@@ -2,7 +2,7 @@
 
 Sep 29, 2026 · 기준 문서: [Pirate Busters 게임 설계서](./Pirate%20Busters%20게임%20설계서.md)
 
-기준 문서 동기화: `a34a30da` (2026-10-01) — 설계서나 `docs/BALANCE.md` 를 고치면 이 계획서에 반영하고 이 값을 갱신한다. 검사: `dart run tool/check_doc_sync.dart` (ADR-008, ADR-037)
+기준 문서 동기화: `f46d7b1d` (2026-10-01) — 설계서나 `docs/BALANCE.md` 를 고치면 이 계획서에 반영하고 이 값을 갱신한다. 검사: `dart run tool/check_doc_sync.dart` (ADR-008, ADR-037)
 
 > 이 문서는 게임 설계서를 개발 작업 단위로 쪼갠 실행 계획이다. 각 항목의 `§n.n`은 설계서 장 번호다. 밸런스 수치는 여기에 적지 않고 `docs/BALANCE.md`(A§n.n 기준 수치, B§n 계산표)를 참조한다. 진행 상황은 체크박스로 추적한다.
 
@@ -646,7 +646,8 @@ M7                                                ████████
 - [x] `pb_sim` 균열 분배: `resolveImpact` 가 매치 난수(`rng`)를 받아 바깥 몫을 균열 조각으로 흩뿌린다 (§4.8). 8방향 후보는 고정 순서, 조각 수·걸음은 BALANCE.md A4.8. 선실 해적 피해·헤엄 해적은 원형 균일 그대로. 호출처 전부(`hit_effects`, `module_effects` 화약고·연료통 유폭, `effect_runner` 설치탄, 망사 경로의 `settleModules`)에 rng 를 넘긴다
 - [x] `pb_sim` 테스트: 꽉 찬 선체에서 총피해 = 원형 균일 합(기대 총피해 보존), 조각이 빈 칸·착탄 칸으로 가지 않는다, 같은 시드면 같은 모양·다른 시드에서 다른 모양이 나온 적이 있다, 참나무 중심 2발 사다리 유지(BALANCE.md B2), 골든 100판 재생성(`dart run test/golden/generate.dart`, 커밋 메시지에 이유)
 - [x] `pb_ai`: `scoring` 의 후보 점수는 기대값(원형 균일 모델)으로 둔다. 주석에 §4.8 균열 피해 참조. 미리보기(dry)는 바뀌지 않는다
-- [ ] `sim_runner` 보통 AI 1만 판 재측정(A9 기준: 시간 판정 7.5%, 평균 19.9턴, 옥토 54.9%). 승률 경고(BALANCE.md B10)를 넘으면 A부 수정을 제안한다
+- [x] `sim_runner` 보통 AI 1만 판 재측정(A9 기준: 시간 판정 7.5%, 평균 19.9턴, 옥토 54.9%). 승률 경고(BALANCE.md B10)를 넘으면 A부 수정을 제안한다 — 1차 측정에서 옥토 57.4% 경고
+- [x] 옥토 경고 처리(ADR-056): 조각이 빈 쪽을 고르면 바다로 흩어지게 해 가장자리 손실을 되돌린다(BALANCE.md A4.8 조각 걸음). 가득 찬 선체의 기대 총피해는 그대로. 1만 판 재측정 결과는 PROGRESS
 - [x] `app` 찢긴 가장자리와 이어지는 금 (§10.2): 이웃 블록 유무 마스크로 부서진 칸 가장자리를 들쭉날쭉한 폴리곤으로, 금은 이웃 손상 칸 방향으로 이어서 그린다. 칸 번호 시드 고정 패턴. `ship_view.dart` 가 262줄이라 새 파일(예: `game/view/torn_edge_painter.dart`)로 분리하고 칸별 Path 는 캐시한다(저사양 모드 §12 영향 없음). 손상 단계는 A9 항목대로 pb_sim `ShipGrid.stageAt` 를 쓴다
 - [x] 문서: CHANGELOG `[Unreleased]` Balance·Changed(A10), PROGRESS A10 기록
 

@@ -3,8 +3,8 @@
  "expect": {
   "outcome": "floodSunk",
   "winner": 0,
-  "turns": 10,
-  "hash": "5cb3c6d0"
+  "turns": 14,
+  "hash": "d164e27d"
  },
  "replay": {
   "version": 7,
@@ -522,7 +522,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "6f19479f"
+    "hash": "e3ad3fe1"
    },
    {
     "turn": 2,
@@ -533,7 +533,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "f1dc3989"
+    "hash": "4bd42d6d"
    },
    {
     "turn": 3,
@@ -543,14 +543,14 @@
       "t": 1000,
       "type": "FIRE",
       "slot": 0,
-      "angle": 17250,
+      "angle": 16500,
       "power": 10000
      },
      {
       "t": 2000,
       "type": "FIRE",
       "slot": 1,
-      "angle": 15750,
+      "angle": 15000,
       "power": 10000
      },
      {
@@ -558,7 +558,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "029eeb7f"
+    "hash": "d9c79ce9"
    },
    {
     "turn": 4,
@@ -569,7 +569,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "545d86bc"
+    "hash": "ab602c7b"
    },
    {
     "turn": 5,
@@ -579,14 +579,14 @@
       "t": 1000,
       "type": "FIRE",
       "slot": 0,
-      "angle": 18500,
+      "angle": 17500,
       "power": 10000
      },
      {
       "t": 2000,
       "type": "FIRE",
       "slot": 1,
-      "angle": 16750,
+      "angle": 16000,
       "power": 10000
      },
      {
@@ -594,7 +594,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "3d5d3fd6"
+    "hash": "10f95a10"
    },
    {
     "turn": 6,
@@ -605,10 +605,46 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "1102baa8"
+    "hash": "47a134e8"
    },
    {
     "turn": 7,
+    "side": 0,
+    "cmds": [
+     {
+      "t": 1000,
+      "type": "FIRE",
+      "slot": 0,
+      "angle": 18750,
+      "power": 10000
+     },
+     {
+      "t": 2000,
+      "type": "FIRE",
+      "slot": 1,
+      "angle": 17250,
+      "power": 10000
+     },
+     {
+      "t": 9000,
+      "type": "END_TURN"
+     }
+    ],
+    "hash": "acc2f9f3"
+   },
+   {
+    "turn": 8,
+    "side": 1,
+    "cmds": [
+     {
+      "t": 1000,
+      "type": "END_TURN"
+     }
+    ],
+    "hash": "8e59be68"
+   },
+   {
+    "turn": 9,
     "side": 0,
     "cmds": [
      {
@@ -622,7 +658,7 @@
       "t": 2000,
       "type": "FIRE",
       "slot": 1,
-      "angle": 18750,
+      "angle": 18500,
       "power": 10000
      },
      {
@@ -630,43 +666,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "a6d914cf"
-   },
-   {
-    "turn": 8,
-    "side": 1,
-    "cmds": [
-     {
-      "t": 1000,
-      "type": "END_TURN"
-     }
-    ],
-    "hash": "8e511c92"
-   },
-   {
-    "turn": 9,
-    "side": 0,
-    "cmds": [
-     {
-      "t": 1000,
-      "type": "FIRE",
-      "slot": 0,
-      "angle": 22750,
-      "power": 10000
-     },
-     {
-      "t": 2000,
-      "type": "FIRE",
-      "slot": 1,
-      "angle": 20750,
-      "power": 10000
-     },
-     {
-      "t": 9000,
-      "type": "END_TURN"
-     }
-    ],
-    "hash": "3efa8ac4"
+    "hash": "44323ef0"
    },
    {
     "turn": 10,
@@ -677,7 +677,79 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "5cb3c6d0"
+    "hash": "1f78069a"
+   },
+   {
+    "turn": 11,
+    "side": 0,
+    "cmds": [
+     {
+      "t": 1000,
+      "type": "FIRE",
+      "slot": 0,
+      "angle": 20000,
+      "power": 10000
+     },
+     {
+      "t": 2000,
+      "type": "FIRE",
+      "slot": 1,
+      "angle": 18250,
+      "power": 10000
+     },
+     {
+      "t": 9000,
+      "type": "END_TURN"
+     }
+    ],
+    "hash": "6ddc3180"
+   },
+   {
+    "turn": 12,
+    "side": 1,
+    "cmds": [
+     {
+      "t": 1000,
+      "type": "END_TURN"
+     }
+    ],
+    "hash": "509bb7d7"
+   },
+   {
+    "turn": 13,
+    "side": 0,
+    "cmds": [
+     {
+      "t": 1000,
+      "type": "FIRE",
+      "slot": 0,
+      "angle": 20000,
+      "power": 10000
+     },
+     {
+      "t": 2000,
+      "type": "FIRE",
+      "slot": 1,
+      "angle": 18250,
+      "power": 10000
+     },
+     {
+      "t": 9000,
+      "type": "END_TURN"
+     }
+    ],
+    "hash": "6b7f17d9"
+   },
+   {
+    "turn": 14,
+    "side": 1,
+    "cmds": [
+     {
+      "t": 1000,
+      "type": "END_TURN"
+     }
+    ],
+    "hash": "d164e27d"
    }
   ]
  }
