@@ -54,6 +54,12 @@ dart run tool/import_assets.dart --check     # pubspec 목록 검사만
 - 패키지 `ammo/ammo.json` 의 사다리 값은 `app/assets/game/ammo.json`(BALANCE.md A4.8)과 13종 모두 같다.
 - 표정 부위는 아직 없다(M4 이월 그대로).
 
+## v0.22 (2026-10-01, ADR-058)
+
+- 원본: `art/pb_v0.22_main/` = `D:\Projects\이미지참고용\pb_v0.22_main` 위에 `이미지참고용\png`(랍스터 전체 PNG·40명 표정 부위)를 덮어쓴 것.
+- 새로 온 것: 표정 6종(`png/characters/<id>/expr_<team>@Nx/`, 머리·눈 + expr.json), `anims.json` `states`·`expressions`·`rarityFx.tiers.mythic`, `ship/tiles_v2`, `style/modes.json`, 신화 카드, 사거리·코스트·세트 아이콘, 화면 시안(`reference/screens`). 랍 키는 `lob` → `lobster`.
+- **아직 앱에 넣지 않았다.** 패키지에 39명의 몸 PNG 가 없어 `import_assets.dart` 를 그대로 돌리면 지금 앱의 v0.21 캐릭터가 지워진다. 바뀐 파일만 덮어쓰는 방식은 계획서 A11 에서 만든다.
+
 ## Flame 재생기 (M4)
 
 `art/pb_assets_v0.15/tools/flame/pb_anim.dart` 는 컴파일 검증 전 참고 구현이다. M4 에서 flame 의존성을 추가할 때 `app/lib/game/anim/` 으로 옮긴다.
