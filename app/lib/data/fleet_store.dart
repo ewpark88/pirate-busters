@@ -37,6 +37,11 @@ abstract class FleetStore {
 
   Future<void> setDeck(List<String> deck);
 
+  /// 테스트 대전에서 마지막으로 고른 덱 ([side] 0 = 나, 1 = 상대, ADR-053).
+  List<String> testDeck(int side);
+
+  Future<void> setTestDeck(int side, List<String> deck);
+
   String? readBlueprint(int slot);
 
   Future<void> writeBlueprint(int slot, String json);
@@ -77,6 +82,16 @@ class HiveFleetStore extends FleetStore {
 
   @override
   Future<void> setDeck(List<String> deck) => _box.put(_deckKey, deck.join(','));
+
+  @override
+  List<String> testDeck(int side) {
+    final text = _box.get('test_deck_$side') ?? '';
+    return text.isEmpty ? const [] : text.split(',');
+  }
+
+  @override
+  Future<void> setTestDeck(int side, List<String> deck) =>
+      _box.put('test_deck_$side', deck.join(','));
 }
 
 /// 메모리에만 두는 저장소. 테스트용.
@@ -101,4 +116,13 @@ class MemoryFleetStore extends FleetStore {
 
   @override
   Future<void> setDeck(List<String> deck) async => this.deck = List.of(deck);
+
+  final Map<int, List<String>> _testDecks = {};
+
+  @override
+  List<String> testDeck(int side) => _testDecks[side] ?? const [];
+
+  @override
+  Future<void> setTestDeck(int side, List<String> deck) async =>
+      _testDecks[side] = List.of(deck);
 }

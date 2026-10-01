@@ -904,4 +904,19 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get iapBuy => '구매';
+
+  @override
+  String get devTestBattle => '테스트 대전';
+
+  @override
+  String get devMyDeck => '내 덱';
+
+  @override
+  String get devEnemyDeck => '상대 덱';
+
+  @override
+  String get devRandomEnemy => '상대 덱이 비어 있으면 무작위 4명';
+
+  @override
+  String get devStart => '시작';
 }

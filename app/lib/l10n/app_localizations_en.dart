@@ -962,4 +962,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get iapBuy => 'Buy';
+
+  @override
+  String get devTestBattle => 'Test battle';
+
+  @override
+  String get devMyDeck => 'My crew';
+
+  @override
+  String get devEnemyDeck => 'Enemy crew';
+
+  @override
+  String get devRandomEnemy => 'Empty enemy crew = 4 random pirates';
+
+  @override
+  String get devStart => 'Start';
 }

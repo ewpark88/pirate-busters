@@ -260,5 +260,10 @@
   "statAccuracy": "명중률 {percent}%",
   "iapRemoveAds": "광고 제거",
   "iapBought": "구매 완료",
-  "iapBuy": "구매"
+  "iapBuy": "구매",
+  "devTestBattle": "테스트 대전",
+  "devMyDeck": "내 덱",
+  "devEnemyDeck": "상대 덱",
+  "devRandomEnemy": "상대 덱이 비어 있으면 무작위 4명",
+  "devStart": "시작"
 }

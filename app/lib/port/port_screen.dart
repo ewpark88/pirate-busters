@@ -8,6 +8,8 @@ import 'package:pirate_busters/battle/battle_session.dart';
 import 'package:pirate_busters/battle/battle_setup.dart';
 import 'package:pirate_busters/campaign/campaign_map_screen.dart';
 import 'package:pirate_busters/crew/crew_screen.dart';
+import 'package:pirate_busters/dev/dev_flags.dart';
+import 'package:pirate_busters/dev/test_battle_screen.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
 import 'package:pirate_busters/meta/progress.dart';
 import 'package:pirate_busters/port/port_game.dart';
@@ -115,6 +117,9 @@ class _PortScreenState extends ConsumerState<PortScreen> {
                   progress: progress,
                   onSettings: () => _open(const SettingsScreen()),
                   onHotseat: () => _open(const BattleScreen(hotseat: true)),
+                  onTestBattle: devTools
+                      ? () => _open(const TestBattleScreen())
+                      : null,
                 ),
                 const Spacer(),
                 PortTabs(
