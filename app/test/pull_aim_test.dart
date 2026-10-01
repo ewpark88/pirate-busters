@@ -45,5 +45,41 @@ void main() {
       expect(aim.release(), isNull);
       expect(aim.isActive, isFalse);
     });
+
+    test('당긴 적이 없으면 약해도 취소 중으로 보이지 않는다', () {
+      final aim = PullAim(facing: 1)
+        ..start()
+        ..drag(-5, 5);
+      expect(aim.isWeak, isTrue);
+      expect(aim.isCancelling, isFalse);
+    });
+
+    test('충분히 당겼다가 누른 자리로 되돌리면 취소 중이고 놓아도 쏘지 않는다', () {
+      final aim = PullAim(facing: 1)
+        ..start()
+        ..drag(-80, 80);
+      expect(aim.isCancelling, isFalse);
+      aim.drag(-2, 2);
+      expect(aim.isCancelling, isTrue);
+      expect(aim.release(), isNull);
+    });
+
+    test('되돌렸다가 다시 당기면 취소가 풀리고 쏜다', () {
+      final aim = PullAim(facing: 1)
+        ..start()
+        ..drag(-80, 80)
+        ..drag(0, 0)
+        ..drag(-60, 60);
+      expect(aim.isCancelling, isFalse);
+      expect(aim.release(), isNotNull);
+    });
+
+    test('새로 누르면 앞 조준의 당김 기록이 지워진다', () {
+      final aim = PullAim(facing: 1)
+        ..start()
+        ..drag(-80, 80)
+        ..start();
+      expect(aim.isCancelling, isFalse);
+    });
   });
 }

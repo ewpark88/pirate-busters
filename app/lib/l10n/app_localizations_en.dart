@@ -408,6 +408,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tapToSplit => 'Tap to split!';
 
   @override
+  String get aimCancel => 'Release to cancel';
+
+  @override
   String get menuHotseat => 'Two players';
 
   @override

@@ -746,6 +746,12 @@ abstract class AppLocalizations {
   /// **'Tap to split!'**
   String get tapToSplit;
 
+  /// No description provided for @aimCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Release to cancel'**
+  String get aimCancel;
+
   /// No description provided for @menuHotseat.
   ///
   /// In en, this message translates to:

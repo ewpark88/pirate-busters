@@ -380,6 +380,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get tapToSplit => '탭해서 분열!';
 
   @override
+  String get aimCancel => '놓으면 취소';
+
+  @override
   String get menuHotseat => '둘이서 해전';
 
   @override
