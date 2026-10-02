@@ -1,4 +1,5 @@
 import 'package:pb_sim/src/match/rules.dart';
+import 'package:pb_sim/src/match/side_status.dart';
 import 'package:pb_sim/src/match/sim_event.dart';
 import 'package:pb_sim/src/match/turn_effects.dart';
 import 'package:pb_sim/src/pirate/crew.dart';
@@ -94,8 +95,33 @@ class SideState {
   bool isCabinFlooded(int slot) =>
       cabins[slot].y * cellUnit + cellUnit ~/ 2 <= draft;
 
-  /// [slot] 해적이 지금 쏠 수 있는가: 쿨다운·상태(배 위) + 선실이 물 위.
-  bool canFire(int slot) => crew.canFire(slot) && !isCabinFlooded(slot);
+  /// [slot] 해적이 지금 쏠 수 있는가: 쿨다운·상태(배 위) + 선실이 물 위 + 봉쇄 안 됨.
+  bool canFire(int slot) =>
+      crew.canFire(slot) && !isCabinFlooded(slot) && !isSealed(slot);
+
+  /// 지속 상태 (설계서 §4.8 고유 효과 공통 규칙, ADR-075).
+  final SideStatus status = SideStatus();
+
+  /// 지금 판의 턴 번호. 지속 상태가 이번 턴에 걸렸는지 보는 데만 쓴다
+  /// ([MatchState.turn] 과 같게 맞춘다, 해시 밖).
+  int turnNow = 1;
+
+  /// [slot] 선실이 이번 턴에 봉쇄됐다(킹).
+  bool isSealed(int slot) =>
+      status.sealTurn == turnNow && status.sealedSlot == slot;
+
+  /// 이번 턴에 이동할 수 없다(모비).
+  bool get moveLocked => status.moveLockTurn == turnNow;
+
+  /// 이번 턴 궤적 표시 비율(%)을 바꾸는 상태가 있으면 그 값, 없으면 −1 (만타·램프).
+  /// 판정과 AI 에는 쓰지 않는다.
+  int get trailOverride => status.trailPercentAt(turnNow);
+
+  /// 칸마다 남은 불 지속 턴(0 = 불 없음, 설계서 §2.5). 칸 인덱스 순서.
+  late final List<int> fireTurns = List.filled(grid.cellCount, 0);
+
+  /// 칸마다 나무 추가 피해(%) (화염탄 사다리, BALANCE.md A2.5).
+  late final List<int> fireExtra = List.filled(grid.cellCount, 0);
 
   /// 선실 슬롯 순서의 선실 칸. 출전 해적은 앞에서부터 탄다.
   final List<CabinCell> cabins;
@@ -235,4 +261,11 @@ class MatchState {
 
   /// 지금 턴을 두는 진영.
   int get activeSide => turn.isOdd ? firstSide : 1 - firstSide;
+
+  /// 진영들의 [SideState.turnNow] 를 지금 턴에 맞춘다.
+  void syncTurn() {
+    for (final s in sides) {
+      s.turnNow = turn;
+    }
+  }
 }

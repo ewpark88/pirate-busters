@@ -21,6 +21,8 @@ class PirateDef {
     required this.ammo,
     required this.spreadDeg,
     required this.ammoParam,
+    required this.ability,
+    required this.abilityValue,
     required this.range,
     required this.radiusCells,
     required this.blockDmg,
@@ -39,6 +41,8 @@ class PirateDef {
     final onHit = r.objectOr('onHit');
     final render = r.object('render');
     final growth = r.objectOr('growth');
+    final ability = r.objectOr('ability');
+    final abilityName = ability.stringOrNull('type');
     final family = _parse(
       () => Family.byName(r.string('family')),
       '$path.family',
@@ -59,6 +63,10 @@ class PirateDef {
       ),
       spreadDeg: ammo.integerOr('spreadDeg', 0),
       ammoParam: ammo.integerOr('repairCells', ammo.integerOr('delayed', 0)),
+      ability: abilityName == null
+          ? Ability.none
+          : _parse(() => Ability.byName(abilityName), '$path.ability.type'),
+      abilityValue: ability.integerOr('value', 0),
       range: rangeName == null
           ? family.defaultRange
           : _parse(
@@ -97,6 +105,12 @@ class PirateDef {
     );
     need(ok: radiusCells >= 0 && radiusCells <= 2, what: '폭발 반경 0~2칸 (§4.8)');
     need(ok: blockDmg >= 0 && pirateDmg >= 0, what: '피해는 0 이상');
+    need(ok: abilityValue >= 0, what: '고유 능력 인자는 0 이상 (§4.3)');
+    final want = ammoFor(ability);
+    need(
+      ok: want == null || want == ammo,
+      what: '고유 능력 ${ability.jsonName} 은 ${want?.jsonName} 탄종에만 (ADR-075)',
+    );
     final wrongKey = speciesProblem(id, species);
     need(ok: wrongKey == null, what: wrongKey ?? '');
   }
@@ -112,6 +126,10 @@ class PirateDef {
   final AmmoType ammo;
   final int spreadDeg;
   final int ammoParam;
+
+  /// 고유 능력과 정수 인자 (설계서 §4.3 `ability`, ADR-075). 없으면 [Ability.none].
+  final Ability ability;
+  final int abilityValue;
   final RangeGrade range;
   final int radiusCells;
   final int blockDmg;
@@ -143,6 +161,8 @@ class PirateDef {
     ammo: ammo,
     spreadDeg: spreadDeg,
     ammoParam: ammoParam,
+    ability: ability,
+    abilityValue: abilityValue,
     range: range,
     radiusCells: radiusCells,
     blockDmg: blockDmg ?? this.blockDmg,
@@ -173,6 +193,8 @@ class PirateDef {
       ammoValue2: value2,
       spreadMdeg: spreadDeg * 1000,
       ammoParam: ammoParam,
+      ability: ability,
+      abilityValue: abilityValue,
     );
   }
 }

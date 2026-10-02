@@ -61,6 +61,29 @@ enum SimEventKind {
 
   /// 모듈이 붙은 블록이 부서졌다 (설계서 §3.3). value = 모듈 종류 index.
   moduleDestroyed,
+
+  /// 블록에 불이 붙었다 (설계서 §2.5). [SimEvent.cell] = 칸.
+  ignited,
+
+  /// 불붙은 블록이 턴 끝에 탔다. [SimEvent.cell] = 칸.
+  burned,
+
+  /// 연쇄탄이 해적에게 번졌다 (설계서 §4.8). [SimEvent.slot] = 번진 해적.
+  chained,
+
+  /// 지속 상태가 걸렸다 (§4.8 고유 효과). [SimEvent.side] = 걸린 진영,
+  /// [SimEvent.value] = 고유 능력 index, [SimEvent.slot] = 봉쇄 선실(없으면 −1),
+  /// [SimEvent.x] = 끌려간 거리(1/1000칸).
+  statusApplied,
+
+  /// 떠 있는 기뢰가 놓였다(젤리). [SimEvent.x] = 월드 x, [SimEvent.side] = 노리는 배.
+  mineFloated,
+
+  /// 비행 중 방향을 바꿨다(알바). (x, y) = 위치, [SimEvent.value] = 틱.
+  steered,
+
+  /// 지원 효과(배수·쿨다운·연료)가 났다. [SimEvent.value] = 고유 능력 index.
+  supported,
 }
 
 /// 턴이 끝난 이유. 순서는 이벤트 값으로 쓰인다.

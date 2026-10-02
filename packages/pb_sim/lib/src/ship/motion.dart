@@ -37,6 +37,7 @@ class MoveResult {
 /// [side] 배가 [dx](1/10칸, 전진 +)를 누르면 실제로 갈 거리(1/1000칸, 전진 +).
 ///
 /// 한계선, 연료, 남은 턴 시간 [timeLeftMs] 중 먼저 닿는 곳까지다 (설계서 §2.6, §2.7).
+/// 이동 불가 상태면 0 이다.
 /// 상태는 바꾸지 않는다. 이동 버튼의 끝 지점 점선도 이 값을 쓴다.
 int moveReach(
   SideState side,
@@ -46,6 +47,8 @@ int moveReach(
   int timeLeftMs,
 ) {
   final speed = moveSpeedOf(side);
+  // 끌려온 배는 다음 턴에 움직이지 못한다(모비, 설계서 §4.8).
+  if (side.moveLocked) return 0;
   if (dx == 0 || speed <= 0 || timeLeftMs <= 0) return 0;
   final (lo, hi) = moveLimits(rules, turn);
   final want = dx * moveStep;

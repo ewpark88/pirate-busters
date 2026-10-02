@@ -1,10 +1,13 @@
+import 'package:pb_sim/src/combat/ability_effects.dart';
+import 'package:pb_sim/src/combat/fire.dart';
 import 'package:pb_sim/src/combat/impact.dart';
+import 'package:pb_sim/src/combat/support_effects.dart';
 import 'package:pb_sim/src/match/match_state.dart';
 import 'package:pb_sim/src/match/sim_event.dart';
 import 'package:pb_sim/src/match/turn_effects.dart';
+import 'package:pb_sim/src/pirate/ability.dart';
 import 'package:pb_sim/src/pirate/ammo.dart';
 import 'package:pb_sim/src/projectile/projectile.dart';
-import 'package:pb_sim/src/ship/ship_grid.dart';
 import 'package:pb_sim/src/world/world.dart';
 
 /// 관통탄 두 번째 칸부터의 피해 비율(%) (BALANCE.md A4.8, 임시값 ADR-050).
@@ -22,8 +25,25 @@ Reach reachOf(MatchState state) {
 }
 
 /// 탄 [p] 가 [target] 배 로컬 칸 ([cx], [cy]), 월드 ([x], [y]) 에 닿았다 (설계서 §4.8).
-/// 탄이 계속 날아가면(관통) false, 끝나면 true.
+/// 탄이 계속 날아가면(관통) false, 끝나면 true. 상대 배면 고유 능력 효과를 더한다
+/// (ADR-075).
 bool onHullHit(
+  MatchState state,
+  Projectile p,
+  SideState target, {
+  required int cx,
+  required int cy,
+  required int x,
+  required int y,
+}) {
+  final done = _ammoHit(state, p, target, cx: cx, cy: cy, x: x, y: y);
+  if (target.side != p.side) {
+    applyHitAbility(state, p, target, cx: cx, cy: cy);
+  }
+  return done;
+}
+
+bool _ammoHit(
   MatchState state,
   Projectile p,
   SideState target, {
@@ -81,7 +101,34 @@ bool onHullHit(
       }
       return true;
     case AmmoType.support:
-      _repairAround(state, target, cx, cy, spec.ammoParam, spec.ammoValue);
+      onSupportHit(state, p, target, cx: cx, cy: cy);
+      return true;
+    case AmmoType.fire:
+      // 착탄 피해 + 화상 지대(착탄 칸 둘레)에 불 (설계서 §2.5, §4.8).
+      impact();
+      igniteAround(
+        target,
+        cx,
+        cy,
+        radius: fireZoneRadius,
+        turns: spec.ammoValue,
+        extraPercent: spec.ammoValue2,
+        events: events,
+      );
+      return true;
+    case AmmoType.chain:
+      final struck = chainStruckCandidates(target, spec, cx: cx, cy: cy);
+      final before = events.length;
+      impact();
+      spreadChain(
+        state,
+        target,
+        spec,
+        cx: cx,
+        cy: cy,
+        from: before,
+        candidates: struck,
+      );
       return true;
     case AmmoType.flock when spec.ammoParam == 1 && !p.divided:
       _markDrop(state, p, target, x);
@@ -94,10 +141,8 @@ bool onHullHit(
       impact(piratePercent: spec.ammoValue);
       return true;
     case AmmoType.explosive ||
-        AmmoType.fire ||
         AmmoType.split ||
         AmmoType.burst ||
-        AmmoType.chain ||
         AmmoType.flock ||
         AmmoType.homing:
       impact();
@@ -125,6 +170,10 @@ bool onSeaHit(
     final cell = _hullCellBelow(target, x);
     if (cell >= 0) {
       _attachMine(state, p, target, cell);
+      return true;
+    }
+    if (spec.ability == Ability.floatMine) {
+      placeFloatMine(state, p, target, x);
       return true;
     }
   }
@@ -191,50 +240,7 @@ void _markDrop(MatchState state, Projectile p, SideState target, int x) {
 
 /// 바다 [x] 아래 선체 칸: 그 세로줄에서 흘수선에 가장 가까운 블록. 선체 밖이면 −1.
 int _hullCellBelow(SideState target, int x) {
-  final grid = target.grid;
   final lx = target.frame.toLocalX(x);
-  if (lx < 0 || lx >= grid.width * cellUnit) return -1;
-  final cx = lx ~/ cellUnit;
-  final water = (target.draft ~/ cellUnit).clamp(0, grid.height - 1);
-  for (var d = 0; d < grid.height; d++) {
-    for (final cy in [water - d, water + d]) {
-      if (cy >= 0 && cy < grid.height && grid.hasBlock(cx, cy)) {
-        return grid.indexOf(cx, cy);
-      }
-    }
-  }
-  return -1;
-}
-
-/// 지원탄: 착지한 칸에서 가까운 ‘구멍’ 단계 블록 [count] 칸을 고친다. 고치는 양은
-/// 최대 내구도 × [percent]% (설계서 §4.2 톡, §2.5 부서진 칸은 못 고침).
-void _repairAround(
-  MatchState state,
-  SideState ship,
-  int cx,
-  int cy,
-  int count,
-  int percent,
-) {
-  final grid = ship.grid;
-  final holes = <(int, int)>[];
-  for (var i = 0; i < grid.cellCount; i++) {
-    final x = i % grid.width;
-    final y = i ~/ grid.width;
-    if (grid.hasBlock(x, y) && grid.stageAt(x, y) == DamageStage.holed) {
-      final d = (x - cx) * (x - cx) + (y - cy) * (y - cy);
-      holes.add((d, i));
-    }
-  }
-  holes.sort((a, b) => a.$1 != b.$1 ? a.$1 - b.$1 : a.$2 - b.$2);
-  for (final (_, i) in holes.take(count)) {
-    final x = i % grid.width;
-    final y = i ~/ grid.width;
-    final amount = grid.materialAt(x, y)!.durability * percent ~/ 100;
-    if (grid.repair(x, y, amount)) {
-      state.events.add(
-        SimEvent(SimEventKind.repaired, side: ship.side, cell: i),
-      );
-    }
-  }
+  if (lx < 0 || lx >= target.grid.width * cellUnit) return -1;
+  return waterlineCellIn(target, lx ~/ cellUnit);
 }

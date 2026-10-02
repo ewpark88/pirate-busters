@@ -85,6 +85,11 @@ int hashMatchState(MatchState state) {
         ..addInt(m.y)
         ..addInt(m.intact ? 1 : 0);
     }
+    // 지속 상태·화재 (ADR-075).
+    h
+      ..addInts(side.status.hashValues)
+      ..addInts(side.fireTurns)
+      ..addInts(side.fireExtra);
   }
   h.addInt(state.effects.length);
   for (final e in state.effects) {

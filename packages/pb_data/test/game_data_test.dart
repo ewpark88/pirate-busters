@@ -216,6 +216,45 @@ void main() {
       final def = PirateDef.fromJson((root['pirates']! as List<Object?>).first);
       expect(def.growth, {'traitLv10': 't10'});
     });
+
+    test('고유 능력은 ability 의 type·value 로 읽고, 없으면 none 이다 (§4.3, ADR-075)', () {
+      PirateDef read(Map<String, Object?> o) {
+        final root = jsonDecode(_pirate(o)) as Map<String, Object?>;
+        return PirateDef.fromJson((root['pirates']! as List<Object?>).first);
+      }
+
+      final moby = read({
+        'ammo': {'type': 'pierce'},
+        'ability': {'type': 'pull', 'value': 3},
+      });
+      expect(moby.ability, Ability.pull);
+      expect(moby.abilityValue, 3);
+      final spec = moby.toSpec(_load().ladder);
+      expect(spec.ability, Ability.pull);
+      expect(spec.abilityValue, 3);
+      expect(read({}).ability, Ability.none);
+      expect(
+        () => read({
+          'ability': {'type': 'teleport'},
+        }),
+        throwsA(isA<DataFormatError>()),
+      );
+      expect(
+        () => read({
+          'ammo': {'type': 'support'},
+          'ability': {'type': 'bail', 'value': -1},
+        }),
+        throwsA(isA<DataFormatError>()),
+      );
+      expect(
+        () => read({
+          'ammo': {'type': 'explosive'},
+          'ability': {'type': 'floatMine'},
+        }),
+        throwsA(isA<DataFormatError>()),
+        reason: '떠 있는 기뢰는 설치탄에만',
+      );
+    });
   });
 
   group('여러 발 탄종 피해 (설계서 §4.8)', () {

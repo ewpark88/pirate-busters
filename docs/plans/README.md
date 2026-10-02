@@ -32,3 +32,4 @@
 | [2026-10-02-quality-diagnosis.md](2026-10-02-quality-diagnosis.md) | 퀄리티 진단(Castle Busters 기준) 계획, 결과는 docs/quality/2026-10-02-gap-analysis.md |
 | [2026-10-02-dev-practice.md](2026-10-02-dev-practice.md) | 빌드 앱 개발 도구 숨은 스위치 + 더미배 폭탄투하 연습, A23 신설 (ADR-073) |
 | [2026-10-02-A21-match-length.md](2026-10-02-A21-match-length.md) | A21 판 길이 측정(난이도별 400판)과 3~4분 조정안 3개 (사용자 결정 대기) |
+| [2026-10-02-R1a-sim-modules.md](2026-10-02-R1a-sim-modules.md) | R1a 행동 모듈·상태 효과 엔진 세부 계획, 설계 결정 제안 P1~P10 (ADR-074) |

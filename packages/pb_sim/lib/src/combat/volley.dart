@@ -1,3 +1,4 @@
+import 'package:pb_sim/src/combat/ability_effects.dart';
 import 'package:pb_sim/src/combat/ammo_rules.dart';
 import 'package:pb_sim/src/combat/flight.dart';
 import 'package:pb_sim/src/combat/hit_effects.dart';
@@ -13,7 +14,8 @@ import 'package:pb_sim/src/projectile/shot_trace.dart';
 ///
 /// 틱마다 id 순으로 탄을 한 틱씩 옮긴다. 연사탄 뒤 발은 [Projectile.startTick] 이
 /// 지나야 난다. 분열탄은 [tapTick] 틱에 조각으로 갈라지고(TAP, 설계서 §4.8),
-/// 다중투하는 꼭대기에서 폭탄으로 갈라진다. 경로는 [MatchState.lastTraces] 에 남긴다
+/// 다중투하는 꼭대기에서 폭탄으로 갈라진다. 방향 전환 탄은 [tapTick] 틱에 [tapDir]
+/// 쪽으로 꺾인다(ADR-075). 경로는 [MatchState.lastTraces] 에 남긴다
 /// (렌더 전용, 해시 밖).
 ///
 /// [dry] 가 있으면 미리 계산만 한다: 효과·이벤트·경로 기록 없이 탄마다 처음 닿는
@@ -23,6 +25,7 @@ int runVolley(
   List<Projectile> shots,
   int ms, {
   int tapTick = -1,
+  int tapDir = 0,
   void Function(Projectile p, TraceStep step, int tick)? dry,
 }) {
   final wind = state.wind * state.rules.windAccel;
@@ -42,6 +45,8 @@ int runVolley(
       final p = live[i];
       flying = true;
       if (tick <= p.startTick) continue;
+      // 방향 전환 탭(알바, §4.8): 이 틱을 날기 전에 꺾는다.
+      if (tick == tapTick && dry == null) steerOnTap(state, p, tapDir, tick);
       final at = msAfterTicks(ms, tick);
       if (p.spec.ammo == AmmoType.homing) steerHoming(state, p, at);
       final vyBefore = p.vy;

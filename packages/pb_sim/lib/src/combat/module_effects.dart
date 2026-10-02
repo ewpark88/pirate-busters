@@ -1,3 +1,4 @@
+import 'package:pb_sim/src/combat/fire.dart';
 import 'package:pb_sim/src/combat/impact.dart';
 import 'package:pb_sim/src/match/match_state.dart';
 import 'package:pb_sim/src/match/rules.dart';
@@ -100,6 +101,16 @@ void _explode(
     y: y,
     events: events,
     rng: rng,
+  );
+  // 터진 자리 둘레 칸에 불이 붙는다 (설계서 §2.5·§3.3, ADR-075).
+  igniteAround(
+    ship,
+    m.x,
+    m.y,
+    radius: fireZoneRadius,
+    turns: spreadFireTurns,
+    extraPercent: 0,
+    events: events,
   );
 }
 
