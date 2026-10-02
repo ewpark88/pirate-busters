@@ -109,6 +109,17 @@ dart run tool/import_assets.dart --merge art/pb_v0.24_main
   - 1칸 등불 선실 타일
   - 랍 초상 이름 `ui/portraits/lob_*` → `lobster_*`
 
+## v0.25 (2026-10-02, ADR-065)
+
+- 원본: `art/pb_v0.25_patch/` 를 `art/pb_v0.24_main/` 위에 덮어썼다(`README_v0.25.md`). 그 전에 README 대로 `boss/kraken_tentacle_hp1~4`(SVG·PNG)와 `reference/screens_v2/stage31_pre_ironclad`·`stage31_pre_swift` 를 지웠다.
+- v0.23 에서 데이터로 쓰지 않던 세 파일을 디자인 쪽이 고쳐 보냈다.
+  - `ship/hulls/hulls.json`: 선형마다 앱 `blueprints.json` 형식의 기준 설계도(`starter.blueprint`)가 건조 포인트·모듈 한도 안이다(슬루프 58/60, 브리건틴 74/80, 프리깃 93/100, 갤리온 113/120). 앱 추천 설계도는 그대로이고, R2 선형별 추천 설계도의 출발점으로 쓴다.
+  - `boss/bosses.json`: 배 안 해적 중복이 없고 중간·해역 보스 선원이 다르다(그림용 제안, 실제 덱은 R3). 기믹 문구는 BALANCE.md A5.4 값이다.
+  - `story/cutscenes.json`: 앱 ARB 키만 쓴다. 프롤로그는 `story_prologue_1~5` 자막만(말풍선 없음), 해역 1 인트로·1-5 뒤·1-12 전후는 이미 있는 해역 1 대사 키다.
+- 크라켄 촉수는 체력 칸 그림 대신 촉수 1개 손상 단계 4장(`boss/kraken_tentacle_dmg0~3`)이다. 촉수 수·체력은 여전히 정해지지 않았다(계획서 11장, R3).
+- 비교 페이지 31~37단계 화면 47장을 실제 크기 배로 다시 그렸다(보스 화면만 1.4배). A12 화면 시안 대조는 이 그림을 쓴다.
+- 앱 이미지는 바뀌지 않는다. `boss/` 는 `deferredImages` 로 R3 까지 가져오지 않는다.
+
 ## 글꼴 (설계서 §14.4, A11)
 
 `app/assets/fonts/` 에 OFL 글꼴 세 가지를 라이선스 파일과 함께 둔다. 출처는 Google Fonts 저장소(`github.com/google/fonts/ofl/`).
