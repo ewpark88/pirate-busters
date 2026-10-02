@@ -9,9 +9,10 @@ art/pb_v0.21_main/              패키지 원본 전체 (git 제외, .gitignore)
                                 characters/*.svg, reference/, tools/, README.md …
 app/assets/images/              앱에 들어가는 PNG. @2x 한 벌만, 이름에서 "@2x" 를 뗀다
   characters/<id>/              <id>_<team>_battle.png (전투 외곽선을 구워 넣은 한 장)
+                                <id>_<team>_card.png (등급 카드 그림, tool/assets/export_cards.py)
     parts_<team>/               부위 PNG + parts.json (부위 애니메이션)
-    parts_battle_<team>/        전투 외곽선 부위 PNG (json 없음)
-  ship/tiles/ rooms/ rig/       블록 32x32 · 선실 96x64 · 돛대·돛·깃발
+    parts_battle_<team>/        전투 외곽선 부위 PNG + battle.json (outlinePad)
+  ship/tiles_v2/ rooms/ rig/    블록 32x32 · 1칸 등불 선실 32x32 · 돛대·돛·깃발
   fx/ fx/impact/ fx/collapse/   발사체·폭발 · 명중 임팩트 · 붕괴
   ui/portraits/ kit/ icons/     선원 초상 · 판·버튼 · 아이콘
   ammo/icons/                   탄종 아이콘 13종 (카드 칩, 설계서 §13.4)
@@ -24,7 +25,7 @@ app/assets/data/weapons.json    해적별 투사체 그림과 움직임(spin·fa
 - 캐릭터 id: `octo` 옥토, `bones` 본즈, `sword` 핀, `otter` 수리, `puffer` 퍼피, `gull` 윙, `shark` 샤키, `turtle` 톡. 팀은 `blue`(우리)·`red`(상대).
 - **@2x 만 넣는 이유:** Flame 의 이미지 로더는 Flutter 의 해상도별 자동 선택(2.0x/3.0x 폴더)을 쓰지 않는다. 세 벌을 넣어도 앱 용량만 커진다. 조준 줌인 때 약 4배 확대되므로 1x 로는 부족하다.
 - **캐릭터 폴더의 초상 PNG 는 넣지 않는다.** 초상은 `ui/portraits/` 를 쓴다.
-- **전투 외곽선 부위:** `parts_battle_<team>/` 에는 parts.json 이 없다. `parts_<team>/parts.json` 을 쓰고 각 부위의 `offset` 에서 14, `pivot` 에 14 를 더한다(사방 14px 여백).
+- **전투 외곽선 부위:** `parts_battle_<team>/` 에는 parts.json 이 없다. `parts_<team>/parts.json` 을 쓰고 각 부위의 `offset` 에서 여백을 빼고 `pivot` 에 더한다. 여백은 같은 폴더 `battle.json` 의 `outlinePad`(v0.24: 22px)다.
 - Flutter 는 하위 폴더를 자동으로 넣지 않으므로 `app/pubspec.yaml` 에 폴더마다 한 줄씩 적는다.
 
 ## 새 버전으로 바꾸기
@@ -65,12 +66,12 @@ dart run tool/import_assets.dart --merge art/pb_v0.22_main   # 지우지 않고 
 dart run tool/import_assets.dart --check                     # pubspec 폴더 목록 + 몸 부위 없는 캐릭터 검사
 ```
 
-- `--merge` 는 패키지에 있는 @2x 파일만 덮어쓰고, 새 키로 대체된 옛 파일(`obsoleteImages`: `characters/lob`, 옛 이름 탄종 아이콘 등)을 지운다. 패키지의 랍 초상은 아직 `lob_*` 이름이라 `lobster_*` 로 바꿔 넣는다(`renamedImages`). 디자인 쪽이 이름을 고치면 이 표를 지운다.
+- `--merge` 는 패키지에 있는 @2x 파일만 덮어쓰고, 새 키로 대체된 옛 파일(`obsoleteImages`: `characters/lob`, 옛 이름 탄종 아이콘 등)을 지운다. 랍 초상은 v0.24 부터 패키지에서 `lobster_*` 이름으로 온다(이름 바꾸기 표 `renamedImages` 는 지웠다).
 - 데이터 파일은 `anims.json`·`tokens.json`·`weapons.json` 세 가지만 넣는다. 패키지의 `ui/cards/cards.json`·`ui/icons/sets.json` 은 설명·세트 이름 글자가 들어 있어 앱에 넣지 않는다(절대 규칙 10). 카드 좌표는 `ui/cards/rarity_card.dart`, 세트 구성은 `ui/cards/card_icons.dart` 에 옮겨 적었다(패키지 값이 바뀌면 같이 고친다).
 - 탄종 아이콘 파일 이름은 탄종 키와 같다(`ammo/icons/<AmmoType.jsonName>.png`).
 - 표정 부위(`characters/<id>/expr_<team>/`, 머리·눈 × 6표정 + expr.json)가 약 1천 장 늘어 앱 이미지가 14MB → 25MB 가 됐다.
 - 전장 타일은 `ship/tiles_v2` 를 쓴다(`game/sprites.dart`). 예전 `ship/tiles`·`ship/rooms` 는 조선소 화면 등에서 아직 쓸 수 있어 남겨 두었다.
-- `tokens.json` 의 `character.battleScale 0.16`·`roomSlot "3x2칸"` 은 앱이 쓰지 않는다. 앱은 선실 한 칸에 맞춘 0.09 를 쓴다(`game/coords.dart`, ADR-057).
+- `tokens.json` 의 `character.battleScale 0.16`·`roomSlot "3x2칸"` 은 앱이 쓰지 않았다. 앱은 선실 한 칸에 맞춘 0.09 를 썼다(ADR-057). v0.24 에서 3/32 로 맞췄다(아래).
 
 ## v0.23 (2026-10-02, ADR-061)
 
@@ -91,7 +92,7 @@ dart run tool/import_assets.dart --check                     # pubspec 폴더 �
   - `ship/hulls/hulls.json`: 격자 크기와 선실 수는 설계서 §3.1 과 같다. 하지만 블록을 꽉 채운 그림이라 건조 포인트(BALANCE.md A3.1)의 약 2배이고, 추천 설계도도 프리깃 기준이다. 앱 추천 설계도(`app/assets/game/blueprints.json`, 슬루프)를 바꾸지 않는다.
   - `boss/bosses.json`: 선원 목록에 같은 해적이 중복되고 중간·해역 보스가 같다. 크라켄 촉수 6개·체력 칸 4/3/2/1 은 설계서·BALANCE.md 에 근거가 없다(계획서 11장, R3).
   - `story/cutscenes.json`: `lineKey` 4개(`story_prologue_1_tok` 등)가 앱 ARB 에 없다. 앱 키(`story_prologue_n`)에 맞춘다.
-- **디자인 쪽 요청 중 v0.23 에서도 남은 것(ADR-057):**
+- **디자인 쪽 요청 중 v0.23 에서도 남은 것(ADR-057, v0.24 에서 모두 해결):**
   - `style/tokens.json` `battleScale 0.16`·`roomSlot` 3×2칸(README 문장만 0.095·1칸이다)
   - 새 배율에 맞춘 전투 외곽선(`parts_battle_*`) 다시 굽기
   - 1칸 등불 선실 타일
@@ -116,3 +117,20 @@ dart run tool/import_assets.dart --check                     # pubspec 폴더 �
 - 부위 폴더 이름에서 `@2x` 가 빠졌으므로 `parts_$team@${n}x` → `parts_$team` 으로 바꾼다.
 - very_good_analysis 린트와 300줄 제한(CLAUDE.md 절대 규칙 9)을 맞추고 테스트를 붙인다.
 - 렌더 전용이다. 대기 동작 위상의 `Random` 은 앱에서만 쓰고, 판정에는 영향을 주지 않는다.
+
+## v0.24 (2026-10-02, ADR-062)
+
+- 원본: `art/pb_v0.24_main/` = `art/pb_v0.23_main/` 에서 `ui/portraits/lob_*`·`png/ui/portraits/lob_*` 를 지우고 `이미지참고용/pb_v0.24_patch.zip` 을 덮어쓴 것. 풀어 둔 폴더(`pb_v0.24_patch/`)에는 `style/`·`tools/`·`ui/` 가 빠져 있어 zip 을 쓴다.
+- 바뀐 것:
+  - `style/tokens.json`: `character.battleScale` 0.16 → 3/32(0.09375), `roomSlotPx`(1칸 32×32, 발 16, 29), `battleHeightAtDesign` 29. 3×2칸 `room_*.svg` 와 `design` 18×12 좌표는 레거시.
+  - 전투 PNG(`<id>_<team>_battle`)와 `parts_battle_<team>`(+ `battle.json` `outlinePad` 22)를 새 배율로 다시 구웠다. 외곽선은 1x 약 1px(설계서 §10.1).
+  - 1칸 등불 선실 타일 `ship/rooms/room1_lantern_{0,1}[_left]`, 꺼진 등불 `room1_dark_{0,1}`(아귀 등불선 기믹, 해역 5 — 그 단계에서 쓴다).
+  - 랍 초상 `ui/portraits/lobster_*`.
+- 앱 적용: `game/coords.dart`(`pirateScale` 3/32, `pirateHeight` 29, `cabinFloor` 3), `character_rig.dart`(`outlinePad` 읽기), `sprites.dart`(선실 타일 → `room1_lantern_*` 네 가지, 칸 위치로 고정 선택). 예전 `ship/rooms/room_*.png`(3×2칸)는 `obsoleteImages` 로 지웠다.
+- **가져오기 주의:** `--merge art/pb_v0.24_main` 은 v0.23 의 아직 안 쓰는 폴더(`bg/`·`boss/`·`ship/modules`·`ui/meta`·`ui/story`·`tiles_v2` 새 타일)도 함께 넣는다. 이번에는 v0.24 몫만 남기고 지웠다. 그 폴더들은 A12·뒷 단계에서 넣는다.
+- **카드 그림:** 등급 카드는 전투 PNG 를 키워 쓰고 있었다. 전투 PNG 가 작아지면서(@2x 45×61) 흐려졌다. 그래서 패키지 `ui/cards/cards.json` 의 `character`(원본 `<id>_<team>.svg`, 0.74배)대로 카드용 그림을 따로 굽는다:
+
+```bash
+python tool/assets/export_cards.py art/pb_v0.24_main   # png/characters/<id>/<id>_<team>_card@2x.png (355×480), 80장 약 2.3MB
+dart run tool/import_assets.dart --merge art/pb_v0.24_main
+```

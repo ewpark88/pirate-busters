@@ -62,7 +62,7 @@ void main() {
       expect(parseArgs(['a', 'b']), isNull);
     });
 
-    test('표정 부위와 새 타일은 그대로 옮기고, 랍 초상은 lobster 키로 바꾼다', () {
+    test('표정 부위·새 타일·랍 초상은 이름에서 @2x 만 떼고 옮긴다', () {
       expect(
         imageTarget('characters/octo/expr_blue@2x/aim_head.png'),
         'characters/octo/expr_blue/aim_head.png',
@@ -72,8 +72,21 @@ void main() {
         'ship/tiles_v2/oak_3.png',
       );
       expect(
-        imageTarget('ui/portraits/lob_red@2x.png'),
+        imageTarget('ui/portraits/lobster_red@2x.png'),
         'ui/portraits/lobster_red.png',
+      );
+      expect(
+        imageTarget('ship/rooms/room1_lantern_0_left@2x.png'),
+        'ship/rooms/room1_lantern_0_left.png',
+      );
+      // 카드 그림은 tool/assets/export_cards.py 가 구운 것이다 (ADR-062).
+      expect(
+        imageTarget('characters/octo/octo_red_card@2x.png'),
+        'characters/octo/octo_red_card.png',
+      );
+      expect(
+        imageTarget('characters/octo/parts_battle_red@2x/battle.json'),
+        'characters/octo/parts_battle_red/battle.json',
       );
       // 계열(투척) 아이콘 lob 은 그대로다.
       expect(imageTarget('ui/icons/lob@2x.png'), 'ui/icons/lob.png');
@@ -88,8 +101,9 @@ void main() {
           reason: old,
         );
       }
-      for (final renamed in renamedImages.values) {
-        expect(File('$images/$renamed').existsSync(), isTrue, reason: renamed);
+      for (final team in ['blue', 'red']) {
+        final file = '$images/ui/portraits/lobster_$team.png';
+        expect(File(file).existsSync(), isTrue, reason: file);
       }
       expect(Directory('$images/characters/lobster').existsSync(), isTrue);
     });

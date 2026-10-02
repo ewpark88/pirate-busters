@@ -27,16 +27,8 @@ String? imageTarget(String rel) {
   if (const {'tiles', 'rooms', 'rig'}.contains(segs.first)) {
     segs.insert(0, 'ship');
   }
-  final target = segs.map((s) => s.replaceAll('@2x', '')).join('/');
-  return renamedImages[target] ?? target;
+  return segs.map((s) => s.replaceAll('@2x', '')).join('/');
 }
-
-/// 패키지에 옛 키로 남아 있는 파일 → 앱이 쓰는 키 (설계서 §4.3: 랍은 `lobster`).
-/// 계열 아이콘 `ui/icons/lob.png`(투척)은 그대로다.
-const renamedImages = {
-  'ui/portraits/lob_blue.png': 'ui/portraits/lobster_blue.png',
-  'ui/portraits/lob_red.png': 'ui/portraits/lobster_red.png',
-};
 
 /// --merge 뒤에 지우는 옛 키 경로(app/assets/images 기준). 새 키로 대체됐다.
 const obsoleteImages = [
@@ -49,6 +41,10 @@ const obsoleteImages = [
   'ammo/icons/snipe.png',
   'ammo/icons/plant.png',
   'ammo/icons/multidrop.png',
+  // v0.24 에서 1칸 선실 타일(`ship/rooms/room1_*`)로 대체된 3×2칸 선실 타일.
+  'ship/rooms/room_barrel.png',
+  'ship/rooms/room_lantern.png',
+  'ship/rooms/room_plain.png',
 ];
 
 /// 명령줄 인자를 (패키지 경로, 덮어쓰기만) 로 읽는다. 검사만이면 경로가 null.

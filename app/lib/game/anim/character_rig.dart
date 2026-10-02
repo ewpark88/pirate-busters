@@ -79,8 +79,8 @@ class CharacterRig extends PositionComponent {
       );
 
   /// 캐릭터 [id], 팀 [team](blue | red)의 부위를 게임의 [images] 로 읽는다.
-  /// [phase] 는 대기 동작 위상(0~1). [battleScale] 은 에셋 tokens.json 의 0.16
-  /// (선실 3×2칸 기준)이 아니라 선실 한 칸에 맞춘 값이다 (ADR-057).
+  /// [phase] 는 대기 동작 위상(0~1). [battleScale] 은 선실 한 칸에 맞춘
+  /// 에셋 tokens.json 의 값이다 (ADR-057, ADR-062).
   static Future<CharacterRig> load(
     Images images,
     String id,
@@ -90,14 +90,19 @@ class CharacterRig extends PositionComponent {
     bool battleOutline = true,
     Map<String, AnimClip> states = const {},
   }) async {
-    // 전장에서는 전투 외곽선을 구운 부위를 쓴다(사방 14px 여백: offset −14,
-    // pivot +14, docs/ASSETS.md). 위치 정보는 일반 부위의 parts.json 을 쓴다.
+    // 전장에서는 전투 외곽선을 구운 부위를 쓴다. 사방 여백은 그 폴더
+    // battle.json 의 `outlinePad`(offset −pad, pivot +pad, docs/ASSETS.md).
+    // 위치 정보는 일반 부위의 parts.json 을 쓴다.
     final dir = 'characters/$id/parts_$team';
     final imageDir = battleOutline ? 'characters/$id/parts_battle_$team' : dir;
-    final pad = battleOutline ? 14.0 : 0.0;
-    final j =
-        jsonDecode(await rootBundle.loadString('assets/images/$dir/parts.json'))
+    Future<Map<String, dynamic>> json(String file) async =>
+        jsonDecode(await rootBundle.loadString('assets/images/$file'))
             as Map<String, dynamic>;
+    final pad = battleOutline
+        ? ((await json('$imageDir/battle.json'))['outlinePad'] as num)
+              .toDouble()
+        : 0.0;
+    final j = await json('$dir/parts.json');
     Vector2 v(dynamic a) {
       final l = a as List<dynamic>;
       return Vector2((l[0] as num).toDouble(), (l[1] as num).toDouble());

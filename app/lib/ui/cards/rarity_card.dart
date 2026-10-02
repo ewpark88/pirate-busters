@@ -69,7 +69,7 @@ class RarityCard extends StatelessWidget {
                         height: 324 * .74,
                         child: Image.asset(
                           'assets/images/characters/$species/'
-                          '${species}_${team}_battle.png',
+                          '${species}_${team}_card.png',
                           fit: BoxFit.fill,
                         ),
                       ),

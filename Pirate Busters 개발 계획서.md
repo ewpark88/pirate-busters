@@ -682,7 +682,8 @@ M7                                                ████████
 
 **선행:** A11. 아트 에셋 v0.23(디자인 29~37단계, `art/pb_v0.23_main/`, docs/ASSETS.md)은 설계서에 있는데 그림이 없던 것을 채웠다. 여기서는 MVP·A 단계에서 이미 만든 화면에만 적용한다. 해역 2~6·보스·메타·상점·출석·해적보감 그림은 그 기능 단계(R1~R5·A1·A2)에서 넣는다. 모두 렌더 전용이고 판정(`pb_sim`)은 바꾸지 않는다(절대 규칙 3).
 
-- [ ] 에셋 v0.23 가져오기: `dart run tool/import_assets.dart --merge art/pb_v0.23_main`(ADR-059 덮어쓰기). 이 단계에서 쓰는 폴더만 `app/pubspec.yaml` 에 넣고 `--check` 를 통과시킨다. docs/ASSETS.md 를 고친다
+- [x] 에셋 v0.24 패치 (ADR-062): 디자인 쪽 요청 4건이 왔다. 해적 배율 3/32(§10.1), 외곽선 여백 `outlinePad`, 1칸 등불 선실 타일(§10.2), 랍 초상 `lobster_*`. 등급 카드 그림은 원본 SVG 에서 따로 굽는다(`tool/assets/export_cards.py`). 원본 `art/pb_v0.24_main/`(v0.23 포함)
+- [ ] 에셋 v0.23 가져오기: `dart run tool/import_assets.dart --merge art/pb_v0.24_main`(ADR-059 덮어쓰기, v0.23 포함. 쓰지 않는 폴더는 지운다). 이 단계에서 쓰는 폴더만 `app/pubspec.yaml` 에 넣고 `--check` 를 통과시킨다. docs/ASSETS.md 를 고친다
 - [ ] 해역 1(열대 만) 전투 배경 (§10.2, §2.1): `bg/tropic/` 레이어 7장(sky·clouds·far·haze·mid·glow·sea)을 `bg/regions.json` 시차로 가로로 이어 그린다. 일반 모드 색이고 far·mid 에는 `style/modes.json` 색 행렬을 씌운다. 지금 코드로 그리는 원경(`game/view/sea_view.dart`·`sea_theme.dart`)을 대체하고, 사인파 바다·포말·굴절 셰이더는 그대로 둔다(셰이더 데이터 없음)
 - [ ] 이동 한계 표식 (§2.6): 전진 한계 암초·부표 줄, 후퇴 한계 불빛 부표, 닿을 때 물살(`bg/props/limit_*`)로 M4 의 코드 그림을 바꾼다
 - [ ] 기능 모듈 그림 (§3.3): `ship/modules/` 9종을 전투 배 위 모듈 칸과 조선소 팔레트에 쓴다(지금은 `ui/labels.dart` 의 Material 아이콘). 포문은 선실 앞벽, 망루는 선실 위, 돛대 모듈 위에 돛대·돛·깃발(README)

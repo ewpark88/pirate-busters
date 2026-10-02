@@ -22,8 +22,9 @@ void main() {
         Coords.pirateHeight + Coords.cabinFloor,
         lessThanOrEqualTo(Coords.cell),
       );
-      // 키 약 0.9칸.
+      // 키 약 0.9칸, 발은 칸 위에서 29px (에셋 v0.24 tokens.json `roomSlotPx`).
       expect(Coords.pirateHeight / Coords.cell, closeTo(0.9, 0.05));
+      expect(Coords.cell - Coords.cabinFloor, 29);
     });
 
     test('무늬 번호는 칸 위치로 정해지고 네 가지를 모두 쓴다 (§10.2)', () {
@@ -80,10 +81,12 @@ void main() {
             final cabin = side.cabins[slot];
             final cell = ship.cellRect(cabin.x, cabin.y);
             final body = ship.rigs[slot].toRect();
+            // 캔버스 위 끝(발에서 29.5px)은 그림 키(29px)보다 0.5px 높은 빈
+            // 여백이라 1px 까지 칸 위로 나가도 된다 (에셋 v0.24, ADR-062).
             expect(
               body.left >= cell.left &&
                   body.right <= cell.right &&
-                  body.top >= cell.top &&
+                  body.top >= cell.top - 1 &&
                   body.bottom <= cell.bottom,
               isTrue,
               reason: '진영 ${ship.side} 슬롯 $slot: $body 가 $cell 밖',
@@ -107,7 +110,11 @@ void main() {
               expect(wet, dry, reason: m.name);
             }
           }
-          expect(ship.sprites.roomWall(1, 2).image.width, 64);
+          // 등불 선실 타일은 1칸(@2x 64px)이고 네 가지를 모두 읽어 둔다.
+          for (var v = 0; v < 4; v++) {
+            final room = ship.sprites.get(BattleSprites.roomFile(v)).image;
+            expect((room.width, room.height), (64, 64));
+          }
           // 젖은 줄 판정은 시뮬레이션의 선실 잠김 판정과 같아야 한다(ADR-061).
           final flood = side.flood;
           for (var f = 0; f <= fullFlood; f += fullFlood ~/ 10) {
