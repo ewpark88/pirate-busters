@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:flame/components.dart';
+import 'package:pirate_busters/game/coords.dart';
 
 /// 카메라 목표 계산 (설계서 §2.1, 렌더 전용). Flame 과 무관한 순수 계산이라 테스트한다.
 ///
@@ -9,8 +10,15 @@ import 'package:flame/components.dart';
 /// 끝날 때까지 탄을 따라가고 탄이 화면 밖으로 나가지 않는다(높이 올라가면 넓게 본다).
 /// 상대 턴도 같다 (설계서 §2.1, ADR-043). 핀치 줌은 1.5배 확대부터 간격 42칸까지.
 class CameraDirector {
-  /// 기본 화면 폭(월드 px, 약 28칸).
-  static const double baseWidth = 900;
+  /// 기본 화면 폭(월드 px, 약 24칸). 전장이 넓어 보여 900(28칸)에서 줄였다 (ADR-072).
+  static const double baseWidth = 760;
+
+  /// 기본 화면에서 내 배 가운데부터 화면 가운데까지(월드 px): 기준 배 브리건틴(14칸)
+  /// 전체가 들어오고 남는 폭을 앞바다로 쓴다 (ADR-072).
+  static const double idleAhead = baseWidth / 2 - 7 * Coords.cell - 16;
+
+  /// 기본 화면 가운데 높이(월드 px): 돛대 끝이 폭 900 때와 같은 높이까지 보인다 (ADR-072).
+  static const double idleY = -150;
 
   /// 가장 멀리 본 화면 폭: 간격 42칸 + 배 두 척 + 여백 (ADR-048).
   static const double maxWidth = 2528;
@@ -28,7 +36,7 @@ class CameraDirector {
 
   double _rate = followRate;
 
-  final Vector2 center = Vector2(0, -120);
+  final Vector2 center = Vector2(0, idleY);
   double width = baseWidth;
 
   /// 사람이 핀치로 고른 배율(1 = 기본, 1.5 = 최대 확대).
@@ -123,13 +131,13 @@ class CameraDirector {
       minWidth,
       maxWidth,
     );
-    final ahead = 260 + 300 * aimStretch;
+    final ahead = idleAhead + 300 * aimStretch;
     // 줌아웃할수록 두 배 가운데로 옮겨, 최대 축소에서는 간격 42칸이어도 두 배가
     // 모두 보인다 (설계서 §2.1).
     final t = ((w - baseWidth) / (maxWidth - baseWidth)).clamp(0.0, 1.0);
     final near = myX + facing * ahead;
     final mid = (myX + enemyX) / 2;
-    return (Vector2(near + (mid - near) * t, -120), w);
+    return (Vector2(near + (mid - near) * t, idleY), w);
   }
 
   /// 목표로 부드럽게 다가간다.

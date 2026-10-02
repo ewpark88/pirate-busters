@@ -15,6 +15,7 @@ import 'package:pirate_busters/data/fleet_store.dart';
 import 'package:pirate_busters/game/anim/anim_data.dart';
 import 'package:pirate_busters/game/battle_game.dart';
 import 'package:pirate_busters/game/camera_director.dart';
+import 'package:pirate_busters/game/coords.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
 import 'package:pirate_busters/settings/language.dart';
 import 'package:pirate_busters/settings/settings_store.dart';
@@ -61,6 +62,24 @@ void main() {
       expect(idle.x, greaterThan(-600));
       expect(w0, CameraDirector.baseWidth);
       expect(w1, greaterThan(w0));
+    });
+
+    test('기본 화면에 브리건틴(14칸) 내 배 전체와 돛대 끝이 들어온다 (ADR-072)', () {
+      const aspect = 0.46; // target() 기본값
+      for (final facing in [1, -1]) {
+        final myX = -600.0 * facing;
+        final c = CameraDirector();
+        final (center, w) = c.target(myX: myX, enemyX: -myX, facing: facing);
+        const half = 7 * Coords.cell;
+        expect(center.x - w / 2, lessThan(myX - half), reason: '$facing');
+        expect(center.x + w / 2, greaterThan(myX + half), reason: '$facing');
+        // 폭 900·가운데 −120 이던 때의 화면 위 끝(돛대 끝)까지 보인다.
+        expect(
+          center.y - w * aspect / 2,
+          lessThanOrEqualTo(-120 - 900 * aspect / 2 + 4),
+        );
+        expect(center.y + w * aspect / 2, greaterThan(0), reason: '수면이 보인다');
+      }
     });
 
     test('탄이 날면 탄과 표적이 한 화면에 들어온다', () {
