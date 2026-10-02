@@ -21,7 +21,6 @@ abstract final class ExplosionFx {
   static const String ember = 'fx/impact/ember.png';
   static const String flame = 'fx/impact/flame.png';
   static const String smoke = 'fx/impact/smoke.png';
-  static const String scorch = 'fx/impact/scorch.png';
 
   /// 전장이 미리 읽는 그림.
   static const List<String> files = [
@@ -29,7 +28,6 @@ abstract final class ExplosionFx {
     ember,
     flame,
     smoke,
-    scorch,
   ];
 
   /// 파편: 사방으로 튀어 올랐다가 떨어진다.

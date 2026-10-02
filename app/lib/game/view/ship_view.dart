@@ -10,11 +10,9 @@ import 'package:pirate_busters/game/anim/character_rig.dart';
 import 'package:pirate_busters/game/coords.dart';
 import 'package:pirate_busters/game/sprites.dart';
 import 'package:pirate_busters/game/view/cabin_painter.dart';
-import 'package:pirate_busters/game/view/damage_painter.dart';
+import 'package:pirate_busters/game/view/damage_layer.dart';
 import 'package:pirate_busters/game/view/module_painter.dart';
-import 'package:pirate_busters/game/view/scorch_painter.dart';
 import 'package:pirate_busters/game/view/ship_motion.dart';
-import 'package:pirate_busters/game/view/torn_edge_painter.dart';
 
 /// 배 한 척: 격자 타일, 돛대, 선실 칸 안의 해적. 시뮬레이션 상태를 그리기만 한다.
 ///
@@ -78,8 +76,14 @@ class ShipView extends PositionComponent with HasGameReference {
 
   bool _isCabin(int x, int y) => _state.cabins.any((c) => c.x == x && c.y == y);
 
-  /// 폭발이 남긴 그을음 칸 (설계서 §10.4). 착탄 이벤트로만 정해지는 렌더 상태다.
-  final Set<int> scorched = {};
+  /// 손상 표현 한 장 (설계서 §10.2·§10.4, ADR-070). 칸 단계가 바뀔 때만 다시 그린다.
+  final DamageLayer _damage = DamageLayer();
+
+  @override
+  void onRemove() {
+    _damage.dispose();
+    super.onRemove();
+  }
 
   /// 해적 [slot] 의 공격 동작.
   void playAttack(int slot) {
@@ -232,14 +236,15 @@ class ShipView extends PositionComponent with HasGameReference {
         final i = y * grid.width + x;
         final rect = cellRect(x, y);
         final m = materials[i];
+        _mats[i] = m == ShipGrid.emptyCell ? _built.materials[i] : m;
         if (m == ShipGrid.emptyCell) {
-          if (_built.materials[i] != ShipGrid.emptyCell) {
-            DamagePainter.broken(canvas, rect, i);
-          }
+          _codes[i] = _built.materials[i] == ShipGrid.emptyCell
+              ? DamageLayer.none
+              : DamageLayer.broken;
           continue;
         }
         final mat = BlockMaterial.values[m];
-        final stage = ShipGrid.stageFor(hp[i], mat.durability);
+        _codes[i] = ShipGrid.stageFor(hp[i], mat.durability).index;
         sprites
             .tile(mat, x, y, wet: BattleSprites.isWet(y, _state.draft))
             .render(
@@ -251,36 +256,39 @@ class ShipView extends PositionComponent with HasGameReference {
         if (_isCabin(x, y)) {
           CabinPainter.room(canvas, rect, sprites.roomWall(x, y));
         }
-        if (scorched.contains(i)) ScorchPainter.draw(canvas, sprites, rect, i);
         final module = _moduleAt[i];
         if (module != null) ModulePainter.draw(canvas, sprites, rect, module);
-        // 금은 이웃 부서진 칸 쪽에서 들어와 이어져 보인다 (설계서 §10.2).
-        TornEdgePainter.damage(canvas, rect, i, stage, _mask(materials, x, y));
       }
     }
-    // 부서진 칸의 가장자리는 타일을 모두 그린 뒤 이웃 블록 쪽으로 찢어 그린다.
-    TornEdgePainter.tornAll(
+    // 배 속·그을음·금·구멍·찢긴 변·파편은 타일을 모두 그린 뒤 한 장으로 얹는다.
+    var wetRows = 0;
+    while (wetRows < grid.height &&
+        BattleSprites.isWet(wetRows, _state.draft)) {
+      wetRows++;
+    }
+    _damage.paint(
       canvas,
-      grid,
-      materials,
-      _built.materials,
-      cellRect,
+      width: _width,
+      codes: _codes,
+      materials: _mats,
+      wetRows: wetRows,
+      origin: cellRect(0, grid.height - 1).topLeft,
+      cell: _cell,
     );
   }
+
+  /// 칸별 손상 코드 (`DamageLayer.none`·단계 0~2·`DamageLayer.broken`).
+  late final List<int> _codes = List.filled(
+    _state.grid.width * _state.grid.height,
+    DamageLayer.none,
+  );
+
+  /// 칸별 재질 (부서진 칸은 판 시작 때 재질).
+  late final List<int> _mats = List.of(_built.materials);
 
   /// 칸 번호 → 모듈 (설계도 그대로). 블록이 부서지면 그 칸과 함께 안 그린다.
   late final Map<int, ModuleKind> _moduleAt = ModulePainter.byCell(
     _state.modules,
     _width,
   );
-
-  int _mask(List<int> materials, int x, int y, {bool block = false}) =>
-      TornEdgePainter.mask(
-        _state.grid,
-        materials,
-        _built.materials,
-        x,
-        y,
-        block: block,
-      );
 }

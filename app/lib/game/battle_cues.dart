@@ -113,10 +113,6 @@ class BattleCues {
           final at = Coords.point(e.x, e.y);
           // 맞은 배는 쏜 쪽 반대로 밀린다.
           final push = facingOf(1 - e.side);
-          // 폭발하는 탄은 맞은 칸에 그을음을 남긴다 (설계서 §10.4).
-          if (e.cell >= 0 && (spec == null || explodes(spec.family))) {
-            ships[e.side].scorched.add(e.cell);
-          }
           if (spec == null) {
             fx.explosion(at);
           } else {
@@ -214,7 +210,6 @@ class BattleCues {
           final radius = blastRadius(e.value);
           if (radius == 0) break;
           final at = cellWorld(e.side, e.cell);
-          ships[e.side].scorched.add(e.cell);
           fx.explosion(at, radius: radius, heavy: true);
           director.impact(at, punch: true);
           ships[e.side].rock(facingOf(1 - e.side));
@@ -225,9 +220,6 @@ class BattleCues {
 
   /// 침수 이벤트 값 [value](0.1%p)가 늘어난 것인가. 펌프는 음수를 낸다.
   static bool floodRose(int value) => value > 0;
-
-  /// 폭발하는 계열인가: 투척·공중탄 (설계서 §10.4).
-  static bool explodes(Family f) => f == Family.lob || f == Family.air;
 
   /// 모듈 [kindIndex] 가 부서질 때의 유폭 반경(칸). 터지지 않는 모듈은 0.
   static int blastRadius(int kindIndex) =>
