@@ -33,11 +33,7 @@ void main() {
       expect(Fireball.alphaAt(.5), inExclusiveRange(0, 1));
     });
 
-    test('투척·공중탄만 그을음을 남기고, 화약고·연료통만 유폭한다', () {
-      expect(BattleCues.explodes(Family.lob), isTrue);
-      expect(BattleCues.explodes(Family.air), isTrue);
-      expect(BattleCues.explodes(Family.direct), isFalse);
-      expect(BattleCues.explodes(Family.support), isFalse);
+    test('화약고·연료통만 유폭한다', () {
       expect(
         BattleCues.blastRadius(ModuleKind.magazine.index),
         ModuleNumbers.magazineRadius,

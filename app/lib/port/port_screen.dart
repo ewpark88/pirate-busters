@@ -21,6 +21,7 @@ import 'package:pirate_busters/shipyard/shipyard_screen.dart';
 import 'package:pirate_busters/story/cutscene_screen.dart';
 import 'package:pirate_busters/story/story_data.dart';
 import 'package:pirate_busters/ui/battle_screen.dart';
+import 'package:pirate_busters/ui/kit/pb_dialog.dart';
 
 /// 항구(메인 화면, 설계서 §13.2). MVP 는 위쪽 프로필·재화·설정, 가운데 내 배,
 /// 아래 조선소·출항·선원 탭만 둔다(개발 계획서 M7). 미션·상자·우편은 R4.
@@ -98,12 +99,7 @@ class _PortScreenState extends ConsumerState<PortScreen> {
       unawaited(_open(const ShipyardScreen()));
       return;
     }
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(AppLocalizations.of(context).portShipyardLocked),
-        duration: const Duration(seconds: 2),
-      ),
-    );
+    showPbToast(context, AppLocalizations.of(context).portShipyardLocked);
   }
 
   @override

@@ -9,6 +9,7 @@ import 'package:pb_sim/pb_sim.dart';
 import 'package:pirate_busters/game/sprites.dart';
 import 'package:pirate_busters/game/view/backdrop.dart';
 import 'package:pirate_busters/game/view/backdrop_view.dart';
+import 'package:pirate_busters/game/view/limit_marks.dart';
 import 'package:pirate_busters/game/view/shot_view.dart';
 
 Backdrop _data() => Backdrop.fromJson(
@@ -127,8 +128,8 @@ void main() {
 
   test('이동 한계 표식 그림이 있고 수면에 닿는 점이 그림 안에 있다 (설계서 §2.6)', () {
     for (final (file, anchor, w, h) in [
-      (BattleSprites.limitForward, ShotView.forwardAnchor, 260, 110),
-      (BattleSprites.limitBack, ShotView.backAnchor, 80, 110),
+      (BattleSprites.limitForward, LimitMarks.forwardAnchor, 260, 110),
+      (BattleSprites.limitBack, LimitMarks.backAnchor, 80, 110),
     ]) {
       expect(File('assets/images/$file').existsSync(), isTrue, reason: file);
       expect(BattleSprites.files, contains(file));

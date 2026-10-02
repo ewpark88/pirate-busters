@@ -119,6 +119,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cancel => 'Cancel';
 
   @override
+  String get navBack => 'Back';
+
+  @override
   String get settings => 'Settings';
 
   @override
@@ -721,7 +724,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String portXp(Object next, Object xp) {
+  String portXp(Object xp, Object next) {
     return 'XP $xp / $next';
   }
 
@@ -744,6 +747,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get stageLocked => 'Clear the previous stage first';
 
   @override
+  String stageTutorialName(Object n) {
+    return 'Tutorial $n';
+  }
+
+  @override
+  String stageNumberName(Object sea, Object number) {
+    return '$sea-$number';
+  }
+
+  @override
   String get stageKindMidBoss => 'Mid boss';
 
   @override
@@ -764,7 +777,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get prepDeck => 'Crew';
 
   @override
-  String prepCost(Object limit, Object used) {
+  String prepCost(Object used, Object limit) {
     return 'Cost $used / $limit';
   }
 
@@ -852,7 +865,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String statFlood(Object enemy, Object mine) {
+  String statFlood(Object mine, Object enemy) {
     return 'Flooding you $mine% · enemy $enemy%';
   }
 
@@ -945,7 +958,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get replaySaved => 'Replay saved';
 
   @override
-  String statDamage(Object blocks, Object damage) {
+  String statDamage(Object damage, Object blocks) {
     return 'Damage dealt $damage · blocks broken $blocks';
   }
 

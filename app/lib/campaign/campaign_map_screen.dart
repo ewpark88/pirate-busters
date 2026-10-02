@@ -1,20 +1,27 @@
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pirate_busters/app/app_theme.dart';
 import 'package:pirate_busters/app/providers.dart';
 import 'package:pirate_busters/campaign/battle_prep_screen.dart';
+import 'package:pirate_busters/campaign/stage_node.dart';
 import 'package:pirate_busters/campaign/stage_spec.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
 import 'package:pirate_busters/l10n/data_text.dart';
 import 'package:pirate_busters/meta/progress.dart';
 import 'package:pirate_busters/story/cutscene_screen.dart';
 import 'package:pirate_busters/story/story_data.dart';
-import 'package:pirate_busters/ui/hud/hud_style.dart';
+import 'package:pirate_busters/ui/kit/kit_motion.dart';
+import 'package:pirate_busters/ui/kit/pb_button.dart';
+import 'package:pirate_busters/ui/kit/pb_dialog.dart';
+import 'package:pirate_busters/ui/kit/pb_panel.dart';
+import 'package:pirate_busters/ui/kit/pb_scaffold.dart';
 import 'package:pirate_busters/ui/meta_icons.dart';
 
-/// 캠페인 지도 (설계서 §13.3). MVP 는 해역 1 일반 모드만: 스테이지 노드·별·보스 노드,
-/// 본 이야기 다시 보기(§15.4). 모드 탭·해역 넘기기는 R3.
+/// 캠페인 지도 (설계서 §13.3, §13 공통). MVP 는 해역 1 일반 모드만: 해역 그림 위
+/// 섬 노드·점선 항로·별·보스 깃발, 본 이야기 다시 보기(§15.4). 모드 탭·해역 넘기기는 R3.
 class CampaignMapScreen extends ConsumerStatefulWidget {
   const CampaignMapScreen({super.key, this.sea = 1});
 
@@ -87,45 +94,65 @@ class _CampaignMapScreenState extends ConsumerState<CampaignMapScreen> {
     bool open(int i) => tutorial
         ? i <= progress.tutorialDone
         : CampaignMapScreen.unlocked(stages, i, progress);
-    return Scaffold(
-      appBar: AppBar(
-        toolbarHeight: 40,
-        title: Text(
+    var current = 0;
+    for (var i = 0; i < stages.length; i++) {
+      if (open(i)) current = i;
+    }
+    return PbScaffold(
+      title:
           '${l10n.campaignTitle} · ${dataText(l10n, 'sea_${widget.sea}_name')}',
+      region: seaRegion(widget.sea),
+      dim: 0.1,
+      actions: [
+        PbIconButton(
+          icon: MetaIcons.replay,
+          tooltip: l10n.storyReplay,
+          onPressed: () => unawaited(_replayStories(progress)),
         ),
-        actions: [
-          IconButton(
-            tooltip: l10n.storyReplay,
-            icon: const Icon(Icons.menu_book),
-            onPressed: () => unawaited(_replayStories(progress)),
-          ),
-        ],
-      ),
-      body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
+      ],
+      body: LayoutBuilder(
+        builder: (context, box) {
+          // 노드는 물결 모양으로 놓고 점선 항로로 잇는다 (설계서 §13.3).
+          const gap = 150.0;
+          final width = math.max(box.maxWidth, 120 + gap * stages.length);
+          final mid = box.maxHeight * 0.52;
+          final wave = math.min(box.maxHeight * 0.16, 60).toDouble();
+          final left = (width - gap * (stages.length - 1)) / 2;
+          final centers = [
+            for (var i = 0; i < stages.length; i++)
+              Offset(left + gap * i, mid + (i.isEven ? wave : -wave) * 0.6),
+          ];
+          return SingleChildScrollView(
             scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 24),
-            child: Row(
-              children: [
-                for (var i = 0; i < stages.length; i++) ...[
-                  if (i > 0)
-                    Container(
-                      width: 28,
-                      height: 4,
-                      color: open(i) ? HudColors.border : HudColors.mute,
-                    ),
-                  StageNode(
-                    stage: stages[i],
-                    stars: progress.starsOf(stages[i].id),
-                    locked: !open(i),
-                    onTap: () => _open(stages[i], locked: !open(i)),
+            child: SizedBox(
+              width: width,
+              height: box.maxHeight,
+              child: Stack(
+                children: [
+                  Positioned.fill(
+                    child: CustomPaint(painter: RoutePainter(centers, current)),
                   ),
+                  for (var i = 0; i < stages.length; i++)
+                    Positioned(
+                      left: centers[i].dx - 70,
+                      width: 140,
+                      top: centers[i].dy - StageNode.sizeOf(stages[i]) / 2 - 38,
+                      child: PopIn(
+                        order: i,
+                        child: StageNode(
+                          stage: stages[i],
+                          stars: progress.starsOf(stages[i].id),
+                          locked: !open(i),
+                          current: i == current,
+                          onTap: () => _open(stages[i], locked: !open(i)),
+                        ),
+                      ),
+                    ),
                 ],
-              ],
+              ),
             ),
-          ),
-        ),
+          );
+        },
       ),
     );
   }
@@ -134,115 +161,38 @@ class _CampaignMapScreenState extends ConsumerState<CampaignMapScreen> {
   Future<void> _replayStories(PlayerProgress progress) async {
     final l10n = AppLocalizations.of(context);
     final seen = CampaignMapScreen.seenStories(progress);
-    final picked = await showModalBottomSheet<String>(
-      context: context,
-      builder: (context) => SafeArea(
-        child: ListView(
-          shrinkWrap: true,
-          children: [
-            ListTile(
-              title: Text(l10n.storyReplay),
-              subtitle: seen.isEmpty ? Text(l10n.storyReplayEmpty) : null,
-            ),
-            for (final id in seen)
-              ListTile(
-                leading: const Icon(Icons.play_arrow),
-                title: Text(CampaignMapScreen.storyTitle(l10n, id)),
-                onTap: () => Navigator.of(context).pop(id),
+    final picked = seen.isEmpty
+        ? await showPbDialog<String>(
+            context,
+            (context) => PbPanel(
+              title: l10n.storyReplay,
+              child: Text(
+                l10n.storyReplayEmpty,
+                style: const TextStyle(fontSize: 16, color: AppColors.text),
               ),
-          ],
-        ),
-      ),
-    );
+            ),
+          )
+        : await showPbChoice<String>(
+            context,
+            title: l10n.storyReplay,
+            items: [
+              for (final id in seen)
+                (id, CampaignMapScreen.storyTitle(l10n, id), MetaIcons.replay),
+            ],
+          );
     final cuts = picked == null ? null : StoryData.of(picked);
     if (cuts != null && mounted) await CutsceneScreen.show(context, cuts);
   }
 
   void _open(StageSpec stage, {required bool locked}) {
     if (locked) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context).stageLocked)),
-      );
+      showPbToast(context, AppLocalizations.of(context).stageLocked);
       return;
     }
     unawaited(
       Navigator.of(context).push(
         MaterialPageRoute<void>(
           builder: (_) => BattlePrepScreen(stage: stage),
-        ),
-      ),
-    );
-  }
-}
-
-/// 스테이지 노드: 번호, 별 3개, 보스는 크게 (설계서 §13.3).
-class StageNode extends StatelessWidget {
-  const StageNode({
-    required this.stage,
-    required this.stars,
-    required this.locked,
-    required this.onTap,
-    super.key,
-  });
-
-  final StageSpec stage;
-  final int stars;
-  final bool locked;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
-    final size = switch (stage.kind) {
-      StageKind.boss => 96.0,
-      StageKind.midBoss => 80.0,
-      _ => 64.0,
-    };
-    final kindLabel = switch (stage.kind) {
-      StageKind.boss => l10n.stageKindBoss,
-      StageKind.midBoss => l10n.stageKindMidBoss,
-      _ => null,
-    };
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(size / 2),
-      child: Opacity(
-        opacity: locked ? 0.45 : 1,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: size,
-              height: size,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: stage.isBoss ? HudColors.red : HudColors.blue,
-                border: Border.all(color: HudColors.border, width: 2),
-              ),
-              child: locked
-                  ? const Icon(Icons.lock, color: HudColors.text)
-                  : Text(
-                      stage.id,
-                      style: TextStyle(
-                        color: HudColors.text,
-                        fontSize: stage.isBoss ? 22 : 18,
-                      ),
-                    ),
-            ),
-            if (kindLabel != null)
-              Text(kindLabel, style: const TextStyle(fontSize: 12)),
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                for (var s = 1; s <= 3; s++)
-                  MetaIcons.image(
-                    s <= stars ? MetaIcons.starOn : MetaIcons.starOff,
-                    size: 16,
-                  ),
-              ],
-            ),
-          ],
         ),
       ),
     );

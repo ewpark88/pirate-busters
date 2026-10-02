@@ -8,6 +8,7 @@ import 'package:pirate_busters/story/backdrop_picture.dart';
 import 'package:pirate_busters/story/rig_portrait.dart';
 import 'package:pirate_busters/story/story_data.dart';
 import 'package:pirate_busters/ui/hud/hud_style.dart';
+import 'package:pirate_busters/ui/kit/pb_button.dart';
 
 /// 전체 화면 컷신 (설계서 §15.4): 해역 배경 위에 해적 파츠 그림과 말풍선·자막.
 /// 탭하면 다음 컷, 건너뛰기는 항상 있다. 컷 전환은 0.3초 페이드다. 새 일러스트는
@@ -85,9 +86,11 @@ class _CutsceneScreenState extends State<CutsceneScreen> {
                   top: 0,
                   right: 8,
                   height: band,
-                  child: TextButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    child: Text(l10n.storySkip),
+                  child: Center(
+                    child: PbButton.small(
+                      label: l10n.storySkip,
+                      onPressed: () => Navigator.of(context).pop(),
+                    ),
                   ),
                 ),
                 Positioned(

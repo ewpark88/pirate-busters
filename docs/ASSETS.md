@@ -120,6 +120,13 @@ dart run tool/import_assets.dart --merge art/pb_v0.24_main
 - 비교 페이지 31~37단계 화면 47장을 실제 크기 배로 다시 그렸다(보스 화면만 1.4배). A12 화면 시안 대조는 이 그림을 쓴다.
 - 앱 이미지는 바뀌지 않는다. `boss/` 는 `deferredImages` 로 R3 까지 가져오지 않는다.
 
+## v0.26 (2026-10-02, ADR-070)
+
+- 원본: `art/pb_v0.26_patch/` 를 `art/pb_v0.24_main/` 위에 덮어썼다(`README_v0.26.md`, 지울 파일 없음).
+- 피해 표현 v3(비교 페이지 38단계): `fx/damage_v3/damage_v3.json`(그리는 순서·색·규칙), 규칙별 예시 SVG·PNG, 참고 구현 `tools/py/damage38.py`, 비교 캡처 `reference/stage38_damage_v3.png`·`reference/screens_v2/stage38_h0~h3.png`.
+- 앱은 예시 PNG 를 넣지 않고 규칙을 코드로 그린다(`app/lib/game/view/damage_*.dart`, A15). 색은 `damage_style.dart` 에 옮겨 두었다.
+- `fx/impact/scorch.png` 는 A15 부터 쓰지 않는다(그을음은 코드로 그림). 폴더째 가져오므로 다음 가져오기 정리 때 뺀다.
+
 ## 소리 (설계서 §10.3, A13, ADR-068)
 
 소리 파일은 없다. 효과음과 배경음악을 모두 `app/lib/audio/pcm_synth.dart` 로 코드 합성한다. 만든 소리는 프로젝트 저작물이라 CC0 으로 둔다.

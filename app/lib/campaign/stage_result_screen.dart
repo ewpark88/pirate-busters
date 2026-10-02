@@ -1,22 +1,23 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pb_data/pb_data.dart';
 import 'package:pb_sim/pb_sim.dart';
+import 'package:pirate_busters/app/app_theme.dart';
 import 'package:pirate_busters/app/providers.dart';
+import 'package:pirate_busters/campaign/result_parts.dart';
 import 'package:pirate_busters/campaign/rewards.dart';
-import 'package:pirate_busters/campaign/stage_flow.dart';
+import 'package:pirate_busters/campaign/stage_node.dart';
 import 'package:pirate_busters/campaign/stage_spec.dart';
 import 'package:pirate_busters/campaign/star_rules.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
 import 'package:pirate_busters/l10n/data_text.dart';
-import 'package:pirate_busters/platform/ads.dart';
-import 'package:pirate_busters/platform/analytics.dart';
-import 'package:pirate_busters/ui/hud/hud_style.dart';
+import 'package:pirate_busters/ui/kit/kit_art.dart';
+import 'package:pirate_busters/ui/kit/kit_motion.dart';
+import 'package:pirate_busters/ui/kit/pb_panel.dart';
+import 'package:pirate_busters/ui/kit/pb_scaffold.dart';
 import 'package:pirate_busters/ui/meta_icons.dart';
 
-/// 결과 화면 (설계서 §13.5): 승패·승리 방식(시간 판정이면 침수량 막대), 별 3개, 보상,
+/// 결과 화면 (설계서 §13.5, §13 공통): 해역 그림 위에 승패·승리 방식(시간 판정이면 침수량 막대), 별 3개, 보상,
 /// 전투 통계, 다시 하기·항구로. ‘광고 보고 2배’·리플레이 저장은 플랫폼 묶음에서 켠다.
 class StageResultScreen extends ConsumerWidget {
   const StageResultScreen({
@@ -55,52 +56,90 @@ class StageResultScreen extends ConsumerWidget {
       MatchOutcome.ongoing => '',
     };
     final missionText = _missionText(l10n, stage.mission);
-    return Scaffold(
-      backgroundColor: const Color(0xFF10141B),
-      body: SafeArea(
-        child: Center(
-          child: HudPanel(
-            padding: const EdgeInsets.all(20),
-            child: SingleChildScrollView(
+    final banner = summary.won
+        ? const Color(0xFFFFD45A)
+        : summary.draw
+        ? AppColors.text
+        : const Color(0xFFE06A5A);
+    return PbScaffold(
+      region: seaRegion(stage.sea),
+      dim: 0.5,
+      body: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 10, 16, 10),
+        child: Row(
+          children: [
+            // 왼쪽: 승패 배너, 승리 방식, 별 (설계서 §13.5).
+            Expanded(
               child: Column(
-                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    title,
-                    style: TextStyle(
-                      fontSize: 34,
-                      color: summary.won ? HudColors.blue : HudColors.red,
+                  PopIn(
+                    child: OutlinedText(
+                      title,
+                      size: 52,
+                      color: banner,
+                      font: AppFonts.display,
+                      stroke: 7,
                     ),
                   ),
-                  Text(how, style: const TextStyle(color: HudColors.mute)),
+                  OutlinedText(how, size: 18),
                   if (summary.outcome == MatchOutcome.timeDecision) ...[
                     const SizedBox(height: 6),
                     _floodBars(l10n),
                   ],
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 12),
                   _stars(l10n, missionText),
-                  const SizedBox(height: 10),
-                  _rewards(l10n, catalog.def),
-                  const SizedBox(height: 6),
-                  Text(
-                    '${l10n.statTurns(summary.turns)} · '
-                    '${l10n.statShots(summary.shotsFired)} · '
-                    '${l10n.statAccuracy(summary.hitPercent)}',
-                    style: const TextStyle(color: HudColors.mute, fontSize: 12),
-                  ),
-                  Text(
-                    l10n.statDamage(
-                      summary.damageDealt,
-                      summary.blocksDestroyed,
-                    ),
-                    style: const TextStyle(color: HudColors.mute, fontSize: 12),
-                  ),
-                  const SizedBox(height: 14),
-                  _ResultActions(stage: stage, reward: reward, replay: replay),
                 ],
               ),
             ),
-          ),
+            const SizedBox(width: 12),
+            // 오른쪽: 보상·통계·버튼.
+            Expanded(
+              child: Center(
+                child: PopIn(
+                  order: 2,
+                  child: PbPanel(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          _rewards(l10n, catalog.def),
+                          const SizedBox(height: 6),
+                          Text(
+                            '${l10n.statTurns(summary.turns)} · '
+                            '${l10n.statShots(summary.shotsFired)} · '
+                            '${l10n.statAccuracy(summary.hitPercent)}',
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              color: AppColors.mute,
+                              fontSize: 12,
+                            ),
+                          ),
+                          Text(
+                            l10n.statDamage(
+                              summary.damageDealt,
+                              summary.blocksDestroyed,
+                            ),
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              color: AppColors.mute,
+                              fontSize: 12,
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          ResultActions(
+                            stage: stage,
+                            reward: reward,
+                            replay: replay,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -114,162 +153,98 @@ class StageResultScreen extends ConsumerWidget {
         _ => dataText(l10n, m.textKey),
       };
 
-  Widget _floodBars(AppLocalizations l10n) => SizedBox(
-    width: 260,
-    child: Column(
-      children: [
-        Text(
-          l10n.statFlood(summary.floodPercent, enemyFloodPercent),
-          style: const TextStyle(fontSize: 12),
-        ),
-        LinearProgressIndicator(
-          value: summary.floodPercent / 100,
-          color: HudColors.blue,
-          backgroundColor: HudColors.panelHi,
-        ),
-        const SizedBox(height: 3),
-        LinearProgressIndicator(
-          value: enemyFloodPercent / 100,
-          color: HudColors.red,
-          backgroundColor: HudColors.panelHi,
-        ),
-      ],
-    ),
-  );
+  Widget _floodBars(AppLocalizations l10n) {
+    return SizedBox(
+      width: 260,
+      child: Column(
+        children: [
+          OutlinedText(
+            l10n.statFlood(summary.floodPercent, enemyFloodPercent),
+            size: 13,
+          ),
+          const SizedBox(height: 3),
+          FloodBar(percent: summary.floodPercent, color: AppColors.blue),
+          const SizedBox(height: 3),
+          FloodBar(percent: enemyFloodPercent, color: const Color(0xFFB3302B)),
+        ],
+      ),
+    );
+  }
 
   Widget _stars(AppLocalizations l10n, String missionText) {
     final s = reward.stars;
-    Widget star(String label, {required bool on}) => Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        MetaIcons.image(on ? MetaIcons.starOn : MetaIcons.starOff),
-        const SizedBox(width: 4),
-        Text(label, style: const TextStyle(fontSize: 12)),
-      ],
-    );
+    final rows = [
+      (l10n.resultWin, s.won),
+      (l10n.resultInTurns(stage.starTurns), s.inTurns),
+      (l10n.resultMission(missionText), s.mission),
+    ];
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        star(l10n.resultWin, on: s.won),
-        star(l10n.resultInTurns(stage.starTurns), on: s.inTurns),
-        star(l10n.resultMission(missionText), on: s.mission),
-      ],
-    );
-  }
-
-  Widget _rewards(AppLocalizations l10n, PirateDef Function(String id) def) =>
-      Column(
-        children: [
-          if (reward.gold > 0) Text(l10n.rewardGold(reward.gold)),
-          Text(l10n.rewardXp(reward.xp)),
-          if (reward.firstClear)
-            Text(
-              l10n.rewardFirstClear,
-              style: const TextStyle(color: HudColors.warn),
-            ),
-          if (reward.newPirate != null)
-            Text(
-              l10n.rewardPirate(
-                dataText(l10n, def(reward.newPirate!).nameKey),
-              ),
-              style: const TextStyle(color: HudColors.warn),
-            ),
-          if (reward.leveledUp)
-            Text(
-              l10n.levelUpTo(reward.levelAfter),
-              style: const TextStyle(color: HudColors.warn, fontSize: 16),
-            ),
-        ],
-      );
-}
-
-/// 아래 버튼: 광고 보고 2배(광고가 준비됐을 때만) · 리플레이 저장 · 항구로 · 다시 하기.
-class _ResultActions extends ConsumerStatefulWidget {
-  const _ResultActions({
-    required this.stage,
-    required this.reward,
-    required this.replay,
-  });
-
-  final StageSpec stage;
-  final StageReward reward;
-  final Replay? replay;
-
-  @override
-  ConsumerState<_ResultActions> createState() => _ResultActionsState();
-}
-
-class _ResultActionsState extends ConsumerState<_ResultActions> {
-  bool _doubled = false;
-  bool _saved = false;
-
-  Future<void> _double() async {
-    final ads = ref.read(adsProvider);
-    if (!await ads.show(AdPlacements.doubleReward)) return;
-    ref.read(analyticsProvider).log(Events.adRewardView, {
-      'placement': AdPlacements.doubleReward,
-      'gold': widget.reward.gold,
-    });
-    await ref
-        .read(progressProvider.notifier)
-        .update((p) => p.addGold(widget.reward.gold));
-    if (mounted) setState(() => _doubled = true);
-  }
-
-  Future<void> _saveReplay() async {
-    final replay = widget.replay;
-    if (replay == null) return;
-    final name = '${widget.stage.id}-${DateTime.now().millisecondsSinceEpoch}';
-    await ref.read(replayStoreProvider).save(name, replay);
-    if (mounted) setState(() => _saved = true);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
-    final ads = ref.watch(adsProvider);
-    final canDouble = ads.available && widget.reward.gold > 0;
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (canDouble)
-              FilledButton.tonalIcon(
-                onPressed: _doubled ? null : () => unawaited(_double()),
-                icon: MetaIcons.image(MetaIcons.ad2x),
-                label: Text(
-                  _doubled ? l10n.resultDoubleDone : l10n.resultDouble,
+        // 큰 별 3개. 하나씩 찍히는 연출은 A18 (설계서 §13.5).
+        PopIn(
+          order: 2,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              for (final (i, (_, on)) in rows.indexed)
+                Padding(
+                  padding: EdgeInsets.fromLTRB(4, i == 1 ? 0 : 10, 4, 0),
+                  child: MetaIcons.image(
+                    on ? MetaIcons.starOn : MetaIcons.starOff,
+                    size: i == 1 ? 56 : 44,
+                  ),
                 ),
-              ),
-            if (canDouble && widget.replay != null) const SizedBox(width: 12),
-            if (widget.replay != null)
-              OutlinedButton.icon(
-                onPressed: _saved ? null : () => unawaited(_saveReplay()),
-                icon: MetaIcons.image(MetaIcons.replay),
-                label: Text(_saved ? l10n.replaySaved : l10n.replaySave),
-              ),
-          ],
+            ],
+          ),
         ),
-        const SizedBox(height: 10),
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            OutlinedButton(
-              onPressed: () => Navigator.of(context).popUntil((r) => r.isFirst),
-              child: Text(l10n.resultToPort),
+        const SizedBox(height: 6),
+        for (final (label, on) in rows)
+          Text(
+            label,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 12,
+              color: on ? AppColors.text : AppColors.mute,
             ),
-            const SizedBox(width: 12),
-            FilledButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                unawaited(StageFlow.play(context, ref, widget.stage));
-              },
-              child: Text(l10n.playAgain),
-            ),
-          ],
+          ),
+      ],
+    );
+  }
+
+  Widget _rewards(AppLocalizations l10n, PirateDef Function(String id) def) {
+    const accent = TextStyle(color: Color(0xFFFFC24A), fontSize: 14);
+    return Column(
+      children: [
+        if (reward.gold > 0)
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              MetaIcons.image(MetaIcons.gold, size: 26),
+              const SizedBox(width: 6),
+              CountUp(
+                value: reward.gold,
+                builder: (context, v) =>
+                    OutlinedText(l10n.rewardGold(v), size: 20),
+              ),
+            ],
+          ),
+        CountUp(
+          value: reward.xp,
+          builder: (context, v) => OutlinedText(l10n.rewardXp(v), size: 17),
         ),
+        if (reward.firstClear) Text(l10n.rewardFirstClear, style: accent),
+        if (reward.newPirate != null)
+          Text(
+            l10n.rewardPirate(dataText(l10n, def(reward.newPirate!).nameKey)),
+            textAlign: TextAlign.center,
+            style: accent,
+          ),
+        if (reward.leveledUp)
+          OutlinedText(
+            l10n.levelUpTo(reward.levelAfter),
+            size: 18,
+            color: const Color(0xFFFFC24A),
+          ),
       ],
     );
   }

@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:pb_data/pb_data.dart';
 import 'package:pb_sim/pb_sim.dart';
+import 'package:pirate_busters/app/app_theme.dart';
 import 'package:pirate_busters/crew/deck_eval.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
 import 'package:pirate_busters/l10n/data_text.dart';
 import 'package:pirate_busters/ui/cards/card_icons.dart';
 import 'package:pirate_busters/ui/cards/rarity_card.dart';
 import 'package:pirate_busters/ui/hud/ammo_label.dart';
+import 'package:pirate_busters/ui/kit/kit_art.dart';
+import 'package:pirate_busters/ui/kit/pb_panel.dart';
 import 'package:pirate_busters/ui/labels.dart';
 
 /// 선실 슬롯 하나: 해적을 끌어다 놓는 곳. 누르면 비운다.
@@ -38,23 +41,27 @@ class CabinSlot extends StatelessWidget {
           ? const Color(0xFFE0402F)
           : candidates.isNotEmpty
           ? const Color(0xFFFFC24A)
-          : const Color(0xFF2F62C4);
+          : AppColors.gold;
       return GestureDetector(
         onTap: onTap,
         child: Container(
           width: 68,
           height: 96,
-          margin: const EdgeInsets.only(right: 4),
+          margin: const EdgeInsets.only(right: 3),
           decoration: BoxDecoration(
-            color: const Color(0xFF1E2129),
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: color, width: 2),
+            color: p == null
+                ? const Color(0x661E2129)
+                : const Color(0xFF1E2129),
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: color, width: 2.5),
           ),
           child: p == null
               ? Center(
-                  child: Text(
+                  child: OutlinedText(
                     '${slot + 1}',
-                    style: const TextStyle(color: Color(0xFF9A917F)),
+                    size: 28,
+                    color: AppColors.mute,
+                    font: AppFonts.display,
                   ),
                 )
               : Draggable<String>(
@@ -95,11 +102,27 @@ class CostBar extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(l10n.crewCost(used, limit)),
-        const SizedBox(height: 2),
-        LinearProgressIndicator(
-          value: limit == 0 ? 0 : (used / limit).clamp(0, 1).toDouble(),
-          minHeight: 8,
+        OutlinedText(l10n.crewCost(used, limit), size: 15),
+        const SizedBox(height: 3),
+        Container(
+          height: 12,
+          decoration: BoxDecoration(
+            color: const Color(0xFF0E1014),
+            borderRadius: BorderRadius.circular(6),
+            border: Border.all(color: AppColors.gold, width: 1.5),
+          ),
+          alignment: Alignment.centerLeft,
+          child: FractionallySizedBox(
+            widthFactor: limit == 0 ? 0 : (used / limit).clamp(0, 1).toDouble(),
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                color: used > limit
+                    ? AppColors.danger
+                    : const Color(0xFFFFC24A),
+                borderRadius: BorderRadius.circular(5),
+              ),
+            ),
+          ),
         ),
       ],
     );
@@ -115,29 +138,31 @@ class DeckEvalView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    Widget chip(String text) => Chip(
-      visualDensity: VisualDensity.compact,
-      label: Text(text),
-    );
+    Widget chip(String text) => PbChip(label: text);
+    const head = TextStyle(color: AppColors.mute, fontSize: 12);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(switch (eval.preferred) {
+        OutlinedText(switch (eval.preferred) {
           PreferredRange.near => l10n.preferNear,
           PreferredRange.far => l10n.preferFar,
           PreferredRange.mixed => l10n.preferMixed,
-        }),
-        Text(l10n.deckFamilies),
+        }, size: 15),
+        const SizedBox(height: 4),
+        Text(l10n.deckFamilies, style: head),
         Wrap(
           spacing: 4,
+          runSpacing: 4,
           children: [
             for (final e in eval.families.entries)
               chip('${Labels.family(l10n, e.key)} ${e.value}'),
           ],
         ),
-        Text(l10n.deckRanges),
+        const SizedBox(height: 4),
+        Text(l10n.deckRanges, style: head),
         Wrap(
           spacing: 4,
+          runSpacing: 4,
           children: [
             for (final e in eval.ranges.entries)
               chip('${rangeLabel(l10n, e.key)} ${e.value}'),
@@ -168,11 +193,15 @@ class PirateTile extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     final locale = Localizations.localeOf(context).toLanguageTag();
     final card = Opacity(
-      opacity: inDeck ? 0.4 : 1,
+      opacity: inDeck ? 0.45 : 1,
       child: Container(
         decoration: BoxDecoration(
-          color: const Color(0xFF1E2129),
-          borderRadius: BorderRadius.circular(8),
+          color: const Color(0xFF262A33),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: AppColors.gold.withValues(alpha: 0.6)),
+          boxShadow: const [
+            BoxShadow(color: Color(0x66000000), offset: Offset(0, 3)),
+          ],
         ),
         padding: const EdgeInsets.all(3),
         child: Column(
@@ -192,7 +221,7 @@ class PirateTile extends StatelessWidget {
                 ],
               ),
             ),
-            _line(dataText(l10n, def.nameKey), const Color(0xFFEFE6D2)),
+            _line(dataText(l10n, def.nameKey), AppColors.text, size: 12),
             _line(
               '${Labels.rarity(l10n, def.rarity)} · '
               '${Labels.family(l10n, def.family)}',
@@ -226,12 +255,12 @@ class PirateTile extends StatelessWidget {
   }
 
   /// 한 줄 글자. 칸보다 길면 자르지 않고 줄여서 다 보여준다 (설계서 §14.4).
-  Widget _line(String text, Color color) => FittedBox(
+  Widget _line(String text, Color color, {double size = 10}) => FittedBox(
     fit: BoxFit.scaleDown,
     child: Text(
       text,
       maxLines: 1,
-      style: TextStyle(color: color, fontSize: 10),
+      style: TextStyle(color: color, fontSize: size),
     ),
   );
 }

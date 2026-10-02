@@ -364,3 +364,28 @@
 - 규칙 검토 반영: 펌프로 침수가 줄면(음수 `flood` 이벤트) 물방울을 내지 않는다(`BattleCues.floodRose`). 남은 제안: 결과 창이 격침이 아닌 결말에서 바로 뜨는 위젯 테스트, 곡 전환 테스트, `BattleGame` 의 ValueNotifier 정리(기존 notifier 와 같은 패턴)
 - 블록 화재 연출은 R1(ADR-068)
 - 발견: `pb_sim` `rules.dart` `sunkHullPercent` 기본값 30 과 `match_state.dart:30` 주석 ‘20%’ 가 다르다(주석 확인 필요)
+
+## A15 — 피해 표현 v3: 배 속·찢긴 판자·금·구멍·그을음·파편 (2026-10-02, 브랜치 `feat/A15-damage-v3`, 완료 — 실기기 확인 이월, ADR-070)
+
+**완료**
+- 에셋 v0.26 수용: `art/pb_v0.26_patch/`(→ `art/pb_v0.24_main/` 위에 덮음), docs/ASSETS.md v0.26 절. 설계서 §10.2(배 속·파편)·§10.4(덩어리 그을음) 문장 추가(사용자 승인), 계획서 A15·해시
+- 참고 구현 `damage38.py` 를 Canvas 호출로 옮김: `damage_style.dart`(색·해시·쐐기), `damage_painter.dart`(배 속·나무 금·구멍), `iron_damage_painter.dart`(철판 금·구멍), `torn_edge_painter.dart`(찢긴 변·파편), `scorch_painter.dart`(덩어리 그을음), `damage_layer.dart`(순서·clip·Picture 캐시)
+- `ShipView` 는 타일·선실·모듈 뒤에 손상 레이어 한 장. 착탄 이벤트 그을음(`scorched`, `BattleCues.explodes`, `fx/impact/scorch` 미리 읽기)은 지웠다
+- 테스트: `damage_v3_test`(해시가 참고 구현과 같음, 색이 JSON 과 같음, 재질 색, 그을음 덩어리, 같은 단계면 같은 그림, 캐시), 골든 `damage_h0~h3`. 리플레이 해시 테스트 그대로 통과
+
+**남은 이슈**
+- 사람 확인: 실기기에서 1~4발 모습을 38단계 비교 캡처와 대조, 연속 착탄 때 프레임
+- 패치에 없는 코르크·망사는 나무 규칙에 소나무·참나무 색(ADR-070). 디자인 쪽에 전용 규칙을 요청할지 정한다
+
+## A16 — 메타 화면 다시 만들기: UI 키트·그림 바탕·움직임 (2026-10-02, 완료 — 실기기 확인 이월, ADR-071)
+
+**완료**
+- 퀄리티 진단(docs/quality/2026-10-02-gap-analysis.md, 기준 Castle Busters): main 을 웹으로 띄워 캡처. 메타 화면이 기본 앱 모양·검은 바탕이라 가장 크게 뒤진다고 판단. 설계서 §10.3·§10.4·§13·§13.4·§13.5 문장 추가(사용자 승인), 계획서 A16~A21
+- 버그: 번역 인자 뒤바뀜 4건(`prepCost`·`portXp`·`statFlood`·`statDamage`, 결과 화면 침수량이 내 것·상대 것 거꾸로), 한계 표식(등대·부표)이 배를 덮음 → `LimitMarks`(priority -5)
+- 공용 키트 `app/lib/ui/kit/`: PbButton·PbIconButton·PbPanel·PbTabs·PbChip·PbToggle·PbScaffold(해역 그림 바탕)·showPbConfirm·showPbChoice·showPbToast, 움직임 KitPageTransitions·PopIn·Pressable·CountUp(저사양이면 끔)
+- 화면: 항구, 설정, 캠페인 지도(물결 배치 섬 노드·점선 항로·현재 노드 배·보스 깃발·튜토리얼 이름), 전투 준비(추천 설계도 미리보기·대사 말풍선·360dp 높이), 결과(해역 바탕·큰 별·보상 세기), 선원, 조선소, 일시정지·항복 확인, 둘이서 결과창, 컷신 건너뛰기
+- 검사: `check_architecture` 메타 화면 기본 위젯 금지, `check_l10n` 인자 순서 정의 필수. 테스트: `l10n_args_test`, `kit_test`, `architecture_rules_test`, 화면 골든 32장
+
+**남은 이슈**
+- 사람 확인: 실기기에서 키트 버튼 눌림·화면 전환·지도 노드 크기, 저사양 모드
+- 전투 HUD 본체(위쪽 패널·이동·턴 종료)는 A17 에서 다룬다

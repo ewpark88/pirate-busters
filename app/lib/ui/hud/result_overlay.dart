@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:pb_sim/pb_sim.dart';
+import 'package:pirate_busters/app/app_theme.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
 import 'package:pirate_busters/ui/hud/hud_style.dart';
+import 'package:pirate_busters/ui/kit/kit_art.dart';
+import 'package:pirate_busters/ui/kit/kit_motion.dart';
+import 'package:pirate_busters/ui/kit/pb_button.dart';
+import 'package:pirate_busters/ui/kit/pb_panel.dart';
 
-/// 판 결과 (간이판, 결과 화면 완성판은 M7 §13.5).
+/// 둘이서·테스트 대전의 판 결과 (설계서 §13.4·§13 공통 키트). 캠페인 결과는 StageResultScreen(§13.5).
 class ResultOverlay extends StatelessWidget {
   const ResultOverlay({
     required this.state,
@@ -38,29 +43,34 @@ class ResultOverlay extends StatelessWidget {
     return ColoredBox(
       color: const Color(0x99000000),
       child: Center(
-        child: HudPanel(
-          padding: const EdgeInsets.all(20),
+        child: PbPanel(
+          padding: const EdgeInsets.fromLTRB(28, 18, 28, 20),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               if (state.outcome == MatchOutcome.sunk ||
                   state.outcome == MatchOutcome.floodSunk)
                 // ‘격침!’ 배너 (설계서 §14.2).
-                Text(
-                  AppLocalizations.of(context).sunkBanner,
-                  style: const TextStyle(fontSize: 48, color: HudColors.warn),
+                PopIn(
+                  child: OutlinedText(
+                    AppLocalizations.of(context).sunkBanner,
+                    size: 48,
+                    color: HudColors.warn,
+                    font: AppFonts.display,
+                    stroke: 6,
+                  ),
                 ),
-              Text(
+              OutlinedText(
                 title,
-                style: TextStyle(
-                  fontSize: 34,
-                  color: winner < 0 ? HudColors.text : HudColors.team(winner),
-                ),
+                size: 34,
+                color: winner < 0 ? HudColors.text : HudColors.team(winner),
+                font: AppFonts.display,
+                stroke: 5,
               ),
               const SizedBox(height: 6),
               Text(how, style: const TextStyle(color: HudColors.mute)),
               const SizedBox(height: 16),
-              FilledButton(onPressed: onPlayAgain, child: Text(l10n.playAgain)),
+              PbButton(label: l10n.playAgain, onPressed: onPlayAgain),
             ],
           ),
         ),

@@ -33,6 +33,34 @@ void main() {
       );
     });
 
+    test('플레이스홀더가 2개 이상인데 인자 순서 정의가 없으면 찾는다', () {
+      expect(
+        compareArb(
+          {'a': '코스트 {used} / {limit}'},
+          {'a': 'Cost {used} / {limit}'},
+        ),
+        hasLength(1),
+      );
+    });
+
+    test('플레이스홀더가 2개 이상이어도 인자 순서 정의가 있으면 통과한다', () {
+      expect(
+        compareArb(
+          {'a': '코스트 {used} / {limit}'},
+          {
+            'a': 'Cost {used} / {limit}',
+            '@a': {
+              'placeholders': {
+                'used': <String, dynamic>{},
+                'limit': <String, dynamic>{},
+              },
+            },
+          },
+        ),
+        isEmpty,
+      );
+    });
+
     test('빈 값을 찾는다', () {
       expect(compareArb({'a': ''}, {'a': 'A'}), hasLength(1));
     });

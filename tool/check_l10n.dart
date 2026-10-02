@@ -35,6 +35,14 @@ List<String> compareArb(Map<String, dynamic> ko, Map<String, dynamic> en) {
     if ('${ko[k]}'.trim().isEmpty || '${en[k]}'.trim().isEmpty) {
       errors.add('`$k` 값이 비어 있다');
     }
+    // 정의가 없으면 gen-l10n 이 인자를 이름 알파벳순으로 만들어, 호출 순서와 어긋나
+    // 값이 뒤바뀐다(전투 준비 '코스트 15 / 6', docs/quality/2026-10-02-gap-analysis.md).
+    final meta = en['@$k'];
+    if (b.length >= 2 && (meta is! Map || meta['placeholders'] == null)) {
+      errors.add(
+        '`$k` 플레이스홀더가 2개 이상이다: app_en.arb 에 `@$k` placeholders 로 인자 순서를 적는다',
+      );
+    }
   }
   return errors;
 }

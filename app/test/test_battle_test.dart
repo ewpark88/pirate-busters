@@ -105,9 +105,9 @@ void main() {
         ),
       );
       await _pump(tester, bar(), MemoryFleetStore());
-      expect(find.byIcon(Icons.bug_report), findsNothing);
+      expect(find.image(const AssetImage(PortIcons.quest)), findsNothing);
       await _pump(tester, bar(onTest: () {}), MemoryFleetStore());
-      expect(find.byIcon(Icons.bug_report), findsOneWidget);
+      expect(find.image(const AssetImage(PortIcons.quest)), findsOneWidget);
     });
   });
 }

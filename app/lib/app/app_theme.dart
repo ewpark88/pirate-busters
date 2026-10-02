@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pirate_busters/ui/kit/kit_motion.dart';
 
 /// 글꼴 역할 (설계서 §14.4). 셋 다 한글·라틴을 함께 가진 OFL 글꼴이다
 /// (라이선스: `assets/fonts/OFL*.txt`).
@@ -66,6 +67,16 @@ ThemeData appTheme() {
       shape: Border(bottom: BorderSide(color: AppColors.gold)),
     ),
     dividerColor: const Color(0xFF3A3F4A),
+    // 화면 전환은 짧게 밀며 나타난다 (설계서 §13 공통 화면 규칙).
+    pageTransitionsTheme: const PageTransitionsTheme(
+      builders: {
+        TargetPlatform.android: KitPageTransitions(),
+        TargetPlatform.iOS: KitPageTransitions(),
+        TargetPlatform.windows: KitPageTransitions(),
+        TargetPlatform.macOS: KitPageTransitions(),
+        TargetPlatform.linux: KitPageTransitions(),
+      },
+    ),
     switchTheme: SwitchThemeData(
       thumbColor: const WidgetStatePropertyAll(AppColors.knob),
       trackColor: WidgetStateProperty.resolveWith(

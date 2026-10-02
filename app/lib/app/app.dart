@@ -8,6 +8,7 @@ import 'package:pirate_busters/l10n/app_localizations.dart';
 import 'package:pirate_busters/port/port_screen.dart';
 import 'package:pirate_busters/settings/language.dart';
 import 'package:pirate_busters/ui/cards/card_motion.dart';
+import 'package:pirate_busters/ui/kit/kit_motion.dart';
 
 /// 앱 루트. 항구(설계서 §13.2)에서 조선소·선원·출항으로 간다. 프롤로그·튜토리얼 분기는 M7 뒤 묶음.
 class PirateBustersApp extends ConsumerWidget {
@@ -34,9 +35,12 @@ class PirateBustersApp extends ConsumerWidget {
       theme: appTheme(),
       // 등급 카드 움직임의 공용 시계 (설계서 §10.5). 저사양 모드에서는 멈춘다.
       builder: (context, child) => MusicDirector(
-        child: CardMotion(
-          enabled: !ref.watch(lowEndProvider),
-          child: child ?? const SizedBox.shrink(),
+        child: KitMotion(
+          reduced: ref.watch(lowEndProvider),
+          child: CardMotion(
+            enabled: !ref.watch(lowEndProvider),
+            child: child ?? const SizedBox.shrink(),
+          ),
         ),
       ),
       home: const PortScreen(),

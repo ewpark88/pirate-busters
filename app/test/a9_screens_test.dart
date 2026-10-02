@@ -75,7 +75,7 @@ void main() {
       ]);
       await _pump(tester, const CampaignMapScreen(), progress: progress);
       final l10n = _l10n(tester, CampaignMapScreen);
-      await tester.tap(find.byIcon(Icons.menu_book));
+      await tester.tap(find.byTooltip(l10n.storyReplay));
       await tester.pumpAndSettle();
       expect(find.text(l10n.storyTitlePrologue), findsOneWidget);
       expect(find.text(l10n.storyTitleSea1Intro), findsOneWidget);
@@ -89,10 +89,11 @@ void main() {
       // 튜토리얼 전이라 해역 인트로가 자동으로 뜨지 않는다.
       await _pump(tester, const CampaignMapScreen());
       final l10n = _l10n(tester, CampaignMapScreen);
-      await tester.tap(find.byIcon(Icons.menu_book));
+      await tester.tap(find.byTooltip(l10n.storyReplay));
       await tester.pumpAndSettle();
       expect(find.text(l10n.storyReplayEmpty), findsOneWidget);
-      expect(find.byIcon(Icons.play_arrow), findsNothing);
+      // 다시 볼 이야기 단추 없이 위쪽 단추 그림 하나뿐이다.
+      expect(find.image(const AssetImage(MetaIcons.replay)), findsOneWidget);
     });
   });
 
@@ -124,10 +125,10 @@ void main() {
         const CrewScreen(showAll: true),
         progress: progress,
       );
-      expect(
-        find.byType(PirateTile),
-        findsNWidgets(testCatalog.data.pirates.length),
-      );
+      // 목록은 스크롤로 그리므로 화면에 보이는 수가 아니라 목록 항목 수를 센다.
+      final grid = tester.widget<GridView>(find.byType(GridView));
+      final items = grid.childrenDelegate as SliverChildListDelegate;
+      expect(items.children, hasLength(testCatalog.data.pirates.length));
       expect(find.byType(CostBar), findsOneWidget);
       expect(
         tester.widget<CostBar>(find.byType(CostBar)).limit,
@@ -162,15 +163,15 @@ void main() {
       expect(find.text(l10n.prepCabinEmpty), findsNWidgets(2));
     });
 
-    testWidgets('설계도가 없으면 미리보기 대신 비었다는 글자', (tester) async {
+    testWidgets('설계도가 없으면 타고 나갈 추천 설계도를 보여주고 비었다고 알린다', (tester) async {
       await _pump(
         tester,
         BattlePrepScreen(stage: stage),
         progress: const PlayerProgress(tutorialDone: 3),
       );
       final l10n = _l10n(tester, BattlePrepScreen);
-      expect(find.byType(BlueprintPreview), findsNothing);
-      expect(find.text(l10n.prepBlueprintEmpty), findsWidgets);
+      expect(find.byType(BlueprintPreview), findsOneWidget);
+      expect(find.text(l10n.prepBlueprintEmpty), findsOneWidget);
     });
   });
 

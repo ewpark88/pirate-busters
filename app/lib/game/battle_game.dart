@@ -17,6 +17,7 @@ import 'package:pirate_busters/game/sprites.dart';
 import 'package:pirate_busters/game/view/backdrop_view.dart';
 import 'package:pirate_busters/game/view/effect_badges.dart';
 import 'package:pirate_busters/game/view/fx_layer.dart';
+import 'package:pirate_busters/game/view/limit_marks.dart';
 import 'package:pirate_busters/game/view/sea_theme.dart';
 import 'package:pirate_busters/game/view/sea_view.dart';
 import 'package:pirate_busters/game/view/ship_view.dart';
@@ -126,6 +127,8 @@ class BattleGame extends FlameGame {
     await world.addAll([
       backdrop,
       SeaView(front: false, theme: theme, swell: _swell, priority: -10),
+      // 한계 표식은 물 위 소품이라 배(0)보다 뒤에 둔다.
+      LimitMarks(session: session, sprites: sprites, priority: -5),
       ..._ships,
       SeaView(
         front: true,

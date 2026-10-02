@@ -51,6 +51,44 @@ const Map<String, String> _forbiddenIdentifiers = {
   'hashCode': '실행마다 달라질 수 있는 Object.hashCode 금지 — 상태 해시는 FNV-1a',
 };
 
+/// 메타 화면 폴더·파일 (설계서 §13 공통 화면 규칙, 계획서 A16). 기본 앱 모양 대신
+/// `app/lib/ui/kit/` 키트를 쓴다.
+const List<String> metaUiPaths = [
+  'app/lib/port/',
+  'app/lib/campaign/',
+  'app/lib/crew/',
+  'app/lib/shipyard/',
+  'app/lib/story/',
+  'app/lib/ui/hud/pause_menu.dart',
+  'app/lib/ui/hud/result_overlay.dart',
+];
+
+/// 메타 화면에서 쓰지 않는 기본 앱 위젯과 대신 쓸 키트.
+const Map<String, String> _metaForbidden = {
+  'AppBar': 'PbScaffold 제목 줄',
+  'AlertDialog': 'showPbConfirm',
+  'SimpleDialog': 'showPbChoice',
+  'showDialog': 'showPbDialog',
+  'showModalBottomSheet': 'showPbChoice',
+  'SnackBar': 'showPbToast',
+  'ListTile': 'PbPanel 안의 줄',
+  'SwitchListTile': 'PbToggle',
+  'Switch': 'PbToggle',
+  'SegmentedButton': 'PbTabs',
+  'FilledButton': 'PbButton',
+  'ElevatedButton': 'PbButton',
+  'OutlinedButton': 'PbButton(kind: secondary)',
+  'TextButton': 'PbButton.small',
+  'IconButton': 'PbIconButton',
+  'PopupMenuButton': 'showPbChoice',
+  'Radio': 'PbTabs',
+  'Chip': 'PbChip',
+  'ChoiceChip': 'PbChip·PbTabs',
+  'FilterChip': 'PbToggle',
+  'LinearProgressIndicator': '키트 막대',
+  'Icons': '메타 아이콘 그림(MetaIcons·PortIcons)',
+};
+
 final RegExp _importRe = RegExp(
   r'''^\s*(?:import|export)\s+['"]([^'"]+)['"]''',
   multiLine: true,
@@ -88,6 +126,18 @@ List<String> checkFile(String relPath, String source) {
 
   if (deterministicPackages.contains(pkg)) {
     violations.addAll(_checkDeterminism(relPath, code));
+  }
+
+  if (metaUiPaths.any(relPath.startsWith)) {
+    for (final m in _identRe.allMatches(code)) {
+      final use = _metaForbidden[m.group(0)];
+      if (use != null) {
+        violations.add(
+          '$relPath:${_lineOf(code, m.start)} — 메타 화면에서 `${m.group(0)}` '
+          '대신 $use 를 쓴다 (설계서 §13 공통)',
+        );
+      }
+    }
   }
 
   final lines = '\n'.allMatches(source).length + 1;
