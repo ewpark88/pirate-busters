@@ -307,6 +307,275 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pirate_p36_lore => 'Slow but careful. He keeps the ship afloat.';
 
   @override
+  String get pirate_p02_name => 'Starry the Firestar';
+
+  @override
+  String get pirate_p02_desc => 'Spinning fire star that leaves a burning zone';
+
+  @override
+  String get pirate_p02_lore =>
+      'Loves fireworks. Has burned three ships so far.';
+
+  @override
+  String get pirate_p03_name => 'Crab Brothers';
+
+  @override
+  String get pirate_p03_desc =>
+      'Two bombs on the same arc, one after the other';
+
+  @override
+  String get pirate_p03_lore =>
+      'They argue nonstop, yet always aim at the same spot.';
+
+  @override
+  String get pirate_p05_name => 'Volke the Volcano Crab';
+
+  @override
+  String get pirate_p05_desc =>
+      'Steep lob that drills 3 layers, then a big blast';
+
+  @override
+  String get pirate_p05_lore => 'The volcano on his back has never cooled.';
+
+  @override
+  String get pirate_p08_name => 'Bones the Sniper';
+
+  @override
+  String get pirate_p08_desc => 'Lightning-fast shot with a glowing-eye scope';
+
+  @override
+  String get pirate_p08_lore =>
+      'When his eye sockets glow, it is already too late.';
+
+  @override
+  String get pirate_p09_name => 'Lion the Spinefish';
+
+  @override
+  String get pirate_p09_desc => 'Fan of spines that shreds nets';
+
+  @override
+  String get pirate_p09_lore => 'Every fin is a venomous spine cannon.';
+
+  @override
+  String get pirate_p10_name => 'Volt the Eel';
+
+  @override
+  String get pirate_p10_desc => 'Chain lightning that jumps between pirates';
+
+  @override
+  String get pirate_p10_lore => 'Gets even livelier in wet places.';
+
+  @override
+  String get pirate_p12_name => 'Nar the Narwhal';
+
+  @override
+  String get pirate_p12_desc => 'Horn lance skewers up to 3 pirates in a row';
+
+  @override
+  String get pirate_p12_lore =>
+      'A quiet lancer who came down from the northern seas.';
+
+  @override
+  String get pirate_p13_name => 'Walrus the Anchorman';
+
+  @override
+  String get pirate_p13_desc => 'Heavy anchor that rips blocks out';
+
+  @override
+  String get pirate_p13_lore =>
+      'Likes pulling the anchor back more than throwing it.';
+
+  @override
+  String get pirate_p14_name => 'Saw the Sawshark';
+
+  @override
+  String get pirate_p14_desc => 'Saw nose cuts a whole column';
+
+  @override
+  String get pirate_p14_lore => 'Its nose itches whenever it sees a mast.';
+
+  @override
+  String get pirate_p15_name => 'Moby the Whale';
+
+  @override
+  String get pirate_p15_desc => 'Drags the enemy ship 3 cells and pins it';
+
+  @override
+  String get pirate_p15_lore =>
+      'The strongest pull in the sea. Slow, but never lets go.';
+
+  @override
+  String get pirate_p17_name => 'Pingu the Slider';
+
+  @override
+  String get pirate_p17_desc => 'Bounces, then belly-slides across the deck';
+
+  @override
+  String get pirate_p17_lore => 'No ice? No problem. Pingu slides on anything.';
+
+  @override
+  String get pirate_p18_name => 'Sheldon the Horseshoe';
+
+  @override
+  String get pirate_p18_desc => 'Ricochets off walls for repeat hits';
+
+  @override
+  String get pirate_p18_lore =>
+      'A shell that survived 300 million years bounces off anything.';
+
+  @override
+  String get pirate_p19_name => 'Dolphy the Surfer';
+
+  @override
+  String get pirate_p19_desc => 'Clings to the hull and pounds the waterline';
+
+  @override
+  String get pirate_p19_lore => 'Has never stopped smiling on a wave.';
+
+  @override
+  String get pirate_p20_name => 'Orca the Tide';
+
+  @override
+  String get pirate_p20_desc => 'Huge wave sweeps the deck, flooding +8%p';
+
+  @override
+  String get pirate_p20_lore => 'When Orca passes, the whole sea tilts.';
+
+  @override
+  String get pirate_p22_name => 'Jelly the Mine';
+
+  @override
+  String get pirate_p22_desc => 'Floating mine that blows when a ship passes';
+
+  @override
+  String get pirate_p22_lore =>
+      'Nobody knows where she drifts. Not even Jelly.';
+
+  @override
+  String get pirate_p23_name => 'Bara the Torpedo';
+
+  @override
+  String get pirate_p23_desc =>
+      'Straight torpedo that dives under the waterline';
+
+  @override
+  String get pirate_p23_lore => 'Once Bara picks a heading, it never turns.';
+
+  @override
+  String get pirate_p24_name => 'Moray the Eel';
+
+  @override
+  String get pirate_p24_desc => 'Latches on, gnaws blocks and jams pumps';
+
+  @override
+  String get pirate_p24_lore => 'Sees a gap, sticks its teeth in first.';
+
+  @override
+  String get pirate_p25_name => 'Kraki the Little Kraken';
+
+  @override
+  String get pirate_p25_desc => 'Tentacles cling on and keep the water rising';
+
+  @override
+  String get pirate_p25_lore => 'Just a baby, but already has three tentacles.';
+
+  @override
+  String get pirate_p29_name => 'Alba the Albatross';
+
+  @override
+  String get pirate_p29_desc =>
+      'Tap to change course; reverses the wind on hit';
+
+  @override
+  String get pirate_p29_lore =>
+      'The first bird to learn to fly against the wind.';
+
+  @override
+  String get pirate_p30_name => 'Manta the Storm Ray';
+
+  @override
+  String get pirate_p30_desc =>
+      'Blinds the enemy aim line and strikes at random';
+
+  @override
+  String get pirate_p30_lore => 'No path is left in the sky Manta crosses.';
+
+  @override
+  String get pirate_p32_name => 'Crabby the Roper';
+
+  @override
+  String get pirate_p32_desc => 'Swings over and drags a pirate into the sea';
+
+  @override
+  String get pirate_p32_lore => 'One big claw is all it takes.';
+
+  @override
+  String get pirate_p33_name => 'King the Shieldcrab';
+
+  @override
+  String get pirate_p33_desc => 'Lands and seals a cabin for a turn';
+
+  @override
+  String get pirate_p33_lore => 'Has never learned how to put the shield down.';
+
+  @override
+  String get pirate_p34_name => 'Lob the Twin-Claw';
+
+  @override
+  String get pirate_p34_desc => 'Leaps to the next pirate after a knockout';
+
+  @override
+  String get pirate_p34_lore => 'Nobody has seen both claws at rest.';
+
+  @override
+  String get pirate_p35_name => 'Davy the Skull Captain';
+
+  @override
+  String get pirate_p35_desc => 'Summons 3 skeleton crew and revives once';
+
+  @override
+  String get pirate_p35_lore =>
+      'A captain back from the deep. He will not sink twice.';
+
+  @override
+  String get pirate_p37_name => 'Pumpum the Baby Whale';
+
+  @override
+  String get pirate_p37_desc => 'Spouts water out, cutting flooding at once';
+
+  @override
+  String get pirate_p37_lore => 'Proud of the spout from its blowhole.';
+
+  @override
+  String get pirate_p38_name => 'Cook the Hermit Crab';
+
+  @override
+  String get pirate_p38_desc => 'Heals nearby crew and cuts cooldowns by 1';
+
+  @override
+  String get pirate_p38_lore => 'Believes a hungry crew cannot fight.';
+
+  @override
+  String get pirate_p39_name => 'Corey the Coral Golem';
+
+  @override
+  String get pirate_p39_desc => 'Raises a coral wall for 2 turns';
+
+  @override
+  String get pirate_p39_lore =>
+      'Grows slowly, but stands in front of anything.';
+
+  @override
+  String get pirate_p40_name => 'Lamp the Anglerfish';
+
+  @override
+  String get pirate_p40_desc => 'Next turn: full aim line, no wind, +30 fuel';
+
+  @override
+  String get pirate_p40_lore =>
+      'Has never lost the way, even in the darkest sea.';
+
+  @override
   String get blueprint_balanced_name => 'Balanced';
 
   @override

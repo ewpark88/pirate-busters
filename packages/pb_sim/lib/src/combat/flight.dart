@@ -1,9 +1,13 @@
+import 'package:pb_sim/src/combat/barrier_effects.dart';
 import 'package:pb_sim/src/combat/hit_effects.dart';
 import 'package:pb_sim/src/combat/launch.dart';
+import 'package:pb_sim/src/combat/unique_effects.dart';
 import 'package:pb_sim/src/combat/volley.dart';
+import 'package:pb_sim/src/match/barrier.dart';
 import 'package:pb_sim/src/match/match_state.dart';
 import 'package:pb_sim/src/match/sim_event.dart';
 import 'package:pb_sim/src/math/fx.dart';
+import 'package:pb_sim/src/pirate/ability.dart';
 import 'package:pb_sim/src/pirate/ammo.dart';
 import 'package:pb_sim/src/projectile/grid_trace.dart';
 import 'package:pb_sim/src/projectile/projectile.dart';
@@ -22,6 +26,7 @@ int targetSideOf(Projectile p) =>
 /// 한 틱 진행한 결과: 맞은 칸(없으면 null), 해수면에 닿았는지, 끝 지점.
 typedef TraceStep = ({
   TraceHit? hit,
+  Barrier? wall,
   bool sea,
   int x,
   int y,
@@ -44,7 +49,10 @@ TraceStep traceStep(
   p.advance(wind);
   var x1 = p.x;
   var y1 = p.y;
-  final sea = y1 < 0;
+  // 상대 산호 방벽을 지나면 막힌다(코리, ADR-078).
+  final wall = barrierCrossed(state, p, x0, y0, x1, y1);
+  // 어뢰(바라)는 수면에서 멈추지 않고 물속으로 들어간다(ADR-078).
+  final sea = y1 < 0 && !p.submerged;
   if (sea) {
     // 해수면과 만나는 지점까지만 배를 훑는다. 발사는 해수면 위에서만 하므로
     // y0 ≥ 0 > y1 이라 나누는 수가 0 이 아니다.
@@ -69,7 +77,15 @@ TraceStep traceStep(
               target.isExposedPirateAt(cx, cy),
         )
       : null;
-  return (hit: hit, sea: sea, x: x1, y: y1, target: target, at: at);
+  return (
+    hit: hit,
+    wall: wall,
+    sea: sea,
+    x: x1,
+    y: y1,
+    target: target,
+    at: at,
+  );
 }
 
 /// 탄 [p] 를 한 틱 진행하고 닿은 곳의 효과를 낸다. 끝났으면 true.
@@ -78,6 +94,12 @@ bool stepShot(MatchState state, Projectile p, int wind, int ms, int tick) {
   final step = traceStep(state, p, wind, ms, tick);
   final target = step.target;
   final hit = step.hit;
+  final wall = step.wall;
+  if (wall != null) {
+    hitBarrier(state, p, wall);
+    return true;
+  }
+  if (p.submerged && p.y < -torpedoDepthLimit) return true;
   if (hit != null && passNet(p, target, hit.cx, hit.cy, events: state.events)) {
     return false;
   }
@@ -112,6 +134,25 @@ bool passNet(
   final grid = target.grid;
   if (grid.materialAt(cx, cy) != BlockMaterial.net) return false;
   if (p.spec.family == Family.air) return false;
+  if (p.spec.ability == Ability.shred) {
+    // 라이언은 망사(돛)를 늦춰지지 않고 찢어 없앤다(ADR-078).
+    p.passedNet = grid.indexOf(cx, cy);
+    if (events != null && grid.damage(cx, cy, grid.hpAt(cx, cy))) {
+      events.add(
+        SimEvent(
+          SimEventKind.blockDestroyed,
+          side: target.side,
+          cell: grid.indexOf(cx, cy),
+        ),
+      );
+      for (final i in collapseUnsupported(grid)) {
+        events.add(
+          SimEvent(SimEventKind.blockCollapsed, side: target.side, cell: i),
+        );
+      }
+    }
+    return true;
+  }
   p
     ..passedNet = grid.indexOf(cx, cy)
     ..vx = p.vx * netSlowPercent ~/ 100
@@ -153,6 +194,11 @@ const int netSlowPercent = 50;
   for (var tick = 1; !p.isExpired; tick++) {
     final step = traceStep(state, p, wind, ms, tick);
     final hit = step.hit;
+    if (step.wall != null) {
+      xs.add(step.x);
+      ys.add(step.y);
+      break;
+    }
     if (hit != null && passNet(p, step.target, hit.cx, hit.cy)) {
       xs.add(step.x);
       ys.add(step.y);

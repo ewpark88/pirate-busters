@@ -602,6 +602,510 @@ abstract class AppLocalizations {
   /// **'Slow but careful. He keeps the ship afloat.'**
   String get pirate_p36_lore;
 
+  /// No description provided for @pirate_p02_name.
+  ///
+  /// In en, this message translates to:
+  /// **'Starry the Firestar'**
+  String get pirate_p02_name;
+
+  /// No description provided for @pirate_p02_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Spinning fire star that leaves a burning zone'**
+  String get pirate_p02_desc;
+
+  /// No description provided for @pirate_p02_lore.
+  ///
+  /// In en, this message translates to:
+  /// **'Loves fireworks. Has burned three ships so far.'**
+  String get pirate_p02_lore;
+
+  /// No description provided for @pirate_p03_name.
+  ///
+  /// In en, this message translates to:
+  /// **'Crab Brothers'**
+  String get pirate_p03_name;
+
+  /// No description provided for @pirate_p03_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Two bombs on the same arc, one after the other'**
+  String get pirate_p03_desc;
+
+  /// No description provided for @pirate_p03_lore.
+  ///
+  /// In en, this message translates to:
+  /// **'They argue nonstop, yet always aim at the same spot.'**
+  String get pirate_p03_lore;
+
+  /// No description provided for @pirate_p05_name.
+  ///
+  /// In en, this message translates to:
+  /// **'Volke the Volcano Crab'**
+  String get pirate_p05_name;
+
+  /// No description provided for @pirate_p05_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Steep lob that drills 3 layers, then a big blast'**
+  String get pirate_p05_desc;
+
+  /// No description provided for @pirate_p05_lore.
+  ///
+  /// In en, this message translates to:
+  /// **'The volcano on his back has never cooled.'**
+  String get pirate_p05_lore;
+
+  /// No description provided for @pirate_p08_name.
+  ///
+  /// In en, this message translates to:
+  /// **'Bones the Sniper'**
+  String get pirate_p08_name;
+
+  /// No description provided for @pirate_p08_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Lightning-fast shot with a glowing-eye scope'**
+  String get pirate_p08_desc;
+
+  /// No description provided for @pirate_p08_lore.
+  ///
+  /// In en, this message translates to:
+  /// **'When his eye sockets glow, it is already too late.'**
+  String get pirate_p08_lore;
+
+  /// No description provided for @pirate_p09_name.
+  ///
+  /// In en, this message translates to:
+  /// **'Lion the Spinefish'**
+  String get pirate_p09_name;
+
+  /// No description provided for @pirate_p09_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Fan of spines that shreds nets'**
+  String get pirate_p09_desc;
+
+  /// No description provided for @pirate_p09_lore.
+  ///
+  /// In en, this message translates to:
+  /// **'Every fin is a venomous spine cannon.'**
+  String get pirate_p09_lore;
+
+  /// No description provided for @pirate_p10_name.
+  ///
+  /// In en, this message translates to:
+  /// **'Volt the Eel'**
+  String get pirate_p10_name;
+
+  /// No description provided for @pirate_p10_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Chain lightning that jumps between pirates'**
+  String get pirate_p10_desc;
+
+  /// No description provided for @pirate_p10_lore.
+  ///
+  /// In en, this message translates to:
+  /// **'Gets even livelier in wet places.'**
+  String get pirate_p10_lore;
+
+  /// No description provided for @pirate_p12_name.
+  ///
+  /// In en, this message translates to:
+  /// **'Nar the Narwhal'**
+  String get pirate_p12_name;
+
+  /// No description provided for @pirate_p12_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Horn lance skewers up to 3 pirates in a row'**
+  String get pirate_p12_desc;
+
+  /// No description provided for @pirate_p12_lore.
+  ///
+  /// In en, this message translates to:
+  /// **'A quiet lancer who came down from the northern seas.'**
+  String get pirate_p12_lore;
+
+  /// No description provided for @pirate_p13_name.
+  ///
+  /// In en, this message translates to:
+  /// **'Walrus the Anchorman'**
+  String get pirate_p13_name;
+
+  /// No description provided for @pirate_p13_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Heavy anchor that rips blocks out'**
+  String get pirate_p13_desc;
+
+  /// No description provided for @pirate_p13_lore.
+  ///
+  /// In en, this message translates to:
+  /// **'Likes pulling the anchor back more than throwing it.'**
+  String get pirate_p13_lore;
+
+  /// No description provided for @pirate_p14_name.
+  ///
+  /// In en, this message translates to:
+  /// **'Saw the Sawshark'**
+  String get pirate_p14_name;
+
+  /// No description provided for @pirate_p14_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Saw nose cuts a whole column'**
+  String get pirate_p14_desc;
+
+  /// No description provided for @pirate_p14_lore.
+  ///
+  /// In en, this message translates to:
+  /// **'Its nose itches whenever it sees a mast.'**
+  String get pirate_p14_lore;
+
+  /// No description provided for @pirate_p15_name.
+  ///
+  /// In en, this message translates to:
+  /// **'Moby the Whale'**
+  String get pirate_p15_name;
+
+  /// No description provided for @pirate_p15_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Drags the enemy ship 3 cells and pins it'**
+  String get pirate_p15_desc;
+
+  /// No description provided for @pirate_p15_lore.
+  ///
+  /// In en, this message translates to:
+  /// **'The strongest pull in the sea. Slow, but never lets go.'**
+  String get pirate_p15_lore;
+
+  /// No description provided for @pirate_p17_name.
+  ///
+  /// In en, this message translates to:
+  /// **'Pingu the Slider'**
+  String get pirate_p17_name;
+
+  /// No description provided for @pirate_p17_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Bounces, then belly-slides across the deck'**
+  String get pirate_p17_desc;
+
+  /// No description provided for @pirate_p17_lore.
+  ///
+  /// In en, this message translates to:
+  /// **'No ice? No problem. Pingu slides on anything.'**
+  String get pirate_p17_lore;
+
+  /// No description provided for @pirate_p18_name.
+  ///
+  /// In en, this message translates to:
+  /// **'Sheldon the Horseshoe'**
+  String get pirate_p18_name;
+
+  /// No description provided for @pirate_p18_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Ricochets off walls for repeat hits'**
+  String get pirate_p18_desc;
+
+  /// No description provided for @pirate_p18_lore.
+  ///
+  /// In en, this message translates to:
+  /// **'A shell that survived 300 million years bounces off anything.'**
+  String get pirate_p18_lore;
+
+  /// No description provided for @pirate_p19_name.
+  ///
+  /// In en, this message translates to:
+  /// **'Dolphy the Surfer'**
+  String get pirate_p19_name;
+
+  /// No description provided for @pirate_p19_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Clings to the hull and pounds the waterline'**
+  String get pirate_p19_desc;
+
+  /// No description provided for @pirate_p19_lore.
+  ///
+  /// In en, this message translates to:
+  /// **'Has never stopped smiling on a wave.'**
+  String get pirate_p19_lore;
+
+  /// No description provided for @pirate_p20_name.
+  ///
+  /// In en, this message translates to:
+  /// **'Orca the Tide'**
+  String get pirate_p20_name;
+
+  /// No description provided for @pirate_p20_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Huge wave sweeps the deck, flooding +8%p'**
+  String get pirate_p20_desc;
+
+  /// No description provided for @pirate_p20_lore.
+  ///
+  /// In en, this message translates to:
+  /// **'When Orca passes, the whole sea tilts.'**
+  String get pirate_p20_lore;
+
+  /// No description provided for @pirate_p22_name.
+  ///
+  /// In en, this message translates to:
+  /// **'Jelly the Mine'**
+  String get pirate_p22_name;
+
+  /// No description provided for @pirate_p22_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Floating mine that blows when a ship passes'**
+  String get pirate_p22_desc;
+
+  /// No description provided for @pirate_p22_lore.
+  ///
+  /// In en, this message translates to:
+  /// **'Nobody knows where she drifts. Not even Jelly.'**
+  String get pirate_p22_lore;
+
+  /// No description provided for @pirate_p23_name.
+  ///
+  /// In en, this message translates to:
+  /// **'Bara the Torpedo'**
+  String get pirate_p23_name;
+
+  /// No description provided for @pirate_p23_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Straight torpedo that dives under the waterline'**
+  String get pirate_p23_desc;
+
+  /// No description provided for @pirate_p23_lore.
+  ///
+  /// In en, this message translates to:
+  /// **'Once Bara picks a heading, it never turns.'**
+  String get pirate_p23_lore;
+
+  /// No description provided for @pirate_p24_name.
+  ///
+  /// In en, this message translates to:
+  /// **'Moray the Eel'**
+  String get pirate_p24_name;
+
+  /// No description provided for @pirate_p24_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Latches on, gnaws blocks and jams pumps'**
+  String get pirate_p24_desc;
+
+  /// No description provided for @pirate_p24_lore.
+  ///
+  /// In en, this message translates to:
+  /// **'Sees a gap, sticks its teeth in first.'**
+  String get pirate_p24_lore;
+
+  /// No description provided for @pirate_p25_name.
+  ///
+  /// In en, this message translates to:
+  /// **'Kraki the Little Kraken'**
+  String get pirate_p25_name;
+
+  /// No description provided for @pirate_p25_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Tentacles cling on and keep the water rising'**
+  String get pirate_p25_desc;
+
+  /// No description provided for @pirate_p25_lore.
+  ///
+  /// In en, this message translates to:
+  /// **'Just a baby, but already has three tentacles.'**
+  String get pirate_p25_lore;
+
+  /// No description provided for @pirate_p29_name.
+  ///
+  /// In en, this message translates to:
+  /// **'Alba the Albatross'**
+  String get pirate_p29_name;
+
+  /// No description provided for @pirate_p29_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to change course; reverses the wind on hit'**
+  String get pirate_p29_desc;
+
+  /// No description provided for @pirate_p29_lore.
+  ///
+  /// In en, this message translates to:
+  /// **'The first bird to learn to fly against the wind.'**
+  String get pirate_p29_lore;
+
+  /// No description provided for @pirate_p30_name.
+  ///
+  /// In en, this message translates to:
+  /// **'Manta the Storm Ray'**
+  String get pirate_p30_name;
+
+  /// No description provided for @pirate_p30_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Blinds the enemy aim line and strikes at random'**
+  String get pirate_p30_desc;
+
+  /// No description provided for @pirate_p30_lore.
+  ///
+  /// In en, this message translates to:
+  /// **'No path is left in the sky Manta crosses.'**
+  String get pirate_p30_lore;
+
+  /// No description provided for @pirate_p32_name.
+  ///
+  /// In en, this message translates to:
+  /// **'Crabby the Roper'**
+  String get pirate_p32_name;
+
+  /// No description provided for @pirate_p32_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Swings over and drags a pirate into the sea'**
+  String get pirate_p32_desc;
+
+  /// No description provided for @pirate_p32_lore.
+  ///
+  /// In en, this message translates to:
+  /// **'One big claw is all it takes.'**
+  String get pirate_p32_lore;
+
+  /// No description provided for @pirate_p33_name.
+  ///
+  /// In en, this message translates to:
+  /// **'King the Shieldcrab'**
+  String get pirate_p33_name;
+
+  /// No description provided for @pirate_p33_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Lands and seals a cabin for a turn'**
+  String get pirate_p33_desc;
+
+  /// No description provided for @pirate_p33_lore.
+  ///
+  /// In en, this message translates to:
+  /// **'Has never learned how to put the shield down.'**
+  String get pirate_p33_lore;
+
+  /// No description provided for @pirate_p34_name.
+  ///
+  /// In en, this message translates to:
+  /// **'Lob the Twin-Claw'**
+  String get pirate_p34_name;
+
+  /// No description provided for @pirate_p34_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Leaps to the next pirate after a knockout'**
+  String get pirate_p34_desc;
+
+  /// No description provided for @pirate_p34_lore.
+  ///
+  /// In en, this message translates to:
+  /// **'Nobody has seen both claws at rest.'**
+  String get pirate_p34_lore;
+
+  /// No description provided for @pirate_p35_name.
+  ///
+  /// In en, this message translates to:
+  /// **'Davy the Skull Captain'**
+  String get pirate_p35_name;
+
+  /// No description provided for @pirate_p35_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Summons 3 skeleton crew and revives once'**
+  String get pirate_p35_desc;
+
+  /// No description provided for @pirate_p35_lore.
+  ///
+  /// In en, this message translates to:
+  /// **'A captain back from the deep. He will not sink twice.'**
+  String get pirate_p35_lore;
+
+  /// No description provided for @pirate_p37_name.
+  ///
+  /// In en, this message translates to:
+  /// **'Pumpum the Baby Whale'**
+  String get pirate_p37_name;
+
+  /// No description provided for @pirate_p37_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Spouts water out, cutting flooding at once'**
+  String get pirate_p37_desc;
+
+  /// No description provided for @pirate_p37_lore.
+  ///
+  /// In en, this message translates to:
+  /// **'Proud of the spout from its blowhole.'**
+  String get pirate_p37_lore;
+
+  /// No description provided for @pirate_p38_name.
+  ///
+  /// In en, this message translates to:
+  /// **'Cook the Hermit Crab'**
+  String get pirate_p38_name;
+
+  /// No description provided for @pirate_p38_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Heals nearby crew and cuts cooldowns by 1'**
+  String get pirate_p38_desc;
+
+  /// No description provided for @pirate_p38_lore.
+  ///
+  /// In en, this message translates to:
+  /// **'Believes a hungry crew cannot fight.'**
+  String get pirate_p38_lore;
+
+  /// No description provided for @pirate_p39_name.
+  ///
+  /// In en, this message translates to:
+  /// **'Corey the Coral Golem'**
+  String get pirate_p39_name;
+
+  /// No description provided for @pirate_p39_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Raises a coral wall for 2 turns'**
+  String get pirate_p39_desc;
+
+  /// No description provided for @pirate_p39_lore.
+  ///
+  /// In en, this message translates to:
+  /// **'Grows slowly, but stands in front of anything.'**
+  String get pirate_p39_lore;
+
+  /// No description provided for @pirate_p40_name.
+  ///
+  /// In en, this message translates to:
+  /// **'Lamp the Anglerfish'**
+  String get pirate_p40_name;
+
+  /// No description provided for @pirate_p40_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Next turn: full aim line, no wind, +30 fuel'**
+  String get pirate_p40_desc;
+
+  /// No description provided for @pirate_p40_lore.
+  ///
+  /// In en, this message translates to:
+  /// **'Has never lost the way, even in the darkest sea.'**
+  String get pirate_p40_lore;
+
   /// No description provided for @blueprint_balanced_name.
   ///
   /// In en, this message translates to:

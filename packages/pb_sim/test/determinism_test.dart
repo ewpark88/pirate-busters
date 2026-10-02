@@ -8,7 +8,9 @@ import 'fixtures.dart';
 
 /// 샘플 매치(시드 20260929, 끝까지)의 기대 해시. 의도한 규칙 변경일 때만 갱신하고
 /// 커밋 메시지에 이유를 적는다 (개발 계획서 §2.4 DoD 2).
-const int _goldenHash = 3984816757;
+/// R1a-1·R1a-2: 지속 상태·화재 칸·부활·방벽을 해시에 넣어 갱신했다(판 결과는 같다,
+/// ADR-075·ADR-078).
+const int _goldenHash = 1847957209;
 
 int _hash(Match m) => hashMatchState(m.state);
 

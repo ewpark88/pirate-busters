@@ -90,8 +90,12 @@ class GameFactory {
         final id = ids[rng.nextInt(ids.length)];
         if (out.contains(id)) continue;
         final next = [...out, id];
-        if (deckProblem(HullSpec.sloop, catalog, next, costLimitForLevel(1)) ==
-            null) {
+        // 남은 자리를 가장 싼 일반 해적으로 채울 수 있을 때만 넣는다(R1b, 40명).
+        final cost = next.fold(0, (sum, n) => sum + catalog.byId(n).cost);
+        final rest = (size - next.length) * Rarity.common.cost;
+        if (cost + rest <= costLimitForLevel(1) &&
+            deckProblem(HullSpec.sloop, catalog, next, costLimitForLevel(1)) ==
+                null) {
           out.add(id);
         }
       }

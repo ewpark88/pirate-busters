@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pb_ai/pb_ai.dart';
 import 'package:pb_sim/pb_sim.dart';
@@ -107,6 +109,22 @@ void main() {
       final n = path.xs.length - 1;
       expect(path.xs.sublist(0, n), preview.xs.sublist(0, n));
       expect(path.ys.sublist(0, n), preview.ys.sublist(0, n));
+    });
+
+    test('조준 표시의 발사 방향(조준 각도 + 배 기울기)은 실제 탄이 나가는 방향과 같다', () {
+      for (final at in const [300, 1300, 2300, 3300]) {
+        final s = _humanFirst()..update(at);
+        final p = launchShot(
+          s.state,
+          slot: 1,
+          angle: 25000,
+          power: 8000,
+          ms: realMs(s.state, effectiveMs(s.state, s.turnMs)),
+        );
+        final facing = s.state.activeSide == 0 ? 1 : -1;
+        final deg = math.atan2(p.vy, p.vx * facing) * 180 / math.pi;
+        expect(deg, closeTo((25000 + s.launchTilt) / 1000, .1));
+      }
     });
 
     test('내 탄이 나는 동안 탭하면 TAP 이 발사로부터의 틱 수로 기록된다', () {

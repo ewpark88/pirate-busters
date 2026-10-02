@@ -40,7 +40,8 @@ class ShotLanding {
 /// 지금 턴 진영의 [slot] 해적이 쏘면 탄마다 어디에 먼저 닿는지 미리 계산한다
 /// (설계서 §5.1: AI 조준 솔버). 판정과 같은 발사·비행 계산이고, 효과는 내지 않는다.
 /// 쓰는 난수와 투사체 id 는 끝나면 되돌리므로 매치 상태는 바뀌지 않는다.
-/// [tapTick] 은 분열탄이 갈라질 틱(없으면 −1).
+/// [tapTick] 은 분열탄이 갈라지거나 방향 전환 탄이 꺾일 틱(없으면 −1), [tapDir] 은
+/// 방향 전환 방향(ADR-075).
 List<ShotLanding> previewShot(
   MatchState state, {
   required int slot,
@@ -48,6 +49,7 @@ List<ShotLanding> previewShot(
   required int power,
   required int ms,
   int tapTick = -1,
+  int tapDir = 0,
 }) {
   final rng = state.rng.state;
   final nextId = state.nextProjectileId;
@@ -65,6 +67,7 @@ List<ShotLanding> previewShot(
       shots,
       ms,
       tapTick: tapTick,
+      tapDir: tapDir,
       dry: (p, step, tick) {
         final hit = step.hit;
         out.add(

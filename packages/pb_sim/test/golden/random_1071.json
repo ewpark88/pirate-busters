@@ -4,7 +4,7 @@
   "outcome": "timeDecision",
   "winner": 0,
   "turns": 30,
-  "hash": "df9649bc"
+  "hash": "1f07b48b"
  },
  "replay": {
   "version": 7,
@@ -531,7 +531,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "94331cf3"
+    "hash": "fd45c789"
    },
    {
     "turn": 2,
@@ -568,7 +568,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "b8c33dae"
+    "hash": "d9a3342e"
    },
    {
     "turn": 3,
@@ -579,7 +579,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "c8665992"
+    "hash": "f26eab68"
    },
    {
     "turn": 4,
@@ -600,7 +600,7 @@
       "power": 6255
      }
     ],
-    "hash": "1023213c"
+    "hash": "5a538fce"
    },
    {
     "turn": 5,
@@ -617,7 +617,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "f2e54d84"
+    "hash": "d5ea2426"
    },
    {
     "turn": 6,
@@ -640,7 +640,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "e69ea8ec"
+    "hash": "3384069d"
    },
    {
     "turn": 7,
@@ -661,7 +661,7 @@
       "power": 9723
      }
     ],
-    "hash": "7713e704"
+    "hash": "5b0055f5"
    },
    {
     "turn": 8,
@@ -695,7 +695,7 @@
       "ticks": 11
      }
     ],
-    "hash": "78158a4e"
+    "hash": "28fe6a3a"
    },
    {
     "turn": 9,
@@ -711,7 +711,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "e2554846"
+    "hash": "635ef17c"
    },
    {
     "turn": 10,
@@ -727,7 +727,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "0563eddc"
+    "hash": "7f489c64"
    },
    {
     "turn": 11,
@@ -745,7 +745,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "b0e57741"
+    "hash": "e2518519"
    },
    {
     "turn": 12,
@@ -756,7 +756,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "aa2f8afb"
+    "hash": "0fa860d3"
    },
    {
     "turn": 13,
@@ -777,7 +777,7 @@
       "power": 9301
      }
     ],
-    "hash": "5a801520"
+    "hash": "3ab6cc5a"
    },
    {
     "turn": 14,
@@ -802,7 +802,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "7b37cc6f"
+    "hash": "88f43793"
    },
    {
     "turn": 15,
@@ -813,13 +813,13 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "6eb329ae"
+    "hash": "20ec8242"
    },
    {
     "turn": 16,
     "side": 1,
     "cmds": [],
-    "hash": "b2093d81"
+    "hash": "b4e4ba35"
    },
    {
     "turn": 17,
@@ -856,7 +856,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "2e9f3df8"
+    "hash": "97fe47f9"
    },
    {
     "turn": 18,
@@ -880,7 +880,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "828aed00"
+    "hash": "45840611"
    },
    {
     "turn": 19,
@@ -901,7 +901,7 @@
       "power": 7444
      }
     ],
-    "hash": "4d87ffbe"
+    "hash": "e83040f2"
    },
    {
     "turn": 20,
@@ -913,7 +913,7 @@
       "dx": -33
      }
     ],
-    "hash": "10d59162"
+    "hash": "d56b98a3"
    },
    {
     "turn": 21,
@@ -947,7 +947,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "719ca36e"
+    "hash": "d4be86de"
    },
    {
     "turn": 22,
@@ -979,7 +979,7 @@
       "dx": -53
      }
     ],
-    "hash": "eec7b203"
+    "hash": "8bb63fe8"
    },
    {
     "turn": 23,
@@ -995,7 +995,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "54998f2b"
+    "hash": "462ef3c9"
    },
    {
     "turn": 24,
@@ -1006,7 +1006,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "4d63382d"
+    "hash": "37ce7948"
    },
    {
     "turn": 25,
@@ -1017,7 +1017,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "0f1ec301"
+    "hash": "ce202e99"
    },
    {
     "turn": 26,
@@ -1035,7 +1035,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "29ffed13"
+    "hash": "9a328cc2"
    },
    {
     "turn": 27,
@@ -1069,7 +1069,7 @@
       "power": 7557
      }
     ],
-    "hash": "d93d0ead"
+    "hash": "f8792cc9"
    },
    {
     "turn": 28,
@@ -1089,7 +1089,7 @@
       "ticks": 38
      }
     ],
-    "hash": "b03284f4"
+    "hash": "ca2c2d28"
    },
    {
     "turn": 29,
@@ -1107,7 +1107,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "f21bd521"
+    "hash": "5fe3b5fd"
    },
    {
     "turn": 30,
@@ -1143,7 +1143,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "df9649bc"
+    "hash": "1f07b48b"
    }
   ]
  }

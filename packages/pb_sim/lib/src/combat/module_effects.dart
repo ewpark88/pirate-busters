@@ -1,3 +1,4 @@
+import 'package:pb_sim/src/combat/fire.dart';
 import 'package:pb_sim/src/combat/impact.dart';
 import 'package:pb_sim/src/match/match_state.dart';
 import 'package:pb_sim/src/match/rules.dart';
@@ -101,6 +102,16 @@ void _explode(
     events: events,
     rng: rng,
   );
+  // 터진 자리 둘레 칸에 불이 붙는다 (설계서 §2.5·§3.3, ADR-075).
+  igniteAround(
+    ship,
+    m.x,
+    m.y,
+    radius: fireZoneRadius,
+    turns: spreadFireTurns,
+    extraPercent: 0,
+    events: events,
+  );
 }
 
 /// 돛대가 부러지면 같은 세로줄 위쪽 블록이 모두 무너진다 (설계서 §3.3).
@@ -125,25 +136,33 @@ void markFiredWithModules(SideState ship, int slot) {
   }
 }
 
-/// 턴 끝 침수 증가 → 수리·펌프 (설계서 §2.3 턴 끝 처리 2·3번째).
+/// 턴 끝 침수 증가 → 수리·펌프 (설계서 §2.3 턴 끝 처리 2·3번째). 침수 단계 끝에
+/// [beforePumps](크라키 촉수)를 부르고, [pumpsOff](모레이)면 펌프를 쉰다.
 void endTurnWater(
   SideState ship,
   MatchRules rules,
   int turn,
-  List<SimEvent> events,
-) {
+  List<SimEvent> events, {
+  void Function()? beforePumps,
+  bool pumpsOff = false,
+}) {
   final gain = applyFlood(ship, rules, turn);
   if (gain > 0) {
     events.add(SimEvent(SimEventKind.flood, side: ship.side, value: gain));
   }
-  runRepairAndPumps(ship, events);
+  beforePumps?.call();
+  runRepairAndPumps(ship, events, pumpsOff: pumpsOff);
 }
 
 /// 턴 끝 수리·펌프 (설계서 §2.3 턴 끝 처리 3번째): 펌프마다 침수량 −4%p, 목수
 /// 공방마다 ‘구멍’ 단계 블록 1칸을 최대 내구도로 고친다(아래 줄부터, 같은 줄은
 /// 왼쪽부터). 부서진 칸은 고치지 못한다(§2.5).
-void runRepairAndPumps(SideState ship, List<SimEvent> events) {
-  final pumps = ship.modules.intactCount(ModuleKind.pump);
+void runRepairAndPumps(
+  SideState ship,
+  List<SimEvent> events, {
+  bool pumpsOff = false,
+}) {
+  final pumps = pumpsOff ? 0 : ship.modules.intactCount(ModuleKind.pump);
   if (pumps > 0 && ship.flood > 0) {
     final before = ship.flood;
     final next = before - pumps * ModuleNumbers.pumpFlood;

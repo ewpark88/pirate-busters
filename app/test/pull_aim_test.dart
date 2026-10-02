@@ -38,6 +38,34 @@ void main() {
       expect(back.shot.angle, PullAim.maxAngleMdeg);
     });
 
+    test('놓는 순간 손가락이 미끄러진 마지막 움직임은 빼고 보던 조준으로 쏜다', () {
+      final aim = PullAim(facing: 1)
+        ..start()
+        ..drag(-80, 80, ms: 0)
+        ..drag(-80, 80, ms: 400)
+        // 떼면서 20ms 만에 미끄러졌다.
+        ..drag(-60, 95, ms: 1000);
+      final shot = aim.release(ms: 1020);
+      expect(shot!.angle, 45000);
+      expect(shot.power, (113.137 / 160 * maxFirePower).round());
+    });
+
+    test('놓기 전에 충분히 머문 마지막 값은 그대로 쏜다', () {
+      final aim = PullAim(facing: 1)
+        ..start()
+        ..drag(-80, 80, ms: 0)
+        ..drag(-100, 0, ms: 300);
+      expect(aim.release(ms: 900)!.angle, 0);
+    });
+
+    test('시각 없이 놓으면 마지막 값으로 쏜다', () {
+      final aim = PullAim(facing: 1)
+        ..start()
+        ..drag(-80, 80, ms: 0)
+        ..drag(-100, 0, ms: 10);
+      expect(aim.release()!.angle, 0);
+    });
+
     test('너무 약하게 당기고 놓으면 쏘지 않는다', () {
       final aim = PullAim(facing: 1)
         ..start()

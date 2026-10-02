@@ -1,6 +1,7 @@
 import 'package:pb_sim/src/combat/ammo_rules.dart';
 import 'package:pb_sim/src/combat/impact.dart';
 import 'package:pb_sim/src/combat/launch.dart';
+import 'package:pb_sim/src/combat/unique_turns.dart';
 import 'package:pb_sim/src/combat/volley.dart';
 import 'package:pb_sim/src/match/match_state.dart';
 import 'package:pb_sim/src/match/rules.dart';
@@ -28,6 +29,8 @@ void runTurnEffects(MatchState state) {
 }
 
 void _fire(MatchState state, TurnEffect e) {
+  // 지속 턴이 끝난 떠 있는 기뢰·펌프 무력화는 조용히 사라진다.
+  if (e.kind == EffectKind.floatMine || e.kind == EffectKind.pumpOff) return;
   final target = state.sides[e.target];
   final grid = target.grid;
   final ms = realMs(state, 0);
@@ -86,5 +89,9 @@ void _fire(MatchState state, TurnEffect e) {
       );
       final ticks = runVolley(state, bombs, ms);
       state.pausedMs += roundDiv(ticks * 1000, simTickHz);
+    case EffectKind.gnawBite:
+      gnawBite(state, e);
+    case EffectKind.floatMine || EffectKind.pumpOff || EffectKind.tentacle:
+      break;
   }
 }

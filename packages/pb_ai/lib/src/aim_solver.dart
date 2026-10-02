@@ -10,26 +10,33 @@ class ShotPlan {
     required this.tapTick,
     required this.value,
     required this.landings,
+    this.tapDir = 0,
   });
 
   final int slot;
   final int angle;
   final int power;
 
-  /// 분열탄 탭 틱(없으면 −1).
+  /// 분열탄·방향 전환 탭 틱(없으면 −1).
   final int tapTick;
+
+  /// 방향 전환 탭 방향(알바: +1 위, −1 아래, ADR-075).
+  final int tapDir;
   final ShotValue value;
   final List<ShotLanding> landings;
 }
 
 /// 후보 샷 격자: 각도 12 × 힘 8 = 96개 (BALANCE.md A5.1). 지원탄은 제 배에
-/// 떨어지도록 거의 수직 각도를 쓴다.
+/// 떨어지도록 거의 수직 각도를, 어뢰(바라)는 물속으로 들어가도록 아래 각도를 쓴다.
 List<(int angle, int power)> candidateGrid(PirateSpec spec) {
   final support = spec.ammo == AmmoType.support;
+  final torpedo = spec.ability == Ability.torpedo;
+  int angle(int a) => support
+      ? 78000 + a * 1000
+      : (torpedo ? 336000 + a * 2000 : 10000 + a * 6000);
   return [
     for (var a = 0; a < 12; a++)
-      for (var p = 0; p < 8; p++)
-        (support ? 78000 + a * 1000 : 10000 + a * 6000, 3000 + p * 1000),
+      for (var p = 0; p < 8; p++) (angle(a), 3000 + p * 1000),
   ];
 }
 
@@ -53,7 +60,7 @@ ShotPlan evaluateShot(
   try {
     final side = state.activeSide;
     final spec = state.sides[side].crew.pirates[slot].spec;
-    ShotPlan plan(int tap) {
+    ShotPlan plan(int tap, [int dir = 0]) {
       final landings = previewShot(
         state,
         slot: slot,
@@ -61,24 +68,32 @@ ShotPlan evaluateShot(
         power: power,
         ms: ms,
         tapTick: tap,
+        tapDir: dir,
       );
       return ShotPlan(
         slot: slot,
         angle: angle,
         power: power,
         tapTick: tap,
+        tapDir: dir,
         value: scoreLandings(state, side, landings),
         landings: landings,
       );
     }
 
     var best = plan(-1);
-    if (spec.ammo != AmmoType.split || best.landings.isEmpty) return best;
+    final steer = spec.ability == Ability.steer;
+    if ((spec.ammo != AmmoType.split && !steer) || best.landings.isEmpty) {
+      return best;
+    }
     final flight = best.landings.first.tick;
-    for (final pct in tapPercents) {
+    for (final (pct, dir) in [
+      for (final pct in tapPercents)
+        for (final dir in steer ? const [1, -1] : const [0]) (pct, dir),
+    ]) {
       final tick = flight * pct ~/ 100;
       if (tick < 1) continue;
-      final p = plan(tick);
+      final p = plan(tick, dir);
       if (p.value.block + p.value.pirate + p.value.flood + p.value.module >
           best.value.block +
               best.value.pirate +

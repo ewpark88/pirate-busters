@@ -5,8 +5,8 @@ import 'package:flutter/painting.dart' show FontWeight, TextStyle;
 import 'package:pirate_busters/app/app_theme.dart';
 import 'package:pirate_busters/game/view/aim_painter.dart';
 
-/// 조준 숫자 (설계서 §10.4 ‘각도 숫자와 힘(%)을 함께 보여준다’): 각도 호 바깥에
-/// 각도, 발사 지점 아래에 힘 알약. 글자는 화면이 l10n 으로 만들어 넘긴다(§14.2).
+/// 조준 숫자 (설계서 §10.4 ‘각도 숫자와 힘(%)을 함께 보여준다’): 발사 지점
+/// 아래 한 줄에 각도·힘 알약을 나란히. 글자는 화면이 l10n 으로 만들어 넘긴다(§14.2).
 abstract final class AimLabels {
   static final TextPaint _text = TextPaint(
     style: const TextStyle(
@@ -28,40 +28,46 @@ abstract final class AimLabels {
     ..strokeWidth = 1
     ..color = const Color(0xFFC9962E);
 
-  /// 각도 글자 자리: 수평과 조준 방향의 가운데(호의 가운데) 쪽으로 호 바깥 30px.
-  /// 점선(조준 방향)과 겹치지 않는다.
-  static Offset angleAt(Offset from, Offset dir) {
-    final horizontal = Offset(dir.dx.sign == 0 ? 1 : dir.dx.sign, 0);
-    final mid = dir + horizontal;
-    final len = mid.distance;
-    return from + (len == 0 ? horizontal : mid / len) * 30;
-  }
+  /// 숫자 줄 가운데: 발사 지점 아래 32px. 각도 알약과 힘 알약이 이 줄에 나란히
+  /// 놓여 힘 링·점선과 겹치지 않는다.
+  static Offset powerAt(Offset from) => from + const Offset(0, 32);
 
-  /// 힘 알약 가운데: 발사 지점 아래 28px.
-  static Offset powerAt(Offset from) => from + const Offset(0, 28);
+  /// 알약 사이 틈(px).
+  static const double gap = 3;
+
+  /// 가로 [wa]·[wp] 인 각도·힘 알약의 가운데: 줄 가운데에 둘을 붙여 놓는다.
+  static (Offset, Offset) rowAt(Offset from, double wa, double wp) {
+    final mid = powerAt(from);
+    final left = mid.dx - (wa + gap + wp) / 2;
+    return (
+      Offset(left + wa / 2, mid.dy),
+      Offset(left + wa + gap + wp / 2, mid.dy),
+    );
+  }
 
   static void draw(
     Canvas c,
-    Offset from,
-    Offset dir, {
+    Offset from, {
     required String angle,
     required String power,
   }) {
-    _text.render(
-      c,
-      angle,
-      Vector2(angleAt(from, dir).dx, angleAt(from, dir).dy),
-      anchor: Anchor.center,
-    );
-    final at = powerAt(from);
-    final size = _text.getLineMetrics(power).size;
+    final (a, p) = rowAt(from, _width(angle), _width(power));
+    _pillText(c, a, angle);
+    _pillText(c, p, power);
+  }
+
+  static double _width(String text) => _text.getLineMetrics(text).size.x + 10;
+
+  /// 어두운 알약에 금테를 두르고 가운데에 글자를 쓴다. 각도·힘이 같은 모양이다.
+  static void _pillText(Canvas c, Offset at, String text) {
+    final h = _text.getLineMetrics(text).size.y + 4;
     final pill = RRect.fromRectAndRadius(
-      Rect.fromCenter(center: at, width: size.x + 10, height: size.y + 4),
-      Radius.circular((size.y + 4) / 2),
+      Rect.fromCenter(center: at, width: _width(text), height: h),
+      Radius.circular(h / 2),
     );
     c
       ..drawRRect(pill, _pill)
       ..drawRRect(pill, _pillEdge);
-    _text.render(c, power, Vector2(at.dx, at.dy), anchor: Anchor.center);
+    _text.render(c, text, Vector2(at.dx, at.dy), anchor: Anchor.center);
   }
 }

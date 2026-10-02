@@ -12,7 +12,7 @@ class HullSpec {
     required this.moduleLimit,
   });
 
-  /// 슬루프: 12×8, 선실 4, 건조 포인트 60, 2.8칸/초, 탱크 80, 1칸당 연료 4,
+  /// 슬루프: 12×8, 선실 4, 건조 포인트 60, 2.8칸/초, 탱크 80, 1칸당 연료 8,
   /// 기능 모듈 한도 4 (BALANCE.md A3.1·A2.7·A3.3).
   /// MVP 의 유일한 선형 (§11.1).
   static const HullSpec sloop = HullSpec(
@@ -23,7 +23,7 @@ class HullSpec {
     buildPoints: 60,
     moveSpeed: 2800,
     fuelTank: 80,
-    fuelPerCell: 4,
+    fuelPerCell: 8,
     moduleLimit: 4,
   );
 

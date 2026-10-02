@@ -1,3 +1,4 @@
+import 'package:pb_sim/src/combat/barrier_effects.dart';
 import 'package:pb_sim/src/combat/effect_runner.dart';
 import 'package:pb_sim/src/match/judge.dart';
 import 'package:pb_sim/src/match/match_state.dart';
@@ -26,6 +27,7 @@ void beginTurn(MatchState state) {
       SimEvent(SimEventKind.stormStart, side: side, value: turn),
     );
   }
+  expireBarriers(state);
   refuel(state.sides[side], rules.fuelPerTurn);
   state.sides[side].crew.startOwnTurn(side, state.events);
   runTurnEffects(state);

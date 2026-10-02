@@ -32,6 +32,13 @@ class PullAim {
   /// 이만큼 당기면 최대 힘.
   final double maxPullPx;
 
+  /// 손가락을 떼는 순간의 미끄러짐으로 보는 시간(밀리초). 놓을 때는 이보다 앞선
+  /// 마지막 값, 곧 화면에서 보던 조준으로 쏜다.
+  static const int releaseSlipMs = 50;
+
+  /// 최근 당김 기록 (밀리초, dx, dy). 시간 순서.
+  final List<(int, double, double)> _trail = [];
+
   double _dx = 0;
   double _dy = 0;
   bool _active = false;
@@ -52,16 +59,24 @@ class PullAim {
     _armed = false;
     _dx = 0;
     _dy = 0;
+    _trail.clear();
   }
 
-  /// 누른 지점 기준 끈 거리 ([dx], [dy]).
-  void drag(double dx, double dy) {
+  /// 누른 지점 기준 끈 거리 ([dx], [dy]). [ms] 는 입력 시각(놓을 때 미끄러짐을
+  /// 걸러 내는 데 쓴다).
+  void drag(double dx, double dy, {int? ms}) {
     if (!_active) return;
     final len = math.sqrt(dx * dx + dy * dy);
     final k = len > maxPullPx ? maxPullPx / len : 1.0;
     _dx = dx * k;
     _dy = dy * k;
     if (!isWeak) _armed = true;
+    if (ms == null) return;
+    _trail.add((ms, _dx, _dy));
+    // 놓을 때 되돌아볼 만큼만 남긴다.
+    while (_trail.length > 2 && _trail[1].$1 <= ms - releaseSlipMs) {
+      _trail.removeAt(0);
+    }
   }
 
   /// 지금 당긴 상태의 발사 값.
@@ -75,10 +90,20 @@ class PullAim {
   double get stretch =>
       (math.sqrt(_dx * _dx + _dy * _dy) / maxPullPx).clamp(0, 1).toDouble();
 
-  /// 놓기. 너무 약하면 null(취소).
-  AimShot? release() {
+  /// 놓기. 너무 약하면 null(취소). [ms] 를 주면 놓기 직전 [releaseSlipMs] 안의
+  /// 움직임(손가락이 떨어지며 미끄러진 것)은 빼고 그 앞의 마지막 값으로 쏜다.
+  AimShot? release({int? ms}) {
     if (!_active) return null;
     _active = false;
+    if (ms != null) {
+      for (final (t, dx, dy) in _trail.reversed) {
+        if (t <= ms - releaseSlipMs) {
+          _dx = dx;
+          _dy = dy;
+          break;
+        }
+      }
+    }
     final s = shot;
     return s.power < minPower ? null : s;
   }

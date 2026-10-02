@@ -53,7 +53,17 @@ void main() {
   });
 
   test('요약: 같은 등급 평균보다 5%p 넘게 이기는 해적과 시간 판정 25% 초과를 경고한다', () {
-    final setup = factory.setupFor(1, const [AiLevel.normal, AiLevel.normal]);
+    // 왼쪽에만 있는 일반 해적과 오른쪽 일반 해적이 함께 있는 판(같은 등급 평균 비교).
+    bool common(String id) => factory.catalog.byId(id).rarity == Rarity.common;
+    final setup =
+        [
+          for (var s = 1; s < 200; s++)
+            factory.setupFor(s, const [AiLevel.normal, AiLevel.normal]),
+        ].firstWhere(
+          (g) =>
+              g.decks[1].any(common) &&
+              g.decks[0].any((id) => common(id) && !g.decks[1].contains(id)),
+        );
     GameResult game(MatchOutcome o, int winner) => GameResult(
       setup: setup,
       outcome: o,

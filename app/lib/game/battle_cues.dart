@@ -199,7 +199,20 @@ class BattleCues {
             SimEventKind.stormStart ||
             // 터진 턴 효과는 뒤따르는 착탄 이벤트가 그린다.
             SimEventKind.divide ||
-            SimEventKind.effectFired:
+            SimEventKind.effectFired ||
+            // 화재·상태 효과·기뢰·탭 연출은 R1c 에서 그린다 (ADR-075).
+            SimEventKind.ignited ||
+            SimEventKind.burned ||
+            SimEventKind.chained ||
+            SimEventKind.statusApplied ||
+            SimEventKind.mineFloated ||
+            SimEventKind.steered ||
+            SimEventKind.supported ||
+            SimEventKind.intercepted ||
+            SimEventKind.barrierPlaced ||
+            SimEventKind.barrierHit ||
+            SimEventKind.revived ||
+            SimEventKind.healed:
           break;
         case SimEventKind.flood:
           // 턴 끝 침수가 늘면 배 둘레 수면에 물방울이 튄다 (설계서 §10.4). 펌프로

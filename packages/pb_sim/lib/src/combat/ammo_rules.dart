@@ -1,9 +1,11 @@
 import 'package:pb_sim/src/combat/hit_effects.dart';
 import 'package:pb_sim/src/combat/launch.dart';
+import 'package:pb_sim/src/combat/unique_turns.dart';
 import 'package:pb_sim/src/match/match_state.dart';
 import 'package:pb_sim/src/match/rules.dart';
 import 'package:pb_sim/src/math/fx.dart';
 import 'package:pb_sim/src/math/trig.dart';
+import 'package:pb_sim/src/pirate/ability.dart';
 import 'package:pb_sim/src/pirate/ammo.dart';
 import 'package:pb_sim/src/pirate/crew.dart';
 import 'package:pb_sim/src/pirate/pirate_spec.dart';
@@ -44,7 +46,10 @@ List<Projectile> launchVolley(
           state.rng.nextInt(2 * directFarJitterMdeg + 1) - directFarJitterMdeg;
     }
   }
-  final count = spec.ammo == AmmoType.burst ? spec.ammoValue : 1;
+  // 꽃게 형제는 같은 궤적으로 두 발 (ADR-078).
+  final count = spec.ammo == AmmoType.burst
+      ? spec.ammoValue
+      : (spec.ability == Ability.twin ? 2 : 1);
   final shotSpec = _scaled(spec, count, dmgPercent);
   final shots = <Projectile>[];
   for (var i = 0; i < count; i++) {
@@ -101,6 +106,7 @@ void _arm(Projectile p, Reach reach) {
     case _:
       break;
   }
+  armUnique(p);
 }
 
 /// 속도 ([vx], [vy]) 를 [mdeg] 만큼 반시계로 돌린다.

@@ -1,4 +1,5 @@
 import 'package:pb_sim/src/match/rules.dart';
+import 'package:pb_sim/src/pirate/ability.dart';
 import 'package:pb_sim/src/pirate/ammo.dart';
 import 'package:pb_sim/src/pirate/range_grade.dart';
 import 'package:pb_sim/src/ship/hull.dart';
@@ -48,6 +49,8 @@ class PirateSpec {
     this.ammoValue2 = 0,
     this.spreadMdeg = 0,
     this.ammoParam = 0,
+    this.ability = Ability.none,
+    this.abilityValue = 0,
   });
 
   final String id;
@@ -94,6 +97,12 @@ class PirateSpec {
   /// 1 이면 다음 내 턴 시작에 투하(펠리). 쓰지 않는 탄종은 0.
   final int ammoParam;
 
+  /// 고유 능력 (설계서 §4.3 `ability`, ADR-075). 없으면 [Ability.none].
+  final Ability ability;
+
+  /// 고유 능력의 정수 인자(끌기 칸 수, 배수 0.1%p 등). 없으면 0.
+  final int abilityValue;
+
   int get cost => rarity.cost;
 
   /// 피해·반경만 바꾼 사본 (분열 조각·연사 한 발·소형 폭탄).
@@ -116,6 +125,8 @@ class PirateSpec {
     ammoValue2: ammoValue2,
     spreadMdeg: spreadMdeg,
     ammoParam: ammoParam,
+    ability: ability,
+    abilityValue: abilityValue,
   );
 }
 

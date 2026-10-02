@@ -91,10 +91,10 @@ void main() {
     });
   });
 
-  group('해적 12명 데이터 (설계서 §4.2, §4.3)', () {
-    test('12명을 읽어 pb_sim 해적 정의로 바꾼다', () {
+  group('해적 40명 데이터 (설계서 §4.2, §4.3)', () {
+    test('40명을 읽어 pb_sim 해적 정의로 바꾼다', () {
       final data = _load();
-      expect(data.pirates, hasLength(12));
+      expect(data.pirates, hasLength(40));
       final catalog = data.catalog;
       for (final p in data.pirates) {
         expect(catalog.byId(p.id).id, p.id);
@@ -137,6 +137,64 @@ void main() {
       expect(c.byId('p07_hippo').range, RangeGrade.short);
       expect(c.byId('p26_polly').range, RangeGrade.veryLong);
       expect(c.byId('p31_sharky').range, RangeGrade.short);
+      expect(c.byId('p08_bones').range, RangeGrade.veryLong);
+      expect(c.byId('p05_volke').range, RangeGrade.veryLong);
+      expect(c.byId('p23_bara').range, RangeGrade.long);
+    });
+
+    test('등급 분포는 일반 12 · 희귀 12 · 영웅 8 · 전설 8 이다 (설계서 §4.2)', () {
+      final count = List.filled(Rarity.values.length, 0);
+      for (final p in _load().pirates) {
+        count[p.rarity.index]++;
+      }
+      expect(count, [12, 12, 8, 8, 0]);
+    });
+
+    test('쿨다운은 BALANCE.md A4.2 표와 같다', () {
+      const twoTurns = {
+        'p05_volke',
+        'p09_lion',
+        'p10_volt',
+        'p15_moby',
+        'p20_orca',
+        'p24_moray',
+        'p25_kraki',
+        'p30_manta',
+        'p35_davy',
+        'p40_lamp',
+      };
+      const zeroTurns = {
+        'p01_octo',
+        'p06_pang',
+        'p07_hippo',
+        'p11_finn',
+        'p16_suri',
+        'p26_polly',
+        'p27_wing',
+        'p36_tok',
+      };
+      for (final p in _load().pirates) {
+        final want = twoTurns.contains(p.id)
+            ? 2
+            : (zeroTurns.contains(p.id) ? 0 : 1);
+        expect(p.cooldownTurns, want, reason: p.id);
+      }
+    });
+
+    test('고유 효과가 있는 해적은 설계서 §4.3 키와 BALANCE.md A4.2 인자를 갖는다', () {
+      final c = _load().catalog;
+      expect(
+        [c.byId('p15_moby').ability, c.byId('p15_moby').abilityValue],
+        [
+          Ability.pull,
+          3,
+        ],
+      );
+      expect(c.byId('p20_orca').abilityValue, 80);
+      expect(c.byId('p37_pumpum').abilityValue, 150);
+      expect(c.byId('p40_lamp').abilityValue, 30);
+      expect(c.byId('p29_alba').ability, Ability.steer);
+      expect(c.byId('p01_octo').ability, Ability.none);
     });
 
     test('해적 글자 키가 한국어·영어 ARB 에 모두 있다 (설계서 §14.5)', () {
@@ -215,6 +273,45 @@ void main() {
               as Map<String, Object?>;
       final def = PirateDef.fromJson((root['pirates']! as List<Object?>).first);
       expect(def.growth, {'traitLv10': 't10'});
+    });
+
+    test('고유 능력은 ability 의 type·value 로 읽고, 없으면 none 이다 (§4.3, ADR-075)', () {
+      PirateDef read(Map<String, Object?> o) {
+        final root = jsonDecode(_pirate(o)) as Map<String, Object?>;
+        return PirateDef.fromJson((root['pirates']! as List<Object?>).first);
+      }
+
+      final moby = read({
+        'ammo': {'type': 'pierce'},
+        'ability': {'type': 'pull', 'value': 3},
+      });
+      expect(moby.ability, Ability.pull);
+      expect(moby.abilityValue, 3);
+      final spec = moby.toSpec(_load().ladder);
+      expect(spec.ability, Ability.pull);
+      expect(spec.abilityValue, 3);
+      expect(read({}).ability, Ability.none);
+      expect(
+        () => read({
+          'ability': {'type': 'teleport'},
+        }),
+        throwsA(isA<DataFormatError>()),
+      );
+      expect(
+        () => read({
+          'ammo': {'type': 'support'},
+          'ability': {'type': 'bail', 'value': -1},
+        }),
+        throwsA(isA<DataFormatError>()),
+      );
+      expect(
+        () => read({
+          'ammo': {'type': 'explosive'},
+          'ability': {'type': 'floatMine'},
+        }),
+        throwsA(isA<DataFormatError>()),
+        reason: '떠 있는 기뢰는 설치탄에만',
+      );
     });
   });
 

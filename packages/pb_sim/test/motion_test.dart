@@ -30,8 +30,10 @@ void main() {
     });
 
     test('전진·후퇴 한계선(±10칸)에서 멈추고, 막힌 거리는 연료를 쓰지 않는다', () {
-      final m = _calm();
+      final m = _calm()..apply(const MoveCommand(t: 10, dx: 0)); // 턴 시작
       final me = _me(m);
+      // 한계선만 본다: 15칸 분량 연료를 채운다(가득 찬 탱크는 10칸, BALANCE A2.7).
+      me.fuel = 15 * me.fuelPerCell;
       final fuel = me.fuel;
       m.apply(const MoveCommand(t: 100, dx: 150));
       expect(me.offset, 10 * cellUnit);
@@ -117,6 +119,8 @@ void main() {
     test('폭풍 타임이 시작되면 양쪽 연료 +30, 후퇴 한계 밖의 배는 한계선으로 오고 이동 이벤트가 나온다', () {
       final m = _calm(rules: rules);
       final a = m.state.sides[m.state.activeSide];
+      m.apply(const MoveCommand(t: 5, dx: 0)); // 턴 시작
+      a.fuel = 10 * a.fuelPerCell; // 후퇴 한계까지 갈 연료
       m.apply(const MoveCommand(t: 10, dx: -100));
       expect(a.offset, -10 * cellUnit);
       for (var i = 0; i < 3; i++) {

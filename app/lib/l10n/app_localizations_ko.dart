@@ -279,6 +279,258 @@ class AppLocalizationsKo extends AppLocalizations {
   String get pirate_p36_lore => '느리지만 꼼꼼하다. 배는 그가 지킨다.';
 
   @override
+  String get pirate_p02_name => '불가사리 불꽃병 스타리';
+
+  @override
+  String get pirate_p02_desc => '회전하는 불별, 착탄 둘레 화상 지대';
+
+  @override
+  String get pirate_p02_lore => '불꽃놀이를 좋아하다 배를 세 척 태웠다.';
+
+  @override
+  String get pirate_p03_name => '꽃게 형제';
+
+  @override
+  String get pirate_p03_desc => '둘이 한 발씩, 같은 지점에 두 번 터진다';
+
+  @override
+  String get pirate_p03_lore => '둘이 늘 말다툼하지만 겨누는 곳은 늘 같다.';
+
+  @override
+  String get pirate_p05_name => '화산 소라게 볼케';
+
+  @override
+  String get pirate_p05_desc => '초고각 곡사, 3층을 뚫고 크게 폭발';
+
+  @override
+  String get pirate_p05_lore => '등의 화산이 식은 적이 없다.';
+
+  @override
+  String get pirate_p08_name => '해골 저격수 본즈';
+
+  @override
+  String get pirate_p08_desc => '초고속 저격, 빛나는 눈 조준경';
+
+  @override
+  String get pirate_p08_lore => '눈구멍에서 빛이 나면 이미 늦었다.';
+
+  @override
+  String get pirate_p09_name => '쏠배감펭 가시포 라이언';
+
+  @override
+  String get pirate_p09_desc => '가시 부채꼴 연사, 망사를 찢는다';
+
+  @override
+  String get pirate_p09_lore => '지느러미 하나하나가 독 가시 대포다.';
+
+  @override
+  String get pirate_p10_name => '전기뱀장어 볼트';
+
+  @override
+  String get pirate_p10_desc => '맞은 해적에서 번지는 체인 번개';
+
+  @override
+  String get pirate_p10_lore => '물이 많은 곳에서는 더 신이 난다.';
+
+  @override
+  String get pirate_p12_name => '일각고래 나르';
+
+  @override
+  String get pirate_p12_desc => '뿔 창으로 해적 3명까지 일렬로 꿰뚫는다';
+
+  @override
+  String get pirate_p12_lore => '북쪽 바다에서 내려온 조용한 창잡이.';
+
+  @override
+  String get pirate_p13_name => '바다코끼리 닻잡이 왈러스';
+
+  @override
+  String get pirate_p13_desc => '무거운 닻으로 블록을 뚫고 뜯어낸다';
+
+  @override
+  String get pirate_p13_lore => '닻을 던지는 것보다 끌어오는 걸 더 좋아한다.';
+
+  @override
+  String get pirate_p14_name => '톱상어 소오';
+
+  @override
+  String get pirate_p14_desc => '톱날 코로 세로줄을 통째로 자른다';
+
+  @override
+  String get pirate_p14_lore => '돛대만 보면 코가 근질거린다.';
+
+  @override
+  String get pirate_p15_name => '향유고래 모비';
+
+  @override
+  String get pirate_p15_desc => '적 배를 3칸 끌어당기고 다음 턴 묶는다';
+
+  @override
+  String get pirate_p15_lore => '바다에서 가장 큰 힘. 느리지만 놓치지 않는다.';
+
+  @override
+  String get pirate_p17_name => '펭귄 배썰매 핑구';
+
+  @override
+  String get pirate_p17_desc => '튕긴 뒤 갑판을 미끄러지며 연속 피해';
+
+  @override
+  String get pirate_p17_lore => '얼음이 없어도 어디서든 미끄러진다.';
+
+  @override
+  String get pirate_p18_name => '투구게 셀던';
+
+  @override
+  String get pirate_p18_desc => '벽에서 되튀며 여러 번 친다';
+
+  @override
+  String get pirate_p18_lore => '삼억 년을 버틴 등껍질은 어디든 튕긴다.';
+
+  @override
+  String get pirate_p19_name => '돌고래 서퍼 돌피';
+
+  @override
+  String get pirate_p19_desc => '선체에 붙어 흘수선을 연타';
+
+  @override
+  String get pirate_p19_lore => '파도 위에서 웃지 않은 적이 없다.';
+
+  @override
+  String get pirate_p20_name => '범고래 해일 오르카';
+
+  @override
+  String get pirate_p20_desc => '큰 파도로 갑판 해적을 쓸고 침수 +8%p';
+
+  @override
+  String get pirate_p20_lore => '오르카가 지나가면 바다가 한 번 기운다.';
+
+  @override
+  String get pirate_p22_name => '해파리 기뢰 젤리';
+
+  @override
+  String get pirate_p22_desc => '떠 있는 기뢰, 적 배가 지나가면 폭발';
+
+  @override
+  String get pirate_p22_lore => '어디 떠 있는지 아무도 모른다. 젤리 자신도.';
+
+  @override
+  String get pirate_p23_name => '바라쿠다 어뢰 바라';
+
+  @override
+  String get pirate_p23_desc => '곧게 날아 물속으로 파고드는 어뢰';
+
+  @override
+  String get pirate_p23_lore => '한 번 정한 방향은 바꾸지 않는다.';
+
+  @override
+  String get pirate_p24_name => '곰치 모레이';
+
+  @override
+  String get pirate_p24_desc => '붙어서 물어뜯고 펌프를 멈춘다';
+
+  @override
+  String get pirate_p24_lore => '틈만 보이면 이빨부터 들이민다.';
+
+  @override
+  String get pirate_p25_name => '아기 크라켄 크라키';
+
+  @override
+  String get pirate_p25_desc => '촉수로 붙어 턴마다 침수를 올린다';
+
+  @override
+  String get pirate_p25_lore => '아직 아기지만 촉수는 벌써 셋이다.';
+
+  @override
+  String get pirate_p29_name => '알바트로스 알바';
+
+  @override
+  String get pirate_p29_desc => '비행 중 탭으로 방향 전환, 명중 시 바람 역전';
+
+  @override
+  String get pirate_p29_lore => '바람을 거슬러 나는 법을 처음 알아낸 새.';
+
+  @override
+  String get pirate_p30_name => '폭풍 가오리 만타';
+
+  @override
+  String get pirate_p30_desc => '상대 다음 턴 궤적 봉쇄, 무작위 피해';
+
+  @override
+  String get pirate_p30_lore => '만타가 지나간 하늘에는 길이 남지 않는다.';
+
+  @override
+  String get pirate_p32_name => '농게 로프 크래비';
+
+  @override
+  String get pirate_p32_desc => '로프로 넘어가 해적을 물고 바다로';
+
+  @override
+  String get pirate_p32_lore => '큰 집게 하나면 충분하다.';
+
+  @override
+  String get pirate_p33_name => '대게 방패병 킹';
+
+  @override
+  String get pirate_p33_desc => '착지해 선실 하나를 다음 턴 봉쇄';
+
+  @override
+  String get pirate_p33_lore => '방패를 내려놓는 법을 모른다.';
+
+  @override
+  String get pirate_p34_name => '바닷가재 쌍집게 랍';
+
+  @override
+  String get pirate_p34_desc => '쓰러뜨리면 다음 해적으로 점프';
+
+  @override
+  String get pirate_p34_lore => '두 집게가 쉬는 걸 본 사람이 없다.';
+
+  @override
+  String get pirate_p35_name => '해골 선장 데비';
+
+  @override
+  String get pirate_p35_desc => '해골 선원 3명 소환, 한 번 부활';
+
+  @override
+  String get pirate_p35_lore => '바다 밑에서 돌아온 선장. 두 번은 안 진다.';
+
+  @override
+  String get pirate_p37_name => '아기고래 뿜뿜';
+
+  @override
+  String get pirate_p37_desc => '물을 뿜어 침수량 즉시 감소';
+
+  @override
+  String get pirate_p37_lore => '숨구멍으로 뿜는 물줄기가 자랑이다.';
+
+  @override
+  String get pirate_p38_name => '소라게 요리사 쿡';
+
+  @override
+  String get pirate_p38_desc => '주변 아군 치유, 아군 쿨다운 −1';
+
+  @override
+  String get pirate_p38_lore => '배고픈 선원은 싸우지 못한다는 게 신조다.';
+
+  @override
+  String get pirate_p39_name => '산호 골렘 코리';
+
+  @override
+  String get pirate_p39_desc => '원하는 곳에 산호 방벽, 2턴';
+
+  @override
+  String get pirate_p39_lore => '천천히 자라지만 무엇이든 막아선다.';
+
+  @override
+  String get pirate_p40_name => '아귀 항해사 램프';
+
+  @override
+  String get pirate_p40_desc => '다음 내 턴 궤적 확대·바람 무시·연료 +30';
+
+  @override
+  String get pirate_p40_lore => '어두운 바다에서도 길을 잃은 적이 없다.';
+
+  @override
   String get blueprint_balanced_name => '밸런스';
 
   @override

@@ -4,7 +4,7 @@
   "outcome": "annihilation",
   "winner": 0,
   "turns": 3,
-  "hash": "213ffda7"
+  "hash": "3900b61b"
  },
  "replay": {
   "version": 7,
@@ -522,7 +522,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "d09ea09d"
+    "hash": "1af273a1"
    },
    {
     "turn": 2,
@@ -533,7 +533,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "93901e39"
+    "hash": "6ee5cad5"
    },
    {
     "turn": 3,
@@ -547,7 +547,7 @@
       "power": 10000
      }
     ],
-    "hash": "213ffda7"
+    "hash": "3900b61b"
    }
   ]
  }
