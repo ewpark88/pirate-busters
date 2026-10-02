@@ -2,7 +2,7 @@
 
 Sep 29, 2026 · 기준 문서: [Pirate Busters 게임 설계서](./Pirate%20Busters%20게임%20설계서.md)
 
-기준 문서 동기화: `d895beba` (2026-10-02) — 설계서나 `docs/BALANCE.md` 를 고치면 이 계획서에 반영하고 이 값을 갱신한다. 검사: `dart run tool/check_doc_sync.dart` (ADR-008, ADR-037)
+기준 문서 동기화: `3dc73224` (2026-10-02) — 설계서나 `docs/BALANCE.md` 를 고치면 이 계획서에 반영하고 이 값을 갱신한다. 검사: `dart run tool/check_doc_sync.dart` (ADR-008, ADR-037)
 
 > 이 문서는 게임 설계서를 개발 작업 단위로 쪼갠 실행 계획이다. 각 항목의 `§n.n`은 설계서 장 번호다. 밸런스 수치는 여기에 적지 않고 `docs/BALANCE.md`(A§n.n 기준 수치, B§n 계산표)를 참조한다. 진행 상황은 체크박스로 추적한다.
 

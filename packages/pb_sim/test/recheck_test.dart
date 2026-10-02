@@ -56,7 +56,10 @@ void main() {
   test('이동 한계선 앞 0.5칸은 절반 속도라 시간이 더 든다 (설계서 §2.6)', () {
     // 9칸은 감속 구간 밖이다.
     final m = newSampleMatch(3, rules: const MatchRules(waveLevel: 0))
-      ..apply(const MoveCommand(t: 100, dx: 90));
+      ..apply(const MoveCommand(t: 10, dx: 0)); // 턴 시작
+    final me = m.state.sides[m.state.activeSide];
+    me.fuel = 10 * me.fuelPerCell; // 한계선까지 갈 연료
+    m.apply(const MoveCommand(t: 100, dx: 90));
     final free = m.state.busyUntilMs - 100;
     m.apply(MoveCommand(t: m.state.busyUntilMs, dx: 10)); // 마지막 1칸
     final last = m.state.busyUntilMs - 100 - free;

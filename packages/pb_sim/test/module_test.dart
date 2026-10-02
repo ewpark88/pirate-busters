@@ -199,7 +199,10 @@ void main() {
       );
       // 철판 12칸 = 무게 60, 최대 75 → +16%.
       expect(ShipModules.weightFuelPermilleOf(iron), 1160);
-      expect(_side(iron).fuelPerCell, 4 * SideState.fuelUnit * 1160 ~/ 1000);
+      expect(
+        _side(iron).fuelPerCell,
+        HullSpec.sloop.fuelPerCell * SideState.fuelUnit * 1160 ~/ 1000,
+      );
     });
 
     test('연료통: 탱크 +40, 부서지면 탱크가 줄고 주변 1칸 블록에 40 피해', () {
