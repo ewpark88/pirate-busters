@@ -29,3 +29,4 @@
 | [2026-10-02-pvp-hold-no-kpi.md](2026-10-02-pvp-hold-no-kpi.md) | PvP 서버 Cloudflare 확정·착수 보류, Firebase 분석·KPI 측정 제외 (ADR-066·067) |
 | [2026-10-02-A14-shot-slow-camera.md](2026-10-02-A14-shot-slow-camera.md) | 탄 비행 1.3배 느리게(중력 9.5)·카메라 탄 중심 추적, A14 신설 |
 | [2026-10-02-damage-v3.md](2026-10-02-damage-v3.md) | 에셋 v0.26 피해 표현 v3 적용, A15 신설 (ADR-070) |
+| [2026-10-02-quality-diagnosis.md](2026-10-02-quality-diagnosis.md) | 퀄리티 진단(Castle Busters 기준) 계획, 결과는 docs/quality/2026-10-02-gap-analysis.md |

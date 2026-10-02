@@ -88,6 +88,8 @@ void main() {
     await tester.pumpAndSettle();
     expect(store.activeSlot, 1);
     expect(find.text('출전 중'), findsOneWidget);
+    // 저장 알림이 사라질 때까지 기다린다.
+    await tester.pump(const Duration(seconds: 3));
   });
 
   testWidgets('선원: 해적을 빈 선실로 끌어다 놓으면 덱에 들고 저장된다', (tester) async {

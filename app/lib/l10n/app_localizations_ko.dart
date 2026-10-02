@@ -101,6 +101,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get cancel => '취소';
 
   @override
+  String get navBack => '뒤로';
+
+  @override
   String get settings => '설정';
 
   @override
@@ -675,7 +678,7 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
-  String portXp(Object next, Object xp) {
+  String portXp(Object xp, Object next) {
     return '경험치 $xp / $next';
   }
 
@@ -698,6 +701,16 @@ class AppLocalizationsKo extends AppLocalizations {
   String get stageLocked => '앞 스테이지를 먼저 깨세요';
 
   @override
+  String stageTutorialName(Object n) {
+    return '튜토리얼 $n';
+  }
+
+  @override
+  String stageNumberName(Object sea, Object number) {
+    return '$sea-$number';
+  }
+
+  @override
   String get stageKindMidBoss => '중간 보스';
 
   @override
@@ -718,7 +731,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get prepDeck => '출전 해적';
 
   @override
-  String prepCost(Object limit, Object used) {
+  String prepCost(Object used, Object limit) {
     return '코스트 $used / $limit';
   }
 
@@ -804,7 +817,7 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
-  String statFlood(Object enemy, Object mine) {
+  String statFlood(Object mine, Object enemy) {
     return '침수 나 $mine% · 상대 $enemy%';
   }
 
@@ -887,7 +900,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get replaySaved => '리플레이 저장됨';
 
   @override
-  String statDamage(Object blocks, Object damage) {
+  String statDamage(Object damage, Object blocks) {
     return '준 피해 $damage · 부순 블록 $blocks';
   }
 

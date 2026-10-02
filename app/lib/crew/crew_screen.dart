@@ -10,6 +10,9 @@ import 'package:pirate_busters/crew/crew_widgets.dart';
 import 'package:pirate_busters/crew/deck_eval.dart';
 import 'package:pirate_busters/dev/dev_flags.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
+import 'package:pirate_busters/ui/kit/kit_motion.dart';
+import 'package:pirate_busters/ui/kit/pb_panel.dart';
+import 'package:pirate_busters/ui/kit/pb_scaffold.dart';
 
 /// 간이 선원 편성 (설계서 §13.7, 개발 계획서 M5): 해적을 선실 슬롯에 끌어다 놓는다.
 /// 코스트 한도(플레이어 레벨, §4.5)를 넘는 해적은 놓을 수 없다. 바꾸면 바로 저장한다.
@@ -90,64 +93,71 @@ class _CrewScreenState extends ConsumerState<CrewScreen> {
     final owned = {...BattleSetup.starterDeck, ...progress.ownedPirates};
     final used = _costOf(_deck);
     final eval = DeckEval([for (final id in _deck) catalog.pirates.byId(id)]);
-    return Scaffold(
-      appBar: AppBar(toolbarHeight: 40, title: Text(l10n.menuCrew)),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(8),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(
-                width: 300,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(l10n.crewHint),
-                    const SizedBox(height: 6),
-                    Row(
-                      children: [
-                        for (var i = 0; i < _slots.length; i++)
-                          CabinSlot(
-                            slot: i,
-                            pirate: _pirate(catalog.data, _slots[i]),
-                            species: catalog.speciesOf,
-                            canAccept: (id) => _fits(id, i),
-                            onAccept: (id) => _place(id, i),
-                            onTap: () => _remove(i),
+    return PbScaffold(
+      title: l10n.menuCrew,
+      body: Padding(
+        padding: const EdgeInsets.fromLTRB(10, 2, 10, 8),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            SizedBox(
+              width: 330,
+              child: PopIn(
+                child: PbPanel(
+                  title: l10n.crewHint,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          for (var i = 0; i < _slots.length; i++)
+                            CabinSlot(
+                              slot: i,
+                              pirate: _pirate(catalog.data, _slots[i]),
+                              species: catalog.speciesOf,
+                              canAccept: (id) => _fits(id, i),
+                              onAccept: (id) => _place(id, i),
+                              onTap: () => _remove(i),
+                            ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      CostBar(used: used, limit: progress.costLimit),
+                      const SizedBox(height: 6),
+                      Expanded(
+                        child: SingleChildScrollView(child: DeckEvalView(eval)),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: PopIn(
+                order: 1,
+                child: PbPanel(
+                  padding: const EdgeInsets.all(10),
+                  child: GridView.extent(
+                    maxCrossAxisExtent: 104,
+                    childAspectRatio: 0.7,
+                    mainAxisSpacing: 6,
+                    crossAxisSpacing: 6,
+                    children: [
+                      for (final def in catalog.data.pirates)
+                        if (widget.showAll || owned.contains(def.id))
+                          PirateTile(
+                            def: def,
+                            spec: catalog.pirates.byId(def.id),
+                            inDeck: _slots.contains(def.id),
+                            onTap: () => _tapPirate(def.id),
                           ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    CostBar(used: used, limit: progress.costLimit),
-                    const SizedBox(height: 8),
-                    Expanded(
-                      child: SingleChildScrollView(child: DeckEvalView(eval)),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: GridView.extent(
-                  maxCrossAxisExtent: 96,
-                  childAspectRatio: 0.72,
-                  mainAxisSpacing: 4,
-                  crossAxisSpacing: 4,
-                  children: [
-                    for (final def in catalog.data.pirates)
-                      if (widget.showAll || owned.contains(def.id))
-                        PirateTile(
-                          def: def,
-                          spec: catalog.pirates.byId(def.id),
-                          inDeck: _slots.contains(def.id),
-                          onTap: () => _tapPirate(def.id),
-                        ),
-                  ],
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

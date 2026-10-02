@@ -9,7 +9,7 @@ import 'package:pirate_busters/settings/language.dart';
 import 'package:pirate_busters/settings/settings_store.dart';
 import 'package:pirate_busters/ui/cards/rarity_card.dart';
 import 'package:pirate_busters/ui/hud/battle_hud.dart';
-
+import 'package:pirate_busters/ui/kit/pb_panel.dart';
 import 'test_catalog.dart';
 
 Future<BattleSession> _pumpHud(
@@ -80,8 +80,10 @@ void main() {
       for (final locale in supportedLocales) {
         await _pumpHud(tester, locale, paused: true);
         // 상대 선택 2개뿐. 언어는 전투 중에 바꾸지 않는다(설계서 §14.1).
-        expect(find.byType(ChoiceChip), findsNWidgets(2));
+        // 상대 고르기는 키트 탭 두 개다 (설계서 §13 공통).
         final l10n = await AppLocalizations.delegate.load(locale);
+        expect(find.byType(PbTabs), findsOneWidget);
+        expect(find.text(l10n.opponentAi), findsOneWidget);
         expect(find.text(l10n.language), findsNothing);
         expect(tester.takeException(), isNull);
       }

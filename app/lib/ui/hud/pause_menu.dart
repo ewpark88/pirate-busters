@@ -3,6 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pirate_busters/app/providers.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
 import 'package:pirate_busters/ui/hud/hud_style.dart';
+import 'package:pirate_busters/ui/kit/kit_motion.dart';
+import 'package:pirate_busters/ui/kit/pb_button.dart';
+import 'package:pirate_busters/ui/kit/pb_dialog.dart';
+import 'package:pirate_busters/ui/kit/pb_panel.dart';
 import 'package:pirate_busters/ui/meta_icons.dart';
 
 /// 일시정지 창: 저사양·자동 종료, 상대(AI·두 사람), 항복 (설계서 §13.4).
@@ -28,93 +32,96 @@ class PauseMenu extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     return Center(
-      child: HudPanel(
-        padding: const EdgeInsets.all(16),
+      child: PopIn(
         child: SizedBox(
-          width: 360,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Text(l10n.pause, style: const TextStyle(fontSize: 22)),
-              const SizedBox(height: 12),
-              Wrap(
-                spacing: 6,
-                children: [
-                  FilterChip(
-                    label: Text(l10n.lowEndMode),
-                    selected: ref.watch(lowEndProvider),
-                    onSelected: (on) =>
-                        ref.read(lowEndProvider.notifier).set(on: on),
-                  ),
-                  FilterChip(
-                    label: Text(l10n.autoEndTurn),
-                    selected: ref.watch(autoEndTurnProvider),
-                    onSelected: (on) =>
-                        ref.read(autoEndTurnProvider.notifier).set(on: on),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-              Text(
-                l10n.opponent,
-                style: const TextStyle(color: HudColors.mute),
-              ),
-              Wrap(
-                spacing: 6,
-                children: [
-                  ChoiceChip(
-                    label: Text(l10n.opponentAi),
-                    selected: !hotseat,
-                    onSelected: (_) => onOpponent(false),
-                  ),
-                  ChoiceChip(
-                    label: Text(l10n.opponentHotseat),
-                    selected: hotseat,
-                    onSelected: (_) => onOpponent(true),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  TextButton.icon(
-                    onPressed: () => _confirmSurrender(context),
-                    icon: MetaIcons.image(MetaIcons.surrender),
-                    label: Text(
-                      l10n.surrender,
-                      style: const TextStyle(color: HudColors.danger),
+          width: 380,
+          child: PbPanel(
+            title: l10n.pause,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                _toggle(
+                  l10n.lowEndMode,
+                  value: ref.watch(lowEndProvider),
+                  set: (on) => ref.read(lowEndProvider.notifier).set(on: on),
+                ),
+                _toggle(
+                  l10n.autoEndTurn,
+                  value: ref.watch(autoEndTurnProvider),
+                  set: (on) =>
+                      ref.read(autoEndTurnProvider.notifier).set(on: on),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  l10n.opponent,
+                  style: const TextStyle(color: HudColors.mute),
+                ),
+                const SizedBox(height: 4),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: FittedBox(
+                    child: PbTabs(
+                      labels: [l10n.opponentAi, l10n.opponentHotseat],
+                      selected: hotseat ? 1 : 0,
+                      onSelect: (i) => onOpponent(i == 1),
                     ),
                   ),
-                  const Spacer(),
-                  FilledButton(onPressed: onResume, child: Text(l10n.resume)),
-                ],
-              ),
-            ],
+                ),
+                const SizedBox(height: 14),
+                Row(
+                  children: [
+                    PbButton.small(
+                      label: l10n.surrender,
+                      icon: MetaIcons.surrender,
+                      onPressed: () => _confirmSurrender(context),
+                    ),
+                    const Spacer(),
+                    PbButton(
+                      label: l10n.resume,
+                      kind: PbButtonKind.gold,
+                      height: 46,
+                      onPressed: onResume,
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  Future<void> _confirmSurrender(BuildContext context) async {
-    final l10n = AppLocalizations.of(context);
-    final ok = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        content: Text(l10n.surrenderConfirm),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: Text(l10n.cancel),
+  /// 켜기·끄기 한 줄. 글자를 눌러도 바뀐다.
+  Widget _toggle(
+    String label, {
+    required bool value,
+    required ValueChanged<bool> set,
+  }) => GestureDetector(
+    behavior: HitTestBehavior.opaque,
+    onTap: () => set(!value),
+    child: Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(label, style: const TextStyle(color: HudColors.text)),
           ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: Text(l10n.surrender),
-          ),
+          PbToggle(value: value, label: label, onChanged: set),
         ],
       ),
+    ),
+  );
+
+  Future<void> _confirmSurrender(BuildContext context) async {
+    final l10n = AppLocalizations.of(context);
+    final ok = await showPbConfirm(
+      context,
+      message: l10n.surrenderConfirm,
+      cancel: l10n.cancel,
+      confirm: l10n.surrender,
     );
-    if (ok ?? false) onSurrender();
+    if (ok) onSurrender();
   }
 }

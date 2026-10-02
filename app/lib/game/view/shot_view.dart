@@ -15,7 +15,8 @@ import 'package:pirate_busters/game/view/trail_painter.dart';
 import 'package:pirate_busters/game/weapon_styles.dart';
 import 'package:pirate_busters/input/pull_aim.dart';
 
-/// 날아가는 탄, 조준 궤적(앞 30% 점선), 이동 끝 지점 점선, 이동 한계 부표.
+/// 날아가는 탄, 조준 궤적(앞 30% 점선), 이동 끝 지점 점선. 이동 한계 표식은
+/// 배 뒤에 그리는 `LimitMarks` 가 맡는다.
 /// 모두 시뮬레이션 값으로 그린다 (개발 계획서 M4).
 class ShotView extends Component {
   ShotView({
@@ -166,7 +167,6 @@ class ShotView extends Component {
 
   @override
   void render(Canvas canvas) {
-    _renderLimits(canvas);
     GuideMarks.movePreview(canvas, session);
     _renderAim(canvas);
     _renderShots(canvas);
@@ -236,48 +236,8 @@ class ShotView extends Component {
   @override
   void update(double dt) => _flow += dt;
 
-  /// 한계선 (설계서 §2.6): 전진 한계는 암초와 부표 줄, 후퇴 한계는 불빛 부표.
-  void _renderLimits(Canvas canvas) {
-    final state = session.state;
-    final (lo, hi) = moveLimits(state.rules, state.turn);
-    for (final side in state.sides) {
-      final facing = facingOf(side.side);
-      final start = startBowX(side.side);
-
-      _limit(
-        canvas,
-        BattleSprites.limitForward,
-        Coords.x(start + facing * hi),
-        facing,
-        forwardAnchor,
-      );
-      _limit(
-        canvas,
-        BattleSprites.limitBack,
-        Coords.x(sternAt(start + facing * lo, facing, side.grid.width)),
-        facing,
-        backAnchor,
-      );
-    }
-  }
-
   /// 뱃머리가 [bowX] 일 때 고물 x(시뮬레이션 단위). 후퇴 한계 부표와 물살은
   /// 뱃머리가 한계에 닿았을 때의 고물 자리에 둔다 (설계서 §2.6).
   static int sternAt(int bowX, int facing, int widthCells) =>
       bowX - facing * widthCells * cellUnit;
-
-  /// 그림 안에서 한계선·수면이 닿는 점(그림 px). 전진 한계는 부표 줄 끝과 암초
-  /// 사이, 후퇴 한계는 부표 밑동이다. 그림은 오른쪽(+x)을 보는 배 기준이다.
-  static final Vector2 forwardAnchor = Vector2(150, 96);
-  static final Vector2 backAnchor = Vector2(40, 96);
-
-  void _limit(Canvas c, String file, double x, int facing, Vector2 anchor) {
-    final sprite = sprites.get(file);
-    c
-      ..save()
-      ..translate(x, 0)
-      ..scale(facing.toDouble(), 1);
-    sprite.render(c, position: -anchor, size: sprite.srcSize / 2);
-    c.restore();
-  }
 }

@@ -6,6 +6,7 @@ import 'package:pb_sim/pb_sim.dart';
 import 'package:pirate_busters/app/providers.dart';
 import 'package:pirate_busters/campaign/battle_prep_screen.dart';
 import 'package:pirate_busters/campaign/campaign_map_screen.dart';
+import 'package:pirate_busters/campaign/result_parts.dart';
 import 'package:pirate_busters/campaign/rewards.dart';
 import 'package:pirate_busters/campaign/stage_result_screen.dart';
 import 'package:pirate_busters/campaign/star_rules.dart';
@@ -16,10 +17,10 @@ import 'package:pirate_busters/meta/progress.dart';
 import 'package:pirate_busters/meta/progress_store.dart';
 import 'package:pirate_busters/platform/ads.dart';
 import 'package:pirate_busters/platform/analytics.dart';
+import 'package:pirate_busters/port/port_widgets.dart';
 import 'package:pirate_busters/settings/language.dart';
 import 'package:pirate_busters/settings/settings_store.dart';
 import 'package:pirate_busters/ui/meta_icons.dart';
-
 import 'test_catalog.dart';
 
 Future<void> _pump(
@@ -108,8 +109,10 @@ void main() {
     tester,
   ) async {
     await _pump(tester, const CampaignMapScreen(), const Locale('ko'));
-    expect(find.text('t-1'), findsOneWidget);
-    expect(find.byIcon(Icons.lock), findsNWidgets(2));
+    // 내부 id(t-1) 대신 이름으로 보인다 (설계서 §13 공통).
+    expect(find.text('t-1'), findsNothing);
+    expect(find.text('튜토리얼 1'), findsOneWidget);
+    expect(find.image(const AssetImage(PortIcons.lock)), findsNWidgets(2));
     expect(find.text('1-1'), findsNothing);
   });
 
@@ -123,7 +126,7 @@ void main() {
         seenStories: ['sea_1_intro'],
       ),
     );
-    expect(find.byIcon(Icons.lock), findsNWidgets(5));
+    expect(find.image(const AssetImage(PortIcons.lock)), findsNWidgets(5));
     await _pump(
       tester,
       const CampaignMapScreen(),
@@ -133,7 +136,7 @@ void main() {
         seenStories: ['sea_1_intro'],
       ).recordStage('1-1', 2),
     );
-    expect(find.byIcon(Icons.lock), findsNWidgets(4));
+    expect(find.image(const AssetImage(PortIcons.lock)), findsNWidgets(4));
     expect(find.image(const AssetImage(MetaIcons.starOn)), findsNWidgets(2));
   });
 
@@ -151,7 +154,7 @@ void main() {
       const Locale('ko'),
     );
     final l10n = await AppLocalizations.delegate.load(const Locale('ko'));
-    expect(find.byType(LinearProgressIndicator), findsNWidgets(2));
+    expect(find.byType(FloodBar), findsNWidgets(2));
     expect(find.text(l10n.rewardFirstClear), findsOneWidget);
     expect(find.textContaining(l10n.pirate_p16_name), findsOneWidget);
     expect(find.text(l10n.levelUpTo(2)), findsOneWidget);

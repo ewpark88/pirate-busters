@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:pb_ai/pb_ai.dart';
+import 'package:pirate_busters/app/app_theme.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
 import 'package:pirate_busters/meta/progress.dart';
-import 'package:pirate_busters/ui/hud/hud_style.dart';
+import 'package:pirate_busters/ui/kit/kit_art.dart';
+import 'package:pirate_busters/ui/kit/kit_motion.dart';
+import 'package:pirate_busters/ui/kit/pb_button.dart';
 import 'package:pirate_busters/ui/meta_icons.dart';
 
 /// AI 난이도 이름 (설계서 §5.2).
@@ -14,7 +17,18 @@ String levelLabel(AppLocalizations l10n, AiLevel level) => switch (level) {
   AiLevel.hell => l10n.levelHell,
 };
 
-/// 항구 위쪽: 프로필(레벨·경험치 막대)·골드·설정 (설계서 §13.2). 닉네임·티어·진주는 R4.
+/// 항구 아이콘 (에셋 `ui/icons/`).
+abstract final class PortIcons {
+  static const String _dir = 'assets/images/ui/icons';
+  static const String ship = '$_dir/ship.png';
+  static const String crew = '$_dir/crew.png';
+  static const String gear = '$_dir/gear.png';
+  static const String lock = '$_dir/lock.png';
+  static const String quest = '$_dir/quest.png';
+}
+
+/// 항구 위쪽: 프로필(레벨·경험치 막대)·골드·설정 (설계서 §13.2, §13 공통).
+/// 닉네임·티어·진주는 R4.
 class PortTopBar extends StatelessWidget {
   const PortTopBar({
     required this.progress,
@@ -40,65 +54,122 @@ class PortTopBar extends StatelessWidget {
       Localizations.localeOf(context).toString(),
     );
     return Padding(
-      padding: const EdgeInsets.fromLTRB(8, 6, 8, 0),
+      padding: const EdgeInsets.fromLTRB(10, 8, 10, 0),
       child: Row(
         children: [
-          HudPanel(
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(l10n.portLevel(progress.level)),
-                const SizedBox(width: 8),
-                SizedBox(
-                  width: 90,
-                  child: Tooltip(
-                    message: l10n.portXp(
-                      numbers.format(progress.xp),
-                      numbers.format(progress.xpToNext),
-                    ),
-                    child: LinearProgressIndicator(
-                      value: (progress.xp / progress.xpToNext).clamp(0, 1),
-                      minHeight: 8,
-                      color: HudColors.warn,
-                      backgroundColor: HudColors.panelHi,
-                    ),
-                  ),
-                ),
-              ],
+          Tooltip(
+            message: l10n.portXp(
+              numbers.format(progress.xp),
+              numbers.format(progress.xpToNext),
+            ),
+            child: _LevelBadge(
+              label: l10n.portLevel(progress.level),
+              fill: (progress.xp / progress.xpToNext).clamp(0, 1).toDouble(),
             ),
           ),
-          const SizedBox(width: 8),
-          HudPanel(
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                MetaIcons.image(MetaIcons.gold, size: 18),
-                const SizedBox(width: 4),
-                Text(numbers.format(progress.gold)),
-              ],
+          const SizedBox(width: 10),
+          _Pill(
+            icon: MetaIcons.gold,
+            child: CountUp(
+              value: progress.gold,
+              builder: (context, v) =>
+                  OutlinedText(numbers.format(v), size: 17),
             ),
           ),
           const Spacer(),
-          if (onTestBattle != null)
-            IconButton(
+          if (onTestBattle != null) ...[
+            PbIconButton(
+              icon: PortIcons.quest,
               tooltip: l10n.devTestBattle,
               onPressed: onTestBattle,
-              icon: const Icon(Icons.bug_report, color: HudColors.text),
             ),
-          IconButton(
+            const SizedBox(width: 8),
+          ],
+          PbIconButton(
+            icon: PortIcons.crew,
             tooltip: l10n.menuHotseat,
             onPressed: onHotseat,
-            icon: const Icon(Icons.people, color: HudColors.text),
           ),
-          IconButton(
+          const SizedBox(width: 8),
+          PbIconButton(
+            icon: PortIcons.gear,
             tooltip: l10n.settings,
             onPressed: onSettings,
-            icon: const Icon(Icons.settings, color: HudColors.text),
           ),
         ],
       ),
     );
   }
+}
+
+/// 레벨 글자와 경험치 막대.
+class _LevelBadge extends StatelessWidget {
+  const _LevelBadge({required this.label, required this.fill});
+
+  final String label;
+  final double fill;
+
+  @override
+  Widget build(BuildContext context) => _Pill(
+    child: Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        OutlinedText(label, size: 17, font: AppFonts.display),
+        const SizedBox(width: 8),
+        Container(
+          width: 92,
+          height: 12,
+          decoration: BoxDecoration(
+            color: const Color(0xFF0E1014),
+            borderRadius: BorderRadius.circular(6),
+            border: Border.all(color: const Color(0xFF5B79C9), width: 1.5),
+          ),
+          alignment: Alignment.centerLeft,
+          child: FractionallySizedBox(
+            widthFactor: fill,
+            child: Container(
+              decoration: BoxDecoration(
+                color: const Color(0xFF63D06A),
+                borderRadius: BorderRadius.circular(5),
+              ),
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+/// 금 테두리 둥근 판 (위쪽 재화·레벨).
+class _Pill extends StatelessWidget {
+  const _Pill({required this.child, this.icon});
+
+  final Widget child;
+  final String? icon;
+
+  @override
+  Widget build(BuildContext context) => Container(
+    height: 40,
+    padding: EdgeInsets.fromLTRB(icon == null ? 14 : 6, 0, 14, 0),
+    decoration: BoxDecoration(
+      color: const Color(0xE61B1E25),
+      borderRadius: BorderRadius.circular(20),
+      border: Border.all(color: AppColors.gold, width: 2),
+      boxShadow: const [
+        BoxShadow(color: Color(0x66000000), offset: Offset(0, 3)),
+      ],
+    ),
+    child: Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (icon != null) ...[
+          Image.asset(icon!, width: 28, height: 28),
+          const SizedBox(width: 6),
+        ],
+        child,
+      ],
+    ),
+  );
 }
 
 /// 항구 아래 탭: 조선소 · 출항(크고 돌출) · 선원 (설계서 §13.2). 랭크·상점 탭은 R4.
@@ -120,71 +191,45 @@ class PortTabs extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+    padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
     child: Row(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        _Tab(
-          icon: shipyardLocked ? Icons.lock : Icons.construction,
-          label: labels.shipyard,
-          onTap: onShipyard,
-          dim: shipyardLocked,
-        ),
-        const SizedBox(width: 12),
-        FilledButton.icon(
-          onPressed: onSail,
-          icon: const Icon(Icons.sailing),
-          label: Text(labels.sail, style: const TextStyle(fontSize: 22)),
-          style: FilledButton.styleFrom(
-            backgroundColor: HudColors.border,
-            foregroundColor: HudColors.panel,
-            minimumSize: const Size(200, 64),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-            ),
+        PopIn(
+          order: 1,
+          child: PbButton(
+            label: labels.shipyard,
+            icon: shipyardLocked ? PortIcons.lock : PortIcons.ship,
+            kind: PbButtonKind.secondary,
+            height: 54,
+            minWidth: 150,
+            onPressed: onShipyard,
           ),
         ),
-        const SizedBox(width: 12),
-        _Tab(icon: Icons.groups, label: labels.crew, onTap: onCrew),
+        const SizedBox(width: 14),
+        PopIn(
+          child: PbButton(
+            label: labels.sail,
+            height: 72,
+            minWidth: 240,
+            fontSize: 28,
+            onPressed: onSail,
+          ),
+        ),
+        const SizedBox(width: 14),
+        PopIn(
+          order: 2,
+          child: PbButton(
+            label: labels.crew,
+            icon: PortIcons.crew,
+            kind: PbButtonKind.secondary,
+            height: 54,
+            minWidth: 150,
+            onPressed: onCrew,
+          ),
+        ),
       ],
-    ),
-  );
-}
-
-class _Tab extends StatelessWidget {
-  const _Tab({
-    required this.icon,
-    required this.label,
-    required this.onTap,
-    this.dim = false,
-  });
-
-  final IconData icon;
-  final String label;
-  final VoidCallback onTap;
-  final bool dim;
-
-  @override
-  Widget build(BuildContext context) => Opacity(
-    opacity: dim ? 0.6 : 1,
-    child: HudPanel(
-      padding: EdgeInsets.zero,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(10),
-        child: SizedBox(
-          width: 110,
-          height: 52,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(icon, size: 22),
-              Text(label, style: const TextStyle(fontSize: 13)),
-            ],
-          ),
-        ),
-      ),
     ),
   );
 }

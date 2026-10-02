@@ -254,6 +254,12 @@ abstract class AppLocalizations {
   /// **'Cancel'**
   String get cancel;
 
+  /// No description provided for @navBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get navBack;
+
   /// No description provided for @settings.
   ///
   /// In en, this message translates to:
@@ -1284,7 +1290,7 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'XP {xp} / {next}'**
-  String portXp(Object next, Object xp);
+  String portXp(Object xp, Object next);
 
   /// No description provided for @portSail.
   ///
@@ -1321,6 +1327,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Clear the previous stage first'**
   String get stageLocked;
+
+  /// No description provided for @stageTutorialName.
+  ///
+  /// In en, this message translates to:
+  /// **'Tutorial {n}'**
+  String stageTutorialName(Object n);
+
+  /// No description provided for @stageNumberName.
+  ///
+  /// In en, this message translates to:
+  /// **'{sea}-{number}'**
+  String stageNumberName(Object sea, Object number);
 
   /// No description provided for @stageKindMidBoss.
   ///
@@ -1362,7 +1380,7 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'Cost {used} / {limit}'**
-  String prepCost(Object limit, Object used);
+  String prepCost(Object used, Object limit);
 
   /// No description provided for @prepEnemy.
   ///
@@ -1494,7 +1512,7 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'Flooding you {mine}% · enemy {enemy}%'**
-  String statFlood(Object enemy, Object mine);
+  String statFlood(Object mine, Object enemy);
 
   /// No description provided for @resultDouble.
   ///
@@ -1638,7 +1656,7 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'Damage dealt {damage} · blocks broken {blocks}'**
-  String statDamage(Object blocks, Object damage);
+  String statDamage(Object damage, Object blocks);
 
   /// No description provided for @statAccuracy.
   ///

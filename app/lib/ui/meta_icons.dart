@@ -36,6 +36,9 @@ abstract final class MetaIcons {
   // 항구 재화 (§13.2). 진주는 R4.
   static const String gold = '$_dir/currency/gold.png';
 
+  /// 조선소 추천 설계도 불러오기 (§13.6).
+  static const String blueprint = '$_dir/currency/blueprint.png';
+
   /// AI 성격 아이콘 (§13.3, §5.3).
   static String personality(Personality p) => '$_dir/ai/ai_${p.name}.png';
 

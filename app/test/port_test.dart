@@ -73,7 +73,7 @@ void main() {
         );
         expect(tester.takeException(), isNull);
         expect(find.textContaining('7'), findsWidgets);
-        expect(find.byIcon(Icons.lock), findsOneWidget);
+        expect(find.image(const AssetImage(PortIcons.lock)), findsOneWidget);
       });
     }
 
@@ -87,6 +87,8 @@ void main() {
         ),
         const Locale('ko'),
       );
+      // 골드는 세어 올라간다 (설계서 §13 공통). 끝나면 최종 값이다.
+      await tester.pumpAndSettle();
       expect(find.text('12,400'), findsOneWidget);
     });
 
@@ -102,8 +104,8 @@ void main() {
         ),
         const Locale('ko'),
       );
-      expect(find.byIcon(Icons.lock), findsNothing);
-      expect(find.byIcon(Icons.construction), findsOneWidget);
+      expect(find.image(const AssetImage(PortIcons.lock)), findsNothing);
+      expect(find.image(const AssetImage(PortIcons.ship)), findsOneWidget);
     });
   });
 

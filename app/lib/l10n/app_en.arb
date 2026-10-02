@@ -78,6 +78,7 @@
   "surrender": "Surrender",
   "surrenderConfirm": "Give up this battle?",
   "cancel": "Cancel",
+  "navBack": "Back",
   "settings": "Settings",
   "language": "Language",
   "languageSystem": "System",
@@ -437,12 +438,26 @@
   "story_s1_12_ally": "Octo: The first shard is ours. Everyone, fire!",
   "portLevel": "Lv {level}",
   "portXp": "XP {xp} / {next}",
+  "@portXp": {
+    "placeholders": {
+      "xp": {},
+      "next": {}
+    }
+  },
   "portSail": "Set Sail",
   "portShipyardLocked": "The shipyard opens from your 4th battle",
   "soundOn": "Sound effects",
   "vibrationOn": "Vibration",
   "campaignTitle": "Campaign",
   "stageLocked": "Clear the previous stage first",
+  "stageTutorialName": "Tutorial {n}",
+  "stageNumberName": "{sea}-{number}",
+  "@stageNumberName": {
+    "placeholders": {
+      "sea": {},
+      "number": {}
+    }
+  },
   "stageKindMidBoss": "Mid boss",
   "stageKindBoss": "Sea boss",
   "prepTitle": "Battle Prep",
@@ -450,9 +465,21 @@
   "prepBlueprintEmpty": "Empty (Balanced preset)",
   "prepDeck": "Crew",
   "prepCost": "Cost {used} / {limit}",
+  "@prepCost": {
+    "placeholders": {
+      "used": {},
+      "limit": {}
+    }
+  },
   "prepEnemy": "Opponent",
   "prepEnemyCount": "{count} enemy pirates",
   "prepWeather": "Waves {wave} · Wind up to {wind}",
+  "@prepWeather": {
+    "placeholders": {
+      "wave": {},
+      "wind": {}
+    }
+  },
   "prepEditDeck": "Edit crew",
   "prepSail": "Set sail",
   "dialogueTap": "Tap to continue",
@@ -472,6 +499,12 @@
   "statTurns": "Turns used {turns}",
   "statShots": "{shots} shots",
   "statFlood": "Flooding you {mine}% · enemy {enemy}%",
+  "@statFlood": {
+    "placeholders": {
+      "mine": {},
+      "enemy": {}
+    }
+  },
   "resultDouble": "Watch ad for 2×",
   "levelUpTo": "Level up! Lv {level}",
   "storySkip": "Skip",
@@ -496,6 +529,12 @@
   "replaySave": "Save replay",
   "replaySaved": "Replay saved",
   "statDamage": "Damage dealt {damage} · blocks broken {blocks}",
+  "@statDamage": {
+    "placeholders": {
+      "damage": {},
+      "blocks": {}
+    }
+  },
   "statAccuracy": "Accuracy {percent}%",
   "iapRemoveAds": "Remove ads",
   "iapBought": "Purchased",
