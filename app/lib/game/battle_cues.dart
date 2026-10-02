@@ -8,8 +8,11 @@ import 'package:pirate_busters/game/camera_director.dart';
 import 'package:pirate_busters/game/coords.dart';
 import 'package:pirate_busters/game/hit_tag.dart';
 import 'package:pirate_busters/game/view/fx_layer.dart';
+import 'package:pirate_busters/game/view/fx_text.dart';
 import 'package:pirate_busters/game/view/impact_accent.dart';
 import 'package:pirate_busters/game/view/ship_view.dart';
+import 'package:pirate_busters/game/view/shot_view.dart';
+import 'package:pirate_busters/game/view/water_fx.dart';
 import 'package:pirate_busters/game/weapon_styles.dart';
 
 /// 히트스톱 (설계서 §10.4): 맞는 순간 연출만 0.07초 멈춘다. 렌더만 멈추고 시뮬레이션
@@ -75,7 +78,8 @@ class BattleCues {
     return session.state.sides[p.side].crew.pirates[p.slot].spec;
   }
 
-  Vector2 _cellWorld(int side, int cell) {
+  /// 칸 (진영 [side], 칸 번호 [cell]) 의 월드 위치.
+  Vector2 cellWorld(int side, int cell) {
     final s = session.state.sides[side];
     final (x, y) = s.frame.cellCenter(
       cell % s.grid.width,
@@ -109,6 +113,10 @@ class BattleCues {
           final at = Coords.point(e.x, e.y);
           // 맞은 배는 쏜 쪽 반대로 밀린다.
           final push = facingOf(1 - e.side);
+          // 폭발하는 탄은 맞은 칸에 그을음을 남긴다 (설계서 §10.4).
+          if (e.cell >= 0 && (spec == null || explodes(spec.family))) {
+            ships[e.side].scorched.add(e.cell);
+          }
           if (spec == null) {
             fx.explosion(at);
           } else {
@@ -136,12 +144,12 @@ class BattleCues {
           director.impact(at);
           playSfx(Sfx.splash);
         case SimEventKind.blockDestroyed:
-          fx.blockBroken(_cellWorld(e.side, e.cell));
+          fx.blockBroken(cellWorld(e.side, e.cell));
           if (!woodPlayed) playSfx(Sfx.wood);
           woodPlayed = true;
         case SimEventKind.blockCollapsed:
           // 끊긴 덩어리는 배 가운데에서 먼 쪽으로 기울며 떨어진다.
-          final at = _cellWorld(e.side, e.cell);
+          final at = cellWorld(e.side, e.cell);
           final outward = (at.x - ships[e.side].position.x).sign;
           fx.collapsed(
             at,
@@ -152,8 +160,15 @@ class BattleCues {
           // 한계선에 닿으면 물살이 튄다 (설계서 §2.6).
           final side = session.state.sides[e.side];
           final (lo, hi) = moveLimits(session.state.rules, session.state.turn);
-          if (side.offset == lo || side.offset == hi) {
-            fx.splash(Coords.point(e.x, 0));
+          if (side.offset == hi) fx.splash(Coords.point(e.x, 0), limit: true);
+          if (side.offset == lo) {
+            // 후퇴 한계에는 고물이 닿는다.
+            final stern = ShotView.sternAt(
+              e.x,
+              facingOf(e.side),
+              side.grid.width,
+            );
+            fx.splash(Coords.point(stern, 0), limit: true);
           }
         case SimEventKind.bounce:
           fx.splash(Coords.point(e.x, 0));
@@ -172,9 +187,9 @@ class BattleCues {
           }
         case SimEventKind.mineAttached:
           // 설치탄이 붙었다: 남은 턴 배지는 EffectBadges 가 그린다.
-          fx.tag(_cellWorld(e.side, e.cell), tagText(HitTag.mine));
+          fx.tag(cellWorld(e.side, e.cell), tagText(HitTag.mine));
         case SimEventKind.repaired:
-          final at = _cellWorld(e.side, e.cell);
+          final at = cellWorld(e.side, e.cell);
           fx.repair(at, tier: tier);
           if (!repairTagged) fx.tag(at, tagText(HitTag.repair));
           repairTagged = true;
@@ -183,14 +198,42 @@ class BattleCues {
             SimEventKind.pirateFell ||
             SimEventKind.pirateReturned ||
             SimEventKind.pirateDown ||
-            SimEventKind.flood ||
             SimEventKind.stormStart ||
             // 터진 턴 효과는 뒤따르는 착탄 이벤트가 그린다.
             SimEventKind.divide ||
-            SimEventKind.effectFired ||
-            SimEventKind.moduleDestroyed:
+            SimEventKind.effectFired:
           break;
+        case SimEventKind.flood:
+          // 턴 끝 침수가 늘면 배 둘레 수면에 물방울이 튄다 (설계서 §10.4). 펌프로
+          // 줄면(음수) 튀지 않는다.
+          if (floodRose(e.value)) {
+            fx.droplets(Vector2(ships[e.side].position.x, 0));
+          }
+        case SimEventKind.moduleDestroyed:
+          // 화약고·연료통 유폭: 일반 명중보다 큰 폭발·긴 흔들림·폭발음 (§10.4).
+          final radius = blastRadius(e.value);
+          if (radius == 0) break;
+          final at = cellWorld(e.side, e.cell);
+          ships[e.side].scorched.add(e.cell);
+          fx.explosion(at, radius: radius, heavy: true);
+          director.impact(at, punch: true);
+          ships[e.side].rock(facingOf(1 - e.side));
+          playSfx(Sfx.boom);
       }
     }
   }
+
+  /// 침수 이벤트 값 [value](0.1%p)가 늘어난 것인가. 펌프는 음수를 낸다.
+  static bool floodRose(int value) => value > 0;
+
+  /// 폭발하는 계열인가: 투척·공중탄 (설계서 §10.4).
+  static bool explodes(Family f) => f == Family.lob || f == Family.air;
+
+  /// 모듈 [kindIndex] 가 부서질 때의 유폭 반경(칸). 터지지 않는 모듈은 0.
+  static int blastRadius(int kindIndex) =>
+      switch (ModuleKind.values[kindIndex]) {
+        ModuleKind.magazine => ModuleNumbers.magazineRadius,
+        ModuleKind.fuelTank => ModuleNumbers.fuelTankRadius,
+        _ => 0,
+      };
 }

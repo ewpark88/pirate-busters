@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pirate_busters/shipyard/ship_grid_view.dart';
 import 'package:pirate_busters/shipyard/shipyard_model.dart';
 import 'package:pirate_busters/ui/labels.dart';
 
@@ -15,7 +16,6 @@ class ShipGridEditor extends StatelessWidget {
       final cell = (box.maxWidth / model.width)
           .clamp(0, box.maxHeight / model.height)
           .toDouble();
-      final size = Size(cell * model.width, cell * model.height);
       (int, int) at(Offset p) =>
           (p.dx ~/ cell, model.height - 1 - (p.dy ~/ cell));
       return Center(
@@ -41,10 +41,7 @@ class ShipGridEditor extends StatelessWidget {
           },
           child: ListenableBuilder(
             listenable: model,
-            builder: (context, _) => CustomPaint(
-              size: size,
-              painter: ShipGridPainter(model, cell),
-            ),
+            builder: (context, _) => ShipGridView(model: model, cell: cell),
           ),
         ),
       );
@@ -52,13 +49,16 @@ class ShipGridEditor extends StatelessWidget {
   );
 }
 
-/// 설계도 격자 그림: 재질 칸, 선실 번호·사람, 모듈 아이콘, 흘수선. 조선소와 전투 준비
-/// 미리보기(`BlueprintPreview`)가 같이 쓴다.
+/// 설계도 격자 그림. 바탕([overlay] 가 아니면)은 칸 선과 재질 색, 겹([overlay])은
+/// 끊긴 블록의 빨간 테두리와 흘수선이다. 재질 타일·선실·모듈 그림은 [ShipGridView] 가
+/// 그 사이에 겹친다.
 class ShipGridPainter extends CustomPainter {
-  ShipGridPainter(this.model, this.cell) : loose = model.loose;
+  ShipGridPainter(this.model, this.cell, {this.overlay = false})
+    : loose = model.loose;
 
   final ShipyardModel model;
   final double cell;
+  final bool overlay;
   final Set<int> loose;
 
   static final Paint _line = Paint()
@@ -78,19 +78,21 @@ class ShipGridPainter extends CustomPainter {
     for (var y = 0; y < h; y++) {
       for (var x = 0; x < model.width; x++) {
         final r = Rect.fromLTWH(x * cell, (h - 1 - y) * cell, cell, cell);
-        canvas.drawRect(r, _line);
         final m = model.materialAt(x, y);
-        if (m == null) continue;
-        canvas.drawRect(
-          r.deflate(1),
-          Paint()..color = Labels.materialColor(m),
-        );
-        if (loose.contains(y * model.width + x)) {
+        if (!overlay) {
+          canvas.drawRect(r, _line);
+          if (m != null) {
+            canvas.drawRect(
+              r.deflate(1),
+              Paint()..color = Labels.materialColor(m),
+            );
+          }
+        } else if (m != null && loose.contains(y * model.width + x)) {
           canvas.drawRect(r.deflate(2), _red);
         }
-        _drawMarks(canvas, r, x, y);
       }
     }
+    if (!overlay) return;
     // 흘수선: 무게로 정해지는 잠긴 깊이 (설계서 §3.4).
     final wl = model.stats.waterline / 1000 * cell;
     canvas.drawLine(
@@ -98,57 +100,6 @@ class ShipGridPainter extends CustomPainter {
       Offset(size.width, size.height - wl),
       _water,
     );
-  }
-
-  void _drawMarks(Canvas canvas, Rect r, int x, int y) {
-    final slot = model.cabinSlotAt(x, y);
-    final module = model.moduleAt(x, y);
-    if (slot >= 0) {
-      _text(canvas, '${slot + 1}', r.topLeft + const Offset(3, 1));
-      _icon(canvas, Icons.person, r, 0.55, const Color(0xFF15171D));
-    }
-    if (module != null) {
-      _icon(
-        canvas,
-        Labels.moduleIcon(module),
-        slot >= 0
-            ? Rect.fromLTWH(r.center.dx, r.top, r.width / 2, r.height / 2)
-            : r,
-        slot >= 0 ? 0.9 : 0.6,
-        const Color(0xFF15171D),
-      );
-    }
-  }
-
-  void _icon(Canvas canvas, IconData icon, Rect r, double scale, Color color) {
-    final tp = TextPainter(
-      text: TextSpan(
-        text: String.fromCharCode(icon.codePoint),
-        style: TextStyle(
-          fontFamily: icon.fontFamily,
-          package: icon.fontPackage,
-          fontSize: r.height * scale,
-          color: color,
-        ),
-      ),
-      textDirection: TextDirection.ltr,
-    )..layout();
-    tp.paint(canvas, r.center - Offset(tp.width / 2, tp.height / 2));
-  }
-
-  void _text(Canvas canvas, String text, Offset at) {
-    TextPainter(
-        text: TextSpan(
-          text: text,
-          style: TextStyle(
-            fontSize: cell * 0.3,
-            color: const Color(0xFF15171D),
-          ),
-        ),
-        textDirection: TextDirection.ltr,
-      )
-      ..layout()
-      ..paint(canvas, at);
   }
 
   @override

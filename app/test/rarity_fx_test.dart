@@ -131,7 +131,7 @@ void main() {
       for (var i = 1; i < alphas.length; i++) {
         expect(alphas[i], lessThan(alphas[i - 1]));
       }
-      expect(alphas.last, greaterThan(0), reason: '끝 점도 보인다');
+      expect(alphas.last, greaterThan(0.4), reason: '끝 점도 보인다');
     });
 
     test('고무줄은 조준 방향의 반대로, 세게 당길수록 길게 늘어난다', () {

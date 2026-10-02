@@ -11,6 +11,7 @@ import 'package:pirate_busters/meta/progress.dart';
 import 'package:pirate_busters/story/cutscene_screen.dart';
 import 'package:pirate_busters/story/story_data.dart';
 import 'package:pirate_busters/ui/hud/hud_style.dart';
+import 'package:pirate_busters/ui/meta_icons.dart';
 
 /// 캠페인 지도 (설계서 §13.3). MVP 는 해역 1 일반 모드만: 스테이지 노드·별·보스 노드,
 /// 본 이야기 다시 보기(§15.4). 모드 탭·해역 넘기기는 R3.
@@ -235,10 +236,9 @@ class StageNode extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 for (var s = 1; s <= 3; s++)
-                  Icon(
-                    s <= stars ? Icons.star : Icons.star_border,
+                  MetaIcons.image(
+                    s <= stars ? MetaIcons.starOn : MetaIcons.starOff,
                     size: 16,
-                    color: HudColors.warn,
                   ),
               ],
             ),

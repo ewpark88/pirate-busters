@@ -10,11 +10,15 @@ import 'package:pirate_busters/game/view/rarity_painter.dart';
 ///
 /// 점 목록은 오래된 것부터 최신 순이다. 고유 꼬리를 먼저 그리고 등급 꼬리를 겹친다.
 abstract final class TrailPainter {
-  static Paint _fill(Color c, double op) =>
-      Paint()..color = c.withValues(alpha: op.clamp(0, 1));
+  // 점마다 Paint 를 새로 만들지 않고 하나를 고쳐 쓴다(프레임 부담, A13). 그리기는
+  // 바로 일어나므로 같은 객체를 다시 써도 앞의 그림은 바뀌지 않는다.
+  static final Paint _fillPaint = Paint();
+  static final Paint _strokePaint = Paint()..style = PaintingStyle.stroke;
 
-  static Paint _stroke(Color c, double width, double op) => Paint()
-    ..style = PaintingStyle.stroke
+  static Paint _fill(Color c, double op) =>
+      _fillPaint..color = c.withValues(alpha: op.clamp(0, 1));
+
+  static Paint _stroke(Color c, double width, double op) => _strokePaint
     ..strokeWidth = width
     ..strokeCap = StrokeCap.round
     ..strokeJoin = StrokeJoin.round

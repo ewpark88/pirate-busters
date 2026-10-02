@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pirate_busters/app/providers.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
 import 'package:pirate_busters/ui/hud/hud_style.dart';
+import 'package:pirate_busters/ui/meta_icons.dart';
 
 /// 일시정지 창: 저사양·자동 종료, 상대(AI·두 사람), 항복 (설계서 §13.4).
 ///
@@ -77,9 +78,10 @@ class PauseMenu extends ConsumerWidget {
               const SizedBox(height: 16),
               Row(
                 children: [
-                  TextButton(
+                  TextButton.icon(
                     onPressed: () => _confirmSurrender(context),
-                    child: Text(
+                    icon: MetaIcons.image(MetaIcons.surrender),
+                    label: Text(
                       l10n.surrender,
                       style: const TextStyle(color: HudColors.danger),
                     ),

@@ -13,12 +13,68 @@ abstract final class AppFonts {
   static const String round = 'Jua';
 }
 
-/// 앱 테마: 본문은 [AppFonts.body], 제목은 [AppFonts.display], 버튼 글자는
-/// [AppFonts.round].
+/// 화면 톤 (에셋 `tokens.json` `palette.hud`, 화면 시안 stage33~35): 어두운 판
+/// 바탕, 금 테두리, 밝은 양피지 글자. 선택은 우리 팀 파랑, 켜진 스위치는 초록.
+abstract final class AppColors {
+  static const Color background = Color(0xFF101217);
+  static const Color panel = Color(0xFF15171D);
+  static const Color panelHi = Color(0xFF262A33);
+  static const Color gold = Color(0xFFC9962E);
+  static const Color text = Color(0xFFEFE6D2);
+  static const Color mute = Color(0xFF9A917F);
+  static const Color blue = Color(0xFF2F62C4);
+  static const Color green = Color(0xFF3C8A3C);
+  static const Color knob = Color(0xFFF1DFA8);
+  static const Color danger = Color(0xFFE06A5A);
+}
+
+/// 앱 테마: 어두운 화면 톤([AppColors]). 본문은 [AppFonts.body], 제목은
+/// [AppFonts.display], 버튼 글자는 [AppFonts.round].
 ThemeData appTheme() {
+  const scheme = ColorScheme(
+    brightness: Brightness.dark,
+    primary: AppColors.gold,
+    onPrimary: AppColors.panel,
+    primaryContainer: Color(0xFF3A2F18),
+    onPrimaryContainer: AppColors.text,
+    secondary: AppColors.blue,
+    onSecondary: Colors.white,
+    secondaryContainer: AppColors.blue,
+    onSecondaryContainer: Colors.white,
+    tertiary: AppColors.green,
+    onTertiary: Colors.white,
+    error: AppColors.danger,
+    onError: AppColors.panel,
+    surface: AppColors.panel,
+    onSurface: AppColors.text,
+    onSurfaceVariant: AppColors.mute,
+    surfaceContainerLowest: AppColors.background,
+    surfaceContainerLow: AppColors.panel,
+    surfaceContainer: AppColors.panel,
+    surfaceContainerHigh: AppColors.panelHi,
+    surfaceContainerHighest: AppColors.panelHi,
+    outline: AppColors.gold,
+    outlineVariant: Color(0xFF3A3F4A),
+  );
   final base = ThemeData(
     fontFamily: AppFonts.body,
-    colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF1E6FB8)),
+    colorScheme: scheme,
+    scaffoldBackgroundColor: AppColors.background,
+    appBarTheme: const AppBarTheme(
+      backgroundColor: AppColors.panel,
+      foregroundColor: AppColors.text,
+      shape: Border(bottom: BorderSide(color: AppColors.gold)),
+    ),
+    dividerColor: const Color(0xFF3A3F4A),
+    switchTheme: SwitchThemeData(
+      thumbColor: const WidgetStatePropertyAll(AppColors.knob),
+      trackColor: WidgetStateProperty.resolveWith(
+        (s) => s.contains(WidgetState.selected)
+            ? AppColors.green
+            : AppColors.panelHi,
+      ),
+      trackOutlineColor: const WidgetStatePropertyAll(Colors.transparent),
+    ),
   );
   TextStyle? display(TextStyle? s) => s?.copyWith(fontFamily: AppFonts.display);
   final t = base.textTheme;

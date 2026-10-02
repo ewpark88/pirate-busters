@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:pirate_busters/game/view/backdrop.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
 import 'package:pirate_busters/meta/progress.dart';
 import 'package:pirate_busters/settings/language.dart';
@@ -28,7 +29,7 @@ void main() {
       expect(StoryData.of('nothing'), isNull);
     });
 
-    test('대사 키는 두 ARB 에, 초상은 에셋에 있다 (§14.3, 0원 원칙)', () {
+    test('대사 키는 두 ARB 에, 해적 부위·표정과 해역 배경은 에셋에 있다 (§14.3, 0원 원칙)', () {
       final ko =
           jsonDecode(File('lib/l10n/app_ko.arb').readAsStringSync()) as Map;
       final en =
@@ -37,19 +38,54 @@ void main() {
         for (final cut in cuts) {
           expect(ko, contains(cut.textKey));
           expect(en, contains(cut.textKey));
-          final species = cut.species;
-          if (species != null) {
-            final team = cut.enemy ? 'red' : 'blue';
+          expect(
+            File(
+              'assets/images/bg/${cut.region}/${cut.region}_sky.png',
+            ).existsSync(),
+            isTrue,
+            reason: cut.region,
+          );
+          for (final c in cut.cast) {
+            final team = c.enemy ? 'red' : 'blue';
+            final dir = 'assets/images/characters/${c.species}';
             expect(
-              File(
-                'assets/images/ui/portraits/${species}_$team.png',
-              ).existsSync(),
+              File('$dir/parts_$team/parts.json').existsSync(),
               isTrue,
-              reason: species,
+              reason: c.species,
             );
+            final expr =
+                jsonDecode(
+                      File('$dir/expr_$team/expr.json').readAsStringSync(),
+                    )
+                    as Map;
+            expect(expr['expressions'] as Map, contains(c.expr));
           }
         }
       }
+    });
+
+    test('프롤로그는 에셋 컷 구성을 따른다: 해역·모드·등장 해적과 표정 (§15.2)', () {
+      final p = StoryData.of(StoryData.prologue)!;
+      expect(p.map((c) => (c.region, c.mode)), [
+        ('tropic', SeaMode.normal),
+        ('gold', SeaMode.hell),
+        ('storm', SeaMode.hell),
+        ('tropic', SeaMode.hard),
+        ('tropic', SeaMode.hard),
+      ]);
+      expect(p[0].cast.map((c) => (c.species, c.expr)), [
+        ('octo', 'win'),
+        ('turtle', 'default'),
+      ]);
+      // 골드핀은 상어 파츠의 검은 실루엣 + 금관으로 정체를 숨긴다 (§15.4).
+      final goldfin = p[1].cast.single;
+      expect((goldfin.species, goldfin.silhouette), ('shark', true));
+      expect(p[3].cast.first.species, 'lobster');
+      expect(p[4].cast, isEmpty);
+      // 프롤로그 글자는 자막이고, 다른 컷은 말하는 해적의 말풍선이다.
+      expect(p.every((c) => c.speaker == null), isTrue);
+      final intro = StoryData.of(StoryData.sea1Intro)!.first;
+      expect(intro.speaker?.species, 'crabs');
     });
   });
 
@@ -115,6 +151,17 @@ void main() {
         expect(find.byType(CutsceneScreen), findsNothing);
       });
     }
+
+    testWidgets('컷은 0.3초 페이드로 바뀐다 (§15.4)', (tester) async {
+      await pump(tester, const Locale('ko'));
+      expect(CutsceneScreen.fade, const Duration(milliseconds: 300));
+      await tester.tap(find.text('1 / 5'));
+      await tester.pump(const Duration(milliseconds: 150));
+      // 바뀌는 중에는 두 컷이 겹쳐 보인다.
+      expect(find.byType(FadeTransition), findsAtLeastNWidgets(2));
+      await tester.pump(const Duration(milliseconds: 200));
+      expect(find.text('2 / 5'), findsOneWidget);
+    });
 
     testWidgets('건너뛰기를 누르면 바로 닫힌다', (tester) async {
       await pump(tester, const Locale('ko'));

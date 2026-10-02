@@ -82,7 +82,18 @@ dart run tool/import_assets.dart --check                     # pubspec 폴더 �
   - 기능 모듈 9종(`ship/modules/`)
   - 특수·화재 타일(`ship/tiles_v2/` 얼음·금박·유령 판자·방패·불붙은 블록·그을린 블록)
   - 보스(`boss/`), 컷신 구성(`story/cutscenes.json`)과 말풍선(`ui/story/`)
-- **아직 앱에 넣지 않았다.** 이미 끝난 화면에 적용하는 일은 계획서 A12, 뒷 단계 화면은 그 단계에서 한다. 넣을 때는 `--merge` 를 쓴다.
+- **앱 적용 (A12, ADR-063):** 이미 끝난 화면에 쓰는 것만 넣었다. 뒷 단계 화면 그림은 그 단계에서 넣는다.
+
+```bash
+python tool/assets/export_bubbles.py art/pb_v0.24_main   # 말풍선의 자리 표시 글자(<text>)를 빼고 @2x 로 다시 굽는다
+dart run tool/import_assets.dart --merge art/pb_v0.24_main
+```
+
+  - 들어간 것: `bg/tropic`·`bg/gold`·`bg/storm`(프롤로그용), `bg/props`, `ship/modules`, `ui/meta/{hud,meta,currency,ai,faction}`, `ui/story`. 데이터는 `bg/regions.json`·`style/modes.json` 이고, 이름 글자 필드(`ko`·`en`·`faction`·`note`·`limits`)를 지우고 넣는다(절대 규칙 10).
+  - `ui/meta` 는 쓰는 묶음을 폴더째 넣어서, 아직 쓰지 않는 아이콘(약관·진주 등)도 함께 들어 있다.
+  - 넣지 않는 것: `tool/import_assets.dart` 의 `deferredImages` 목록이다. 해역 2·4·5 배경, `boss/`, `ui/meta` 의 상자·티어·심장·날씨·궤적, 특수 블록 타일(불·그을음·유령·얼음·금박·방패)이 여기 든다. 그 단계에서 목록에서 빼고 pubspec 에 더한다.
+  - 전장은 `sea` 겹을 쓰지 않는다. 바다는 앱의 사인파 바다·셰이더가 그린다. 컷신 배경은 7장을 모두 쓴다.
+  - 일반 모드가 아닐 때: 하늘·바다는 `regions.json` 의 모드 색 그라데이션으로, far·mid 는 행렬로, 구름은 모드 구름색을 곱해 그린다. 비·번개는 R3 에서 넣는다.
 - 해역 배경 레이어 순서(README): sky(고정) → clouds(.08) → far(.18) → haze(.18) → mid(.4) → glow(.4) → 배·해적 → sea(1.0).
   - far·mid 에는 `style/modes.json` 의 색 행렬을 씌운다.
   - glow 는 행렬 없이 모드가 어두울수록 불투명도를 올린다.
@@ -97,6 +108,28 @@ dart run tool/import_assets.dart --check                     # pubspec 폴더 �
   - 새 배율에 맞춘 전투 외곽선(`parts_battle_*`) 다시 굽기
   - 1칸 등불 선실 타일
   - 랍 초상 이름 `ui/portraits/lob_*` → `lobster_*`
+
+## v0.25 (2026-10-02, ADR-065)
+
+- 원본: `art/pb_v0.25_patch/` 를 `art/pb_v0.24_main/` 위에 덮어썼다(`README_v0.25.md`). 그 전에 README 대로 `boss/kraken_tentacle_hp1~4`(SVG·PNG)와 `reference/screens_v2/stage31_pre_ironclad`·`stage31_pre_swift` 를 지웠다.
+- v0.23 에서 데이터로 쓰지 않던 세 파일을 디자인 쪽이 고쳐 보냈다.
+  - `ship/hulls/hulls.json`: 선형마다 앱 `blueprints.json` 형식의 기준 설계도(`starter.blueprint`)가 건조 포인트·모듈 한도 안이다(슬루프 58/60, 브리건틴 74/80, 프리깃 93/100, 갤리온 113/120). 앱 추천 설계도는 그대로이고, R2 선형별 추천 설계도의 출발점으로 쓴다.
+  - `boss/bosses.json`: 배 안 해적 중복이 없고 중간·해역 보스 선원이 다르다(그림용 제안, 실제 덱은 R3). 기믹 문구는 BALANCE.md A5.4 값이다.
+  - `story/cutscenes.json`: 앱 ARB 키만 쓴다. 프롤로그는 `story_prologue_1~5` 자막만(말풍선 없음), 해역 1 인트로·1-5 뒤·1-12 전후는 이미 있는 해역 1 대사 키다.
+- 크라켄 촉수는 체력 칸 그림 대신 촉수 1개 손상 단계 4장(`boss/kraken_tentacle_dmg0~3`)이다. 촉수 수·체력은 여전히 정해지지 않았다(계획서 11장, R3).
+- 비교 페이지 31~37단계 화면 47장을 실제 크기 배로 다시 그렸다(보스 화면만 1.4배). A12 화면 시안 대조는 이 그림을 쓴다.
+- 앱 이미지는 바뀌지 않는다. `boss/` 는 `deferredImages` 로 R3 까지 가져오지 않는다.
+
+## 소리 (설계서 §10.3, A13, ADR-068)
+
+소리 파일은 없다. 효과음과 배경음악을 모두 `app/lib/audio/pcm_synth.dart` 로 코드 합성한다. 만든 소리는 프로젝트 저작물이라 CC0 으로 둔다.
+
+| 곡 | 선율 출처 | 쓰는 곳 |
+| --- | --- | --- |
+| *Sailor's Hornpipe* (College Hornpipe) | 영국 민요, 18세기. 저작권 없음 | 항구 (`Music.port`) |
+| *Drunken Sailor* | 선원 민요, 19세기 기록. 저작권 없음 | 전투 (`Music.battle`), 폭풍 타임 1.2배 |
+
+선율은 앱이 짧은 루프로 편곡한 것이다(`audio/shanty_music.dart`). 효과음 레시피는 `audio/sfx_bank.dart` 에 있다.
 
 ## 글꼴 (설계서 §14.4, A11)
 

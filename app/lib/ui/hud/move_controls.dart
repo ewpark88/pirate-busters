@@ -8,6 +8,7 @@ import 'package:pirate_busters/battle/playback.dart';
 import 'package:pirate_busters/battle/session_views.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
 import 'package:pirate_busters/ui/hud/hud_style.dart';
+import 'package:pirate_busters/ui/meta_icons.dart';
 
 /// 아래 왼쪽: ◀ 후퇴 · 연료 게이지 · 전진 ▶ (설계서 §2.2, §2.6, §2.7, §13.4).
 ///
@@ -15,10 +16,18 @@ import 'package:pirate_busters/ui/hud/hud_style.dart';
 /// 앞 이동이 끝날 때마다 1/10칸짜리 `MOVE` 를 이어서 낸다. 누르고 있으면 갈 수 있는
 /// 끝 지점을 전장에 점선으로 보여준다. 연료가 0 이면 버튼을 잠그고 게이지를 깜빡인다.
 class MoveControls extends StatefulWidget {
-  const MoveControls({required this.session, required this.side, super.key});
+  const MoveControls({
+    required this.session,
+    required this.side,
+    this.onClick,
+    super.key,
+  });
 
   final BattleSession session;
   final int side;
+
+  /// 버튼 누름 소리 (설계서 §10.3).
+  final VoidCallback? onClick;
 
   @override
   State<MoveControls> createState() => _MoveControlsState();
@@ -50,6 +59,7 @@ class _MoveControlsState extends State<MoveControls>
 
   void _press(int dir) {
     if (!_enabled) return;
+    widget.onClick?.call();
     _dir = dir;
     _s.moveHeld = true;
     unawaited(_ticker.start());
@@ -91,7 +101,7 @@ class _MoveControlsState extends State<MoveControls>
           // 왼쪽 버튼은 화면 왼쪽으로 간다: 왼쪽 배는 후퇴, 오른쪽 배는 전진.
           _HoldButton(
             label: _facing > 0 ? l10n.retreat : l10n.advance,
-            icon: Icons.chevron_left,
+            icon: MetaIcons.moveBack,
             enabled: _enabled,
             onDown: () => _press(-_facing),
             onUp: _release,
@@ -119,7 +129,7 @@ class _MoveControlsState extends State<MoveControls>
           const SizedBox(width: 8),
           _HoldButton(
             label: _facing > 0 ? l10n.advance : l10n.retreat,
-            icon: Icons.chevron_right,
+            icon: MetaIcons.moveForward,
             enabled: _enabled,
             onDown: () => _press(_facing),
             onUp: _release,
@@ -140,7 +150,9 @@ class _HoldButton extends StatelessWidget {
   });
 
   final String label;
-  final IconData icon;
+
+  /// 화면 방향 화살표 그림 (`MetaIcons.moveBack` ← · `moveForward` →).
+  final String icon;
   final bool enabled;
   final VoidCallback onDown;
   final VoidCallback onUp;
@@ -155,7 +167,7 @@ class _HoldButton extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, color: HudColors.text, size: 30),
+          MetaIcons.image(icon, size: 30),
           Text(label, style: const TextStyle(fontSize: 12)),
         ],
       ),

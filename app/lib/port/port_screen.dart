@@ -4,6 +4,8 @@ import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pirate_busters/app/providers.dart';
+import 'package:pirate_busters/audio/music_director.dart';
+import 'package:pirate_busters/audio/sound_service.dart';
 import 'package:pirate_busters/battle/battle_session.dart';
 import 'package:pirate_busters/battle/battle_setup.dart';
 import 'package:pirate_busters/campaign/campaign_map_screen.dart';
@@ -30,6 +32,8 @@ class PortScreen extends ConsumerStatefulWidget {
 }
 
 class _PortScreenState extends ConsumerState<PortScreen> {
+  /// 설정의 저사양 모드 (설계서 §12). 항구 배경 겹 수를 줄인다.
+  final ValueNotifier<bool> _lowEnd = ValueNotifier(false);
   BattleSession? _session;
   late PortGame _game;
 
@@ -47,14 +51,18 @@ class _PortScreenState extends ConsumerState<PortScreen> {
       humanSides: const {0},
       speciesOf: catalog.speciesOf,
     );
-    _game = PortGame(_session!);
+    _game = PortGame(_session!, lowEnd: _lowEnd);
   }
 
   @override
   void initState() {
     super.initState();
     _rebuild();
-    WidgetsBinding.instance.addPostFrameCallback((_) => unawaited(_firstRun()));
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // 항구 곡 (설계서 §10.3).
+      ref.read(musicTrackProvider.notifier).play(Music.port);
+      unawaited(_firstRun());
+    });
   }
 
   /// 처음 실행: 프롤로그(건너뛰기 가능) 뒤 캠페인 지도(튜토리얼 3판)로 (설계서 §13.1, §15.2).
@@ -71,6 +79,7 @@ class _PortScreenState extends ConsumerState<PortScreen> {
   @override
   void dispose() {
     _session?.dispose();
+    _lowEnd.dispose();
     super.dispose();
   }
 
@@ -101,6 +110,7 @@ class _PortScreenState extends ConsumerState<PortScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final progress = ref.watch(progressProvider);
+    _lowEnd.value = ref.watch(lowEndProvider);
     return Scaffold(
       body: Stack(
         fit: StackFit.expand,

@@ -1801,6 +1801,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'REPAIR'**
   String get hitTagRepair;
+
+  /// 조준 각도 라벨 (설계서 §10.4)
+  ///
+  /// In en, this message translates to:
+  /// **'{deg}°'**
+  String aimAngle(String deg);
+
+  /// 조준 힘 라벨 (설계서 §10.4)
+  ///
+  /// In en, this message translates to:
+  /// **'Power {pct}%'**
+  String aimPower(String pct);
+
+  /// 설정: 배경음악 켜기 (설계서 §10.3)
+  ///
+  /// In en, this message translates to:
+  /// **'Music'**
+  String get musicOn;
 }
 
 class _AppLocalizationsDelegate

@@ -171,6 +171,12 @@ class _RecordingSound implements SoundService {
 
   @override
   void play(Sfx sfx, {double pitch = 1, double volume = 1}) => played.add(sfx);
+
+  @override
+  Future<void> loadMusic(Map<Music, Uint8List> wavs) async {}
+
+  @override
+  void playMusic(Music? track, {double speed = 1}) {}
 }
 
 /// 1×1 그림 하나로 모든 스프라이트를 대신하는 가짜. 진동만 본다.

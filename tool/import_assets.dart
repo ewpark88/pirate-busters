@@ -5,10 +5,11 @@
 //   dart run tool/import_assets.dart --check                  pubspec 검사만
 // 1) 패키지 전체를 art/<이름>/ 에 그대로 복사한다 (git 제외).
 // 2) png/ 의 @2x 만 골라 이름에서 "@2x" 를 떼고 app/assets/images/ 로 복사한다.
-// 3) anims.json·tokens.json 을 app/assets/data/ 로 복사한다.
+// 3) 데이터 JSON 을 app/assets/data/ 로 복사한다. regions·modes 는 글자 필드를 뺀다.
 // 4) app/pubspec.yaml 의 에셋 폴더 목록이 실제 폴더와 다르면 exit 1.
 // --merge 는 app/assets 를 지우지 않고 패키지에 있는 파일만 덮어쓴다. 캐릭터 몸
 // PNG 가 일부만 든 패키지(v0.22: 랍스터와 표정 부위뿐)를 넣을 때 쓴다.
+import 'dart:convert';
 import 'dart:io';
 
 const assetsRoot = 'app/assets';
@@ -27,8 +28,22 @@ String? imageTarget(String rel) {
   if (const {'tiles', 'rooms', 'rig'}.contains(segs.first)) {
     segs.insert(0, 'ship');
   }
-  return segs.map((s) => s.replaceAll('@2x', '')).join('/');
+  final target = segs.map((s) => s.replaceAll('@2x', '')).join('/');
+  if (deferredImages.any(target.startsWith)) return null;
+  return target;
 }
+
+/// 아직 쓰는 기능이 없어 가져오지 않는 경로 앞부분(app/assets/images 기준, ADR-063).
+/// 그 기능 단계에서 여기서 빼고 pubspec 에 폴더를 더한다.
+const deferredImages = [
+  'bg/abyss/', 'bg/fog/', 'bg/glacier/', // 해역 2·4·5 (R3)
+  'boss/', // 보스 기믹 (R3)
+  'ui/meta/chest/', 'ui/meta/tier/', 'ui/meta/heart/', // 메타 (R4)
+  'ui/meta/weather/', 'ui/meta/traj/', // 오늘의 해전·궤적 효과 (R4·R1)
+  // 특수 블록: 불(R1)·유령선(R2)·얼음·금박·뱃머리 방패(R3).
+  'ship/tiles_v2/burn_', 'ship/tiles_v2/charred', 'ship/tiles_v2/ghost_',
+  'ship/tiles_v2/ice_', 'ship/tiles_v2/gold_', 'ship/tiles_v2/shield',
+];
 
 /// --merge 뒤에 지우는 옛 키 경로(app/assets/images 기준). 새 키로 대체됐다.
 const obsoleteImages = [
@@ -64,8 +79,27 @@ const dataFiles = {
   'anims/anims.json': 'anims.json',
   'style/tokens.json': 'tokens.json',
   'weapons/weapons.json': 'weapons.json',
+  // 해역 배경 시차·모드 색과 모드 색 행렬 (A12, ADR-063).
+  'bg/regions.json': 'regions.json',
+  'style/modes.json': 'modes.json',
   // `ui/cards/cards.json`·`ui/icons/sets.json` 은 설명·세트 이름 글자가 들어 있어
   // 앱에 넣지 않는다(절대 규칙 10). 필요한 값은 코드와 ARB 로 옮긴다.
+};
+
+/// 글자 필드를 지우고 넣는 데이터 파일 (절대 규칙 10). 이름은 ARB 키로 붙인다.
+const textStrippedData = {'regions.json', 'modes.json'};
+
+/// [textStrippedData] 에서 지우는 글자 필드.
+const textFields = {'ko', 'en', 'faction', 'note', 'limits'};
+
+/// JSON 값에서 [textFields] 를 모든 깊이에서 지운다.
+Object? stripText(Object? json) => switch (json) {
+  final Map<String, Object?> m => {
+    for (final e in m.entries)
+      if (!textFields.contains(e.key)) e.key: stripText(e.value),
+  },
+  final List<Object?> l => [for (final v in l) stripText(v)],
+  _ => json,
 };
 
 /// 패키지 폴더 이름 → art/ 아래 이름. `pirate_busters_assets_v0.15` → `pb_assets_v0.15`.
@@ -148,7 +182,16 @@ void _import(Directory src, {required bool merge}) {
     final file = File('${src.path}/$from');
     // 옛 패키지에는 없는 데이터 파일이 있다.
     if (!file.existsSync()) return;
-    _copyFile(file, '$assetsRoot/data/$to');
+    if (!textStrippedData.contains(to)) {
+      _copyFile(file, '$assetsRoot/data/$to');
+    } else {
+      final json = stripText(jsonDecode(file.readAsStringSync()));
+      File('$assetsRoot/data/$to')
+        ..parent.createSync(recursive: true)
+        ..writeAsStringSync(
+          '${const JsonEncoder.withIndent(' ').convert(json)}\n',
+        );
+    }
     data++;
   });
   if (merge) {

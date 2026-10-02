@@ -283,5 +283,8 @@
   "hitTagBurn": "화상",
   "hitTagMine": "기뢰",
   "hitTagBite": "물어뜯기",
-  "hitTagRepair": "수리"
+  "hitTagRepair": "수리",
+  "aimAngle": "{deg}°",
+  "aimPower": "힘 {pct}%",
+  "musicOn": "배경음악"
 }

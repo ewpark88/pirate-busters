@@ -5,6 +5,7 @@ import 'package:pirate_busters/battle/battle_session.dart';
 import 'package:pirate_busters/battle/session_views.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
 import 'package:pirate_busters/ui/hud/hud_style.dart';
+import 'package:pirate_busters/ui/meta_icons.dart';
 
 /// 위 가운데: 남은 턴, 누구 턴, 턴 타이머, 바람 / 위 양쪽: 선체·침수·선원 (설계서 §13.4).
 class TopBar extends StatelessWidget {
@@ -62,10 +63,14 @@ class _TurnInfo extends StatelessWidget {
             Text(l10n.stormTime, style: const TextStyle(color: HudColors.warn)),
             const SizedBox(width: 10),
           ],
+          MetaIcons.image(MetaIcons.turns, size: 18),
+          const SizedBox(width: 4),
           Text(l10n.turnsLeft(turnsLeft)),
           const SizedBox(width: 12),
           Text(owner, style: TextStyle(color: HudColors.team(side))),
           const SizedBox(width: 12),
+          MetaIcons.image(MetaIcons.timer, size: 18),
+          const SizedBox(width: 2),
           Text(
             '$seconds',
             style: TextStyle(color: timerColor, fontSize: 22),
@@ -128,6 +133,8 @@ class SideStatus extends StatelessWidget {
           children: [
             Row(
               children: [
+                MetaIcons.image(MetaIcons.hull, size: 16),
+                const SizedBox(width: 2),
                 Text(l10n.hull),
                 const SizedBox(width: 6),
                 Expanded(
@@ -141,11 +148,28 @@ class SideStatus extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 4),
-            Text(l10n.flood(flood)),
-            Text(l10n.crewAlive(alive, side.crew.size)),
+            _IconText(MetaIcons.flood, l10n.flood(flood)),
+            _IconText(MetaIcons.crew, l10n.crewAlive(alive, side.crew.size)),
           ],
         ),
       ),
     );
   }
+}
+
+/// 아이콘과 글자 한 줄 (설계서 §13.4).
+class _IconText extends StatelessWidget {
+  const _IconText(this.icon, this.text);
+
+  final String icon;
+  final String text;
+
+  @override
+  Widget build(BuildContext context) => Row(
+    children: [
+      MetaIcons.image(icon, size: 16),
+      const SizedBox(width: 2),
+      Flexible(child: Text(text, overflow: TextOverflow.ellipsis)),
+    ],
+  );
 }

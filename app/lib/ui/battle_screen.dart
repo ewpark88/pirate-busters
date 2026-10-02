@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -5,6 +7,8 @@ import 'package:intl/intl.dart';
 import 'package:pb_ai/pb_ai.dart';
 import 'package:pb_sim/pb_sim.dart';
 import 'package:pirate_busters/app/providers.dart';
+import 'package:pirate_busters/audio/music_director.dart';
+import 'package:pirate_busters/audio/sound_service.dart';
 import 'package:pirate_busters/battle/battle_session.dart';
 import 'package:pirate_busters/battle/battle_setup.dart';
 import 'package:pirate_busters/battle/battle_stats.dart';
@@ -64,6 +68,7 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
   @override
   void initState() {
     super.initState();
+    _music = ref.read(musicTrackProvider.notifier);
     _start(widget.seed, hotseat: widget.hotseat);
   }
 
@@ -106,9 +111,12 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
             ),
     );
     _reported = false;
-    _session.addListener(_checkOver);
+    _session
+      ..addListener(_checkOver)
+      ..addListener(_updateMusic);
     final analytics = ref.read(analyticsProvider);
     _game = BattleGame(_session, sound: ref.read(soundServiceProvider));
+    _game.settled.addListener(_checkOver);
     _game.onTurnEnd = (e) {
       if (!_session.humanSides.contains(e.side)) return;
       analytics.log(Events.turnEnd, {
@@ -123,7 +131,8 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
   }
 
   void _checkOver() {
-    if (_reported || !_session.isOver) return;
+    // 격침 연출이 끝난 뒤에 결과로 넘어간다 (설계서 §10.4).
+    if (_reported || !_session.isOver || !_game.settled.value) return;
     _reported = true;
     widget.onOver?.call(_session.state, _prepared?.replay(), _game.stats);
   }
@@ -150,7 +159,21 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
   @override
   void dispose() {
     _session.dispose();
+    // 전투를 나가면 항구 곡으로 돌아간다(트리 정리 뒤에 바꾼다).
+    final music = _music;
+    unawaited(Future.microtask(() => music.play(Music.port)));
     super.dispose();
+  }
+
+  late final MusicTrackNotifier _music;
+
+  /// 전투 곡, 폭풍 타임에는 빠르게 (설계서 §10.3).
+  void _updateMusic() {
+    final state = _session.state;
+    _music.play(
+      Music.battle,
+      speed: state.rules.isStorm(state.turn) ? stormMusicSpeed : 1,
+    );
   }
 
   @override
@@ -167,6 +190,8 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
     _game
       ..damageText = ((amount) => l10n.damagePopup(number.format(amount)))
       ..turnsText = number.format
+      ..aimAngleText = ((d) => l10n.aimAngle(number.format(d)))
+      ..aimPowerText = ((p) => l10n.aimPower(number.format(p)))
       // 명중 이름표 (설계서 §10.4).
       ..tagText = (tag) => switch (tag) {
         HitTag.crit => l10n.hitTagCrit,
@@ -198,13 +223,18 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
           ),
         ),
         Positioned.fill(
-          child: BattleHud(
-            session: _session,
-            overview: _game.overview,
-            paused: _paused,
-            onPause: _pause,
-            onRestart: _restart,
-            hint: _hint(AppLocalizations.of(context)),
+          child: ValueListenableBuilder<bool>(
+            valueListenable: _game.settled,
+            builder: (context, settled, _) => BattleHud(
+              session: _session,
+              overview: _game.overview,
+              paused: _paused,
+              onPause: _pause,
+              onRestart: _restart,
+              hint: _hint(AppLocalizations.of(context)),
+              settled: settled,
+              onClick: () => _game.playSfx(Sfx.click),
+            ),
           ),
         ),
       ],

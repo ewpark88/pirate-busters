@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pb_sim/pb_sim.dart';
-import 'package:pirate_busters/shipyard/ship_grid_editor.dart';
+import 'package:pirate_busters/shipyard/ship_grid_view.dart';
 import 'package:pirate_busters/shipyard/shipyard_model.dart';
 
 /// 설계도 미리보기 (설계서 §13.3 전투 준비 ‘내 배 미리보기’). 조선소 격자 그림을
@@ -19,10 +19,7 @@ class BlueprintPreview extends StatelessWidget {
             .clamp(0, box.maxHeight / model.height)
             .toDouble();
         return Center(
-          child: CustomPaint(
-            size: Size(cell * model.width, cell * model.height),
-            painter: ShipGridPainter(model, cell),
-          ),
+          child: ShipGridView(model: model, cell: cell),
         );
       },
     );

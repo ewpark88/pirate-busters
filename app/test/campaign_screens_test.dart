@@ -18,6 +18,7 @@ import 'package:pirate_busters/platform/ads.dart';
 import 'package:pirate_busters/platform/analytics.dart';
 import 'package:pirate_busters/settings/language.dart';
 import 'package:pirate_busters/settings/settings_store.dart';
+import 'package:pirate_busters/ui/meta_icons.dart';
 
 import 'test_catalog.dart';
 
@@ -133,7 +134,7 @@ void main() {
       ).recordStage('1-1', 2),
     );
     expect(find.byIcon(Icons.lock), findsNWidgets(4));
-    expect(find.byIcon(Icons.star), findsNWidgets(2));
+    expect(find.image(const AssetImage(MetaIcons.starOn)), findsNWidgets(2));
   });
 
   testWidgets('결과: 시간 판정이면 침수 막대 두 개, 첫 클리어 보너스와 합류 해적이 보인다', (

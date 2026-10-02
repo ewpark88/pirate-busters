@@ -8,7 +8,9 @@ import 'package:pirate_busters/battle/session_views.dart';
 import 'package:pirate_busters/game/anim/rarity_fx.dart';
 import 'package:pirate_busters/game/coords.dart';
 import 'package:pirate_busters/game/sprites.dart';
+import 'package:pirate_busters/game/view/aim_labels.dart';
 import 'package:pirate_busters/game/view/aim_painter.dart';
+import 'package:pirate_busters/game/view/guide_marks.dart';
 import 'package:pirate_busters/game/view/trail_painter.dart';
 import 'package:pirate_busters/game/weapon_styles.dart';
 import 'package:pirate_busters/input/pull_aim.dart';
@@ -162,15 +164,10 @@ class ShotView extends Component {
     );
   }
 
-  static final Paint _limitPaint = Paint()..color = const Color(0xFFE8C9A0);
-  static final Paint _movePaint = Paint()
-    ..color = const Color(0xCCFFFFFF)
-    ..strokeWidth = 2;
-
   @override
   void render(Canvas canvas) {
     _renderLimits(canvas);
-    _renderMovePreview(canvas);
+    GuideMarks.movePreview(canvas, session);
     _renderAim(canvas);
     _renderShots(canvas);
   }
@@ -184,100 +181,103 @@ class ShotView extends Component {
     final path = session
         .previewShot(aim.slot, aim.shot.angle, aim.shot.power)
         .head(30);
-    _renderRangeEnd(canvas, aim.slot, path.xs.first);
+    GuideMarks.rangeEnd(canvas, session, aim.slot, path.xs.first);
     // 점선은 멀어질수록 흐려지고 색은 등급을 따른다 (설계서 §10.4, §10.5).
     final side = session.state.activeSide;
     final spec = session.state.sides[side].crew.pirates[aim.slot].spec;
     final color = rarity.of(spec.rarity).aim;
-    final pts = [
-      for (var i = 0; i <= path.lastTick; i += 2)
+    final path2 = [
+      for (var i = 0; i <= path.lastTick; i++)
         Coords.point(path.xs[i], path.ys[i]).toOffset(),
     ];
-    // 첫 점은 발사 지점(해적 몸)이라 고무줄·호·링이 대신한다.
-    AimPainter.trajectory(canvas, pts.sublist(1), color);
+    // 점은 호 길이로 고르게, 힘 링 바깥부터 찍고 발사 방향으로 흐른다. 저사양은 멈춘다.
+    const step = AimPainter.dotStep;
+    final phase = fewer ? 0.0 : (_flow * AimPainter.flowSpeed) % step;
+    final dots = AimPainter.resample(
+      path2,
+      step,
+      skip: AimPainter.dotSkip,
+      phase: phase,
+    );
+    AimPainter.trajectory(
+      canvas,
+      dots,
+      color,
+      fadeIn: fewer ? 1 : phase / step,
+    );
+    final from = path2.first;
+    final facing = facingOf(side);
     AimPainter.sling(
       canvas,
-      pts.first,
-      facing: facingOf(side),
+      from,
+      facing: facing,
       angleMdeg: aim.shot.angle,
       stretch: aim.stretch,
       power: aim.shot.power / maxFirePower,
       color: color,
     );
+    AimLabels.draw(
+      canvas,
+      from,
+      AimPainter.direction(facing, aim.shot.angle),
+      angle: angleText((aim.shot.angle / 1000).round()),
+      power: powerText((aim.shot.power * 100 / maxFirePower).round()),
+    );
   }
 
-  static final Paint _rangePaint = Paint()
-    ..color = const Color(0xCCFFC24A)
-    ..strokeWidth = 2;
+  /// 조준 숫자 글자 (설계서 §10.4). 화면이 l10n 으로 바꿔 넣는다.
+  String Function(int degrees) angleText = (d) => '$d°';
+  String Function(int percent) powerText = (p) => '$p%';
 
-  /// 사거리 끝: 발사 지점에서 사거리(칸)만큼 앞 물 위의 점선과 부표 (설계서 §2.8).
-  void _renderRangeEnd(Canvas canvas, int slot, int launchX) {
-    final state = session.state;
-    final side = state.activeSide;
-    final range = state.sides[side].crew.pirates[slot].spec.range;
-    final x = Coords.x(launchX + facingOf(side) * range.cells * cellUnit);
-    for (var y = -36.0; y < 8; y += 8) {
-      canvas.drawLine(Offset(x, y), Offset(x, y + 4), _rangePaint);
-    }
-    canvas.drawCircle(Offset(x, -40), 4, _rangePaint);
-  }
+  /// 저사양 모드: 점선 흐름을 멈춘다 (설계서 §12).
+  bool fewer = false;
+  double _flow = 0;
 
-  void _renderMovePreview(Canvas canvas) {
-    final dx = session.movePreviewDx;
-    if (dx == 0) return;
-    final side = session.state.sides[session.state.activeSide];
-    final x = Coords.x(side.bowX + dx * moveStep);
-    for (var y = -40.0; y < 12; y += 8) {
-      canvas.drawLine(Offset(x, y), Offset(x, y + 4), _movePaint);
-    }
-  }
+  @override
+  void update(double dt) => _flow += dt;
 
-  static final Paint _reef = Paint()..color = const Color(0xFF3A2E3F);
-  static final Paint _rope = Paint()
-    ..color = const Color(0xFFE8C9A0)
-    ..strokeWidth = 1.5;
-  static final Paint _buoyRed = Paint()..color = const Color(0xFFB3302B);
-
-  /// 한계선 (설계서 §2.6): 전진 한계는 암초와 부표 줄, 후퇴 한계는 부표.
+  /// 한계선 (설계서 §2.6): 전진 한계는 암초와 부표 줄, 후퇴 한계는 불빛 부표.
   void _renderLimits(Canvas canvas) {
     final state = session.state;
     final (lo, hi) = moveLimits(state.rules, state.turn);
     for (final side in state.sides) {
       final facing = facingOf(side.side);
       final start = startBowX(side.side);
-      _renderReef(canvas, Coords.x(start + facing * hi), facing);
-      _renderBuoy(canvas, Coords.x(start + facing * lo));
+
+      _limit(
+        canvas,
+        BattleSprites.limitForward,
+        Coords.x(start + facing * hi),
+        facing,
+        forwardAnchor,
+      );
+      _limit(
+        canvas,
+        BattleSprites.limitBack,
+        Coords.x(sternAt(start + facing * lo, facing, side.grid.width)),
+        facing,
+        backAnchor,
+      );
     }
   }
 
-  /// 전진 한계: 물 위로 솟은 암초 두 덩이와 그 사이 부표 줄.
-  void _renderReef(Canvas canvas, double x, int facing) {
-    final ahead = facing * 20.0;
-    canvas
-      ..drawPath(
-        Path()
-          ..moveTo(x + ahead - 16, 6)
-          ..lineTo(x + ahead - 8, -14)
-          ..lineTo(x + ahead + 2, -8)
-          ..lineTo(x + ahead + 12, -20)
-          ..lineTo(x + ahead + 20, 6)
-          ..close(),
-        _reef,
-      )
-      ..drawLine(Offset(x - 40, -3), Offset(x + 40, -3), _rope);
-    for (var d = -40.0; d <= 40; d += 20) {
-      canvas.drawCircle(Offset(x + d, -3), 3.5, _limitPaint);
-    }
-  }
+  /// 뱃머리가 [bowX] 일 때 고물 x(시뮬레이션 단위). 후퇴 한계 부표와 물살은
+  /// 뱃머리가 한계에 닿았을 때의 고물 자리에 둔다 (설계서 §2.6).
+  static int sternAt(int bowX, int facing, int widthCells) =>
+      bowX - facing * widthCells * cellUnit;
 
-  /// 후퇴 한계: 줄무늬 부표 하나.
-  void _renderBuoy(Canvas canvas, double x) {
-    canvas
-      ..drawRect(Rect.fromLTWH(x - 1.5, -30, 3, 26), _limitPaint)
-      ..drawOval(
-        Rect.fromCenter(center: Offset(x, -6), width: 16, height: 12),
-        _buoyRed,
-      )
-      ..drawRect(Rect.fromLTWH(x - 8, -8, 16, 3), _limitPaint);
+  /// 그림 안에서 한계선·수면이 닿는 점(그림 px). 전진 한계는 부표 줄 끝과 암초
+  /// 사이, 후퇴 한계는 부표 밑동이다. 그림은 오른쪽(+x)을 보는 배 기준이다.
+  static final Vector2 forwardAnchor = Vector2(150, 96);
+  static final Vector2 backAnchor = Vector2(40, 96);
+
+  void _limit(Canvas c, String file, double x, int facing, Vector2 anchor) {
+    final sprite = sprites.get(file);
+    c
+      ..save()
+      ..translate(x, 0)
+      ..scale(facing.toDouble(), 1);
+    sprite.render(c, position: -anchor, size: sprite.srcSize / 2);
+    c.restore();
   }
 }

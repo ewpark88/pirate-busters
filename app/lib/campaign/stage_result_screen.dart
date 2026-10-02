@@ -14,6 +14,7 @@ import 'package:pirate_busters/l10n/data_text.dart';
 import 'package:pirate_busters/platform/ads.dart';
 import 'package:pirate_busters/platform/analytics.dart';
 import 'package:pirate_busters/ui/hud/hud_style.dart';
+import 'package:pirate_busters/ui/meta_icons.dart';
 
 /// 결과 화면 (설계서 §13.5): 승패·승리 방식(시간 판정이면 침수량 막대), 별 3개, 보상,
 /// 전투 통계, 다시 하기·항구로. ‘광고 보고 2배’·리플레이 저장은 플랫폼 묶음에서 켠다.
@@ -141,11 +142,7 @@ class StageResultScreen extends ConsumerWidget {
     Widget star(String label, {required bool on}) => Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(
-          on ? Icons.star : Icons.star_border,
-          color: HudColors.warn,
-          size: 20,
-        ),
+        MetaIcons.image(on ? MetaIcons.starOn : MetaIcons.starOff),
         const SizedBox(width: 4),
         Text(label, style: const TextStyle(fontSize: 12)),
       ],
@@ -239,17 +236,19 @@ class _ResultActionsState extends ConsumerState<_ResultActions> {
           mainAxisSize: MainAxisSize.min,
           children: [
             if (canDouble)
-              FilledButton.tonal(
+              FilledButton.tonalIcon(
                 onPressed: _doubled ? null : () => unawaited(_double()),
-                child: Text(
+                icon: MetaIcons.image(MetaIcons.ad2x),
+                label: Text(
                   _doubled ? l10n.resultDoubleDone : l10n.resultDouble,
                 ),
               ),
             if (canDouble && widget.replay != null) const SizedBox(width: 12),
             if (widget.replay != null)
-              OutlinedButton(
+              OutlinedButton.icon(
                 onPressed: _saved ? null : () => unawaited(_saveReplay()),
-                child: Text(_saved ? l10n.replaySaved : l10n.replaySave),
+                icon: MetaIcons.image(MetaIcons.replay),
+                label: Text(_saved ? l10n.replaySaved : l10n.replaySave),
               ),
           ],
         ),

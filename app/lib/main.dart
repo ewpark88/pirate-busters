@@ -5,6 +5,7 @@ import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:pirate_busters/app/app.dart';
 import 'package:pirate_busters/app/providers.dart';
 import 'package:pirate_busters/audio/sfx_bank.dart';
+import 'package:pirate_busters/audio/shanty_music.dart';
 import 'package:pirate_busters/audio/sound_service.dart';
 import 'package:pirate_busters/campaign/campaign_catalog.dart';
 import 'package:pirate_busters/data/fleet_store.dart';
@@ -42,6 +43,7 @@ Future<void> main() async {
   final replays = await HiveReplayStore.open();
   final sound = SoloudSoundService();
   await sound.load(SfxBank.build());
+  await sound.loadMusic(ShantyMusic.build());
   runApp(
     ProviderScope(
       overrides: [

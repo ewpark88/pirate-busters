@@ -1,0 +1,389 @@
+{
+ "version": "0.23",
+ "horizon": 420,
+ "canvas": [
+  1400,
+  640
+ ],
+ "layers": [
+  {
+   "id": "sky",
+   "parallax": 0,
+   "colorMatrix": false
+  },
+  {
+   "id": "clouds",
+   "parallax": 0.08,
+   "colorMatrix": false
+  },
+  {
+   "id": "far",
+   "parallax": 0.18,
+   "colorMatrix": true
+  },
+  {
+   "id": "haze",
+   "parallax": 0.18,
+   "colorMatrix": false
+  },
+  {
+   "id": "mid",
+   "parallax": 0.4,
+   "colorMatrix": true
+  },
+  {
+   "id": "glow",
+   "parallax": 0.4,
+   "colorMatrix": false
+  },
+  {
+   "id": "sea",
+   "parallax": 1,
+   "colorMatrix": false
+  }
+ ],
+ "regions": {
+  "tropic": {
+   "sun": [
+    1080,
+    120,
+    34
+   ],
+   "modes": {
+    "normal": {
+     "sky": [
+      "#3fa4e8",
+      "#86cdf2",
+      "#d2f1f6"
+     ],
+     "sea": [
+      "#25b5c2",
+      "#0f6a8a"
+     ],
+     "cloud": "#ffffff",
+     "foam": "#ffffff",
+     "rain": 0,
+     "lightning": 0,
+     "sail": "#b3302b"
+    },
+    "hard": {
+     "sky": [
+      "#264c77",
+      "#616587",
+      "#d19d84"
+     ],
+     "sea": [
+      "#1d6d7d",
+      "#0d3e53"
+     ],
+     "cloud": "#7c7789",
+     "foam": "#f1dec4",
+     "rain": 0,
+     "lightning": 0,
+     "sail": "#6a1414"
+    },
+    "hell": {
+     "sky": [
+      "#0d1f2f",
+      "#23334a",
+      "#3b4a60"
+     ],
+     "sea": [
+      "#12404c",
+      "#07222f"
+     ],
+     "cloud": "#3a3d45",
+     "foam": "#9dafc0",
+     "rain": 1,
+     "lightning": 1,
+     "sail": "#1c1d27"
+    }
+   }
+  },
+  "fog": {
+   "sun": [
+    300,
+    150,
+    26
+   ],
+   "modes": {
+    "normal": {
+     "sky": [
+      "#7f9698",
+      "#a9bab6",
+      "#d6ddd4"
+     ],
+     "sea": [
+      "#4f7470",
+      "#1f3a3a"
+     ],
+     "cloud": "#e6ece6",
+     "foam": "#dfe8e2",
+     "rain": 0,
+     "lightning": 0,
+     "sail": "#b3302b"
+    },
+    "hard": {
+     "sky": [
+      "#3e4758",
+      "#6e5e70",
+      "#d29677"
+     ],
+     "sea": [
+      "#305059",
+      "#142930"
+     ],
+     "cloud": "#736f7f",
+     "foam": "#e5d5b9",
+     "rain": 0,
+     "lightning": 0,
+     "sail": "#6a1414"
+    },
+    "hell": {
+     "sky": [
+      "#181d22",
+      "#283040",
+      "#3b475b"
+     ],
+     "sea": [
+      "#1c3038",
+      "#0b161c"
+     ],
+     "cloud": "#363a41",
+     "foam": "#98acbb",
+     "rain": 1,
+     "lightning": 1,
+     "sail": "#1c1d27"
+    }
+   }
+  },
+  "storm": {
+   "sun": [
+    1180,
+    110,
+    24
+   ],
+   "modes": {
+    "normal": {
+     "sky": [
+      "#4d6584",
+      "#7f96b0",
+      "#b9c7d2"
+     ],
+     "sea": [
+      "#2f5872",
+      "#112a3c"
+     ],
+     "cloud": "#c4cfdb",
+     "foam": "#e8f0f6",
+     "rain": 0,
+     "lightning": 0,
+     "sail": "#b3302b"
+    },
+    "hard": {
+     "sky": [
+      "#2b3451",
+      "#5e516e",
+      "#c78d76"
+     ],
+     "sea": [
+      "#224459",
+      "#0e2231"
+     ],
+     "cloud": "#66647b",
+     "foam": "#e8d8c1",
+     "rain": 0,
+     "lightning": 0,
+     "sail": "#6a1414"
+    },
+    "hell": {
+     "sky": [
+      "#10151f",
+      "#222a3f",
+      "#37435b"
+     ],
+     "sea": [
+      "#152939",
+      "#08131c"
+     ],
+     "cloud": "#313540",
+     "foam": "#99adbf",
+     "rain": 1,
+     "lightning": 1,
+     "sail": "#1c1d27"
+    }
+   }
+  },
+  "glacier": {
+   "sun": [
+    260,
+    110,
+    28
+   ],
+   "modes": {
+    "normal": {
+     "sky": [
+      "#7cc4ec",
+      "#b6e2f6",
+      "#eef8fc"
+     ],
+     "sea": [
+      "#3a8ab4",
+      "#164a6c"
+     ],
+     "cloud": "#ffffff",
+     "foam": "#ffffff",
+     "rain": 0,
+     "lightning": 0,
+     "sail": "#b3302b"
+    },
+    "hard": {
+     "sky": [
+      "#3d5878",
+      "#736d88",
+      "#dba086"
+     ],
+     "sea": [
+      "#265a77",
+      "#103046"
+     ],
+     "cloud": "#7c7789",
+     "foam": "#f1dec4",
+     "rain": 0,
+     "lightning": 0,
+     "sail": "#6a1414"
+    },
+    "hell": {
+     "sky": [
+      "#172430",
+      "#2b374b",
+      "#3f4b61"
+     ],
+     "sea": [
+      "#173549",
+      "#091a28"
+     ],
+     "cloud": "#3a3d45",
+     "foam": "#9dafc0",
+     "rain": 1,
+     "lightning": 1,
+     "sail": "#1c1d27"
+    }
+   }
+  },
+  "abyss": {
+   "sun": [
+    1120,
+    130,
+    30
+   ],
+   "modes": {
+    "normal": {
+     "sky": [
+      "#4c4f9e",
+      "#8a7ac4",
+      "#d0b8e6"
+     ],
+     "sea": [
+      "#2c2a7a",
+      "#0a0a2e"
+     ],
+     "cloud": "#e6d8f6",
+     "foam": "#c9b8ff",
+     "rain": 0,
+     "lightning": 0,
+     "sail": "#b3302b"
+    },
+    "hard": {
+     "sky": [
+      "#2b2c5a",
+      "#624675",
+      "#d0887e"
+     ],
+     "sea": [
+      "#20305d",
+      "#0b132b"
+     ],
+     "cloud": "#736885",
+     "foam": "#dcc3c4",
+     "rain": 0,
+     "lightning": 0,
+     "sail": "#6a1414"
+    },
+    "hell": {
+     "sky": [
+      "#101223",
+      "#242643",
+      "#3a415e"
+     ],
+     "sea": [
+      "#141e3a",
+      "#060b19"
+     ],
+     "cloud": "#363744",
+     "foam": "#94a4c0",
+     "rain": 1,
+     "lightning": 1,
+     "sail": "#1c1d27"
+    }
+   }
+  },
+  "gold": {
+   "sun": [
+    700,
+    300,
+    60
+   ],
+   "modes": {
+    "normal": {
+     "sky": [
+      "#e8a64a",
+      "#f6d07a",
+      "#fff0c2"
+     ],
+     "sea": [
+      "#2c9ab0",
+      "#0e5a78"
+     ],
+     "cloud": "#fff4dc",
+     "foam": "#fff6d8",
+     "rain": 0,
+     "lightning": 0,
+     "sail": "#b3302b"
+    },
+    "hard": {
+     "sky": [
+      "#664d3a",
+      "#8b6759",
+      "#e29d70"
+     ],
+     "sea": [
+      "#206175",
+      "#0c374b"
+     ],
+     "cloud": "#7c727b",
+     "foam": "#f1dab5",
+     "rain": 0,
+     "lightning": 0,
+     "sail": "#6a1414"
+    },
+    "hell": {
+     "sky": [
+      "#282016",
+      "#353437",
+      "#424a58"
+     ],
+     "sea": [
+      "#143948",
+      "#071e2b"
+     ],
+     "cloud": "#3a3b40",
+     "foam": "#9daeba",
+     "rain": 1,
+     "lightning": 1,
+     "sail": "#1c1d27"
+    }
+   }
+  }
+ }
+}

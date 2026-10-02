@@ -4,6 +4,7 @@ import 'package:pb_ai/pb_ai.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
 import 'package:pirate_busters/meta/progress.dart';
 import 'package:pirate_busters/ui/hud/hud_style.dart';
+import 'package:pirate_busters/ui/meta_icons.dart';
 
 /// AI 난이도 이름 (설계서 §5.2).
 String levelLabel(AppLocalizations l10n, AiLevel level) => switch (level) {
@@ -71,11 +72,7 @@ class PortTopBar extends StatelessWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(
-                  Icons.monetization_on,
-                  color: HudColors.warn,
-                  size: 18,
-                ),
+                MetaIcons.image(MetaIcons.gold, size: 18),
                 const SizedBox(width: 4),
                 Text(numbers.format(progress.gold)),
               ],

@@ -5,6 +5,7 @@ import 'package:pirate_busters/l10n/app_localizations.dart';
 import 'package:pirate_busters/ui/cards/rarity_card.dart';
 import 'package:pirate_busters/ui/hud/ammo_label.dart';
 import 'package:pirate_busters/ui/hud/hud_style.dart';
+import 'package:pirate_busters/ui/meta_icons.dart';
 
 /// 아래 가운데: 선실 해적 카드 (설계서 §13.4). 카드를 누르면 그 해적을 고르고
 /// 카메라가 줌인한다(설계서 §2.2). 쿨다운·잠긴 선실·쓰러진 해적은 흐리게 보인다.
@@ -138,7 +139,11 @@ class _PirateCardState extends State<_PirateCard> {
                   icon: ammoIconPath(pirate.spec.ammo),
                 ),
               ),
-              _strip(foot, footColor),
+              _strip(
+                foot,
+                footColor,
+                icon: note == null && far ? MetaIcons.outOfRange : null,
+              ),
             ],
           ),
         ),

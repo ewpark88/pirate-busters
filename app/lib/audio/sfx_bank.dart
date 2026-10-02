@@ -40,5 +40,56 @@ abstract final class SfxBank {
             ..tone(2113, 2090, .3, vol: .05)
             ..noise(.04, 5000, 3000, seed: 10))
           .toWav(gain: masterGain),
+    // 유폭: 깊은 쿵 두 번 + 길게 우르릉 + 터지는 파열음.
+    Sfx.boom =>
+      (PcmSynth(durationSec: 1.4)
+            ..tone(70, 26, 1.2, vol: .5)
+            ..tone(110, 40, .5, wave: Wave.triangle, vol: .2, delay: .12)
+            ..noise(1.3, 320, 40, vol: .38, q: .6, seed: 11)
+            ..noise(.2, 3000, 800, vol: .2, seed: 12)
+            ..noise(.5, 900, 150, vol: .18, q: .8, seed: 13, delay: .15))
+          .toWav(gain: masterGain),
+    // 격침: 낮게 꺼지는 신음 + 물이 차오르는 꾸르륵.
+    Sfx.sink =>
+      (PcmSynth(durationSec: 2.2)
+            ..tone(140, 45, 2, wave: Wave.triangle, vol: .2)
+            ..noise(2, 700, 120, vol: .22, q: .7, seed: 14)
+            ..tone(520, 260, .12, vol: .06, delay: .5)
+            ..tone(460, 230, .12, vol: .06, delay: .9)
+            ..tone(400, 200, .12, vol: .05, delay: 1.3))
+          .toWav(gain: masterGain),
+    // 승리 악구: 솔-도-미-솔 올라가는 나팔.
+    Sfx.win => _phrase(const [392, 523.25, 659.25, 783.99], .16, Wave.square),
+    // 패배 악구: 내려가는 단조.
+    Sfx.lose => _phrase(
+      const [392, 349.23, 311.13, 261.63],
+      .24,
+      Wave.triangle,
+    ),
+    // 버튼 누름: 짧은 딸깍.
+    Sfx.click =>
+      (PcmSynth(durationSec: .08)
+            ..tone(1400, 900, .05, wave: Wave.triangle, vol: .14)
+            ..noise(.02, 4000, 2500, vol: .05, seed: 15))
+          .toWav(gain: masterGain),
   };
+
+  /// 음 [hz] 를 [step] 초 간격으로 이어 부는 짧은 악구. 마지막 음은 길게 끈다.
+  static Uint8List _phrase(List<double> hz, double step, Wave wave) {
+    final synth = PcmSynth(durationSec: step * hz.length + .5);
+    for (final (i, f) in hz.indexed) {
+      final last = i == hz.length - 1;
+      synth
+        ..tone(
+          f,
+          f,
+          last ? .6 : step * 1.1,
+          wave: wave,
+          vol: .1,
+          delay: i * step,
+        )
+        ..tone(f * 2, f * 2, last ? .4 : step, vol: .03, delay: i * step);
+    }
+    return synth.toWav(gain: masterGain);
+  }
 }

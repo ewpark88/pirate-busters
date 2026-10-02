@@ -11,6 +11,9 @@ import 'package:pirate_busters/game/coords.dart';
 import 'package:pirate_busters/game/sprites.dart';
 import 'package:pirate_busters/game/view/cabin_painter.dart';
 import 'package:pirate_busters/game/view/damage_painter.dart';
+import 'package:pirate_busters/game/view/module_painter.dart';
+import 'package:pirate_busters/game/view/scorch_painter.dart';
+import 'package:pirate_busters/game/view/ship_motion.dart';
 import 'package:pirate_busters/game/view/torn_edge_painter.dart';
 
 /// 배 한 척: 격자 타일, 돛대, 선실 칸 안의 해적. 시뮬레이션 상태를 그리기만 한다.
@@ -75,6 +78,9 @@ class ShipView extends PositionComponent with HasGameReference {
 
   bool _isCabin(int x, int y) => _state.cabins.any((c) => c.x == x && c.y == y);
 
+  /// 폭발이 남긴 그을음 칸 (설계서 §10.4). 착탄 이벤트로만 정해지는 렌더 상태다.
+  final Set<int> scorched = {};
+
   /// 해적 [slot] 의 공격 동작.
   void playAttack(int slot) {
     final id = session.speciesOf(_state.crew.pirates[slot].spec.id);
@@ -109,19 +115,11 @@ class ShipView extends PositionComponent with HasGameReference {
     );
   }
 
-  /// 맞은 방향으로 흔들렸다가 돌아온다 (설계서 §10.4). [dir] 은 화면에서 밀리는
-  /// 쪽(+1 오른쪽). 그리기만 하고 기울기 판정(§2.5)과는 무관하다.
-  void rock(int dir) {
-    _rockDir = dir.sign.toDouble();
-    _rockT = 0;
-  }
+  /// 흔들림·격침 연출 (설계서 §10.4).
+  final ShipMotion motion = ShipMotion();
 
-  double _rockDir = 0;
-  double _rockT = 10;
-
-  /// 흔들림 각(라디안): 2° 로 밀렸다가 0.6초쯤 출렁이며 잦아든다.
-  double get _rock =>
-      _rockDir * 0.035 * math.exp(-5 * _rockT) * math.cos(_rockT * 14);
+  /// 맞은 방향으로 흔들렸다가 돌아온다 (설계서 §10.4).
+  void rock(int dir) => motion.rock(dir);
 
   /// 지금 그리는 뱃머리 x(시뮬레이션 단위). 이동 연출 중이면 중간 값.
   double get bowX {
@@ -139,14 +137,21 @@ class ShipView extends PositionComponent with HasGameReference {
     super.update(dt);
     final facing = facingOf(side);
     final midX = bowX - facing * _width * cellUnit / 2;
-    position = Coords.point(midX, heave - _state.draft);
+    final state = session.state;
+    // 판이 격침으로 끝나면 진 배가 기울며 가라앉는다(재생이 끝난 뒤).
+    if (state.isOver && isSinkOutcome(state.outcome) && state.winner != side) {
+      if (session.playback == null) motion.startSink();
+    }
+    motion.update(dt);
+    position = Coords.point(midX, heave - _state.draft)..y += motion.depth;
     scale.x = facing.toDouble();
-    final rules = session.state.rules;
-    final tilt =
-        Wave(rules, session.state.turn).roll(side, session.turnMs) +
-        floodTilt(_state, rules);
-    _rockT += dt;
-    angle = -facing * tilt * math.pi / 180000 + _rock;
+    final rules = state.rules;
+    final flood = floodTilt(_state, rules);
+    final tilt = Wave(rules, state.turn).roll(side, session.turnMs) + flood;
+    angle =
+        -facing * tilt * math.pi / 180000 +
+        motion.rockAngle -
+        facing * motion.extraTilt(flood == 0 ? -1 : flood.sign.toDouble());
     _updateCrew(dt);
   }
 
@@ -159,6 +164,7 @@ class ShipView extends PositionComponent with HasGameReference {
   void _updateCrew(double dt) {
     _t += dt;
     final crew = _state.crew;
+    final state = session.state;
     final shot = session.playback;
     final frozen = shot is ShotPlayback && !shot.landed;
     final k = 1 - math.exp(-6 * dt);
@@ -191,28 +197,15 @@ class ShipView extends PositionComponent with HasGameReference {
         rig.alpha = 0;
       }
       rig.home.add((_targets[slot] - rig.home) * k);
-      rig.lean = _leanOf(slot);
       // 상태 동작과 표정 (설계서 §10.1): 떨어지는 중, 헤엄, 판이 끝나면 승리·패배.
-      final state = session.state;
-      rig.state = status == PirateStatus.swimming
-          ? (rig.home.distanceTo(_targets[slot]) > 8 ? 'fall' : 'swim')
-          : state.isOver && state.winner >= 0
-          ? (state.winner == side ? 'win' : 'lose')
-          : (rig.lean > 0 ? 'aim' : null);
+      rig
+        ..lean = leanOf(session, side, slot)
+        ..state = status == PirateStatus.swimming
+            ? (rig.home.distanceTo(_targets[slot]) > 8 ? 'fall' : 'swim')
+            : state.isOver && state.winner >= 0
+            ? (state.winner == side ? 'win' : 'lose')
+            : (rig.lean > 0 ? 'aim' : null);
     }
-  }
-
-  /// 조준 자세: 사람은 당긴 만큼, 상대는 쏘기 직전에 몸을 젖힌다 (설계서 §2.3).
-  double _leanOf(int slot) {
-    final aim = session.aim;
-    if (aim != null && aim.slot == slot && session.state.activeSide == side) {
-      return 14 * aim.stretch;
-    }
-    final foe = session.opponentAim;
-    if (foe != null && foe.slot == slot && session.state.activeSide == side) {
-      return 14 * foe.progress;
-    }
-    return 0;
   }
 
   @override
@@ -225,7 +218,15 @@ class ShipView extends PositionComponent with HasGameReference {
         : null;
     final materials = snap?.materials ?? grid.rawMaterials;
     final hp = snap?.hp ?? grid.rawHp;
-    CabinPainter.rig(canvas, sprites, materials, _width, blue: side == 0);
+    ModulePainter.rigs(
+      canvas,
+      sprites,
+      materials,
+      _width,
+      _moduleAt,
+      cellRect,
+      blue: side == 0,
+    );
     for (var y = 0; y < grid.height; y++) {
       for (var x = 0; x < grid.width; x++) {
         final i = y * grid.width + x;
@@ -250,42 +251,36 @@ class ShipView extends PositionComponent with HasGameReference {
         if (_isCabin(x, y)) {
           CabinPainter.room(canvas, rect, sprites.roomWall(x, y));
         }
+        if (scorched.contains(i)) ScorchPainter.draw(canvas, sprites, rect, i);
+        final module = _moduleAt[i];
+        if (module != null) ModulePainter.draw(canvas, sprites, rect, module);
         // 금은 이웃 부서진 칸 쪽에서 들어와 이어져 보인다 (설계서 §10.2).
         TornEdgePainter.damage(canvas, rect, i, stage, _mask(materials, x, y));
       }
     }
     // 부서진 칸의 가장자리는 타일을 모두 그린 뒤 이웃 블록 쪽으로 찢어 그린다.
-    for (var y = 0; y < grid.height; y++) {
-      for (var x = 0; x < grid.width; x++) {
-        final i = y * grid.width + x;
-        if (materials[i] != ShipGrid.emptyCell ||
-            _built.materials[i] == ShipGrid.emptyCell) {
-          continue;
-        }
-        TornEdgePainter.torn(
-          canvas,
-          cellRect(x, y),
-          i,
-          _mask(materials, x, y, block: true),
-        );
-      }
-    }
+    TornEdgePainter.tornAll(
+      canvas,
+      grid,
+      materials,
+      _built.materials,
+      cellRect,
+    );
   }
 
-  /// ([x], [y]) 의 상하좌우 이웃 마스크. [block] 이면 블록이 남은 이웃, 아니면
-  /// 설계도에 있었다가 부서진 이웃.
-  int _mask(List<int> materials, int x, int y, {bool block = false}) {
-    final grid = _state.grid;
-    bool at(int nx, int ny) {
-      if (!grid.inBounds(nx, ny)) return false;
-      final i = ny * grid.width + nx;
-      final has = materials[i] != ShipGrid.emptyCell;
-      return block ? has : !has && _built.materials[i] != ShipGrid.emptyCell;
-    }
+  /// 칸 번호 → 모듈 (설계도 그대로). 블록이 부서지면 그 칸과 함께 안 그린다.
+  late final Map<int, ModuleKind> _moduleAt = ModulePainter.byCell(
+    _state.modules,
+    _width,
+  );
 
-    return (at(x - 1, y) ? TornEdgePainter.left : 0) |
-        (at(x + 1, y) ? TornEdgePainter.right : 0) |
-        (at(x, y + 1) ? TornEdgePainter.up : 0) |
-        (at(x, y - 1) ? TornEdgePainter.down : 0);
-  }
+  int _mask(List<int> materials, int x, int y, {bool block = false}) =>
+      TornEdgePainter.mask(
+        _state.grid,
+        materials,
+        _built.materials,
+        x,
+        y,
+        block: block,
+      );
 }

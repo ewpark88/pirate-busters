@@ -135,6 +135,10 @@ void main() {
         testWidgets(
           '${entry.key} 골든: ${locale.languageCode} $name',
           (tester) async {
+            // 컷신 배경·해적 자세 데이터는 실제 비동기로 미리 읽는다.
+            await tester.runAsync(
+              () => CutsceneScreen.preload(StoryData.of(StoryData.prologue)!),
+            );
             tester.view.physicalSize = size * 2;
             tester.view.devicePixelRatio = 2;
             addTearDown(tester.view.reset);
