@@ -52,12 +52,22 @@ class EffectBadges extends Component {
     return Coords.point(x, y);
   }
 
+  /// 붙어서 기다리는 효과: 그 해적의 무기 그림 옆에 배지를 단다.
+  static bool _attached(EffectKind k) =>
+      k == EffectKind.mineBlast ||
+      k == EffectKind.gnawBite ||
+      k == EffectKind.tentacle;
+
   @override
   void render(Canvas canvas) {
     for (final e in session.state.effects) {
+      // 떠 있는 기뢰는 WorldMarks 가 수면에 그리고, 펌프 정지는 물어뜯기와 같은 칸이다.
+      if (e.kind == EffectKind.floatMine || e.kind == EffectKind.pumpOff) {
+        continue;
+      }
       final at = positionOf(e);
       var badge = at;
-      if (e.kind == EffectKind.mineBlast) {
+      if (_attached(e.kind)) {
         // 설치탄은 붙어서 턴을 기다린다. 배지는 그 오른쪽 위에 붙인다.
         final style = weapons?.of(session.speciesOf(e.spec.id));
         if (style != null) {
@@ -72,15 +82,15 @@ class EffectBadges extends Component {
         }
         badge = at + Vector2(9, -9);
       }
-      canvas
-        ..drawCircle(badge.toOffset(), radius, _fill)
-        ..drawCircle(badge.toOffset(), radius, _ring);
-      _text.render(
-        canvas,
-        turnsText(e.turnsLeft),
-        badge,
-        anchor: Anchor.center,
-      );
+      drawBadge(canvas, badge, turnsText(e.turnsLeft));
     }
+  }
+
+  /// 남은 턴 수 배지 하나: 어두운 원, 금색 테두리, 숫자.
+  static void drawBadge(Canvas canvas, Vector2 at, String label) {
+    canvas
+      ..drawCircle(at.toOffset(), radius, _fill)
+      ..drawCircle(at.toOffset(), radius, _ring);
+    _text.render(canvas, label, at, anchor: Anchor.center);
   }
 }

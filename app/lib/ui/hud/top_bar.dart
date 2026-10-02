@@ -76,17 +76,29 @@ class _TurnInfo extends StatelessWidget {
             style: TextStyle(color: timerColor, fontSize: 22),
           ),
           const SizedBox(width: 12),
-          _Wind(wind: state.wind),
+          _Wind(wind: state.wind, note: _windNote(context, state)),
         ],
       ),
     );
   }
 }
 
+/// 이번 턴 바람에 걸린 상태: 램프의 무풍이 알바의 역풍보다 앞선다 (설계서 §4.8).
+String? _windNote(BuildContext context, MatchState state) {
+  final status = state.sides[state.activeSide].status;
+  final l10n = AppLocalizations.of(context);
+  if (status.windIgnoreTurn == state.turn) return l10n.windCalm;
+  if (status.windReverseTurn == state.turn) return l10n.windReversed;
+  return null;
+}
+
 class _Wind extends StatelessWidget {
-  const _Wind({required this.wind});
+  const _Wind({required this.wind, this.note});
 
   final int wind;
+
+  /// 역풍·무풍 표시. 없으면 null.
+  final String? note;
 
   @override
   Widget build(BuildContext context) => Row(
@@ -100,6 +112,10 @@ class _Wind extends StatelessWidget {
         color: wind == 0 ? HudColors.mute : HudColors.text,
       ),
       Text('${wind.abs()}'),
+      if (note != null) ...[
+        const SizedBox(width: 4),
+        Text(note!, style: const TextStyle(color: HudColors.warn)),
+      ],
     ],
   );
 }

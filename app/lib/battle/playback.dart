@@ -63,7 +63,8 @@ class ShotPlayback extends Playback {
     for (final t in traces) {
       if (t.endTick > last) last = t.endTick;
     }
-    // 착탄·물보라·튕김·갈라짐 이벤트가 틱을 갖고, 뒤따르는 파괴·피격은 그 틱에 낸다.
+    // 착탄·물보라·튕김·갈라짐·방향 전환·방벽·요격 이벤트가 틱을 갖고, 뒤따르는
+    // 파괴·피격은 그 틱에 낸다.
     var tick = 0;
     final timed = <(int, SimEvent)>[];
     for (final e in events) {
@@ -118,6 +119,9 @@ class ShotPlayback extends Playback {
     SimEventKind.splash,
     SimEventKind.bounce,
     SimEventKind.divide,
+    SimEventKind.steered,
+    SimEventKind.barrierHit,
+    SimEventKind.intercepted,
   };
 
   /// 탄 비행 시간. 그 뒤 [durationMs] 까지는 부서지는 연출(턴 타이머 정지, §2.3).

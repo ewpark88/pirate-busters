@@ -80,7 +80,7 @@ int runVolley(
       }
       traces[i].add(p.x, p.y);
       // 날아가는 동안 상대 펠리 투하 표시를 요격한다(ADR-078).
-      interceptDrops(state, p);
+      interceptDrops(state, p, tick: tick);
       final children = _divideAt(state, p, tick, vyBefore, tapTick);
       if (children.isNotEmpty) {
         _replace(state, live, done, traces, i, children);

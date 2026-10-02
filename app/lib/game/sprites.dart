@@ -2,6 +2,7 @@ import 'package:flame/cache.dart';
 import 'package:flame/components.dart';
 import 'package:pb_sim/pb_sim.dart';
 import 'package:pirate_busters/game/view/explosion_fx.dart';
+import 'package:pirate_busters/game/view/fire_view.dart';
 import 'package:pirate_busters/game/view/water_fx.dart';
 
 /// 전장에서 쓰는 이미지 (에셋 v0.22·v0.24, docs/ASSETS.md). 모두 @2x.
@@ -12,6 +13,7 @@ class BattleSprites {
     for (final m in ['pine', 'oak', 'cork', 'bot', 'mesh'])
       for (var v = 0; v < 4; v++) 'ship/tiles_v2/${m}_$v.png',
     'ship/tiles_v2/iron.png',
+    ...FireView.files,
     for (var v = 0; v < 4; v++) roomFile(v),
     for (final k in ModuleKind.values) moduleFile(k),
     'ship/rig/mast.png',

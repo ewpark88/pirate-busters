@@ -11,13 +11,12 @@ import 'package:pirate_busters/game/coords.dart';
 import 'package:pirate_busters/game/sprites.dart';
 import 'package:pirate_busters/game/view/cabin_painter.dart';
 import 'package:pirate_busters/game/view/damage_layer.dart';
+import 'package:pirate_busters/game/view/fire_view.dart';
 import 'package:pirate_busters/game/view/module_painter.dart';
 import 'package:pirate_busters/game/view/ship_motion.dart';
 
-/// 배 한 척: 격자 타일, 돛대, 선실 칸 안의 해적. 시뮬레이션 상태를 그리기만 한다.
-///
-/// 로컬 원점은 배 가운데의 용골 바닥이고, 오른쪽 배는 좌우를 뒤집는다(scale.x = −1).
-/// 파도 위아래·기울기(파도 + 침수)와 이동 연출을 반영한다 (설계서 §2.5, §2.6).
+/// 배 한 척: 격자 타일, 돛대, 선실 칸 안의 해적, 불(`FireView`). 그리기만 한다.
+/// 원점은 배 가운데 용골 바닥, 오른쪽 배는 좌우 뒤집음. 파도·기울기·이동 반영 (§2.5·§2.6).
 class ShipView extends PositionComponent with HasGameReference {
   ShipView({
     required this.session,
@@ -57,6 +56,7 @@ class ShipView extends PositionComponent with HasGameReference {
       rigs.add(rig);
       await add(rig);
     }
+    await add(FireView(session: session, side: side, sprites: sprites));
   }
 
   double _localX(num cx) => (cx - _width / 2) * _cell;

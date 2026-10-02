@@ -96,7 +96,7 @@ bool stepShot(MatchState state, Projectile p, int wind, int ms, int tick) {
   final hit = step.hit;
   final wall = step.wall;
   if (wall != null) {
-    hitBarrier(state, p, wall);
+    hitBarrier(state, p, wall, tick: tick);
     return true;
   }
   if (p.submerged && p.y < -torpedoDepthLimit) return true;

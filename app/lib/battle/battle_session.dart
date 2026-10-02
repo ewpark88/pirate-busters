@@ -144,13 +144,16 @@ class BattleSession extends ChangeNotifier with SessionUiState {
   }
 
   /// 비행 중 탭 (설계서 §2.2). 내 탄이 날고 있을 때만 `TAP` 을 낸다. 분열탄이면
-  /// 지금 틱에 갈라지고(설계서 §4.8), 다른 탄종에서는 효과가 없다.
-  void tap() {
+  /// 지금 틱에 갈라지고, 방향 전환 탄(알바)은 [dir] 쪽(+1 위, −1 아래)으로 꺾인다
+  /// (설계서 §4.8). 다른 탄종에서는 효과가 없다.
+  void tap({int dir = 0}) {
     final shot = playback;
     if (shot is! ShotPlayback || !humanSides.contains(shot.side)) return;
     final tick = shot.tick.floor();
     if (shot.awaitingTap) {
-      if (tick >= 1 && tick < shot.lastTick) _resolveSplit(shot, tick);
+      if (tick >= 1 && tick < shot.lastTick) {
+        playback = resolveSplit(match, shot, tick, dir: dir);
+      }
     } else {
       match.apply(TapCommand(t: turnMs, slot: shot.slot, ticks: tick));
     }
@@ -198,9 +201,11 @@ class BattleSession extends ChangeNotifier with SessionUiState {
     while (playback == null && _scriptIndex < bundle.commands.length) {
       final c = bundle.commands[_scriptIndex];
       if (c.t > turnMs) return;
-      _scriptIndex++;
+      // 발사 바로 뒤 같은 해적의 TAP 은 그 발사를 계산할 때 함께 넣는다.
+      final tap = followingTap(bundle, _scriptIndex);
+      _scriptIndex += tap == null ? 1 : 2;
       final turn = state.turn;
-      _apply(c);
+      _apply(c, followTap: tap);
       if (state.turn != turn || isOver) return;
     }
     if (playback == null && _scriptIndex >= bundle.commands.length) {
@@ -221,14 +226,16 @@ class BattleSession extends ChangeNotifier with SessionUiState {
     _scriptIndex = 0;
   }
 
-  void _apply(Command c) {
+  /// [followTap] 은 컴퓨터 발사 바로 뒤의 같은 해적 `TAP`: 기다리는 탄을 그 탭으로
+  /// 계산해 재생(턴 묶음)과 같은 결과를 낸다.
+  void _apply(Command c, {TapCommand? followTap}) {
     final side = state.activeSide;
     final turn = state.turn;
     final bowBefore = state.sides[side].bowX;
     // 분열탄은 탭 전까지 계산하지 않으므로 떨어질 곳을 미리 예측해 둔다.
     final split = c is FireCommand ? splitPathFor(state, c) : null;
     final before = [for (final s in state.sides) GridSnapshot(s.grid)];
-    final start = _eventsStart(turn);
+    final start = eventsStartFor(state, turn);
     final firedBefore = state.nextProjectileId;
     match.apply(c);
     // 턴이 끝나도 이벤트 목록은 다음 턴 첫 커맨드 때 비워진다.
@@ -246,8 +253,14 @@ class BattleSession extends ChangeNotifier with SessionUiState {
           before: before,
         );
       } else {
-        // 컴퓨터는 탭하지 않는다(갈라지지 않은 채 계산).
-        if (pending) match.settlePending();
+        // 컴퓨터는 묶음에 든 TAP 으로, 없으면 탭 없이 계산한다.
+        if (pending) {
+          if (followTap != null) {
+            match.apply(followTap);
+          } else {
+            match.settlePending();
+          }
+        }
         playback = resolvedShot(
           state,
           side: side,
@@ -272,17 +285,6 @@ class BattleSession extends ChangeNotifier with SessionUiState {
     }
     _syncTurnClock();
     notifyListeners();
-  }
-
-  /// 이번 커맨드로 생길 이벤트가 [MatchState.events] 의 어디부터인지. 턴의 첫
-  /// 커맨드면 목록이 새로 시작된다.
-  int _eventsStart(int turn) {
-    final events = state.events;
-    final begun =
-        events.isNotEmpty &&
-        events.first.kind == SimEventKind.turnStart &&
-        events.first.value == turn;
-    return begun ? events.length : 0;
   }
 
   void _finishPlayback(Playback p) {

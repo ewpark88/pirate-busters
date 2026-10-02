@@ -40,8 +40,10 @@ const deferredImages = [
   'boss/', // 보스 기믹 (R3)
   'ui/meta/chest/', 'ui/meta/tier/', 'ui/meta/heart/', // 메타 (R4)
   'ui/meta/weather/', 'ui/meta/traj/', // 오늘의 해전·궤적 효과 (R4·R1)
-  // 특수 블록: 불(R1)·유령선(R2)·얼음·금박·뱃머리 방패(R3).
-  'ship/tiles_v2/burn_', 'ship/tiles_v2/charred', 'ship/tiles_v2/ghost_',
+  // 특수 블록: 유령선(R2)·얼음·금박·뱃머리 방패(R3). 불·그을린 블록은 R1c 에서 쓴다.
+  'ship/tiles_v2/ghost_',
+  // 피해 표현 v3 예시 그림: 앱은 참고 구현을 Canvas 로 옮겨 그리므로 쓰지 않는다(ADR-070).
+  'fx/damage_v3/',
   'ship/tiles_v2/ice_', 'ship/tiles_v2/gold_', 'ship/tiles_v2/shield',
 ];
 

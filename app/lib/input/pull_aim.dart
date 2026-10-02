@@ -8,7 +8,7 @@ import 'package:pb_sim/pb_sim.dart';
 class AimShot {
   const AimShot({required this.angle, required this.power});
 
-  /// 상대 쪽 수평이 0 인 밀리도 (0 ~ [PullAim.maxAngleMdeg]).
+  /// 상대 쪽 수평이 0 인 밀리도. 아래쪽(어뢰)은 360° 에서 뺀 값(0 ~ 359999)이다.
   final int angle;
 
   /// 0 ~ [maxFirePower].
@@ -18,11 +18,22 @@ class AimShot {
 /// 당겨서 쏘기 (설계서 §2.2): 누른 지점에서 끌면, 끈 방향의 반대로 날아간다.
 ///
 /// 좌표는 화면 논리 px (x 오른쪽, y 아래 +). [facing] 은 쏘는 배가 바라보는 방향
-/// (+1 오른쪽, −1 왼쪽)이다. 뒤로 넘어가는 각도는 최대 각, 아래쪽은 수평으로 막는다.
+/// (+1 오른쪽, −1 왼쪽)이다. 각도는 [minAngle]~[maxAngle] 로 막는다: 보통은
+/// 0~85°(뒤로 넘어가면 최대 각, 아래쪽은 수평), 지원 해적은 내 배로 쏘도록 뒤쪽까지,
+/// 어뢰(바라)는 아래쪽까지 (설계서 §2.2, §4.8, `aimRangeFor`).
 class PullAim {
-  PullAim({required this.facing, this.maxPullPx = 160});
+  PullAim({
+    required this.facing,
+    this.maxPullPx = 160,
+    this.minAngle = 0,
+    this.maxAngle = maxAngleMdeg,
+  });
 
   static const int maxAngleMdeg = 85000;
+
+  /// 허용 각도(밀리도, 위가 +). 아래쪽은 음수.
+  final int minAngle;
+  final int maxAngle;
 
   /// 이보다 약하게 당기면 놓아도 쏘지 않는다(취소).
   static const int minPower = 1000;
@@ -116,8 +127,10 @@ class PullAim {
     final up = _dy;
     if (forward == 0 && up == 0) return 0;
     final rad = math.atan2(up, forward);
-    if (rad < 0) return 0;
-    final mdeg = (rad * 180 / math.pi * 1000).round();
-    return mdeg > maxAngleMdeg ? maxAngleMdeg : mdeg;
+    // 뒤로 크게 넘어간 아래쪽(왼쪽 아래)은 위로 넘어간 것으로 본다.
+    var mdeg = (rad * 180 / math.pi * 1000).round();
+    if (mdeg < -90000) mdeg += 360000;
+    final clamped = mdeg.clamp(minAngle, maxAngle);
+    return clamped < 0 ? clamped + 360000 : clamped;
   }
 }

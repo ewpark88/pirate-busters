@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:pb_sim/pb_sim.dart';
 import 'package:pirate_busters/battle/battle_session.dart';
 import 'package:pirate_busters/game/battle_game.dart';
+import 'package:pirate_busters/input/aim_mode.dart';
 import 'package:pirate_busters/input/pull_aim.dart';
 
 /// 전장 위 제스처 (설계서 §2.1, §2.2, ADR-033): 배 위 해적을 한 손가락으로 끌면
@@ -48,7 +49,13 @@ class _FieldGesturesState extends State<FieldGestures> {
     _s.select(slot, toggle: false);
     _slot = slot;
     _start = d.localFocalPoint;
-    _aim = PullAim(facing: facingOf(_s.state.activeSide))..start();
+    final me = _s.state.sides[_s.state.activeSide];
+    final (lo, hi) = aimRangeFor(me.crew.pirates[slot].spec);
+    _aim = PullAim(
+      facing: facingOf(_s.state.activeSide),
+      minAngle: lo,
+      maxAngle: hi,
+    )..start();
   }
 
   void _onUpdate(ScaleUpdateDetails d) {
@@ -83,7 +90,7 @@ class _FieldGesturesState extends State<FieldGestures> {
   /// (설계서 §2.2, §13.4).
   void _onTap(TapUpDetails d) {
     if (_s.playback != null) {
-      widget.game.tap();
+      widget.game.tap(Vector2(d.localPosition.dx, d.localPosition.dy));
       return;
     }
     final slot = widget.game.pirateAt(

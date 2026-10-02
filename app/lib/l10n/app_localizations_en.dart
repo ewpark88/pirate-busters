@@ -1327,6 +1327,48 @@ class AppLocalizationsEn extends AppLocalizations {
   String get hitTagRepair => 'REPAIR';
 
   @override
+  String get hitTagSeal => 'SEALED';
+
+  @override
+  String get hitTagPull => 'PULLED';
+
+  @override
+  String get hitTagWind => 'WIND FLIP';
+
+  @override
+  String get hitTagBlind => 'BLINDED';
+
+  @override
+  String get hitTagBail => 'BAIL';
+
+  @override
+  String get hitTagBoost => 'LANTERN';
+
+  @override
+  String get hitTagHeal => 'HEAL';
+
+  @override
+  String get hitTagWall => 'WALL';
+
+  @override
+  String get hitTagRevive => 'REVIVE';
+
+  @override
+  String get hitTagIntercept => 'INTERCEPT';
+
+  @override
+  String get cabinSealed => 'Sealed';
+
+  @override
+  String get moveLocked => 'Pinned';
+
+  @override
+  String get windReversed => 'Flipped';
+
+  @override
+  String get windCalm => 'Calm';
+
+  @override
   String aimAngle(String deg) {
     return '$deg°';
   }

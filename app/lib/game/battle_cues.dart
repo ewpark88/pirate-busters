@@ -6,6 +6,7 @@ import 'package:pirate_busters/battle/playback.dart';
 import 'package:pirate_busters/game/anim/rarity_fx.dart';
 import 'package:pirate_busters/game/camera_director.dart';
 import 'package:pirate_busters/game/coords.dart';
+import 'package:pirate_busters/game/cues_unique.dart';
 import 'package:pirate_busters/game/hit_tag.dart';
 import 'package:pirate_busters/game/view/fx_layer.dart';
 import 'package:pirate_busters/game/view/fx_text.dart';
@@ -101,6 +102,7 @@ class BattleCues {
     final spec = _shooter;
     final tier = spec == null ? RarityFx.common : rarity.of(spec.rarity);
     final tag = spec == null ? null : HitTag.ofAmmo(spec.ammo);
+    final shown = <HitTag>{};
     for (final e in cues) {
       switch (e.kind) {
         case SimEventKind.fire:
@@ -199,9 +201,10 @@ class BattleCues {
             SimEventKind.stormStart ||
             // 터진 턴 효과는 뒤따르는 착탄 이벤트가 그린다.
             SimEventKind.divide ||
-            SimEventKind.effectFired ||
-            // 화재·상태 효과·기뢰·탭 연출은 R1c 에서 그린다 (ADR-075).
-            SimEventKind.ignited ||
+            SimEventKind.effectFired:
+          break;
+        // 고유 효과 연출 (설계서 §4.8, ADR-075·078).
+        case SimEventKind.ignited ||
             SimEventKind.burned ||
             SimEventKind.chained ||
             SimEventKind.statusApplied ||
@@ -213,7 +216,7 @@ class BattleCues {
             SimEventKind.barrierHit ||
             SimEventKind.revived ||
             SimEventKind.healed:
-          break;
+          dispatchUnique(e, shown);
         case SimEventKind.flood:
           // 턴 끝 침수가 늘면 배 둘레 수면에 물방울이 튄다 (설계서 §10.4). 펌프로
           // 줄면(음수) 튀지 않는다.
