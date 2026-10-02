@@ -1252,6 +1252,48 @@ class AppLocalizationsKo extends AppLocalizations {
   String get hitTagRepair => '수리';
 
   @override
+  String get hitTagSeal => '봉쇄';
+
+  @override
+  String get hitTagPull => '끌어당김';
+
+  @override
+  String get hitTagWind => '바람 역전';
+
+  @override
+  String get hitTagBlind => '궤적 봉쇄';
+
+  @override
+  String get hitTagBail => '배수';
+
+  @override
+  String get hitTagBoost => '등불';
+
+  @override
+  String get hitTagHeal => '치유';
+
+  @override
+  String get hitTagWall => '방벽';
+
+  @override
+  String get hitTagRevive => '부활';
+
+  @override
+  String get hitTagIntercept => '요격';
+
+  @override
+  String get cabinSealed => '봉쇄';
+
+  @override
+  String get moveLocked => '묶임';
+
+  @override
+  String get windReversed => '역풍';
+
+  @override
+  String get windCalm => '무풍';
+
+  @override
   String aimAngle(String deg) {
     return '$deg°';
   }

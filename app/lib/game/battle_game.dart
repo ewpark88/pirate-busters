@@ -10,9 +10,9 @@ import 'package:pirate_busters/battle/battle_stats.dart';
 import 'package:pirate_busters/battle/playback.dart';
 import 'package:pirate_busters/game/anim/anim_data.dart';
 import 'package:pirate_busters/game/battle_cues.dart';
+import 'package:pirate_busters/game/battle_texts.dart';
 import 'package:pirate_busters/game/camera_director.dart';
 import 'package:pirate_busters/game/coords.dart';
-import 'package:pirate_busters/game/hit_tag.dart';
 import 'package:pirate_busters/game/sprites.dart';
 import 'package:pirate_busters/game/view/backdrop_view.dart';
 import 'package:pirate_busters/game/view/effect_badges.dart';
@@ -24,11 +24,12 @@ import 'package:pirate_busters/game/view/shake.dart';
 import 'package:pirate_busters/game/view/ship_view.dart';
 import 'package:pirate_busters/game/view/shot_view.dart';
 import 'package:pirate_busters/game/view/water_fx.dart';
+import 'package:pirate_busters/game/view/world_marks.dart';
 import 'package:pirate_busters/game/weapon_styles.dart';
 
 /// 전장 (개발 계획서 M4). 매 프레임 [BattleSession] 을 진행하고 결과를 그린다.
 /// 판정은 하지 않는다 (CLAUDE.md 절대 규칙 3).
-class BattleGame extends FlameGame {
+class BattleGame extends FlameGame with BattleTexts {
   BattleGame(this.session, {this.sound = const SilentSoundService()});
 
   final BattleSession session;
@@ -45,17 +46,6 @@ class BattleGame extends FlameGame {
 
   /// ‘전체 보기’ (설계서 §2.1). HUD 버튼이 바꾼다.
   final ValueNotifier<bool> overview = ValueNotifier(false);
-
-  /// 피해 숫자 글자. 화면이 l10n·NumberFormat 으로 바꿔 넣는다 (설계서 §14.2).
-  String Function(int amount) damageText = (amount) => '$amount';
-
-  /// 명중 이름표와 남은 턴 수 글자 (설계서 §10.4). 화면이 l10n 으로 바꿔 넣는다.
-  String Function(HitTag tag) tagText = (tag) => tag.name;
-  String Function(int turns) turnsText = (turns) => '$turns';
-
-  /// 조준 각도·힘 글자 (설계서 §10.4). 화면이 l10n 으로 바꿔 넣는다.
-  String Function(int degrees) aimAngleText = (d) => '$d°';
-  String Function(int percent) aimPowerText = (p) => '$p%';
 
   /// 판이 끝난 뒤 연출(격침)까지 끝났다. 결과 창은 이것을 기다린다 (설계서 §10.4).
   final ValueNotifier<bool> settled = ValueNotifier(false);
@@ -75,6 +65,10 @@ class BattleGame extends FlameGame {
   late final ShotView _shot;
   late final FxLayer _fx;
   late final BattleCues _cues;
+
+  /// 연출 연결(테스트가 이벤트를 직접 넘길 때 쓴다).
+  @visibleForTesting
+  BattleCues get cues => _cues;
   double _pinchStart = 1;
 
   /// 사람이 보는 진영(AI 전은 0, 핫시트는 지금 턴 진영).
@@ -146,6 +140,8 @@ class BattleGame extends FlameGame {
         cellWorld: (side, cell) => _cues.cellWorld(side, cell),
       ),
       EffectBadges(session: session, weapons: weapons, priority: 25)
+        ..turnsText = (turns) => turnsText(turns),
+      WorldMarks(session: session, ships: _ships, priority: 25)
         ..turnsText = (turns) => turnsText(turns),
       _fx,
     ]);
@@ -269,8 +265,15 @@ class BattleGame extends FlameGame {
 
   void pinchUpdate(double scale) => director.setUserZoom(_pinchStart * scale);
 
-  /// 비행 중 탭 → `TAP` (설계서 §2.2).
-  void tap() => session.tap();
+  /// 비행 중 탭 → `TAP` (설계서 §2.2). [screen] 이 탄보다 위면 위(+1), 아래면
+  /// 아래(−1)로 꺾는다(알바, §4.8).
+  void tap([Vector2? screen]) {
+    final shot = _shot.projectile;
+    final up = screen != null && shot != null;
+    session.tap(
+      dir: up ? (camera.globalToLocal(screen).y < shot.y ? 1 : -1) : 0,
+    );
+  }
 
   /// 화면 좌표 [screen] 에 있는 사람 쪽 해적 슬롯. 배 위 캐릭터를 끌어 조준한다
   /// (설계서 §2.2 “배 위 캐릭터”). 없으면 null.

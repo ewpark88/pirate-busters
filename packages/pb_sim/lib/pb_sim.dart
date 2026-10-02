@@ -5,13 +5,17 @@
 /// (`tool/check_architecture.dart` 가 검사한다).
 library;
 
+export 'src/combat/ammo_rules.dart' show flockDropHeight;
 export 'src/combat/crack_spread.dart';
 export 'src/combat/flight.dart' show predictFirstHit;
 export 'src/combat/impact.dart';
 export 'src/combat/launch.dart';
 export 'src/combat/preview.dart';
+export 'src/combat/unique_effects.dart' show torpedoDepthLimit;
+export 'src/combat/unique_turns.dart' show armUnique;
 export 'src/command/command.dart';
 export 'src/hash/state_hasher.dart';
+export 'src/match/barrier.dart';
 export 'src/match/controller.dart';
 export 'src/match/headless.dart';
 export 'src/match/judge.dart';

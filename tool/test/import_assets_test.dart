@@ -159,11 +159,16 @@ void main() {
         'ui/meta/chest/chest_wood@2x.png',
         'ui/meta/tier/tier_king@2x.png',
         'ship/tiles_v2/ice_0@2x.png',
-        'ship/tiles_v2/burn_1@2x.png',
         'ship/tiles_v2/shield@2x.png',
+        'fx/damage_v3/crack_iron_0@2x.png',
       ]) {
         expect(imageTarget(rel), isNull, reason: rel);
       }
+      // 불·그을린 블록은 R1c 에서 쓴다.
+      expect(
+        imageTarget('ship/tiles_v2/burn_1@2x.png'),
+        'ship/tiles_v2/burn_1.png',
+      );
     });
 
     test('배경 데이터에서 이름 글자 필드를 지운다 (절대 규칙 10)', () {

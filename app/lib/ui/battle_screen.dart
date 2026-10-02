@@ -224,6 +224,16 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
         HitTag.mine => l10n.hitTagMine,
         HitTag.bite => l10n.hitTagBite,
         HitTag.repair => l10n.hitTagRepair,
+        HitTag.seal => l10n.hitTagSeal,
+        HitTag.pull => l10n.hitTagPull,
+        HitTag.wind => l10n.hitTagWind,
+        HitTag.blind => l10n.hitTagBlind,
+        HitTag.bail => l10n.hitTagBail,
+        HitTag.boost => l10n.hitTagBoost,
+        HitTag.heal => l10n.hitTagHeal,
+        HitTag.wall => l10n.hitTagWall,
+        HitTag.revive => l10n.hitTagRevive,
+        HitTag.intercept => l10n.hitTagIntercept,
       };
     return _scaffold();
   }

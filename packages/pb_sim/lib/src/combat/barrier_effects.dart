@@ -56,15 +56,17 @@ Barrier? barrierCrossed(
   return best;
 }
 
-/// 방벽 [b] 가 탄 [p] 를 막는다: 탄의 블록 피해만큼 깎이고 0 이하면 무너진다.
-void hitBarrier(MatchState state, Projectile p, Barrier b) {
+/// 방벽 [b] 가 탄 [p] 를 발사 뒤 [tick] 틱에 막는다: 탄의 블록 피해만큼 깎이고
+/// 0 이하면 무너진다.
+void hitBarrier(MatchState state, Projectile p, Barrier b, {int tick = 0}) {
   b.hp -= p.spec.blockDamage;
   state.events.add(
     SimEvent(
       SimEventKind.barrierHit,
       side: b.owner,
       x: b.x,
-      value: b.hp < 0 ? 0 : b.hp,
+      y: b.hp < 0 ? 0 : b.hp,
+      value: tick,
     ),
   );
   if (b.hp <= 0) state.barriers.remove(b);

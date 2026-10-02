@@ -80,6 +80,8 @@ class _PirateCardState extends State<_PirateCard> {
       PirateStatus.swimming => l10n.pirateSwimming,
       PirateStatus.aboard when side.isCabinFlooded(widget.slot) =>
         l10n.cabinFlooded,
+      // 킹에게 봉쇄된 선실 (설계서 §4.8, ADR-075).
+      PirateStatus.aboard when side.isSealed(widget.slot) => l10n.cabinSealed,
       PirateStatus.aboard when pirate.cooldown > 0 => l10n.cooldown(
         pirate.cooldown,
       ),

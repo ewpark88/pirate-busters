@@ -10,7 +10,31 @@ enum HitTag {
   burn,
   mine,
   bite,
-  repair;
+  repair,
+
+  // 고유 효과 (설계서 §4.8, ADR-075·078).
+  seal,
+  pull,
+  wind,
+  blind,
+  bail,
+  boost,
+  heal,
+  wall,
+  revive,
+  intercept;
+
+  /// 상대 배에 건 고유 능력 [ability] 의 이름표. 없으면 null.
+  static HitTag? ofAbility(Ability ability) => switch (ability) {
+    Ability.sealCabin => seal,
+    Ability.pull => pull,
+    Ability.steer => wind,
+    Ability.blindTrail => blind,
+    Ability.bail => bail,
+    Ability.lantern => boost,
+    Ability.cooldownCut => heal,
+    _ => null,
+  };
 
   /// 탄종 [ammo] 로 맞혔을 때 붙는 이름표. 없으면 null.
   static HitTag? ofAmmo(AmmoType ammo) => switch (ammo) {

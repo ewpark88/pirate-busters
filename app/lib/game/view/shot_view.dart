@@ -13,6 +13,7 @@ import 'package:pirate_busters/game/view/aim_painter.dart';
 import 'package:pirate_busters/game/view/guide_marks.dart';
 import 'package:pirate_busters/game/view/trail_painter.dart';
 import 'package:pirate_busters/game/weapon_styles.dart';
+import 'package:pirate_busters/input/aim_mode.dart';
 import 'package:pirate_busters/input/pull_aim.dart';
 
 /// 날아가는 탄, 조준 궤적(앞 20% 점선), 이동 끝 지점 점선. 이동 한계 표식은
@@ -214,7 +215,13 @@ class ShotView extends Component {
     // 상대 턴 재생에는 궤적을 그리지 않는다 (설계서 §13.4).
     final path = session
         .previewShot(aim.slot, aim.shot.angle, aim.shot.power)
-        .head(previewPercent);
+        .head(
+          trailPercentFor(
+            session.state.sides[session.state.activeSide],
+            aim.slot,
+            base: previewPercent,
+          ),
+        );
     GuideMarks.rangeEnd(canvas, session, aim.slot, path.xs.first);
     // 점선은 멀어질수록 흐려지고 색은 등급을 따른다 (설계서 §10.4, §10.5).
     final side = session.state.activeSide;
@@ -256,7 +263,7 @@ class ShotView extends Component {
     AimLabels.draw(
       canvas,
       from,
-      angle: angleText((launch / 1000).round()),
+      angle: angleText(shownDegrees(launch)),
       power: powerText((aim.shot.power * 100 / maxFirePower).round()),
     );
   }

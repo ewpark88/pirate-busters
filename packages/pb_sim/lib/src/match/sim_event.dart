@@ -85,13 +85,15 @@ enum SimEventKind {
   /// 지원 효과(배수·쿨다운·연료)가 났다. [SimEvent.value] = 고유 능력 index.
   supported,
 
-  /// 펠리 투하 표시가 상대 탄에 요격됐다. [SimEvent.x] = 표시 x.
+  /// 펠리 투하 표시가 상대 탄에 요격됐다. [SimEvent.x] = 표시 x, [SimEvent.value] =
+  /// 발사 후 틱.
   intercepted,
 
   /// 산호 방벽이 섰다(코리). [SimEvent.x] = 월드 x, [SimEvent.value] = 내구도.
   barrierPlaced,
 
-  /// 산호 방벽이 탄을 막았다. [SimEvent.x] = 월드 x, [SimEvent.value] = 남은 내구도.
+  /// 산호 방벽이 탄을 막았다. [SimEvent.x] = 월드 x, [SimEvent.y] = 남은 내구도,
+  /// [SimEvent.value] = 발사 후 틱.
   barrierHit,
 
   /// 해적이 되살아났다(데비). [SimEvent.slot].

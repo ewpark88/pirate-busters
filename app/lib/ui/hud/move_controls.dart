@@ -55,6 +55,7 @@ class _MoveControlsState extends State<MoveControls>
       _s.isHumanTurn &&
       _s.state.activeSide == widget.side &&
       _me.fuel > 0 &&
+      !_me.moveLocked &&
       _s.playback is! ShotPlayback;
 
   void _press(int dir) {
@@ -110,7 +111,14 @@ class _MoveControlsState extends State<MoveControls>
           Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(l10n.fuel, style: const TextStyle(fontSize: 12)),
+              // 모비에게 끌려와 묶인 턴이면 연료 대신 ‘묶임’ (설계서 §4.8).
+              Text(
+                _me.moveLocked ? l10n.moveLocked : l10n.fuel,
+                style: TextStyle(
+                  fontSize: 12,
+                  color: _me.moveLocked ? HudColors.danger : null,
+                ),
+              ),
               const SizedBox(height: 2),
               SizedBox(
                 width: 70,

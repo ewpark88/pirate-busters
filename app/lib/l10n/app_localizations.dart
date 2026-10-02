@@ -2348,6 +2348,90 @@ abstract class AppLocalizations {
   /// **'REPAIR'**
   String get hitTagRepair;
 
+  /// No description provided for @hitTagSeal.
+  ///
+  /// In en, this message translates to:
+  /// **'SEALED'**
+  String get hitTagSeal;
+
+  /// No description provided for @hitTagPull.
+  ///
+  /// In en, this message translates to:
+  /// **'PULLED'**
+  String get hitTagPull;
+
+  /// No description provided for @hitTagWind.
+  ///
+  /// In en, this message translates to:
+  /// **'WIND FLIP'**
+  String get hitTagWind;
+
+  /// No description provided for @hitTagBlind.
+  ///
+  /// In en, this message translates to:
+  /// **'BLINDED'**
+  String get hitTagBlind;
+
+  /// No description provided for @hitTagBail.
+  ///
+  /// In en, this message translates to:
+  /// **'BAIL'**
+  String get hitTagBail;
+
+  /// No description provided for @hitTagBoost.
+  ///
+  /// In en, this message translates to:
+  /// **'LANTERN'**
+  String get hitTagBoost;
+
+  /// No description provided for @hitTagHeal.
+  ///
+  /// In en, this message translates to:
+  /// **'HEAL'**
+  String get hitTagHeal;
+
+  /// No description provided for @hitTagWall.
+  ///
+  /// In en, this message translates to:
+  /// **'WALL'**
+  String get hitTagWall;
+
+  /// No description provided for @hitTagRevive.
+  ///
+  /// In en, this message translates to:
+  /// **'REVIVE'**
+  String get hitTagRevive;
+
+  /// No description provided for @hitTagIntercept.
+  ///
+  /// In en, this message translates to:
+  /// **'INTERCEPT'**
+  String get hitTagIntercept;
+
+  /// No description provided for @cabinSealed.
+  ///
+  /// In en, this message translates to:
+  /// **'Sealed'**
+  String get cabinSealed;
+
+  /// No description provided for @moveLocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Pinned'**
+  String get moveLocked;
+
+  /// No description provided for @windReversed.
+  ///
+  /// In en, this message translates to:
+  /// **'Flipped'**
+  String get windReversed;
+
+  /// No description provided for @windCalm.
+  ///
+  /// In en, this message translates to:
+  /// **'Calm'**
+  String get windCalm;
+
   /// 조준 각도 라벨 (설계서 §10.4)
   ///
   /// In en, this message translates to:

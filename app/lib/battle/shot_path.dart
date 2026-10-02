@@ -8,7 +8,8 @@ class ShotPath {
   ShotPath._(this.xs, this.ys);
 
   /// 발사 전 [state] 에서 [slot] 해적이 [ms](실제 시각)에 쏜 탄의 궤적.
-  /// 해수면 아래로 내려가거나 수명이 다할 때까지 담는다.
+  /// 해수면 아래로 내려가거나 수명이 다할 때까지 담는다. 어뢰(바라)는 물속으로
+  /// 사라지는 깊이까지 담는다 (설계서 §4.8).
   factory ShotPath.predict(
     MatchState state, {
     required int slot,
@@ -17,10 +18,12 @@ class ShotPath {
     required int ms,
   }) {
     final p = launchShot(state, slot: slot, angle: angle, power: power, ms: ms);
+    armUnique(p);
     final wind = state.wind * state.rules.windAccel;
     final xs = <int>[p.x];
     final ys = <int>[p.y];
-    while (!p.isExpired && p.y >= 0) {
+    final floor = p.submerged ? -torpedoDepthLimit : 0;
+    while (!p.isExpired && p.y >= floor) {
       p.advance(wind);
       xs.add(p.x);
       ys.add(p.y);

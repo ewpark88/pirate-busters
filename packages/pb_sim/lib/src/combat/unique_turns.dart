@@ -75,7 +75,7 @@ bool pumpsOffFor(MatchState state) => state.effects.any(
 );
 
 /// 펠리 투하 표시 요격: 상대 탄이 표시 지점(투하 높이) 1칸 안을 지나면 표시가 사라진다.
-void interceptDrops(MatchState state, Projectile p) {
+void interceptDrops(MatchState state, Projectile p, {int tick = 0}) {
   final hits = [
     for (final e in state.effects)
       if (e.kind == EffectKind.flockDrop &&
@@ -93,6 +93,7 @@ void interceptDrops(MatchState state, Projectile p) {
         side: e.owner,
         slot: e.ownerSlot,
         x: e.x,
+        value: tick,
       ),
     );
   }
