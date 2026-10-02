@@ -8,6 +8,16 @@ import 'package:pirate_busters/battle/battle_session.dart';
 class ShipMotion {
   double _rockDir = 0;
   double _rockT = 10;
+  double _kickDir = 0;
+  double _kickT = 10;
+
+  /// 맞았을 때 기우는 최대 각(라디안)과 내려앉는 깊이(월드 px) (A20 에서 키움).
+  static const double rockAmp = 0.06;
+  static const double rockDip = 5;
+
+  /// 쏠 때 밀리는 거리(월드 px)와 뒤로 젖는 각(라디안).
+  static const double recoilPx = 7;
+  static const double recoilTilt = 0.02;
 
   /// 가라앉기 시작한 뒤 지난 초. 음수면 가라앉지 않는다.
   double sinkT = -1;
@@ -23,6 +33,23 @@ class ShipMotion {
     _rockT = 0;
   }
 
+  /// 쏠 때 반동: [dir] 쪽(+1 오른쪽)으로 살짝 밀렸다가 돌아온다 (설계서 §10.4, A20).
+  void recoil(int dir) {
+    _kickDir = dir.sign.toDouble();
+    _kickT = 0;
+  }
+
+  /// 반동으로 밀린 거리(월드 px).
+  double get recoilX => _kickDir * recoilPx * math.exp(-9 * _kickT);
+
+  /// 반동으로 젖은 각(라디안). 미는 쪽으로 살짝 기운다.
+  double get recoilAngle => _kickDir * recoilTilt * math.exp(-8 * _kickT);
+
+  /// 맞고 살짝 가라앉았다 떠오르는 깊이(월드 px, + 아래).
+  double get dip => _rockDir == 0
+      ? 0
+      : rockDip * math.exp(-6 * _rockT) * math.sin(_rockT * 9).abs();
+
   /// 격침 연출을 시작한다(한 번만).
   void startSink() {
     if (sinkT < 0) sinkT = 0;
@@ -35,12 +62,13 @@ class ShipMotion {
 
   void update(double dt) {
     _rockT += dt;
+    _kickT += dt;
     if (sinkT >= 0) sinkT += dt;
   }
 
-  /// 흔들림 각(라디안): 2° 로 밀렸다가 0.6초쯤 출렁이며 잦아든다.
+  /// 흔들림 각(라디안): 약 3.4° 로 밀렸다가 0.6초쯤 출렁이며 잦아든다.
   double get rockAngle =>
-      _rockDir * 0.035 * math.exp(-5 * _rockT) * math.cos(_rockT * 14);
+      _rockDir * rockAmp * math.exp(-5 * _rockT) * math.cos(_rockT * 14);
 
   /// 가라앉은 정도 0~1 (처음과 끝이 부드러운 곡선).
   static double sinkProgress(double t) {

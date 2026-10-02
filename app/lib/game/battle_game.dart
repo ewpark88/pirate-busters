@@ -20,6 +20,7 @@ import 'package:pirate_busters/game/view/fx_layer.dart';
 import 'package:pirate_busters/game/view/limit_marks.dart';
 import 'package:pirate_busters/game/view/sea_theme.dart';
 import 'package:pirate_busters/game/view/sea_view.dart';
+import 'package:pirate_busters/game/view/shake.dart';
 import 'package:pirate_busters/game/view/ship_view.dart';
 import 'package:pirate_busters/game/view/shot_view.dart';
 import 'package:pirate_busters/game/view/water_fx.dart';
@@ -174,6 +175,9 @@ class BattleGame extends FlameGame {
     applyLowEnd();
   }
 
+  /// 흔들림 떨림의 시계(초).
+  double _shakeT = 0;
+
   @override
   void update(double dt) {
     session.update((dt * 1000).round().clamp(0, 100));
@@ -248,14 +252,10 @@ class BattleGame extends FlameGame {
       aspect: size.x > 0 ? size.y / size.x : 0.46,
     );
     director.update(dt, goal);
-    final shake = _fx.shake;
+    // 흔들림은 매끄러운 떨림으로 잦아든다 (설계서 §10.4, A20).
+    _shakeT += dt;
     camera.viewfinder
-      ..position =
-          director.center +
-          Vector2(
-            shake * ((session.turnMs ~/ 16).isEven ? 1 : -1),
-            shake * 0.5,
-          )
+      ..position = director.center + Shake.offset(_fx.shake, _shakeT)
       ..zoom = size.x / (director.width * director.punchScale);
   }
 

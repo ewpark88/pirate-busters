@@ -13,6 +13,7 @@ import 'package:pirate_busters/game/sprites.dart';
 import 'package:pirate_busters/game/view/collapse_fx.dart';
 import 'package:pirate_busters/game/view/explosion_fx.dart';
 import 'package:pirate_busters/game/view/impact_accent.dart';
+import 'package:pirate_busters/game/view/shake.dart';
 
 /// 착탄 효과를 월드에 띄운다 (설계서 §10.3 타격감).
 class FxLayer extends Component {
@@ -229,6 +230,6 @@ class FxLayer extends Component {
   @override
   void update(double dt) {
     super.update(dt);
-    shake = math.max(0, shake - dt * 30);
+    shake = Shake.decay(shake, dt);
   }
 }

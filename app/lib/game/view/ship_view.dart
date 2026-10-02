@@ -125,6 +125,8 @@ class ShipView extends PositionComponent with HasGameReference {
   /// 맞은 방향으로 흔들렸다가 돌아온다 (설계서 §10.4).
   void rock(int dir) => motion.rock(dir);
 
+  void recoil(int dir) => motion.recoil(dir); // 쏠 때 반동 (A20).
+
   /// 지금 그리는 뱃머리 x(시뮬레이션 단위). 이동 연출 중이면 중간 값.
   double get bowX {
     final p = session.playback;
@@ -147,14 +149,17 @@ class ShipView extends PositionComponent with HasGameReference {
       if (session.playback == null) motion.startSink();
     }
     motion.update(dt);
-    position = Coords.point(midX, heave - _state.draft)..y += motion.depth;
+    position = Coords.point(midX, heave - _state.draft)
+      ..x += motion.recoilX
+      ..y += motion.depth + motion.dip;
     scale.x = facing.toDouble();
     final rules = state.rules;
     final flood = floodTilt(_state, rules);
     final tilt = Wave(rules, state.turn).roll(side, session.turnMs) + flood;
     angle =
         -facing * tilt * math.pi / 180000 +
-        motion.rockAngle -
+        motion.rockAngle +
+        motion.recoilAngle -
         facing * motion.extraTilt(flood == 0 ? -1 : flood.sign.toDouble());
     _updateCrew(dt);
   }
