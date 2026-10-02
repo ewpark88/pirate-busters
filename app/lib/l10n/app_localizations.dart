@@ -1496,6 +1496,12 @@ abstract class AppLocalizations {
   /// **'To port'**
   String get resultToPort;
 
+  /// No description provided for @resultMvp.
+  ///
+  /// In en, this message translates to:
+  /// **'MVP'**
+  String get resultMvp;
+
   /// No description provided for @statTurns.
   ///
   /// In en, this message translates to:

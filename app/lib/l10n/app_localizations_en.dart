@@ -855,6 +855,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get resultToPort => 'To port';
 
   @override
+  String get resultMvp => 'MVP';
+
+  @override
   String statTurns(Object turns) {
     return 'Turns used $turns';
   }

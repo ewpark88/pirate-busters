@@ -233,6 +233,7 @@
   "rewardPirate": "새 해적 합류: {name}",
   "rewardFirstClear": "첫 클리어 보너스",
   "resultToPort": "항구로",
+  "resultMvp": "MVP",
   "statTurns": "사용 턴 {turns}",
   "statShots": "발사 {shots}발",
   "statFlood": "침수 나 {mine}% · 상대 {enemy}%",

@@ -58,6 +58,7 @@ abstract final class StageFlow {
       hits: stats.hits[0],
       damageDealt: stats.pirateDamage[0],
       blocksDestroyed: stats.blocksDestroyed[0],
+      mvpSlot: stats.mvpSlot(0),
     );
     final enemyFlood = state.sides[1].flood * 100 ~/ fullFlood;
     final stars = const StarRules().evaluate(stage, mine);

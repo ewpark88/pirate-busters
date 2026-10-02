@@ -15,6 +15,7 @@ class MatchSummary {
     this.hits = 0,
     this.damageDealt = 0,
     this.blocksDestroyed = 0,
+    this.mvpPirate,
   });
 
   /// 끝난 판의 상태에서 [side] 기준으로 만든다.
@@ -24,8 +25,10 @@ class MatchSummary {
     int hits = 0,
     int damageDealt = 0,
     int blocksDestroyed = 0,
+    int mvpSlot = -1,
   }) {
     final me = state.sides[side];
+    final crew = me.crew.pirates;
     return MatchSummary(
       won: state.winner == side,
       // 무승부는 pb_sim 이 정한다(승자 −1). 앱이 침수 % 로 다시 재지 않는다 (§2.4).
@@ -43,6 +46,9 @@ class MatchSummary {
       hits: hits,
       damageDealt: damageDealt,
       blocksDestroyed: blocksDestroyed,
+      mvpPirate: mvpSlot >= 0 && mvpSlot < crew.length
+          ? crew[mvpSlot].spec.id
+          : null,
     );
   }
 
@@ -63,6 +69,9 @@ class MatchSummary {
   final int hits;
   final int damageDealt;
   final int blocksDestroyed;
+
+  /// 가장 많이 기여한 내 해적 id (결과 화면 MVP, 설계서 §13.5). 없으면 null.
+  final String? mvpPirate;
 
   int get hitPercent =>
       shotsFired == 0 ? 0 : (hits * 100 ~/ shotsFired).clamp(0, 100);
