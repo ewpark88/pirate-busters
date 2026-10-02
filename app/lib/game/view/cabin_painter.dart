@@ -35,14 +35,17 @@ abstract final class CabinPainter {
       ..drawRect(r, _edge);
   }
 
-  /// 돛대·돛·깃발 (장식, 판정 없음). 가장 높은 블록 위 가운데에 세운다. [materials]
-  /// 는 칸별 재질(가로 [width] 칸), 좌표는 배 로컬(가운데 용골 바닥이 원점)이다.
+  /// 돛대·돛·깃발 (장식, 판정 없음). [foot] 이 있으면 그 자리(돛대 모듈)에서
+  /// 세우고, 없으면 가장 높은 블록 위 가운데에 세운다. 돛·깃발 높이는 가장 높은
+  /// 블록 위로 같다. [materials] 는 칸별 재질(가로 [width] 칸), 좌표는 배
+  /// 로컬(가운데 용골 바닥이 원점)이다.
   static void rig(
     Canvas canvas,
     BattleSprites sprites,
     List<int> materials,
     int width, {
     required bool blue,
+    Offset? foot,
   }) {
     var top = 0;
     for (var i = 0; i < materials.length; i++) {
@@ -51,19 +54,28 @@ abstract final class CabinPainter {
     final team = blue ? 'blue' : 'red';
     final mast = sprites.get('ship/rig/mast.png');
     final mastSize = mast.srcSize / 3.2;
-    final mastPos = Vector2(-mastSize.x / 2, -top * Coords.cell - mastSize.y);
-    mast.render(canvas, position: mastPos, size: mastSize);
+    final x = foot?.dx ?? 0;
+    final mastPos = Vector2(
+      x - mastSize.x / 2,
+      -top * Coords.cell - mastSize.y,
+    );
+    final bottom = foot?.dy ?? mastPos.y + mastSize.y;
+    mast.render(
+      canvas,
+      position: mastPos,
+      size: Vector2(mastSize.x, bottom - mastPos.y),
+    );
     final sail = sprites.get('ship/rig/sail_$team.png');
     final sailSize = sail.srcSize / 4.2;
     sail.render(
       canvas,
-      position: Vector2(-sailSize.x / 2, mastPos.y + 16),
+      position: Vector2(x - sailSize.x / 2, mastPos.y + 16),
       size: sailSize,
     );
     final flag = sprites.get('ship/rig/flag_$team.png');
     flag.render(
       canvas,
-      position: Vector2(4, mastPos.y - 10),
+      position: Vector2(x + 4, mastPos.y - 10),
       size: flag.srcSize / 3.6,
     );
   }

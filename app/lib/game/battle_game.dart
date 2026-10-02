@@ -14,6 +14,7 @@ import 'package:pirate_busters/game/camera_director.dart';
 import 'package:pirate_busters/game/coords.dart';
 import 'package:pirate_busters/game/hit_tag.dart';
 import 'package:pirate_busters/game/sprites.dart';
+import 'package:pirate_busters/game/view/backdrop_view.dart';
 import 'package:pirate_busters/game/view/effect_badges.dart';
 import 'package:pirate_busters/game/view/fx_layer.dart';
 import 'package:pirate_busters/game/view/sea_theme.dart';
@@ -48,6 +49,10 @@ class BattleGame extends FlameGame {
   /// 명중 이름표와 남은 턴 수 글자 (설계서 §10.4). 화면이 l10n 으로 바꿔 넣는다.
   String Function(HitTag tag) tagText = (tag) => tag.name;
   String Function(int turns) turnsText = (turns) => '$turns';
+
+  /// 조준 각도·힘 글자 (설계서 §10.4). 화면이 l10n 으로 바꿔 넣는다.
+  String Function(int degrees) aimAngleText = (d) => '$d°';
+  String Function(int percent) aimPowerText = (p) => '$p%';
 
   /// 저사양 모드: 바다 굴절 셰이더를 끈다 (설계서 §10.2).
   final ValueNotifier<bool> lowEnd = ValueNotifier(false);
@@ -86,18 +91,26 @@ class BattleGame extends FlameGame {
     }
     // 해역 1 일반 모드: 맑은 낮 (설계서 §10.2). 해역·모드 톤은 R3.
     const theme = SeaTheme.tropicalDay;
-    camera.backdrop.add(SkyBackdrop(theme));
+    final backdrop = await BackdropView.load(
+      images,
+      rootBundle,
+      lowEnd: lowEnd,
+      priority: -30,
+    );
     _ships = [
       for (final side in const [0, 1])
         ShipView(session: session, side: side, sprites: sprites, anims: anims),
     ];
-    _shot = ShotView(
-      session: session,
-      sprites: sprites,
-      weapons: weapons,
-      rarity: anims.rarity,
-      priority: 20,
-    );
+    _shot =
+        ShotView(
+            session: session,
+            sprites: sprites,
+            weapons: weapons,
+            rarity: anims.rarity,
+            priority: 20,
+          )
+          ..angleText = ((d) => aimAngleText(d))
+          ..powerText = ((p) => aimPowerText(p));
     _fx = FxLayer(
       sprites: sprites,
       lowEnd: lowEnd,
@@ -105,8 +118,7 @@ class BattleGame extends FlameGame {
       priority: 30,
     );
     await world.addAll([
-      ParallaxScenery(theme: theme, factor: 0.15, seed: 1, priority: -30),
-      ParallaxScenery(theme: theme, factor: 0.4, seed: 2, priority: -20),
+      backdrop,
       SeaView(front: false, theme: theme, swell: _swell, priority: -10),
       ..._ships,
       SeaView(
@@ -136,6 +148,7 @@ class BattleGame extends FlameGame {
     overview.addListener(() => director.overview = overview.value);
     // 저사양 모드에서는 등급 고리의 입자와 외곽 빛을 줄인다 (설계서 §12).
     void applyLowEnd() {
+      _shot.fewer = lowEnd.value;
       for (final ship in _ships) {
         for (final rig in ship.rigs) {
           rig.fewer = lowEnd.value;

@@ -1031,4 +1031,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get hitTagRepair => 'REPAIR';
+
+  @override
+  String aimAngle(String deg) {
+    return '$deg°';
+  }
+
+  @override
+  String aimPower(String pct) {
+    return 'Power $pct%';
+  }
 }

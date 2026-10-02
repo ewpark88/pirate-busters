@@ -11,6 +11,7 @@ import 'package:pirate_busters/game/coords.dart';
 import 'package:pirate_busters/game/sprites.dart';
 import 'package:pirate_busters/game/view/cabin_painter.dart';
 import 'package:pirate_busters/game/view/damage_painter.dart';
+import 'package:pirate_busters/game/view/module_painter.dart';
 import 'package:pirate_busters/game/view/torn_edge_painter.dart';
 
 /// 배 한 척: 격자 타일, 돛대, 선실 칸 안의 해적. 시뮬레이션 상태를 그리기만 한다.
@@ -225,7 +226,15 @@ class ShipView extends PositionComponent with HasGameReference {
         : null;
     final materials = snap?.materials ?? grid.rawMaterials;
     final hp = snap?.hp ?? grid.rawHp;
-    CabinPainter.rig(canvas, sprites, materials, _width, blue: side == 0);
+    ModulePainter.rigs(
+      canvas,
+      sprites,
+      materials,
+      _width,
+      _moduleAt,
+      cellRect,
+      blue: side == 0,
+    );
     for (var y = 0; y < grid.height; y++) {
       for (var x = 0; x < grid.width; x++) {
         final i = y * grid.width + x;
@@ -250,42 +259,35 @@ class ShipView extends PositionComponent with HasGameReference {
         if (_isCabin(x, y)) {
           CabinPainter.room(canvas, rect, sprites.roomWall(x, y));
         }
+        final module = _moduleAt[i];
+        if (module != null) ModulePainter.draw(canvas, sprites, rect, module);
         // 금은 이웃 부서진 칸 쪽에서 들어와 이어져 보인다 (설계서 §10.2).
         TornEdgePainter.damage(canvas, rect, i, stage, _mask(materials, x, y));
       }
     }
     // 부서진 칸의 가장자리는 타일을 모두 그린 뒤 이웃 블록 쪽으로 찢어 그린다.
-    for (var y = 0; y < grid.height; y++) {
-      for (var x = 0; x < grid.width; x++) {
-        final i = y * grid.width + x;
-        if (materials[i] != ShipGrid.emptyCell ||
-            _built.materials[i] == ShipGrid.emptyCell) {
-          continue;
-        }
-        TornEdgePainter.torn(
-          canvas,
-          cellRect(x, y),
-          i,
-          _mask(materials, x, y, block: true),
-        );
-      }
-    }
+    TornEdgePainter.tornAll(
+      canvas,
+      grid,
+      materials,
+      _built.materials,
+      cellRect,
+    );
   }
 
-  /// ([x], [y]) 의 상하좌우 이웃 마스크. [block] 이면 블록이 남은 이웃, 아니면
-  /// 설계도에 있었다가 부서진 이웃.
-  int _mask(List<int> materials, int x, int y, {bool block = false}) {
-    final grid = _state.grid;
-    bool at(int nx, int ny) {
-      if (!grid.inBounds(nx, ny)) return false;
-      final i = ny * grid.width + nx;
-      final has = materials[i] != ShipGrid.emptyCell;
-      return block ? has : !has && _built.materials[i] != ShipGrid.emptyCell;
-    }
+  /// 칸 번호 → 모듈 (설계도 그대로). 블록이 부서지면 그 칸과 함께 안 그린다.
+  late final Map<int, ModuleKind> _moduleAt = ModulePainter.byCell(
+    _state.modules,
+    _width,
+  );
 
-    return (at(x - 1, y) ? TornEdgePainter.left : 0) |
-        (at(x + 1, y) ? TornEdgePainter.right : 0) |
-        (at(x, y + 1) ? TornEdgePainter.up : 0) |
-        (at(x, y - 1) ? TornEdgePainter.down : 0);
-  }
+  int _mask(List<int> materials, int x, int y, {bool block = false}) =>
+      TornEdgePainter.mask(
+        _state.grid,
+        materials,
+        _built.materials,
+        x,
+        y,
+        block: block,
+      );
 }

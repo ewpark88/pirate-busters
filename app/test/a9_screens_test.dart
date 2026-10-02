@@ -19,6 +19,7 @@ import 'package:pirate_busters/settings/settings_store.dart';
 import 'package:pirate_busters/shipyard/blueprint_preview.dart';
 import 'package:pirate_busters/story/cutscene_screen.dart';
 import 'package:pirate_busters/story/story_data.dart';
+import 'package:pirate_busters/ui/meta_icons.dart';
 
 import 'test_catalog.dart';
 
@@ -150,9 +151,12 @@ void main() {
       final l10n = _l10n(tester, BattlePrepScreen);
       expect(find.byType(BlueprintPreview), findsOneWidget);
       expect(
-        find.byIcon(BattlePrepScreen.personalityIcon(stage.personality)),
+        find.image(AssetImage(MetaIcons.personality(stage.personality))),
         findsOneWidget,
       );
+      // 해역 1 세력 깃발과 이름 (설계서 §15.3).
+      expect(find.image(AssetImage(MetaIcons.factionOfSea(1))), findsOneWidget);
+      expect(find.text(l10n.sea_1_faction), findsOneWidget);
       expect(find.text(l10n.prepCabins), findsOneWidget);
       // 시작 덱 2명, 슬루프 선실 4개 → 빈 선실 2개.
       expect(find.text(l10n.prepCabinEmpty), findsNWidgets(2));

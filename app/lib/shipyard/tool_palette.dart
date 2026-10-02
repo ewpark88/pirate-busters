@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pb_sim/pb_sim.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
+import 'package:pirate_busters/shipyard/ship_grid_view.dart';
 import 'package:pirate_busters/shipyard/shipyard_model.dart';
 import 'package:pirate_busters/ui/labels.dart';
 
@@ -25,15 +26,19 @@ class ToolPalette extends StatelessWidget {
                 MaterialTool(m),
                 Labels.material(l10n, m),
                 cost: m.cost,
-                swatch: Labels.materialColor(m),
+                image: ShipGridView.tileImage(m, 0, 0),
               ),
-            _chip(const CabinTool(), l10n.toolCabin, icon: Icons.person),
+            _chip(
+              const CabinTool(),
+              l10n.toolCabin,
+              image: ShipGridView.cabinImage(0, 0),
+            ),
             for (final k in ModuleKind.values)
               _chip(
                 ModuleTool(k),
                 Labels.module(l10n, k),
                 cost: k.cost,
-                icon: Labels.moduleIcon(k),
+                image: ShipGridView.moduleImage(k),
               ),
             _chip(const EraseTool(), l10n.toolErase, icon: Icons.backspace),
           ],
@@ -55,13 +60,13 @@ class ToolPalette extends StatelessWidget {
     String label, {
     int? cost,
     IconData? icon,
-    Color? swatch,
+    String? image,
   }) => ChoiceChip(
     selected: _same(model.tool, tool),
     onSelected: (_) => model.selectTool(tool),
     visualDensity: VisualDensity.compact,
-    avatar: swatch != null
-        ? CircleAvatar(backgroundColor: swatch, radius: 8)
+    avatar: image != null
+        ? Image.asset(image, width: 18, height: 18)
         : Icon(icon, size: 16),
     label: Text(cost == null ? label : '$label $cost'),
   );

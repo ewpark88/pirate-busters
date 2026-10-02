@@ -8,6 +8,7 @@ import 'package:pirate_busters/battle/playback.dart';
 import 'package:pirate_busters/battle/session_views.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
 import 'package:pirate_busters/ui/hud/hud_style.dart';
+import 'package:pirate_busters/ui/meta_icons.dart';
 
 /// 아래 왼쪽: ◀ 후퇴 · 연료 게이지 · 전진 ▶ (설계서 §2.2, §2.6, §2.7, §13.4).
 ///
@@ -91,7 +92,7 @@ class _MoveControlsState extends State<MoveControls>
           // 왼쪽 버튼은 화면 왼쪽으로 간다: 왼쪽 배는 후퇴, 오른쪽 배는 전진.
           _HoldButton(
             label: _facing > 0 ? l10n.retreat : l10n.advance,
-            icon: Icons.chevron_left,
+            icon: MetaIcons.moveBack,
             enabled: _enabled,
             onDown: () => _press(-_facing),
             onUp: _release,
@@ -119,7 +120,7 @@ class _MoveControlsState extends State<MoveControls>
           const SizedBox(width: 8),
           _HoldButton(
             label: _facing > 0 ? l10n.advance : l10n.retreat,
-            icon: Icons.chevron_right,
+            icon: MetaIcons.moveForward,
             enabled: _enabled,
             onDown: () => _press(_facing),
             onUp: _release,
@@ -140,7 +141,9 @@ class _HoldButton extends StatelessWidget {
   });
 
   final String label;
-  final IconData icon;
+
+  /// 화면 방향 화살표 그림 (`MetaIcons.moveBack` ← · `moveForward` →).
+  final String icon;
   final bool enabled;
   final VoidCallback onDown;
   final VoidCallback onUp;
@@ -155,7 +158,7 @@ class _HoldButton extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, color: HudColors.text, size: 30),
+          MetaIcons.image(icon, size: 30),
           Text(label, style: const TextStyle(fontSize: 12)),
         ],
       ),

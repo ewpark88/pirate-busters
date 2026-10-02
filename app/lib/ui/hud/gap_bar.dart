@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pb_sim/pb_sim.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
 import 'package:pirate_busters/ui/hud/hud_style.dart';
+import 'package:pirate_busters/ui/meta_icons.dart';
 
 /// 위 가는 막대: 두 배의 위치와 지금 간격(칸), 오른쪽 끝 ‘전체 보기’ (설계서 §2.1, §13.4).
 class GapBar extends StatelessWidget {
@@ -56,6 +57,8 @@ class GapBar extends StatelessWidget {
         ValueListenableBuilder<bool>(
           valueListenable: overview,
           builder: (context, on, _) => FilterChip(
+            avatar: MetaIcons.image(MetaIcons.fullView, size: 16),
+            showCheckmark: false,
             label: Text(l10n.overview),
             selected: on,
             onSelected: (v) => overview.value = v,

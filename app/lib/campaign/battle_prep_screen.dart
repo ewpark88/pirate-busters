@@ -16,6 +16,7 @@ import 'package:pirate_busters/shipyard/blueprint_preview.dart';
 import 'package:pirate_busters/story/cutscene_screen.dart';
 import 'package:pirate_busters/story/story_data.dart';
 import 'package:pirate_busters/ui/hud/hud_style.dart';
+import 'package:pirate_busters/ui/meta_icons.dart';
 
 /// 전투 준비 (설계서 §13.3): 왼쪽 내 배 미리보기와 설계도 선택, 가운데 상대 정보(성격
 /// 아이콘·날씨·기믹)와 대사, 오른쪽 선실 배치와 코스트, 아래 덱 수정·출항. 세트 표시는 A3.
@@ -23,14 +24,6 @@ class BattlePrepScreen extends ConsumerStatefulWidget {
   const BattlePrepScreen({required this.stage, super.key});
 
   final StageSpec stage;
-
-  /// AI 성격 아이콘 (설계서 §13.3). 새 그림 없이 Material 아이콘으로 (0원 원칙).
-  static IconData personalityIcon(Personality p) => switch (p) {
-    Personality.bombard => Icons.whatshot,
-    Personality.hunter => Icons.gps_fixed,
-    Personality.sinker => Icons.water,
-    Personality.rusher => Icons.bolt,
-  };
 
   @override
   ConsumerState<BattlePrepScreen> createState() => _BattlePrepScreenState();
@@ -189,12 +182,17 @@ class _BattlePrepScreenState extends ConsumerState<BattlePrepScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(l10n.prepEnemy, style: const TextStyle(color: HudColors.mute)),
+          // 세력이 먼저, 그다음 AI 성격 (화면 시안 stage33_prep).
           Row(
             children: [
-              Icon(
-                BattlePrepScreen.personalityIcon(stage.personality),
-                size: 18,
-              ),
+              MetaIcons.image(MetaIcons.factionOfSea(stage.sea)),
+              const SizedBox(width: 4),
+              Text(dataText(l10n, 'sea_${stage.sea}_faction')),
+            ],
+          ),
+          Row(
+            children: [
+              MetaIcons.image(MetaIcons.personality(stage.personality)),
               const SizedBox(width: 4),
               Expanded(
                 child: Text(

@@ -973,4 +973,14 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get hitTagRepair => '수리';
+
+  @override
+  String aimAngle(String deg) {
+    return '$deg°';
+  }
+
+  @override
+  String aimPower(String pct) {
+    return '힘 $pct%';
+  }
 }

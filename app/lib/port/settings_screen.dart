@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pirate_busters/app/providers.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
 import 'package:pirate_busters/settings/language.dart';
+import 'package:pirate_busters/ui/meta_icons.dart';
 
 /// 설정 화면 (설계서 §13.8, §14.1): 언어·효과음·진동·저사양 모드·자동 턴 종료.
 /// 전투 중에는 열 수 없고 항구 위쪽 아이콘에서 연다(§13.2).
@@ -21,6 +22,7 @@ class SettingsScreen extends ConsumerWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
           children: [
             ListTile(
+              leading: MetaIcons.image(MetaIcons.language, size: 24),
               title: Text(l10n.language),
               trailing: SegmentedButton<LanguageChoice>(
                 showSelectedIcon: false,
@@ -44,22 +46,26 @@ class SettingsScreen extends ConsumerWidget {
               ),
             ),
             SwitchListTile(
+              secondary: MetaIcons.image(MetaIcons.sound, size: 24),
               title: Text(l10n.soundOn),
               value: ref.watch(soundOnProvider),
               onChanged: (on) => ref.read(soundOnProvider.notifier).set(on: on),
             ),
             SwitchListTile(
+              secondary: MetaIcons.image(MetaIcons.vibrate, size: 24),
               title: Text(l10n.vibrationOn),
               value: ref.watch(vibrationOnProvider),
               onChanged: (on) =>
                   ref.read(vibrationOnProvider.notifier).set(on: on),
             ),
             SwitchListTile(
+              secondary: MetaIcons.image(MetaIcons.lowSpec, size: 24),
               title: Text(l10n.lowEndMode),
               value: ref.watch(lowEndProvider),
               onChanged: (on) => ref.read(lowEndProvider.notifier).set(on: on),
             ),
             SwitchListTile(
+              secondary: MetaIcons.image(MetaIcons.endTurn, size: 24),
               title: Text(l10n.autoEndTurn),
               value: ref.watch(autoEndTurnProvider),
               onChanged: (on) =>

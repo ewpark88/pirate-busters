@@ -522,5 +522,23 @@
   "hitTagBurn": "BURN",
   "hitTagMine": "MINE",
   "hitTagBite": "BITE",
-  "hitTagRepair": "REPAIR"
+  "hitTagRepair": "REPAIR",
+  "aimAngle": "{deg}°",
+  "@aimAngle": {
+    "description": "조준 각도 라벨 (설계서 §10.4)",
+    "placeholders": {
+      "deg": {
+        "type": "String"
+      }
+    }
+  },
+  "aimPower": "Power {pct}%",
+  "@aimPower": {
+    "description": "조준 힘 라벨 (설계서 §10.4)",
+    "placeholders": {
+      "pct": {
+        "type": "String"
+      }
+    }
+  }
 }

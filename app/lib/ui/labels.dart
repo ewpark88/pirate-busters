@@ -24,17 +24,6 @@ abstract final class Labels {
     ModuleKind.fuelTank => l10n.moduleFuelTank,
   };
 
-  static IconData moduleIcon(ModuleKind k) => switch (k) {
-    ModuleKind.gunPort => Icons.gps_fixed,
-    ModuleKind.magazine => Icons.local_fire_department,
-    ModuleKind.pump => Icons.water_drop,
-    ModuleKind.workshop => Icons.handyman,
-    ModuleKind.mast => Icons.sailing,
-    ModuleKind.lookout => Icons.visibility,
-    ModuleKind.captain => Icons.star,
-    ModuleKind.fuelTank => Icons.local_gas_station,
-  };
-
   /// 조선소 격자에서 재질 색 (에셋 타일 색에 맞춤).
   static Color materialColor(BlockMaterial m) => switch (m) {
     BlockMaterial.pine => const Color(0xFFD9A441),

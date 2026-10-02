@@ -11,11 +11,15 @@ class BattleSprites {
       for (var v = 0; v < 4; v++) 'ship/tiles_v2/${m}_$v.png',
     'ship/tiles_v2/iron.png',
     for (var v = 0; v < 4; v++) roomFile(v),
+    for (final k in ModuleKind.values) moduleFile(k),
     'ship/rig/mast.png',
     'ship/rig/sail_blue.png',
     'ship/rig/sail_red.png',
     'ship/rig/flag_blue.png',
     'ship/rig/flag_red.png',
+    limitForward,
+    limitBack,
+    limitSplash,
     'fx/cannonball.png',
     'fx/explosion.png',
     'fx/splash.png',
@@ -34,6 +38,22 @@ class BattleSprites {
     for (var i = 0; i < 6; i++) 'fx/impact/debris_$i.png',
     for (var i = 0; i < 6; i++) 'fx/impact/puff_$i.png',
   ];
+
+  /// 기능 모듈 그림 (설계서 §3.3, 에셋 v0.23 `ship/modules/`).
+  static String moduleFile(ModuleKind kind) =>
+      'ship/modules/${switch (kind) {
+        ModuleKind.gunPort => 'gunport',
+        ModuleKind.lookout => 'crowsnest',
+        ModuleKind.magazine => 'powder',
+        ModuleKind.workshop => 'carpenter',
+        ModuleKind.fuelTank => 'fuel',
+        ModuleKind.pump || ModuleKind.mast || ModuleKind.captain => kind.name,
+      }}.png';
+
+  /// 이동 한계 표식 (설계서 §2.6, 에셋 v0.23 `bg/props/`). 1 그림 px = 1 월드 px.
+  static const String limitForward = 'bg/props/limit_forward.png';
+  static const String limitBack = 'bg/props/limit_back.png';
+  static const String limitSplash = 'bg/props/limit_splash.png';
 
   static Future<BattleSprites> load(Images images) async {
     await images.loadAll(files);

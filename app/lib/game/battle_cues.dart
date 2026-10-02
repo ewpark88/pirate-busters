@@ -10,6 +10,7 @@ import 'package:pirate_busters/game/hit_tag.dart';
 import 'package:pirate_busters/game/view/fx_layer.dart';
 import 'package:pirate_busters/game/view/impact_accent.dart';
 import 'package:pirate_busters/game/view/ship_view.dart';
+import 'package:pirate_busters/game/view/shot_view.dart';
 import 'package:pirate_busters/game/weapon_styles.dart';
 
 /// 히트스톱 (설계서 §10.4): 맞는 순간 연출만 0.07초 멈춘다. 렌더만 멈추고 시뮬레이션
@@ -152,8 +153,15 @@ class BattleCues {
           // 한계선에 닿으면 물살이 튄다 (설계서 §2.6).
           final side = session.state.sides[e.side];
           final (lo, hi) = moveLimits(session.state.rules, session.state.turn);
-          if (side.offset == lo || side.offset == hi) {
-            fx.splash(Coords.point(e.x, 0));
+          if (side.offset == hi) fx.splash(Coords.point(e.x, 0), limit: true);
+          if (side.offset == lo) {
+            // 후퇴 한계에는 고물이 닿는다.
+            final stern = ShotView.sternAt(
+              e.x,
+              facingOf(e.side),
+              side.grid.width,
+            );
+            fx.splash(Coords.point(stern, 0), limit: true);
           }
         case SimEventKind.bounce:
           fx.splash(Coords.point(e.x, 0));

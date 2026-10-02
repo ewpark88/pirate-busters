@@ -59,6 +59,10 @@ flutter:
     - assets/game/
     - assets/stages/
     - assets/images/ammo/icons/
+    - assets/images/bg/gold/
+    - assets/images/bg/props/
+    - assets/images/bg/storm/
+    - assets/images/bg/tropic/
     - assets/images/characters/alba/
     - assets/images/characters/alba/expr_blue/
     - assets/images/characters/alba/expr_red/
@@ -342,6 +346,7 @@ flutter:
     - assets/images/fx/
     - assets/images/fx/collapse/
     - assets/images/fx/impact/
+    - assets/images/ship/modules/
     - assets/images/ship/rig/
     - assets/images/ship/rooms/
     - assets/images/ship/tiles/
@@ -349,6 +354,12 @@ flutter:
     - assets/images/ui/cards/
     - assets/images/ui/icons/
     - assets/images/ui/kit/
+    - assets/images/ui/meta/ai/
+    - assets/images/ui/meta/currency/
+    - assets/images/ui/meta/faction/
+    - assets/images/ui/meta/hud/
+    - assets/images/ui/meta/meta/
     - assets/images/ui/portraits/
+    - assets/images/ui/story/
     - assets/images/weapons/
     - assets/images/weapons/icons/

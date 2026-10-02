@@ -11,6 +11,7 @@ import 'package:pirate_busters/ui/hud/pause_menu.dart';
 import 'package:pirate_busters/ui/hud/pirate_cards.dart';
 import 'package:pirate_busters/ui/hud/result_overlay.dart';
 import 'package:pirate_busters/ui/hud/top_bar.dart';
+import 'package:pirate_busters/ui/meta_icons.dart';
 
 /// 전투 HUD 전체 (설계서 §13.4). 판정은 하지 않고 [BattleSession] 을 그리기만 한다.
 class BattleHud extends StatelessWidget {
@@ -86,10 +87,9 @@ class BattleHud extends StatelessWidget {
                   IconButton(
                     tooltip: _hotseat ? l10n.settings : l10n.pause,
                     onPressed: () => onPause(true),
-                    icon: Icon(
-                      _hotseat ? Icons.settings : Icons.pause_circle,
-                      size: 34,
-                    ),
+                    icon: _hotseat
+                        ? const Icon(Icons.settings, size: 34)
+                        : MetaIcons.image(MetaIcons.pause, size: 34),
                     color: HudColors.text,
                   ),
                 ],
@@ -115,7 +115,14 @@ class BattleHud extends StatelessWidget {
                           vertical: 14,
                         ),
                       ),
-                      child: Text(l10n.endTurn),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          MetaIcons.image(MetaIcons.endTurn),
+                          const SizedBox(width: 6),
+                          Text(l10n.endTurn),
+                        ],
+                      ),
                     ),
                   ],
                 ),
@@ -159,9 +166,13 @@ class BattleHud extends StatelessWidget {
           alignment: const Alignment(0, -0.45),
           child: IgnorePointer(
             child: HudPanel(
-              child: Text(
-                l10n.aimCancel,
-                style: const TextStyle(fontSize: 22),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  MetaIcons.image(MetaIcons.cancel, size: 26),
+                  const SizedBox(width: 6),
+                  Text(l10n.aimCancel, style: const TextStyle(fontSize: 22)),
+                ],
               ),
             ),
           ),

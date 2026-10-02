@@ -82,7 +82,18 @@ dart run tool/import_assets.dart --check                     # pubspec 폴더 �
   - 기능 모듈 9종(`ship/modules/`)
   - 특수·화재 타일(`ship/tiles_v2/` 얼음·금박·유령 판자·방패·불붙은 블록·그을린 블록)
   - 보스(`boss/`), 컷신 구성(`story/cutscenes.json`)과 말풍선(`ui/story/`)
-- **아직 앱에 넣지 않았다.** 이미 끝난 화면에 적용하는 일은 계획서 A12, 뒷 단계 화면은 그 단계에서 한다. 넣을 때는 `--merge` 를 쓴다.
+- **앱 적용 (A12, ADR-063):** 이미 끝난 화면에 쓰는 것만 넣었다. 뒷 단계 화면 그림은 그 단계에서 넣는다.
+
+```bash
+python tool/assets/export_bubbles.py art/pb_v0.24_main   # 말풍선의 자리 표시 글자(<text>)를 빼고 @2x 로 다시 굽는다
+dart run tool/import_assets.dart --merge art/pb_v0.24_main
+```
+
+  - 들어간 것: `bg/tropic`·`bg/gold`·`bg/storm`(프롤로그용), `bg/props`, `ship/modules`, `ui/meta/{hud,meta,currency,ai,faction}`, `ui/story`. 데이터는 `bg/regions.json`·`style/modes.json` 이고, 이름 글자 필드(`ko`·`en`·`faction`·`note`·`limits`)를 지우고 넣는다(절대 규칙 10).
+  - `ui/meta` 는 쓰는 묶음을 폴더째 넣어서, 아직 쓰지 않는 아이콘(약관·진주 등)도 함께 들어 있다.
+  - 넣지 않는 것: `tool/import_assets.dart` 의 `deferredImages` 목록이다. 해역 2·4·5 배경, `boss/`, `ui/meta` 의 상자·티어·심장·날씨·궤적, 특수 블록 타일(불·그을음·유령·얼음·금박·방패)이 여기 든다. 그 단계에서 목록에서 빼고 pubspec 에 더한다.
+  - 전장은 `sea` 겹을 쓰지 않는다. 바다는 앱의 사인파 바다·셰이더가 그린다. 컷신 배경은 7장을 모두 쓴다.
+  - 일반 모드가 아닐 때: 하늘·바다는 `regions.json` 의 모드 색 그라데이션으로, far·mid 는 행렬로, 구름은 모드 구름색을 곱해 그린다. 비·번개는 R3 에서 넣는다.
 - 해역 배경 레이어 순서(README): sky(고정) → clouds(.08) → far(.18) → haze(.18) → mid(.4) → glow(.4) → 배·해적 → sea(1.0).
   - far·mid 에는 `style/modes.json` 의 색 행렬을 씌운다.
   - glow 는 행렬 없이 모드가 어두울수록 불투명도를 올린다.

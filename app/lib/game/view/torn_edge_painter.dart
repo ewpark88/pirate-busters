@@ -10,6 +10,55 @@ import 'package:pirate_busters/game/view/damage_painter.dart';
 /// 판정은 격자 그대로다. 모양은 칸 번호와 이웃 마스크로 정해지는 고정 패턴이라
 /// 리플레이에서도 같고, Path 는 (패턴, 마스크) 로 캐시한다.
 abstract final class TornEdgePainter {
+  /// 부서진 칸마다 가장자리를 이웃 블록 쪽으로 찢어 그린다. 칸 사각형은
+  /// [cellRect] 로 얻는다.
+  static void tornAll(
+    Canvas canvas,
+    ShipGrid grid,
+    List<int> materials,
+    List<int> built,
+    Rect Function(int x, int y) cellRect,
+  ) {
+    for (var y = 0; y < grid.height; y++) {
+      for (var x = 0; x < grid.width; x++) {
+        final i = y * grid.width + x;
+        if (materials[i] != ShipGrid.emptyCell ||
+            built[i] == ShipGrid.emptyCell) {
+          continue;
+        }
+        torn(
+          canvas,
+          cellRect(x, y),
+          i,
+          mask(grid, materials, built, x, y, block: true),
+        );
+      }
+    }
+  }
+
+  /// ([x], [y]) 의 상하좌우 이웃 마스크. [block] 이면 블록이 남은 이웃, 아니면
+  /// 설계도([built])에 있었다가 부서진 이웃.
+  static int mask(
+    ShipGrid grid,
+    List<int> materials,
+    List<int> built,
+    int x,
+    int y, {
+    bool block = false,
+  }) {
+    bool at(int nx, int ny) {
+      if (!grid.inBounds(nx, ny)) return false;
+      final i = ny * grid.width + nx;
+      final has = materials[i] != ShipGrid.emptyCell;
+      return block ? has : !has && built[i] != ShipGrid.emptyCell;
+    }
+
+    return (at(x - 1, y) ? left : 0) |
+        (at(x + 1, y) ? right : 0) |
+        (at(x, y + 1) ? up : 0) |
+        (at(x, y - 1) ? down : 0);
+  }
+
   /// 이웃 마스크 비트.
   static const int left = 1;
   static const int right = 2;

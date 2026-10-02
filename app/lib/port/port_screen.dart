@@ -30,6 +30,8 @@ class PortScreen extends ConsumerStatefulWidget {
 }
 
 class _PortScreenState extends ConsumerState<PortScreen> {
+  /// 설정의 저사양 모드 (설계서 §12). 항구 배경 겹 수를 줄인다.
+  final ValueNotifier<bool> _lowEnd = ValueNotifier(false);
   BattleSession? _session;
   late PortGame _game;
 
@@ -47,7 +49,7 @@ class _PortScreenState extends ConsumerState<PortScreen> {
       humanSides: const {0},
       speciesOf: catalog.speciesOf,
     );
-    _game = PortGame(_session!);
+    _game = PortGame(_session!, lowEnd: _lowEnd);
   }
 
   @override
@@ -71,6 +73,7 @@ class _PortScreenState extends ConsumerState<PortScreen> {
   @override
   void dispose() {
     _session?.dispose();
+    _lowEnd.dispose();
     super.dispose();
   }
 
@@ -101,6 +104,7 @@ class _PortScreenState extends ConsumerState<PortScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final progress = ref.watch(progressProvider);
+    _lowEnd.value = ref.watch(lowEndProvider);
     return Scaffold(
       body: Stack(
         fit: StackFit.expand,

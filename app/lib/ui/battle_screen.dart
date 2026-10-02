@@ -167,6 +167,8 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
     _game
       ..damageText = ((amount) => l10n.damagePopup(number.format(amount)))
       ..turnsText = number.format
+      ..aimAngleText = ((d) => l10n.aimAngle(number.format(d)))
+      ..aimPowerText = ((p) => l10n.aimPower(number.format(p)))
       // 명중 이름표 (설계서 §10.4).
       ..tagText = (tag) => switch (tag) {
         HitTag.crit => l10n.hitTagCrit,

@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:test/test.dart';
@@ -123,6 +124,86 @@ void main() {
         ]),
         ['uni'],
       );
+    });
+  });
+
+  group('에셋 v0.23 적용 범위 (A12, ADR-063)', () {
+    test('이 단계에서 쓰는 배경·모듈·메타 아이콘·말풍선은 가져온다', () {
+      expect(
+        imageTarget('bg/tropic/tropic_far@2x.png'),
+        'bg/tropic/tropic_far.png',
+      );
+      expect(
+        imageTarget('bg/props/limit_back@2x.png'),
+        'bg/props/limit_back.png',
+      );
+      expect(
+        imageTarget('ship/modules/gunport@2x.png'),
+        'ship/modules/gunport.png',
+      );
+      expect(imageTarget('ui/meta/hud/hull@2x.png'), 'ui/meta/hud/hull.png');
+      expect(
+        imageTarget('ui/story/bubble_left@2x.png'),
+        'ui/story/bubble_left.png',
+      );
+      expect(
+        imageTarget('ship/tiles_v2/oak_0@2x.png'),
+        'ship/tiles_v2/oak_0.png',
+      );
+    });
+
+    test('뒷 단계 기능의 그림은 가져오지 않는다', () {
+      for (final rel in [
+        'bg/fog/fog_sky@2x.png',
+        'boss/ram@2x.png',
+        'ui/meta/chest/chest_wood@2x.png',
+        'ui/meta/tier/tier_king@2x.png',
+        'ship/tiles_v2/ice_0@2x.png',
+        'ship/tiles_v2/burn_1@2x.png',
+        'ship/tiles_v2/shield@2x.png',
+      ]) {
+        expect(imageTarget(rel), isNull, reason: rel);
+      }
+    });
+
+    test('배경 데이터에서 이름 글자 필드를 지운다 (절대 규칙 10)', () {
+      expect(
+        stripText({
+          'note': '설명',
+          'horizon': 420,
+          'regions': {
+            'tropic': {
+              'ko': '열대 만',
+              'en': 'Tropical Bay',
+              'faction': '붉은집게 초계대',
+              'sun': [1080, 120, 34],
+            },
+          },
+          'limits': {'back': 'props/limit_back.svg (설명)'},
+        }),
+        {
+          'horizon': 420,
+          'regions': {
+            'tropic': {
+              'sun': [1080, 120, 34],
+            },
+          },
+        },
+      );
+    });
+
+    test('앱의 배경·모드 데이터에는 글자 필드가 없다', () {
+      bool hasText(Object? o) => switch (o) {
+        final Map<String, Object?> m => m.entries.any(
+          (e) => textFields.contains(e.key) || hasText(e.value),
+        ),
+        final List<Object?> l => l.any(hasText),
+        _ => false,
+      };
+      for (final f in textStrippedData) {
+        final json = jsonDecode(File('app/assets/data/$f').readAsStringSync());
+        expect(hasText(json), isFalse, reason: f);
+      }
     });
   });
 

@@ -176,8 +176,14 @@ class FxLayer extends Component {
   }
 
   /// 물보라.
-  void splash(Vector2 at) {
-    _spawn(_popSprite('fx/splash.png', at - Vector2(0, 30), 90, 0.6));
+  /// [limit] 이면 한계선에 닿아 멈출 때의 물살이다 (설계서 §2.6, 그림 80×70).
+  void splash(Vector2 at, {bool limit = false}) {
+    _spawn(
+      limit
+          ? (_popSprite(BattleSprites.limitSplash, at - Vector2(0, 27), 80, 0.6)
+              ..size.y = 70)
+          : _popSprite('fx/splash.png', at - Vector2(0, 30), 90, 0.6),
+    );
     _haptic(HapticFeedback.lightImpact);
   }
 
