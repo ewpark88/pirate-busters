@@ -118,19 +118,19 @@ void main() {
       expect((loss - 40) % 16, 0);
     });
 
-    test('기준 배 A(테스트 슬루프): 내구도 2,110, 격침(30%)까지 1,478 → 일반 폭발탄 15발', () {
+    test('기준 배 A(테스트 슬루프): 내구도 2,110, 격침(40%)까지 1,267 → 일반 폭발탄 13발', () {
       final grid = ShipGrid.fromBlueprint(sampleBlueprint());
       expect(sampleBlueprint().cost, 57);
       expect(grid.initialTotalHp, 2110);
-      // 격침: 남은 내구도 × 100 < 시작 × 30 (A2.4) → 632 이하로 깎아야 한다.
+      // 격침: 남은 내구도 × 100 < 시작 × 40 (A2.4) → 843 이하로 깎아야 한다.
       final percent = const MatchRules().sunkHullPercent;
       var toCut = 0;
       while ((grid.initialTotalHp - toCut) * 100 >=
           grid.initialTotalHp * percent) {
         toCut++;
       }
-      expect(toCut, 1478);
-      expect((toCut + 103) ~/ 104, 15);
+      expect(toCut, 1267);
+      expect((toCut + 103) ~/ 104, 13);
     });
   });
 }

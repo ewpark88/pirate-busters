@@ -125,8 +125,8 @@ void main() {
           ..flood = 60
           ..grid.damage(3, 0, 100),
       );
-      // 오른쪽 15턴 중 폭풍 전 13턴 × 3%p + 폭풍 2턴 × 4.5%p.
-      expect(s.sides[1].flood, 60 + 13 * 30 + 2 * 45);
+      // 오른쪽 15턴 중 폭풍 전 13턴 × 4%p + 폭풍 2턴 × 6%p.
+      expect(s.sides[1].flood, 60 + 13 * 40 + 2 * 60);
       _expectResult(s, 0);
     });
 
@@ -134,7 +134,7 @@ void main() {
       final m = newSampleMatch(17);
       final first = m.state.activeSide;
       for (var x = 0; x < 12; x++) {
-        m.state.sides[first].grid.damage(x, 0, 100); // 12칸 × 3%p = 36%p/턴
+        m.state.sides[first].grid.damage(x, 0, 100); // 12칸 × 4%p = 48%p/턴
       }
       runMatch(m, passController, passController);
       expect(m.state.outcome, MatchOutcome.floodSunk);

@@ -3,8 +3,8 @@
  "expect": {
   "outcome": "floodSunk",
   "winner": 0,
-  "turns": 14,
-  "hash": "86aeba8d"
+  "turns": 16,
+  "hash": "31b694f9"
  },
  "replay": {
   "version": 7,
@@ -15,7 +15,7 @@
    "firesPerTurn": 2,
    "maxWind": 3,
    "windAccel": 26,
-   "sunkHullPercent": 30,
+   "sunkHullPercent": 40,
    "fuelPerTurn": 30,
    "stormTurns": 4,
    "stormTurnTimeMs": 20000,
@@ -28,8 +28,8 @@
    "wavePeriodMs": 4000,
    "waveHeavePerLevel": 150,
    "waveRollPerLevel": 1000,
-   "floodFullCell": 30,
-   "floodHalfCell": 15,
+   "floodFullCell": 40,
+   "floodHalfCell": 20,
    "waterlineDivisor": 4,
    "sinkAtFullFlood": 2000,
    "tiltPerCell": 1000,
@@ -533,7 +533,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "055586b1"
+    "hash": "44455092"
    },
    {
     "turn": 3,
@@ -558,7 +558,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "7641314d"
+    "hash": "73970136"
    },
    {
     "turn": 4,
@@ -569,7 +569,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "899ce927"
+    "hash": "e1480f73"
    },
    {
     "turn": 5,
@@ -579,7 +579,7 @@
       "t": 1000,
       "type": "FIRE",
       "slot": 0,
-      "angle": 17500,
+      "angle": 17750,
       "power": 10000
      },
      {
@@ -594,7 +594,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "cc02aadc"
+    "hash": "87b42623"
    },
    {
     "turn": 6,
@@ -605,7 +605,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "b0cd009c"
+    "hash": "e9fa549e"
    },
    {
     "turn": 7,
@@ -630,7 +630,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "af9f9787"
+    "hash": "46c46c8c"
    },
    {
     "turn": 8,
@@ -641,7 +641,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "6f4a1674"
+    "hash": "9d6ea152"
    },
    {
     "turn": 9,
@@ -651,14 +651,14 @@
       "t": 1000,
       "type": "FIRE",
       "slot": 0,
-      "angle": 20250,
+      "angle": 19750,
       "power": 10000
      },
      {
       "t": 2000,
       "type": "FIRE",
       "slot": 1,
-      "angle": 18500,
+      "angle": 18000,
       "power": 10000
      },
      {
@@ -666,7 +666,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "4924cc5c"
+    "hash": "728d5ed1"
    },
    {
     "turn": 10,
@@ -677,7 +677,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "7dc3812a"
+    "hash": "76023550"
    },
    {
     "turn": 11,
@@ -687,14 +687,14 @@
       "t": 1000,
       "type": "FIRE",
       "slot": 0,
-      "angle": 20000,
+      "angle": 21750,
       "power": 10000
      },
      {
       "t": 2000,
       "type": "FIRE",
       "slot": 1,
-      "angle": 18250,
+      "angle": 20000,
       "power": 10000
      },
      {
@@ -702,7 +702,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "11cb0070"
+    "hash": "066f88fd"
    },
    {
     "turn": 12,
@@ -713,7 +713,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "269ff3b7"
+    "hash": "c8dc8dc2"
    },
    {
     "turn": 13,
@@ -723,14 +723,14 @@
       "t": 1000,
       "type": "FIRE",
       "slot": 0,
-      "angle": 20000,
+      "angle": 21500,
       "power": 10000
      },
      {
       "t": 2000,
       "type": "FIRE",
       "slot": 1,
-      "angle": 18250,
+      "angle": 19750,
       "power": 10000
      },
      {
@@ -738,7 +738,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "53a27ce9"
+    "hash": "2648b916"
    },
    {
     "turn": 14,
@@ -749,7 +749,43 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "86aeba8d"
+    "hash": "ab85ade2"
+   },
+   {
+    "turn": 15,
+    "side": 0,
+    "cmds": [
+     {
+      "t": 1000,
+      "type": "FIRE",
+      "slot": 0,
+      "angle": 21500,
+      "power": 10000
+     },
+     {
+      "t": 2000,
+      "type": "FIRE",
+      "slot": 1,
+      "angle": 19750,
+      "power": 10000
+     },
+     {
+      "t": 9000,
+      "type": "END_TURN"
+     }
+    ],
+    "hash": "96b90683"
+   },
+   {
+    "turn": 16,
+    "side": 1,
+    "cmds": [
+     {
+      "t": 1000,
+      "type": "END_TURN"
+     }
+    ],
+    "hash": "31b694f9"
    }
   ]
  }

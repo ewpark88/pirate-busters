@@ -2,8 +2,8 @@
 /// ADR-042). 유예 동안 이동할 수 있고(이동 버튼을 누르는 동안은 세지 않는다),
 /// 설정에서 끌 수 있다. 턴 종료 커맨드는 세션이 낸다.
 class AutoEndClock {
-  /// 자동 종료 유예(밀리초, 임시값 ADR-042).
-  static const int graceMs = 1500;
+  /// 자동 종료 유예(밀리초, BALANCE A2.3, ADR-080).
+  static const int graceMs = 1000;
 
   bool enabled = true;
   int _ms = 0;
