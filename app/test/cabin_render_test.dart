@@ -35,6 +35,19 @@ void main() {
       expect(BattleSprites.variantOf(3, 2), (3 * 7 + 2 * 13 + 6 % 5) % 4);
     });
 
+    test('칸 가운데가 잠긴 깊이 아래면 젖은 줄이고, 배가 내려앉으면 젖은 줄이 는다', () {
+      // 맨 아랫줄(y=0) 가운데는 0.5칸.
+      expect(BattleSprites.isWet(0, cellUnit ~/ 2 - 1), isFalse);
+      expect(BattleSprites.isWet(0, cellUnit ~/ 2), isTrue);
+      expect(BattleSprites.isWet(1, cellUnit), isFalse);
+      int wetRows(int draft) => [
+        for (var y = 0; y < 8; y++)
+          if (BattleSprites.isWet(y, draft)) y,
+      ].length;
+      expect(wetRows(1600), 2);
+      expect(wetRows(2600), 3);
+    });
+
     testWidgets('대기 중인 해적은 자기 선실 칸 안에 그려지고, 선실 칸에는 안쪽 벽 타일이 있다', (
       tester,
     ) async {
@@ -80,11 +93,34 @@ void main() {
           for (final m in BlockMaterial.values) {
             expect(ship.sprites.tile(m, 1, 2).image.width, 64, reason: m.name);
           }
-          expect(
-            ship.sprites.tile(BlockMaterial.oak, 3, 0, keel: true).image,
-            isNot(ship.sprites.tile(BlockMaterial.oak, 3, 0).image),
-          );
+          // 흘수선 아래 참나무·소나무만 젖은 타일이다 (§10.2, ADR-061).
+          for (final m in BlockMaterial.values) {
+            final wet = ship.sprites.tile(m, 3, 0, wet: true).image;
+            final dry = ship.sprites.tile(m, 3, 0).image;
+            if (m == BlockMaterial.oak || m == BlockMaterial.pine) {
+              expect(wet, isNot(dry), reason: m.name);
+              expect(
+                wet,
+                ship.sprites.tile(BlockMaterial.oak, 3, 0, wet: true).image,
+              );
+            } else {
+              expect(wet, dry, reason: m.name);
+            }
+          }
           expect(ship.sprites.roomWall(1, 2).image.width, 64);
+          // 젖은 줄 판정은 시뮬레이션의 선실 잠김 판정과 같아야 한다(ADR-061).
+          final flood = side.flood;
+          for (var f = 0; f <= fullFlood; f += fullFlood ~/ 10) {
+            side.flood = f;
+            for (var slot = 0; slot < side.crew.size; slot++) {
+              expect(
+                BattleSprites.isWet(side.cabins[slot].y, side.draft),
+                side.isCabinFlooded(slot),
+                reason: '침수 $f 슬롯 $slot',
+              );
+            }
+          }
+          side.flood = flood;
         }
       });
       expect(tester.takeException(), isNull);

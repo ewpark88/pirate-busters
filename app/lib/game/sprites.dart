@@ -49,15 +49,21 @@ class BattleSprites {
   /// 정해져 리플레이에서도 같다 (설계서 §10.2).
   static int variantOf(int x, int y) => (x * 7 + y * 13 + (x * y) % 5) % 4;
 
+  /// 로컬 줄 [y] 가 잠긴 깊이 [draft](1/1000칸)에 젖었나. 칸 가운데가 수면
+  /// 아래면 젖은 것으로 본다(선실 잠김 판정 `isCabinFlooded` 와 같은 식).
+  static bool isWet(int y, int draft) => y * cellUnit + cellUnit ~/ 2 <= draft;
+
   /// 칸 ([x], [y]) 의 재질 타일(멀쩡한 모습). 손상 단계는 ShipView 가 코드로
-  /// 덧그린다 (설계서 §10.2, ADR-030). 용골 줄([keel])은 바닥 타일, 철판은 한 가지다.
-  Sprite tile(BlockMaterial m, int x, int y, {bool keel = false}) {
-    if (m == BlockMaterial.iron && !keel) return get('ship/tiles_v2/iron.png');
-    final name = keel
-        ? 'bot'
-        : m == BlockMaterial.net
-        ? 'mesh'
-        : m.name;
+  /// 덧그린다 (설계서 §10.2, ADR-030). 흘수선 아래([wet]) 참나무·소나무 칸은
+  /// 젖은 타일(`bot`, 에셋 v0.23 README, ADR-061)이고 철판은 한 가지다.
+  Sprite tile(BlockMaterial m, int x, int y, {bool wet = false}) {
+    final name = switch (m) {
+      BlockMaterial.iron => null,
+      BlockMaterial.oak || BlockMaterial.pine when wet => 'bot',
+      BlockMaterial.net => 'mesh',
+      _ => m.name,
+    };
+    if (name == null) return get('ship/tiles_v2/iron.png');
     return get('ship/tiles_v2/${name}_${variantOf(x, y)}.png');
   }
 
