@@ -784,3 +784,15 @@ M7                                                ████████
 - [ ] 결과와 BALANCE.md A2.4(턴 제한·폭풍)·A3.5(내구도) 조정안을 사용자에게 보고한다. 승인되면 `/doc-sync` 로 반영한다
 
 **완료 조건:** 측정 결과와 제안이 docs/plans 에 있고 사용자 결정이 기록된다.
+
+### A23 개발 도구: 숨은 스위치·더미배 연습 (ADR-073) — `app`
+
+**선행:** A9(테스트 대전, ADR-053). 설치한 빌드 앱에서도 해적 전원을 시험하고, 반격 없는 표적 배에 해적을 바꿔 가며 폭탄투하를 연습하려는 사용자 요청이다. 개발 도구라 설계서는 바꾸지 않고, 판정(`pb_sim`)도 바꾸지 않는다(절대 규칙 3).
+
+- [x] 숨은 스위치: 설정 화면 ‘언어’ 글자 7번 탭으로 개발 도구를 켜고 끈다. 값은 기기에 남는다. 항구 테스트 대전 버튼·편성 화면 해적 전원 보기가 이를 따른다 — 했다: `dev/dev_flags.dart`(`devToolsProvider`), `dev/dev_tools_switch.dart`, `settings_store` `devTools`
+- [x] 더미배 연습: 테스트 대전 화면의 ‘더미배 연습’ 버튼. 상대는 빈 턴만 낸다(`ScriptedController`). 판이 끝나면 같은 덱으로 다시 시작한다 — 했다: `TestBattle.dummy`, `battle_screen`
+- [x] 해적 바꾸기: 연습 전투 위쪽 해적 전원 줄, 누르면 그 해적이 맨 앞인 새 판(더미배 손상은 초기화) — 했다: `dev/practice_bar.dart`, `TestBattle.withLead`
+- [x] 글자 ko·en(`devPractice`·`devToolsOn`·`devToolsOff`), 테스트 `app/test/dev_practice_test.dart`
+- [ ] 실기기: release 빌드에서 스위치를 켜고 해적 전원으로 더미배 연습을 해 본다
+
+**완료 조건:** release 빌드에서 스위치로 테스트 대전과 해적 전원이 열린다. 더미배는 쏘지도 움직이지도 않는다(테스트). 연습 줄에서 해적을 누르면 그 해적이 맨 앞인 새 판이 열린다(테스트). verify 통과.

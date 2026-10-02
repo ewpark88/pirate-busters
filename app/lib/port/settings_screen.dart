@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pirate_busters/app/app_theme.dart';
 import 'package:pirate_busters/app/providers.dart';
 import 'package:pirate_busters/audio/music_director.dart';
+import 'package:pirate_busters/dev/dev_tools_switch.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
 import 'package:pirate_busters/settings/language.dart';
 import 'package:pirate_busters/ui/kit/kit_motion.dart';
@@ -44,77 +45,81 @@ class SettingsScreen extends ConsumerWidget {
           child: SingleChildScrollView(
             padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
             child: PopIn(
-              child: PbPanel(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    _Row(
-                      icon: MetaIcons.language,
-                      label: l10n.language,
-                      trailing: PbTabs(
-                        labels: [
-                          for (final c in choices)
-                            switch (c) {
-                              LanguageChoice.system => l10n.languageSystem,
-                              LanguageChoice.ko => l10n.languageKorean,
-                              LanguageChoice.en => l10n.languageEnglish,
-                            },
-                        ],
-                        selected: choices.indexOf(language),
-                        onSelect: (i) => ref
-                            .read(languageProvider.notifier)
-                            .choose(choices[i]),
-                      ),
-                    ),
-                    toggle(
-                      MetaIcons.sound,
-                      l10n.soundOn,
-                      value: ref.watch(soundOnProvider),
-                      set: (on) =>
-                          ref.read(soundOnProvider.notifier).set(on: on),
-                    ),
-                    toggle(
-                      MetaIcons.sound,
-                      l10n.musicOn,
-                      value: ref.watch(musicOnProvider),
-                      set: (on) =>
-                          ref.read(musicOnProvider.notifier).set(on: on),
-                    ),
-                    toggle(
-                      MetaIcons.vibrate,
-                      l10n.vibrationOn,
-                      value: ref.watch(vibrationOnProvider),
-                      set: (on) =>
-                          ref.read(vibrationOnProvider.notifier).set(on: on),
-                    ),
-                    toggle(
-                      MetaIcons.lowSpec,
-                      l10n.lowEndMode,
-                      value: ref.watch(lowEndProvider),
-                      set: (on) =>
-                          ref.read(lowEndProvider.notifier).set(on: on),
-                    ),
-                    toggle(
-                      MetaIcons.endTurn,
-                      l10n.autoEndTurn,
-                      value: ref.watch(autoEndTurnProvider),
-                      set: (on) =>
-                          ref.read(autoEndTurnProvider.notifier).set(on: on),
-                    ),
-                    // 광고 제거 (설계서 §9). 스토어 연결 전에는 안 보인다.
-                    if (iap.available)
+              // '언어' 글자 7번 = 개발 도구 숨은 스위치 (ADR-073).
+              child: DevToolsSwitch(
+                child: PbPanel(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
                       _Row(
-                        label: l10n.iapRemoveAds,
-                        trailing: ref.watch(adsRemovedProvider)
-                            ? Text(l10n.iapBought)
-                            : PbButton.small(
-                                label: l10n.iapBuy,
-                                kind: PbButtonKind.gold,
-                                onPressed: () =>
-                                    ref.read(adsRemovedProvider.notifier).buy(),
-                              ),
+                        icon: MetaIcons.language,
+                        label: l10n.language,
+                        trailing: PbTabs(
+                          labels: [
+                            for (final c in choices)
+                              switch (c) {
+                                LanguageChoice.system => l10n.languageSystem,
+                                LanguageChoice.ko => l10n.languageKorean,
+                                LanguageChoice.en => l10n.languageEnglish,
+                              },
+                          ],
+                          selected: choices.indexOf(language),
+                          onSelect: (i) => ref
+                              .read(languageProvider.notifier)
+                              .choose(choices[i]),
+                        ),
                       ),
-                  ],
+                      toggle(
+                        MetaIcons.sound,
+                        l10n.soundOn,
+                        value: ref.watch(soundOnProvider),
+                        set: (on) =>
+                            ref.read(soundOnProvider.notifier).set(on: on),
+                      ),
+                      toggle(
+                        MetaIcons.sound,
+                        l10n.musicOn,
+                        value: ref.watch(musicOnProvider),
+                        set: (on) =>
+                            ref.read(musicOnProvider.notifier).set(on: on),
+                      ),
+                      toggle(
+                        MetaIcons.vibrate,
+                        l10n.vibrationOn,
+                        value: ref.watch(vibrationOnProvider),
+                        set: (on) =>
+                            ref.read(vibrationOnProvider.notifier).set(on: on),
+                      ),
+                      toggle(
+                        MetaIcons.lowSpec,
+                        l10n.lowEndMode,
+                        value: ref.watch(lowEndProvider),
+                        set: (on) =>
+                            ref.read(lowEndProvider.notifier).set(on: on),
+                      ),
+                      toggle(
+                        MetaIcons.endTurn,
+                        l10n.autoEndTurn,
+                        value: ref.watch(autoEndTurnProvider),
+                        set: (on) =>
+                            ref.read(autoEndTurnProvider.notifier).set(on: on),
+                      ),
+                      // 광고 제거 (설계서 §9). 스토어 연결 전에는 안 보인다.
+                      if (iap.available)
+                        _Row(
+                          label: l10n.iapRemoveAds,
+                          trailing: ref.watch(adsRemovedProvider)
+                              ? Text(l10n.iapBought)
+                              : PbButton.small(
+                                  label: l10n.iapBuy,
+                                  kind: PbButtonKind.gold,
+                                  onPressed: () => ref
+                                      .read(adsRemovedProvider.notifier)
+                                      .buy(),
+                                ),
+                        ),
+                    ],
+                  ),
                 ),
               ),
             ),

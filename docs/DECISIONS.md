@@ -670,3 +670,14 @@
   - 구조 붕괴(§3.4)·선실 파괴 시 추락(§2.3)은 이미 설계서와 시뮬에 있다. 판 길이·PvP 보류(ADR-066)는 수치·방향 결정이라 A21 측정 뒤 사용자가 정한다.
 - **대안:** 아트 스타일부터 다시 잡기. 진단상 그림은 원인이 아니라 택하지 않았다.
 - **영향:** 설계서 §10.3·§10.4·§13·§13.4·§13.5, 계획서 A16~A21, `app/lib/ui/kit/`(공용 키트), 메타 화면(`port`·`campaign`·`crew`·`shipyard`·`story`), `app/lib/l10n/app_en.arb`, `tool/check_l10n.dart`(인자 순서 정의 필수), `tool/architecture/rules.dart`(메타 화면 기본 위젯 금지), `docs/HARNESS.md`, `app/lib/game/view/limit_marks.dart`·`shot_view.dart`·`battle_game.dart`. 계획: docs/plans/2026-10-02-quality-diagnosis.md, 진단: docs/quality/2026-10-02-gap-analysis.md.
+
+
+## ADR-073 개발 도구 숨은 스위치와 더미배 연습, A23 신설 (2026-10-02)
+- **배경:** 사용자가 설치한 빌드 앱에서 해적 전원을 시험해 볼 수 없다고 했다. 테스트 대전·해적 전원 편성(ADR-053)이 디버그 빌드나 `DEV_TOOLS` 빌드에만 켜지기 때문이다. 또 반격하지 않는 표적 배에 해적을 바꿔 가며 폭탄투하를 연습하고 싶다고 했다.
+- **결정 (사용자 선택):**
+  - **숨은 스위치:** 설정 화면에서 버튼이 아닌 곳(‘언어’ 글자 등)을 7번 연달아 누르면 개발 도구를 켜고 끈다. 값은 `settings` 상자 `dev_tools` 에 남는다. `devTools` 상수는 `devToolsProvider`(개발 빌드면 늘 켬)로 바뀌고, 항구 테스트 대전 버튼과 편성 화면 해적 전원 보기가 이를 따른다. 화면 모양은 바꾸지 않는다(골든 그대로).
+  - **더미배 연습:** 테스트 대전 화면에 ‘더미배 연습’ 버튼을 둔다. 상대 컨트롤러는 pb_sim `ScriptedController`(매 턴 빈 묶음 → 바로 `END_TURN`)라 쏘지도 움직이지도 않는다(절대 규칙 4). 전투 규칙은 그대로라 침몰·턴 한도로 판이 끝나면 결과 없이 같은 덱으로 다시 시작한다.
+  - **해적 바꾸기:** 연습 전투 위쪽에 해적 전원 줄을 띄우고, 누르면 그 해적이 맨 앞 선실인 덱으로 새 판을 연다. pb_sim 에 판 도중 선실 교체 규칙이 없어 **더미배 손상은 처음으로 돌아간다.** 손상을 이어 가려면 설계서 규칙 변경이 필요해 하지 않았다.
+  - 게임 기능이 아니라 개발 도구라 설계서는 고치지 않는다(ADR-053 선례). 새 기능이므로 계획서 끝에 **A23** 으로 둔다(절대 규칙 11).
+- **대안:** `--dart-define=DEV_TOOLS=true` 개발용 빌드 스크립트. 사용자가 숨은 스위치를 골랐다. 침몰·턴 한도 없는 더미배, 판 도중 아무 해적 쏘기. pb_sim 규칙 변경이 필요해 택하지 않았다.
+- **영향:** 스토어 빌드에서도 스위치로 해적 전원과 테스트 대전을 열 수 있다. 스위치를 켠 채 편성 화면에서 갖지 않은 해적을 선실에 넣으면 캠페인 덱에도 저장되고, 스위치를 꺼도 남는다(ADR-053 개발 빌드와 같은 동작, 해적 전원 시험이 목적이라 그대로 둔다). 출시 전에 ADR-029 핫시트·ADR-053 과 함께 뺄지 다시 본다. 파일: `app/lib/dev/`(`dev_flags`·`dev_tools_switch`·`practice_bar`·`test_battle`·`test_battle_screen`), `settings_store`, `settings_screen`, `port_screen`, `crew_screen`, `battle_screen`, 테스트 `app/test/dev_practice_test.dart`. 계획: docs/plans/2026-10-02-dev-practice.md.

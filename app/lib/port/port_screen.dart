@@ -123,7 +123,7 @@ class _PortScreenState extends ConsumerState<PortScreen> {
                   progress: progress,
                   onSettings: () => _open(const SettingsScreen()),
                   onHotseat: () => _open(const BattleScreen(hotseat: true)),
-                  onTestBattle: devTools
+                  onTestBattle: ref.watch(devToolsProvider)
                       ? () => _open(const TestBattleScreen())
                       : null,
                 ),

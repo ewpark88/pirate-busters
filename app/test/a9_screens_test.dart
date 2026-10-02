@@ -120,8 +120,6 @@ void main() {
       const progress = PlayerProgress(level: 3, tutorialDone: 3);
       await _pump(
         tester,
-        // 개발 플래그 값과 같더라도 뜻을 분명히 적는다.
-        // ignore: avoid_redundant_argument_values
         const CrewScreen(showAll: true),
         progress: progress,
       );

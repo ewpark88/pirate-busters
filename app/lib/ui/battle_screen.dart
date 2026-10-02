@@ -13,6 +13,7 @@ import 'package:pirate_busters/battle/battle_session.dart';
 import 'package:pirate_busters/battle/battle_setup.dart';
 import 'package:pirate_busters/battle/battle_stats.dart';
 import 'package:pirate_busters/campaign/stage_spec.dart';
+import 'package:pirate_busters/dev/practice_bar.dart';
 import 'package:pirate_busters/dev/test_battle.dart';
 import 'package:pirate_busters/game/battle_game.dart';
 import 'package:pirate_busters/game/hit_tag.dart';
@@ -65,6 +66,9 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
   bool _reported = false;
   PreparedMatch? _prepared;
 
+  /// 테스트 대전 설정. 더미배 연습에서 해적을 바꾸면 새 값이 된다 (ADR-073).
+  late TestBattle? _test = widget.test;
+
   @override
   void initState() {
     super.initState();
@@ -89,7 +93,7 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
             costLimit: ref.read(progressProvider).costLimit,
             tune: (r) => applyRemoteRules(r, remote),
           );
-    final test = widget.test;
+    final test = _test;
     _session = BattleSession(
       _prepared?.match ??
           test?.start(setup, seed, blueprint: blueprint) ??
@@ -98,17 +102,18 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
       speciesOf: catalog.speciesOf,
       opponent: hotseat
           ? null
-          : AiController(
-              level: stage?.aiLevel ?? test?.level ?? widget.level,
-              personality:
-                  stage?.personality ??
-                  Personality.values[seed % Personality.values.length],
-              // AI 다이얼 원격 덮어쓰기 (설계서 §7.4 `ai_*`).
-              dials: AiDials.withOverrides(
-                stage?.aiLevel ?? test?.level ?? widget.level,
-                ref.read(remoteValuesProvider).intOr,
-              ),
-            ),
+          : test?.dummyController ??
+                AiController(
+                  level: stage?.aiLevel ?? test?.level ?? widget.level,
+                  personality:
+                      stage?.personality ??
+                      Personality.values[seed % Personality.values.length],
+                  // AI 다이얼 원격 덮어쓰기 (설계서 §7.4 `ai_*`).
+                  dials: AiDials.withOverrides(
+                    stage?.aiLevel ?? test?.level ?? widget.level,
+                    ref.read(remoteValuesProvider).intOr,
+                  ),
+                ),
     );
     _reported = false;
     _session
@@ -134,6 +139,11 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
     // 격침 연출이 끝난 뒤에 결과로 넘어간다 (설계서 §10.4).
     if (_reported || !_session.isOver || !_game.settled.value) return;
     _reported = true;
+    // 더미배 연습은 결과 없이 같은 덱으로 다시 시작한다 (ADR-073).
+    if (_test?.dummy ?? false) {
+      _later(_restart);
+      return;
+    }
     widget.onOver?.call(_session.state, _prepared?.replay(), _game.stats);
   }
 
@@ -148,6 +158,19 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
     });
     old.dispose();
   }
+
+  /// 더미배 연습에서 [id] 를 맨 앞에 넣은 새 판 (ADR-073).
+  void _practice(String id) {
+    _test = _test!.withLead(id);
+    _restart();
+  }
+
+  /// 세션 알림 도중에 세션을 버리지 않도록 알림이 끝난 뒤로 미룬다.
+  void _later(VoidCallback run) => unawaited(
+    Future.microtask(() {
+      if (mounted) run();
+    }),
+  );
 
   void _pause(bool paused) {
     // 일시정지는 AI 전에서만 쓴다 (설계서 §13.4).
@@ -237,6 +260,8 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
             ),
           ),
         ),
+        if (_test case TestBattle(dummy: true, :final deck))
+          PracticeBar(deck: deck, onPick: _practice),
       ],
     ),
   );

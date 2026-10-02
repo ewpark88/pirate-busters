@@ -1712,6 +1712,24 @@ abstract class AppLocalizations {
   /// **'Start'**
   String get devStart;
 
+  /// No description provided for @devPractice.
+  ///
+  /// In en, this message translates to:
+  /// **'Dummy practice'**
+  String get devPractice;
+
+  /// No description provided for @devToolsOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Developer tools on'**
+  String get devToolsOn;
+
+  /// No description provided for @devToolsOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Developer tools off'**
+  String get devToolsOff;
+
   /// No description provided for @storyReplay.
   ///
   /// In en, this message translates to:
