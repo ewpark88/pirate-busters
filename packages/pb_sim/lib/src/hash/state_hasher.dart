@@ -72,7 +72,8 @@ int hashMatchState(MatchState state) {
         ..addString(p.spec.id)
         ..addInt(p.hp)
         ..addInt(p.status.index)
-        ..addInt(p.cooldown);
+        ..addInt(p.cooldown)
+        ..addInt(p.revived ? 1 : 0);
     }
     for (final fired in side.crew.firedThisTurn) {
       h.addInt(fired ? 1 : 0);
@@ -103,6 +104,10 @@ int hashMatchState(MatchState state) {
       ..addString(e.spec.id)
       ..addInt(e.cell)
       ..addInt(e.x);
+  }
+  h.addInt(state.barriers.length);
+  for (final b in state.barriers) {
+    h.addInts(b.hashValues);
   }
   return h.value;
 }

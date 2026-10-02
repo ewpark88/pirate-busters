@@ -1,7 +1,10 @@
 import 'package:pb_sim/src/combat/ability_effects.dart';
+import 'package:pb_sim/src/combat/barrier_effects.dart';
 import 'package:pb_sim/src/combat/fire.dart';
 import 'package:pb_sim/src/combat/impact.dart';
 import 'package:pb_sim/src/combat/support_effects.dart';
+import 'package:pb_sim/src/combat/unique_effects.dart';
+import 'package:pb_sim/src/combat/unique_turns.dart';
 import 'package:pb_sim/src/match/match_state.dart';
 import 'package:pb_sim/src/match/sim_event.dart';
 import 'package:pb_sim/src/match/turn_effects.dart';
@@ -36,7 +39,9 @@ bool onHullHit(
   required int x,
   required int y,
 }) {
-  final done = _ammoHit(state, p, target, cx: cx, cy: cy, x: x, y: y);
+  final done =
+      uniqueHullHit(state, p, target, cx: cx, cy: cy, x: x, y: y) ??
+      _ammoHit(state, p, target, cx: cx, cy: cy, x: x, y: y);
   if (target.side != p.side) {
     applyHitAbility(state, p, target, cx: cx, cy: cy);
   }
@@ -101,7 +106,7 @@ bool _ammoHit(
       }
       return true;
     case AmmoType.support:
-      onSupportHit(state, p, target, cx: cx, cy: cy);
+      onSupportHit(state, p, target, cx: cx, cy: cy, x: x);
       return true;
     case AmmoType.fire:
       // 착탄 피해 + 화상 지대(착탄 칸 둘레)에 불 (설계서 §2.5, §4.8).
@@ -181,6 +186,10 @@ bool onSeaHit(
     _markDrop(state, p, target, x);
     return true;
   }
+  if (spec.ability == Ability.coral) {
+    placeCoral(state, p, x);
+    return true;
+  }
   state.events.add(
     SimEvent(SimEventKind.splash, side: target.side, x: x, value: tick),
   );
@@ -204,6 +213,7 @@ bool bounceOffSea(Projectile p, int x) {
 /// 설치탄: 붙은 칸에서 `ammoValue` 턴 뒤 내 턴 시작에 터진다. 멀 때는 도달에
 /// 1턴 더 걸린다 (설계서 §2.6).
 void _attachMine(MatchState state, Projectile p, SideState target, int cell) {
+  if (attachUnique(state, p, target, cell)) return;
   final delay = p.spec.ammoValue + (reachOf(state) == Reach.far ? 1 : 0);
   state.effects.add(
     TurnEffect(

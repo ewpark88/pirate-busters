@@ -1,5 +1,6 @@
 import 'package:pb_sim/src/combat/fire.dart';
 import 'package:pb_sim/src/combat/module_effects.dart';
+import 'package:pb_sim/src/combat/unique_turns.dart';
 import 'package:pb_sim/src/match/judge.dart';
 import 'package:pb_sim/src/match/match_state.dart';
 
@@ -10,7 +11,14 @@ void endTurnUpkeep(MatchState state) {
   burnAtTurnEnd(ship, state.rng, state.events);
   judgeInstant(state);
   if (state.isOver) return;
-  endTurnWater(ship, state.rules, state.turn, state.events);
+  endTurnWater(
+    ship,
+    state.rules,
+    state.turn,
+    state.events,
+    beforePumps: () => runTentacles(state),
+    pumpsOff: pumpsOffFor(state),
+  );
   judgeInstant(state);
 }
 

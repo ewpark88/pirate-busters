@@ -84,6 +84,21 @@ enum SimEventKind {
 
   /// 지원 효과(배수·쿨다운·연료)가 났다. [SimEvent.value] = 고유 능력 index.
   supported,
+
+  /// 펠리 투하 표시가 상대 탄에 요격됐다. [SimEvent.x] = 표시 x.
+  intercepted,
+
+  /// 산호 방벽이 섰다(코리). [SimEvent.x] = 월드 x, [SimEvent.value] = 내구도.
+  barrierPlaced,
+
+  /// 산호 방벽이 탄을 막았다. [SimEvent.x] = 월드 x, [SimEvent.value] = 남은 내구도.
+  barrierHit,
+
+  /// 해적이 되살아났다(데비). [SimEvent.slot].
+  revived,
+
+  /// 해적이 치유됐다(쿡). [SimEvent.slot], [SimEvent.value] = 회복량.
+  healed,
 }
 
 /// 턴이 끝난 이유. 순서는 이벤트 값으로 쓰인다.

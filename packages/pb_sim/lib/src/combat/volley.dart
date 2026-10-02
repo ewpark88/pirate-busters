@@ -3,6 +3,7 @@ import 'package:pb_sim/src/combat/ammo_rules.dart';
 import 'package:pb_sim/src/combat/flight.dart';
 import 'package:pb_sim/src/combat/hit_effects.dart';
 import 'package:pb_sim/src/combat/launch.dart';
+import 'package:pb_sim/src/combat/unique_turns.dart';
 import 'package:pb_sim/src/match/match_state.dart';
 import 'package:pb_sim/src/match/sim_event.dart';
 import 'package:pb_sim/src/pirate/ammo.dart';
@@ -54,6 +55,10 @@ int runVolley(
         final step = traceStep(state, p, wind, ms, tick);
         final net = step.hit;
         if (net != null && passNet(p, step.target, net.cx, net.cy)) continue;
+        if (step.wall != null) {
+          done[i] = true;
+          continue;
+        }
         final bounced = step.hit == null && step.sea && bounceOffSea(p, step.x);
         if (step.hit != null || (step.sea && !bounced) || p.isExpired) {
           if (step.hit != null || step.sea) dry(p, step, tick);
@@ -71,6 +76,8 @@ int runVolley(
         continue;
       }
       traces[i].add(p.x, p.y);
+      // 날아가는 동안 상대 펠리 투하 표시를 요격한다(ADR-078).
+      interceptDrops(state, p);
       final children = _divideAt(state, p, tick, vyBefore, tapTick);
       if (children.isNotEmpty) {
         _replace(state, live, done, traces, i, children);

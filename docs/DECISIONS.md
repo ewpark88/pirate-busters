@@ -719,3 +719,13 @@
   - 점선은 같은 크기의 작은 등급색 점에 얇은 외곽선, 뒤로 흐려짐. 힘 링은 10칸, 각도·힘 숫자는 발사 지점 아래 알약 한 줄.
 - **대안:** 궤적 전체와 착탄 표시. 실력 차가 사라져 택하지 않았다.
 - **영향:** 설계서 §2.2·§10.4, 계획서 기준 문서 해시 `82bb27ee`. 코드: `app/lib/game/view/aim_painter.dart`·`aim_sling.dart`·`aim_labels.dart`·`shot_view.dart`, `app/lib/battle/session_views.dart`(`launchTilt`), `app/lib/input/pull_aim.dart`·`field_gestures.dart`. 판정(pb_sim)은 그대로다. 직사 원거리 각도 흔들림(§2.6)·여러 발 부채꼴은 원래대로 점선에 나오지 않는다.
+
+## ADR-078 R1a-2 해적 고유 동작 21가지와 수치 (2026-10-02)
+- **배경:** R1a-2 는 설계서에 동작 모델·수치가 없던 해적 고유 동작(꽃게 형제·볼케·본즈·라이언·나르·왈러스·소오·바라·핑구·셀던·돌피·오르카·모레이·크라키·펠리 요격·만타 무작위 피해·크래비·랍·데비·쿡 치유·코리 방벽)을 정하는 단계다. 사용자가 “확인해야 될 것은 알아서 수정하고 다음 단계 진행”이라며 결정을 위임했다.
+- **결정:** 지금 엔진 구조(탄종 + 고유 능력 키, 정수 결정론, 턴 효과 목록) 안에서 가장 단순한 규칙으로 정했다. 규칙은 설계서 §4.8 ‘해적별 고유 동작’, 키는 §4.3, 수치는 BALANCE A4.2(임시값)에 적었다.
+  - 새 상태: 해적 부활 표시(`PirateState.revived`), 산호 방벽 목록(`MatchState.barriers`), 턴 효과 `gnawBite`·`pumpOff`·`tentacle`. 모두 해시에 넣어 골든 100판과 고정 해시를 다시 만들었다(판 결과·턴 수는 같다).
+  - 볼케·셀던은 지나간 칸을 다시 맞지 않게 투사체의 `passedNet` 을 함께 쓴다. 바라 어뢰는 수면에서 멈추지 않는 `submerged` 탄이다.
+  - 화면 전용: 본즈 조준경(궤적 50%)과 오르카 기울임은 판정이 없다. 그리기는 R1c.
+  - 급강하·자폭 탭을 쓰는 출시 해적은 없다(윙은 꼭대기에서 저절로 갈라짐).
+- **대안:** 해골 선원·촉수·방벽을 체력 있는 엔티티로 만들기. 범위가 커서 턴 효과·방벽 목록으로 줄였다.
+- **영향:** 설계서 §4.3·§4.8, BALANCE A4.2, 계획서 R1a-2. 코드: `pb_sim` `combat/unique_effects.dart`·`unique_moves.dart`·`unique_turns.dart`·`barrier_effects.dart`·`match/barrier.dart` 와 연결부, `app/lib/game/battle_cues.dart`(새 이벤트 무시 분기). 테스트 `pb_sim/test/r1a2_unique_test.dart`.

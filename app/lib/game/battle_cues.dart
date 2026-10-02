@@ -207,7 +207,12 @@ class BattleCues {
             SimEventKind.statusApplied ||
             SimEventKind.mineFloated ||
             SimEventKind.steered ||
-            SimEventKind.supported:
+            SimEventKind.supported ||
+            SimEventKind.intercepted ||
+            SimEventKind.barrierPlaced ||
+            SimEventKind.barrierHit ||
+            SimEventKind.revived ||
+            SimEventKind.healed:
           break;
         case SimEventKind.flood:
           // 턴 끝 침수가 늘면 배 둘레 수면에 물방울이 튄다 (설계서 §10.4). 펌프로

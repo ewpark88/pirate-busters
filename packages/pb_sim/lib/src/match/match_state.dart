@@ -1,3 +1,4 @@
+import 'package:pb_sim/src/match/barrier.dart';
 import 'package:pb_sim/src/match/rules.dart';
 import 'package:pb_sim/src/match/side_status.dart';
 import 'package:pb_sim/src/match/sim_event.dart';
@@ -253,6 +254,9 @@ class MatchState {
 
   /// 턴 시작에 터지도록 예약한 효과 (설계서 §4.3 턴 효과). 예약 순서대로 처리한다.
   final List<TurnEffect> effects = [];
+
+  /// 서 있는 산호 방벽(코리, ADR-078). 세운 순서대로 둔다.
+  final List<Barrier> barriers = [];
 
   /// 마지막 발사(또는 턴 효과)에서 난 탄들의 틱별 위치. 렌더용이라 해시에 넣지 않는다.
   List<ShotTrace> lastTraces = const [];

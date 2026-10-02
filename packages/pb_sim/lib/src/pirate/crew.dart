@@ -1,5 +1,6 @@
 import 'package:pb_sim/src/match/sim_event.dart';
 import 'package:pb_sim/src/math/fx.dart';
+import 'package:pb_sim/src/pirate/ability.dart';
 import 'package:pb_sim/src/pirate/pirate_spec.dart';
 
 /// 선실이 부서져 떨어질 때 입는 피해: 최대 체력의 20% (ADR-010).
@@ -24,6 +25,9 @@ class PirateState {
   final PirateSpec spec;
   int hp;
   PirateStatus status = PirateStatus.aboard;
+
+  /// 한 번 되살아났는가(데비, ADR-078). 해시에 들어간다.
+  bool revived = false;
 
   /// 남은 쿨다운. 0 이면 쏠 수 있다. 쏘면 `cooldownTurns + 1` 이 되고 내 턴이
   /// 끝날 때마다 1 줄어서, 같은 턴에 다시 쏘지 못하고 `cooldownTurns` 만큼 내 턴을
@@ -79,6 +83,14 @@ class Crew {
       SimEvent(SimEventKind.pirateHit, side: side, slot: slot, value: dealt),
     );
     if (p.hp > 0) return;
+    // 해골 선장 데비는 한 번 체력 절반으로 되살아난다 (설계서 §4.2, ADR-078).
+    if (p.spec.ability == Ability.summon && !p.revived) {
+      p
+        ..revived = true
+        ..hp = p.spec.hp ~/ 2;
+      events.add(SimEvent(SimEventKind.revived, side: side, slot: slot));
+      return;
+    }
     p.status = PirateStatus.down;
     events.add(SimEvent(SimEventKind.pirateDown, side: side, slot: slot));
   }

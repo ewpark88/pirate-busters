@@ -1,5 +1,7 @@
 import 'package:pb_sim/src/combat/ammo_rules.dart';
 import 'package:pb_sim/src/combat/impact.dart';
+import 'package:pb_sim/src/combat/unique_moves.dart';
+import 'package:pb_sim/src/combat/unique_turns.dart';
 import 'package:pb_sim/src/match/match_state.dart';
 import 'package:pb_sim/src/match/sim_event.dart';
 import 'package:pb_sim/src/match/turn_effects.dart';
@@ -107,11 +109,14 @@ void applyHitAbility(
         ..sealedSlot = slot;
     case Ability.blindTrail:
       status.trailBlockTurn = next;
-    case Ability.none ||
-        Ability.floatMine ||
-        Ability.bail ||
-        Ability.cooldownCut ||
-        Ability.lantern:
+      // 만타 무작위 피해 (ADR-078).
+      randomStrikes(state, target, spec, spec.abilityValue);
+    case Ability.grab:
+      // 크래비: 가장 가까운 배 위 해적을 물고 바다로 (ADR-078).
+      slot = nearestAboard(target, cx, cy);
+      if (slot < 0) return;
+      target.crew.fall(slot, target.side, state.events);
+    case _:
       return;
   }
   p.abilityDone = true;
