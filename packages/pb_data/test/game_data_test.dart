@@ -152,6 +152,7 @@ void main() {
 
     test('쿨다운은 BALANCE.md A4.2 표와 같다', () {
       const twoTurns = {
+        'p04_uni',
         'p05_volke',
         'p09_lion',
         'p10_volt',

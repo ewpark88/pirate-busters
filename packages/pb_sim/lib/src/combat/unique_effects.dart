@@ -8,10 +8,10 @@ import 'package:pb_sim/src/combat/unique_moves.dart';
 import 'package:pb_sim/src/match/match_state.dart';
 import 'package:pb_sim/src/match/sim_event.dart';
 import 'package:pb_sim/src/pirate/ability.dart';
-import 'package:pb_sim/src/pirate/ammo.dart';
 import 'package:pb_sim/src/pirate/crew.dart';
 import 'package:pb_sim/src/pirate/pirate_spec.dart';
 import 'package:pb_sim/src/projectile/projectile.dart';
+import 'package:pb_sim/src/ship/material.dart';
 import 'package:pb_sim/src/ship/ship_grid.dart';
 import 'package:pb_sim/src/world/world.dart';
 
@@ -57,7 +57,7 @@ bool? uniqueHullHit(
           ..passedNet = target.grid.indexOf(cx, cy);
         return false;
       }
-      impact(_wider(spec));
+      impact(spec);
       return true;
     case Ability.skewer || Ability.rip || Ability.saw || Ability.torpedo:
       return _pierce(state, p, target, cx: cx, cy: cy, x: x, y: y);
@@ -125,13 +125,6 @@ bool? uniqueHullHit(
   }
 }
 
-/// 반경 +1 사본(상한 2칸, §4.8).
-PirateSpec _wider(PirateSpec s) => s.withDamage(
-  blockDamage: s.blockDamage,
-  pirateDamage: s.pirateDamage,
-  blastRadius: cappedBlastRadius(s.blastRadius + 1),
-);
-
 /// 관통탄 변형(나르·왈러스·소오·바라). 기본 관통 규칙(두 번째 칸부터 50%)을 따른다.
 bool _pierce(
   MatchState state,
@@ -171,9 +164,11 @@ bool _pierce(
     blockPercent: percent,
     centerPiratePercent: piratePercent,
   );
+  // 왈러스는 약한 재질(소나무·코르크·망사)만 뜯어낸다(R1d, 참나무·철판 사다리 유지).
   if (spec.ability == Ability.rip &&
       grid.hasBlock(cx, cy) &&
-      grid.stageAt(cx, cy) == DamageStage.holed) {
+      grid.stageAt(cx, cy) == DamageStage.holed &&
+      _rippable(grid.materialAt(cx, cy)!)) {
     damageCells(state, target, [grid.indexOf(cx, cy)], grid.hpAt(cx, cy));
   }
   p.piercedCells++;
@@ -183,6 +178,11 @@ bool _pierce(
   }
   return true;
 }
+
+bool _rippable(BlockMaterial m) =>
+    m == BlockMaterial.pine ||
+    m == BlockMaterial.cork ||
+    m == BlockMaterial.net;
 
 bool _aboardAt(SideState target, int cx, int cy) {
   for (var slot = 0; slot < target.crew.size; slot++) {

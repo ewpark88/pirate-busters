@@ -87,7 +87,7 @@
       "family": "lob",
       "rarity": "hero",
       "hp": 240,
-      "cooldownTurns": 1,
+      "cooldownTurns": 2,
       "ammo": {
         "type": "split",
         "spreadDeg": 25
@@ -127,7 +127,7 @@
       },
       "ability": {
         "type": "drill",
-        "value": 3
+        "value": 2
       },
       "growth": {},
       "render": {
@@ -656,7 +656,7 @@
       },
       "ability": {
         "type": "gnaw",
-        "value": 25
+        "value": 40
       },
       "growth": {},
       "render": {
@@ -818,7 +818,7 @@
       },
       "ability": {
         "type": "blindTrail",
-        "value": 3
+        "value": 2
       },
       "growth": {},
       "render": {
@@ -1088,7 +1088,8 @@
       "hp": 260,
       "cooldownTurns": 2,
       "ammo": {
-        "type": "support"
+        "type": "support",
+        "repairCells": 2
       },
       "projectile": {},
       "onHit": {

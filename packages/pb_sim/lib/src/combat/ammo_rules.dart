@@ -50,7 +50,9 @@ List<Projectile> launchVolley(
   final count = spec.ammo == AmmoType.burst
       ? spec.ammoValue
       : (spec.ability == Ability.twin ? 2 : 1);
-  final shotSpec = _scaled(spec, count, dmgPercent);
+  final shotSpec = spec.ability == Ability.twin
+      ? _twin(spec, dmgPercent)
+      : _scaled(spec, count, dmgPercent);
   final shots = <Projectile>[];
   for (var i = 0; i < count; i++) {
     final p = launchShot(
@@ -82,6 +84,15 @@ PirateSpec _scaled(PirateSpec spec, int count, int percent) {
     pirateDamage: pirate * percent ~/ 100,
   );
 }
+
+/// 꽃게 형제 두 발의 합계 피해 비율(%) (BALANCE.md A4.2, R1d).
+const int twinTotalPercent = 120;
+
+/// 꽃게 형제 한 발: 합계 [twinTotalPercent]% 를 두 발에 나누고 [percent]% 를 곱한다.
+PirateSpec _twin(PirateSpec spec, int percent) => spec.withDamage(
+  blockDamage: spec.blockDamage * twinTotalPercent ~/ 200 * percent ~/ 100,
+  pirateDamage: spec.pirateDamage * twinTotalPercent ~/ 200 * percent ~/ 100,
+);
 
 /// 부채꼴 [spread](밀리도) 안에서 [count] 발 중 [i] 번째의 각도 차이.
 int _fanOffset(int spread, int i, int count) =>

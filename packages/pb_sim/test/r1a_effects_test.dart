@@ -82,7 +82,7 @@ class _Recorder implements Controller {
 }
 
 /// R1a-1 섞인 판(시드 4242, 스크립트 35·36)의 기대 해시. 의도한 규칙 변경일 때만 갱신한다.
-const int _mixedHash = 473789135;
+const int _mixedHash = 2153910199;
 
 List<SimEvent> _of(Match m, SimEventKind kind) =>
     m.state.events.where((e) => e.kind == kind).toList();
@@ -137,7 +137,7 @@ void main() {
       expect(ship.fireTurns[ship.grid.indexOf(5, 0)], 0);
     });
 
-    test('턴 끝마다 블록이 10 × (1 + 나무 추가 피해) 타고 지속 턴이 지나면 꺼진다', () {
+    test('턴 끝마다 블록이 6 × (1 + 나무 추가 피해) 타고 지속 턴이 지나면 꺼진다 (R1d)', () {
       final m = _duel(testPirate('x'));
       final ship = m.state.sides[1];
       final grid = ship.grid;
@@ -153,10 +153,10 @@ void main() {
       );
       final hp = grid.hpAt(10, 1);
       burnAtTurnEnd(ship, m.state.rng, m.state.events);
-      expect(grid.hpAt(10, 1), hp - 15);
+      expect(grid.hpAt(10, 1), hp - 9);
       expect(ship.fireTurns[i], 1);
       burnAtTurnEnd(ship, m.state.rng, m.state.events);
-      expect(grid.hpAt(10, 1), hp - 30);
+      expect(grid.hpAt(10, 1), hp - 18);
       expect(ship.fireTurns[i], 0);
       expect(ship.fireExtra[i], 0);
     });
