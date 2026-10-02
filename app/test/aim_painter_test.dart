@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pirate_busters/game/view/aim_labels.dart';
 import 'package:pirate_busters/game/view/aim_painter.dart';
+import 'package:pirate_busters/game/view/aim_sling.dart';
 
 void main() {
   group('조준 점선 (설계서 §10.4, ADR-063)', () {
@@ -60,31 +61,26 @@ void main() {
       }
     });
 
-    test('각도 숫자는 조준 방향(점선) 위가 아니라 호 가운데 쪽, 힘은 발사 지점 아래에 둔다', () {
-      const from = Offset.zero;
-      for (final facing in const [1, -1]) {
-        final dir = AimPainter.direction(facing, 60000);
-        final at = AimLabels.angleAt(from, dir);
-        expect((at - from).distance, closeTo(30, 1e-9));
-        // 수평(0°)과 60° 의 가운데 = 30° 쪽, 보는 쪽을 따른다.
-        expect(at.dx.sign, facing.toDouble());
-        expect(at.dy, closeTo(-15, 1e-9));
-      }
-      expect(AimLabels.powerAt(from), const Offset(0, 28));
+    test('각도·힘 알약은 발사 지점 아래 한 줄에 겹치지 않게 나란히 놓인다', () {
+      const from = Offset(10, -40);
+      expect(AimLabels.powerAt(from), const Offset(10, -8));
+      final (a, p) = AimLabels.rowAt(from, 20, 30);
+      expect(a.dy, p.dy);
+      expect(a.dy, -8);
+      // 각도가 왼쪽, 둘 사이는 틈만큼 떨어지고 줄 가운데에 모인다.
+      expect(p.dx - a.dx, closeTo(10 + AimLabels.gap + 15, 1e-9));
+      expect((a.dx - 10 + p.dx - 10) / 2, closeTo(-2.5, 1e-9));
     });
 
-    test('점선·고무줄·숫자를 양쪽 진영 모두 오류 없이 그린다', () {
+    test('점선·숫자를 오류 없이 그린다', () {
       final recorder = PictureRecorder();
       final canvas = Canvas(recorder);
-      for (final facing in const [1, -1]) {
-        AimLabels.draw(
-          canvas,
-          const Offset(10, -40),
-          AimPainter.direction(facing, 40000),
-          angle: '40°',
-          power: '힘 74%',
-        );
-      }
+      AimLabels.draw(
+        canvas,
+        const Offset(10, -40),
+        angle: '40°',
+        power: '힘 74%',
+      );
       AimPainter.trajectory(
         canvas,
         [for (var i = 0; i < 8; i++) Offset(i * 7, -i * 4)],
@@ -92,6 +88,19 @@ void main() {
         fadeIn: .3,
       );
       recorder.endRecording().dispose();
+    });
+
+    test('힘 링은 10칸이고 힘만큼 앞 칸부터 차며 마지막 칸은 일부만 찬다', () {
+      double lit(double p) => [
+        for (var i = 0; i < AimSling.segments; i++) AimSling.segmentFill(i, p),
+      ].reduce((a, b) => a + b);
+      expect(AimSling.segments, 10);
+      expect(lit(0), 0);
+      expect(lit(.55), closeTo(5.5, 1e-9));
+      expect(AimSling.segmentFill(4, .55), 1);
+      expect(AimSling.segmentFill(5, .55), closeTo(.5, 1e-9));
+      expect(AimSling.segmentFill(6, .55), 0);
+      expect(lit(1), 10);
     });
   });
 }

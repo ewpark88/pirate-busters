@@ -15,7 +15,7 @@ import 'package:pirate_busters/game/view/trail_painter.dart';
 import 'package:pirate_busters/game/weapon_styles.dart';
 import 'package:pirate_busters/input/pull_aim.dart';
 
-/// 날아가는 탄, 조준 궤적(앞 30% 점선), 이동 끝 지점 점선. 이동 한계 표식은
+/// 날아가는 탄, 조준 궤적(앞 20% 점선), 이동 끝 지점 점선. 이동 한계 표식은
 /// 배 뒤에 그리는 `LimitMarks` 가 맡는다.
 /// 모두 시뮬레이션 값으로 그린다 (개발 계획서 M4).
 class ShotView extends Component {
@@ -214,7 +214,7 @@ class ShotView extends Component {
     // 상대 턴 재생에는 궤적을 그리지 않는다 (설계서 §13.4).
     final path = session
         .previewShot(aim.slot, aim.shot.angle, aim.shot.power)
-        .head(30);
+        .head(previewPercent);
     GuideMarks.rangeEnd(canvas, session, aim.slot, path.xs.first);
     // 점선은 멀어질수록 흐려지고 색은 등급을 따른다 (설계서 §10.4, §10.5).
     final side = session.state.activeSide;
@@ -241,11 +241,14 @@ class ShotView extends Component {
     );
     final from = path2.first;
     final facing = facingOf(side);
+    // 호·새총·각도 숫자는 실제 발사 방향(조준 각도 + 배 기울기)을 따라 점선과
+    // 한 줄로 맞는다 (설계서 §2.5).
+    final launch = aim.shot.angle + session.launchTilt;
     AimPainter.sling(
       canvas,
       from,
       facing: facing,
-      angleMdeg: aim.shot.angle,
+      angleMdeg: launch,
       stretch: aim.stretch,
       power: aim.shot.power / maxFirePower,
       color: color,
@@ -253,11 +256,13 @@ class ShotView extends Component {
     AimLabels.draw(
       canvas,
       from,
-      AimPainter.direction(facing, aim.shot.angle),
-      angle: angleText((aim.shot.angle / 1000).round()),
+      angle: angleText((launch / 1000).round()),
       power: powerText((aim.shot.power * 100 / maxFirePower).round()),
     );
   }
+
+  /// 궤적 점선으로 보여 주는 앞부분 비율(%) (설계서 §2.2).
+  static const int previewPercent = 20;
 
   /// 조준 숫자 글자 (설계서 §10.4). 화면이 l10n 으로 바꿔 넣는다.
   String Function(int degrees) angleText = (d) => '$d°';

@@ -15,6 +15,14 @@ extension BattleSessionViews on BattleSession {
     ms: realMs(state, effectiveMs(state, turnMs)),
   );
 
+  /// 지금 쏘면 조준 각도에 더해지는 배 기울기(밀리도, 파도 + 침수, 설계서 §2.5).
+  /// 조준 표시의 호·새총·각도 숫자를 실제 발사 방향에 맞추는 데 쓴다.
+  int get launchTilt => tiltAtMs(
+    state,
+    state.activeSide,
+    realMs(state, effectiveMs(state, turnMs)),
+  );
+
   /// 지금 [dx](1/10칸)를 누르면 실제로 갈 거리(1/1000칸). 시뮬레이션의 [moveReach].
   int reach(int dx) {
     final at = effectiveMs(state, turnMs);

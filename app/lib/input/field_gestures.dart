@@ -30,6 +30,9 @@ class _FieldGesturesState extends State<FieldGestures> {
   Offset _start = Offset.zero;
   bool _pinching = false;
 
+  /// 당김 입력 시각(놓을 때 미끄러짐을 걸러 낸다).
+  final Stopwatch _clock = Stopwatch()..start();
+
   BattleSession get _s => widget.session;
 
   void _onStart(ScaleStartDetails d) {
@@ -61,13 +64,13 @@ class _FieldGesturesState extends State<FieldGestures> {
     final aim = _aim;
     if (aim == null) return;
     final delta = d.localFocalPoint - _start;
-    aim.drag(delta.dx, delta.dy);
+    aim.drag(delta.dx, delta.dy, ms: _clock.elapsedMilliseconds);
     _s.setAim(_slot, aim.shot, aim.stretch, cancelling: aim.isCancelling);
   }
 
   void _onEnd(ScaleEndDetails d) {
     _pinching = false;
-    final shot = _aim?.release();
+    final shot = _aim?.release(ms: _clock.elapsedMilliseconds);
     _aim = null;
     if (shot == null) {
       _s.clearAim();
