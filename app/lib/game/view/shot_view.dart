@@ -118,6 +118,9 @@ class ShotView extends Component {
         canvas.restore();
         continue;
       }
+      // 멀리 뺀 화면에서도 탄이 보이게 키우고 밝은 테두리를 두른다 (설계서 §10.4).
+      final grow = visibleScale(_zoom);
+      _halo(canvas, pos, 11 * grow);
       final w = weapons;
       if (style == null || w == null) {
         sprites
@@ -125,7 +128,7 @@ class ShotView extends Component {
             .render(
               canvas,
               position: pos,
-              size: Vector2.all(18),
+              size: Vector2.all(18 * grow),
               anchor: Anchor.center,
             );
         continue;
@@ -138,9 +141,40 @@ class ShotView extends Component {
         ..rotate(style.angle(seconds, ahead.x, ahead.y));
       w
           .sprite(style)
-          .render(canvas, size: Vector2(32, 24), anchor: Anchor.center);
+          .render(
+            canvas,
+            size: Vector2(32, 24) * grow,
+            anchor: Anchor.center,
+          );
       canvas.restore();
     }
+  }
+
+  /// 탄이 화면에서 차지할 최소 크기(논리 px). 공용 포탄 18 월드 px 기준.
+  static const double minScreenPx = 22;
+
+  /// 지금 카메라 줌(월드 1px 이 화면 몇 px 인가). 게임 밖(테스트)이면 1.
+  double get _zoom {
+    final game = findGame();
+    return game == null ? 1 : game.camera.viewfinder.zoom;
+  }
+
+  /// 줌 [zoom] 에서 탄을 키울 배율. 화면에서 [minScreenPx] 보다 작아지지 않는다.
+  static double visibleScale(double zoom) =>
+      zoom <= 0 ? 1 : (minScreenPx / (18 * zoom)).clamp(1, 8).toDouble();
+
+  static final Paint _haloFill = Paint()..color = const Color(0x99FFF4C2);
+  static final Paint _haloRing = Paint()
+    ..color = const Color(0xCC14161C)
+    ..style = PaintingStyle.stroke
+    ..strokeWidth = 2;
+
+  /// 탄 뒤의 밝은 원과 어두운 테두리. 바다·하늘 어디서나 구분된다.
+  static void _halo(Canvas canvas, Vector2 pos, double r) {
+    final c = pos.toOffset();
+    canvas
+      ..drawCircle(c, r, _haloFill)
+      ..drawCircle(c, r, _haloRing);
   }
 
   /// 꼬리 점 수와 점 사이 간격(틱). 지나온 약 0.16초를 오래된 것부터 담는다.
