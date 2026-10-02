@@ -4,8 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:pirate_busters/app/app.dart';
 import 'package:pirate_busters/app/providers.dart';
-import 'package:pirate_busters/audio/sfx_bank.dart';
-import 'package:pirate_busters/audio/shanty_music.dart';
+import 'package:pirate_busters/audio/sound_library.dart';
 import 'package:pirate_busters/audio/sound_service.dart';
 import 'package:pirate_busters/campaign/campaign_catalog.dart';
 import 'package:pirate_busters/data/fleet_store.dart';
@@ -42,8 +41,9 @@ Future<void> main() async {
   final progress = await HiveProgressStore.open();
   final replays = await HiveReplayStore.open();
   final sound = SoloudSoundService();
-  await sound.load(SfxBank.build());
-  await sound.loadMusic(ShantyMusic.build());
+  // CC0 음원을 먼저 쓰고, 없는 소리는 합성음으로 채운다 (설계서 §10.3, A19).
+  await sound.loadClips(await SoundLibrary.loadSfx(rootBundle));
+  await sound.loadMusicClips(await SoundLibrary.loadMusic(rootBundle));
   runApp(
     ProviderScope(
       overrides: [

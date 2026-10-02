@@ -4,6 +4,8 @@ import 'package:pb_data/pb_data.dart';
 import 'package:pb_sim/pb_sim.dart';
 import 'package:pirate_busters/app/app_theme.dart';
 import 'package:pirate_busters/app/providers.dart';
+import 'package:pirate_busters/battle/battle_setup.dart';
+import 'package:pirate_busters/campaign/result_hero.dart';
 import 'package:pirate_busters/campaign/result_parts.dart';
 import 'package:pirate_busters/campaign/rewards.dart';
 import 'package:pirate_busters/campaign/stage_node.dart';
@@ -61,85 +63,109 @@ class StageResultScreen extends ConsumerWidget {
         : summary.draw
         ? AppColors.text
         : const Color(0xFFE06A5A);
+    // MVP 가 없으면(한 발도 못 맞힘) 덱 첫 해적이 나온다.
+    final hero =
+        summary.mvpPirate ??
+        ref.watch(fleetStoreProvider).deck?.first ??
+        BattleSetup.starterDeck.first;
     return PbScaffold(
       region: seaRegion(stage.sea),
       dim: 0.5,
-      body: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 10, 16, 10),
-        child: Row(
-          children: [
-            // 왼쪽: 승패 배너, 승리 방식, 별 (설계서 §13.5).
-            Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  PopIn(
-                    child: OutlinedText(
-                      title,
-                      size: 52,
-                      color: banner,
-                      font: AppFonts.display,
-                      stroke: 7,
-                    ),
-                  ),
-                  OutlinedText(how, size: 18),
-                  if (summary.outcome == MatchOutcome.timeDecision) ...[
-                    const SizedBox(height: 6),
-                    _floodBars(l10n),
-                  ],
-                  const SizedBox(height: 12),
-                  _stars(l10n, missionText),
-                ],
-              ),
-            ),
-            const SizedBox(width: 12),
-            // 오른쪽: 보상·통계·버튼.
-            Expanded(
-              child: Center(
+      // 탭하면 연출을 건너뛴다 (설계서 §13.5).
+      body: SkippableMotion(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 10, 16, 10),
+          child: Row(
+            children: [
+              // 왼쪽: 승리면 MVP 해적, 패배면 젖은 해적과 기운 배 (설계서 §13.5).
+              Expanded(
+                flex: 3,
                 child: PopIn(
-                  order: 2,
-                  child: PbPanel(
-                    child: SingleChildScrollView(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          _rewards(l10n, catalog.def),
-                          const SizedBox(height: 6),
-                          Text(
-                            '${l10n.statTurns(summary.turns)} · '
-                            '${l10n.statShots(summary.shotsFired)} · '
-                            '${l10n.statAccuracy(summary.hitPercent)}',
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                              color: AppColors.mute,
-                              fontSize: 12,
+                  order: 1,
+                  child: ResultHero(
+                    won: summary.won,
+                    draw: summary.draw,
+                    pirate: hero,
+                  ),
+                ),
+              ),
+              // 가운데: 승패 배너, 승리 방식, 별.
+              Expanded(
+                flex: 4,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    PopIn(
+                      child: FittedBox(
+                        child: OutlinedText(
+                          title,
+                          size: 52,
+                          color: banner,
+                          font: AppFonts.display,
+                          stroke: 7,
+                        ),
+                      ),
+                    ),
+                    OutlinedText(how, size: 18),
+                    if (summary.outcome == MatchOutcome.timeDecision) ...[
+                      const SizedBox(height: 6),
+                      _floodBars(l10n),
+                    ],
+                    const SizedBox(height: 12),
+                    _stars(l10n, missionText),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 12),
+              // 오른쪽: 보상·통계·버튼.
+              Expanded(
+                flex: 4,
+                child: Center(
+                  child: PopIn(
+                    order: 2,
+                    child: PbPanel(
+                      child: SingleChildScrollView(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            _rewards(l10n, catalog.def),
+                            const SizedBox(height: 6),
+                            Text(
+                              '${l10n.statTurns(summary.turns)} · '
+                              '${l10n.statShots(summary.shotsFired)} · '
+                              '${l10n.statAccuracy(summary.hitPercent)}',
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                color: AppColors.mute,
+                                fontSize: 12,
+                              ),
                             ),
-                          ),
-                          Text(
-                            l10n.statDamage(
-                              summary.damageDealt,
-                              summary.blocksDestroyed,
+                            Text(
+                              l10n.statDamage(
+                                summary.damageDealt,
+                                summary.blocksDestroyed,
+                              ),
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                color: AppColors.mute,
+                                fontSize: 12,
+                              ),
                             ),
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                              color: AppColors.mute,
-                              fontSize: 12,
+                            const SizedBox(height: 10),
+                            ResultActions(
+                              stage: stage,
+                              reward: reward,
+                              replay: replay,
                             ),
-                          ),
-                          const SizedBox(height: 10),
-                          ResultActions(
-                            stage: stage,
-                            reward: reward,
-                            replay: replay,
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -154,13 +180,16 @@ class StageResultScreen extends ConsumerWidget {
       };
 
   Widget _floodBars(AppLocalizations l10n) {
-    return SizedBox(
-      width: 260,
+    return ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: 260),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          OutlinedText(
-            l10n.statFlood(summary.floodPercent, enemyFloodPercent),
-            size: 13,
+          FittedBox(
+            child: OutlinedText(
+              l10n.statFlood(summary.floodPercent, enemyFloodPercent),
+              size: 13,
+            ),
           ),
           const SizedBox(height: 3),
           FloodBar(percent: summary.floodPercent, color: AppColors.blue),
@@ -180,22 +209,22 @@ class StageResultScreen extends ConsumerWidget {
     ];
     return Column(
       children: [
-        // 큰 별 3개. 하나씩 찍히는 연출은 A18 (설계서 §13.5).
-        PopIn(
-          order: 2,
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              for (final (i, (_, on)) in rows.indexed)
-                Padding(
+        // 큰 별 3개가 하나씩 찍힌다 (설계서 §13.5).
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            for (final (i, (_, on)) in rows.indexed)
+              PopIn(
+                order: 4 + i * 3,
+                child: Padding(
                   padding: EdgeInsets.fromLTRB(4, i == 1 ? 0 : 10, 4, 0),
                   child: MetaIcons.image(
                     on ? MetaIcons.starOn : MetaIcons.starOff,
-                    size: i == 1 ? 56 : 44,
+                    size: i == 1 ? 52 : 40,
                   ),
                 ),
-            ],
-          ),
+              ),
+          ],
         ),
         const SizedBox(height: 6),
         for (final (label, on) in rows)
@@ -221,10 +250,14 @@ class StageResultScreen extends ConsumerWidget {
             children: [
               MetaIcons.image(MetaIcons.gold, size: 26),
               const SizedBox(width: 6),
-              CountUp(
-                value: reward.gold,
-                builder: (context, v) =>
-                    OutlinedText(l10n.rewardGold(v), size: 20),
+              Flexible(
+                child: FittedBox(
+                  child: CountUp(
+                    value: reward.gold,
+                    builder: (context, v) =>
+                        OutlinedText(l10n.rewardGold(v), size: 20),
+                  ),
+                ),
               ),
             ],
           ),

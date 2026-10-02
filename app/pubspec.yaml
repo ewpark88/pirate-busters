@@ -55,6 +55,7 @@ flutter:
         - asset: assets/fonts/Jua-Regular.ttf
   # 아트 에셋 v0.22 (docs/ASSETS.md). 폴더를 바꾸면 dart run tool/import_assets.dart --check
   assets:
+    - assets/audio/
     - assets/data/
     - assets/game/
     - assets/stages/

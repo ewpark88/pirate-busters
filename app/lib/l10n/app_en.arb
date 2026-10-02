@@ -496,6 +496,7 @@
   "rewardPirate": "New pirate joined: {name}",
   "rewardFirstClear": "First clear bonus",
   "resultToPort": "To port",
+  "resultMvp": "MVP",
   "statTurns": "Turns used {turns}",
   "statShots": "{shots} shots",
   "statFlood": "Flooding you {mine}% · enemy {enemy}%",

@@ -807,6 +807,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get resultToPort => '항구로';
 
   @override
+  String get resultMvp => 'MVP';
+
+  @override
   String statTurns(Object turns) {
     return '사용 턴 $turns';
   }
