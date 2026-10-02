@@ -8,8 +8,8 @@ import 'package:pb_sim/src/ship/flooding.dart';
 import 'package:pb_sim/src/ship/material.dart';
 import 'package:pb_sim/src/ship/support.dart';
 
-/// 불붙은 블록의 턴 끝 피해 (BALANCE.md A2.5, 임시값 ADR-075).
-const int fireBlockDamage = 10;
+/// 불붙은 블록의 턴 끝 피해 (BALANCE.md A2.5, 임시값 ADR-075, R1d 10 → 6).
+const int fireBlockDamage = 6;
 
 /// 불붙은 선실 칸 해적의 턴 끝 피해 (BALANCE.md A2.5, 임시값 ADR-075).
 const int firePirateDamage = 10;

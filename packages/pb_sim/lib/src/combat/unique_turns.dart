@@ -3,6 +3,7 @@ library;
 
 import 'package:pb_sim/src/combat/ability_effects.dart';
 import 'package:pb_sim/src/combat/ammo_rules.dart';
+import 'package:pb_sim/src/combat/impact.dart';
 import 'package:pb_sim/src/combat/unique_moves.dart';
 import 'package:pb_sim/src/match/match_state.dart';
 import 'package:pb_sim/src/match/sim_event.dart';
@@ -31,7 +32,22 @@ bool attachUnique(MatchState state, Projectile p, SideState target, int cell) {
         ..add(effect(EffectKind.gnawBite, target.side, 1))
         ..add(effect(EffectKind.pumpOff, p.side, 1));
     case Ability.tentacle:
-      // 턴 시작에는 세지 않고(trigger −1) 상대 턴 끝 침수 단계에서 센다.
+      // 붙는 순간 설치탄처럼 터지고(R1d), 촉수는 턴 시작에는 세지 않고(trigger −1)
+      // 상대 턴 끝 침수 단계에서 센다.
+      final grid = target.grid;
+      final cx = cell % grid.width;
+      final cy = cell ~/ grid.width;
+      final (x, y) = target.frame.cellCenter(cx, cy);
+      resolveImpact(
+        target,
+        spec: spec,
+        cx: cx,
+        cy: cy,
+        x: x,
+        y: y,
+        events: state.events,
+        rng: state.rng,
+      );
       state.effects.add(effect(EffectKind.tentacle, -1, spec.ammoValue));
     case _:
       return false;

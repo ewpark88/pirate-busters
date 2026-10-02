@@ -100,14 +100,14 @@ class _Recorder implements Controller {
 }
 
 /// R1a-2 섞인 판(시드 777, 스크립트 33·34)의 기대 해시. 의도한 규칙 변경일 때만 갱신한다.
-const int _mixedHash = 3397480333;
+const int _mixedHash = 2292984687;
 
 List<SimEvent> _of(Match m, SimEventKind kind) =>
     m.state.events.where((e) => e.kind == kind).toList();
 
 void main() {
   group('투척·직사 고유 동작', () {
-    test('꽃게 형제는 같은 각도로 두 발을 쏘고 한 발 피해는 여러 발 합계 규칙이다', () {
+    test('꽃게 형제는 같은 각도로 두 발을 쏘고 두 발 합계는 120% 다 (R1d)', () {
       final crab = _pirate('crab', ability: Ability.twin, blockDamage: 100);
       final m = _duel(crab);
       final shots = launchVolley(
@@ -120,7 +120,7 @@ void main() {
       expect(shots, hasLength(2));
       expect(shots[0].vx, shots[1].vx);
       expect(shots[1].startTick, greaterThan(shots[0].startTick));
-      expect(shots[0].spec.blockDamage, perShotDamage(100, 0, 2));
+      expect(shots[0].spec.blockDamage, 60);
     });
 
     test('볼케는 인자 층을 절반 피해로 뚫고 마지막 칸에서 반경을 넓혀 터진다', () {
