@@ -26,7 +26,7 @@ class CameraDirector {
   static const double maxWidth = 2528;
   static const double minWidth = baseWidth / 1.5;
   static const double impactWidth = 700;
-  static const double impactHoldSec = 1.3;
+  static const double impactHoldSec = 0.8;
   static const double followRate = 4;
 
   /// 탄을 따라갈 때는 더 빨리 붙는다(탄이 화면 밖으로 나가지 않게).

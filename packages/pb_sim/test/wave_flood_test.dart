@@ -72,17 +72,17 @@ void main() {
       expect(isLeak(grid, 5, 0), isFalse);
     });
 
-    test('완전히 잠긴 구멍은 턴마다 +3%p, 반쯤 잠긴 구멍은 +1.5%p', () {
+    test('완전히 잠긴 구멍은 턴마다 +4%p, 반쯤 잠긴 구멍은 +2%p', () {
       const rules = MatchRules();
       // 침수 50% 로 1칸 내려앉아 잠긴 깊이 1.895칸: 맨 아래 줄은 완전히, 둘째 줄은 반쯤.
       final side = newSampleMatch(1).state.sides[0]..flood = 500;
       side.grid
         ..damage(3, 0, 100)
         ..damage(4, 1, 100);
-      expect(floodGain(side, rules, 1), 30 + 15);
-      expect(floodGain(side, rules, 27), (30 + 15) * 3 ~/ 2);
-      expect(applyFlood(side, rules, 1), 45);
-      expect(side.flood, 545);
+      expect(floodGain(side, rules, 1), 40 + 20);
+      expect(floodGain(side, rules, 27), (40 + 20) * 3 ~/ 2);
+      expect(applyFlood(side, rules, 1), 60);
+      expect(side.flood, 560);
     });
 
     test('침수량은 100% 에서 멈추고, 그만큼 배가 내려앉는다(100% 에 2칸)', () {
@@ -120,12 +120,12 @@ void main() {
       m.state.sides[me].grid.damage(3, 0, 100);
       m.state.sides[1 - me].grid.damage(3, 0, 100);
       m.apply(const EndTurnCommand(t: 10));
-      // 샘플 배 맨 아래 줄은 반쯤 잠겨 +1.5%p.
-      expect(m.state.sides[me].flood, 15);
+      // 샘플 배 맨 아래 줄은 반쯤 잠겨 +2%p.
+      expect(m.state.sides[me].flood, 20);
       expect(m.state.sides[1 - me].flood, 0);
       expect(
         m.state.events.where((e) => e.kind == SimEventKind.flood).single.value,
-        15,
+        20,
       );
     });
 

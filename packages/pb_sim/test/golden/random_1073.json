@@ -4,7 +4,7 @@
   "outcome": "timeDecision",
   "winner": 0,
   "turns": 30,
-  "hash": "b3ffee4a"
+  "hash": "e6f72ec1"
  },
  "replay": {
   "version": 7,
@@ -15,7 +15,7 @@
    "firesPerTurn": 2,
    "maxWind": 3,
    "windAccel": 26,
-   "sunkHullPercent": 30,
+   "sunkHullPercent": 40,
    "fuelPerTurn": 30,
    "stormTurns": 4,
    "stormTurnTimeMs": 20000,
@@ -28,8 +28,8 @@
    "wavePeriodMs": 4000,
    "waveHeavePerLevel": 150,
    "waveRollPerLevel": 1000,
-   "floodFullCell": 30,
-   "floodHalfCell": 15,
+   "floodFullCell": 40,
+   "floodHalfCell": 20,
    "waterlineDivisor": 4,
    "sinkAtFullFlood": 2000,
    "tiltPerCell": 1000,
@@ -1108,7 +1108,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "49c36e88"
+    "hash": "1f7a8f43"
    },
    {
     "turn": 27,
@@ -1126,7 +1126,7 @@
       "dx": -33
      }
     ],
-    "hash": "bbcaf14c"
+    "hash": "4cce6fd7"
    },
    {
     "turn": 28,
@@ -1137,7 +1137,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "3a678716"
+    "hash": "0b4c53e9"
    },
    {
     "turn": 29,
@@ -1154,13 +1154,13 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "c42b21cb"
+    "hash": "febf7da4"
    },
    {
     "turn": 30,
     "side": 1,
     "cmds": [],
-    "hash": "b3ffee4a"
+    "hash": "e6f72ec1"
    }
   ]
  }

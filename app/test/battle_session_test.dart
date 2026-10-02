@@ -277,7 +277,10 @@ void main() {
     expect(clock.tick(5000, done: true, held: false), isFalse);
     clock.enabled = true;
     expect(clock.tick(1000, done: true, held: true), isFalse, reason: '이동 중');
-    expect(clock.tick(1000, done: true, held: false), isFalse);
-    expect(clock.tick(600, done: true, held: false), isTrue);
+    expect(
+      clock.tick(AutoEndClock.graceMs - 1, done: true, held: false),
+      isFalse,
+    );
+    expect(clock.tick(1, done: true, held: false), isTrue);
   });
 }
