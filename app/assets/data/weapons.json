@@ -1,6 +1,6 @@
 {
- "version": "0.21",
- "note": "캐릭터별 무기. 스프라이트는 가운데(0,0) 기준 +x 방향, viewBox -40 -24 64 48. 개수(count·splitN·dropN)는 표시용 기본값이고 실제 개수는 ammo/ammo.json 등급 사다리를 따른다.",
+ "version": "0.22",
+ "note": "캐릭터별 무기 (키 = 에셋 키 render.species). 스프라이트는 가운데 기준 +x 방향, viewBox -40 -24 64 48",
  "weapons": {
   "octo": {
    "mode": "spin",
@@ -8,7 +8,7 @@
    "trail": "smoke",
    "id": "octo",
    "desc": "검은 폭탄 Bomb",
-   "ammo": "explode",
+   "ammo": "explosive",
    "sprite": "weapons/octo.svg"
   },
   "starry": {
@@ -32,7 +32,7 @@
    "spread": 10,
    "id": "crabs",
    "desc": "작은 폭탄 2발 Twin bombs",
-   "ammo": "explode",
+   "ammo": "explosive",
    "sprite": "weapons/crabs.svg"
   },
   "uni": {
@@ -52,7 +52,7 @@
    "trail": "lava",
    "id": "volke",
    "desc": "용암 바위 Lava rock",
-   "ammo": "explode",
+   "ammo": "explosive",
    "sprite": "weapons/volke.svg"
   },
   "pang": {
@@ -60,7 +60,7 @@
    "trail": "water",
    "id": "pang",
    "desc": "물방울 총알 Water bullet",
-   "ammo": "snipe",
+   "ammo": "sniper",
    "sprite": "weapons/pang.svg"
   },
   "hippo": {
@@ -71,7 +71,7 @@
    "spread": 0,
    "id": "hippo",
    "desc": "황동 탄 3연사 Triple shot",
-   "ammo": "rapid",
+   "ammo": "burst",
    "sprite": "weapons/hippo.svg"
   },
   "bones": {
@@ -80,7 +80,7 @@
    "trailCol": "#7affc8",
    "id": "bones",
    "desc": "초고속 저격탄 Sniper round",
-   "ammo": "snipe",
+   "ammo": "sniper",
    "sprite": "weapons/bones.svg"
   },
   "lion": {
@@ -91,7 +91,7 @@
    "spread": 4,
    "id": "lion",
    "desc": "독가시 부채꼴 5발 Spine fan",
-   "ammo": "rapid",
+   "ammo": "burst",
    "sprite": "weapons/lion.svg"
   },
   "volt": {
@@ -209,7 +209,7 @@
    "trail": "bubble",
    "id": "puffer",
    "desc": "다이너마이트 Dynamite",
-   "ammo": "plant",
+   "ammo": "mine",
    "sprite": "weapons/puffer.svg"
   },
   "jelly": {
@@ -221,7 +221,7 @@
    ],
    "id": "jelly",
    "desc": "해파리 기뢰 Jelly mine",
-   "ammo": "plant",
+   "ammo": "mine",
    "sprite": "weapons/jelly.svg"
   },
   "bara": {
@@ -240,7 +240,7 @@
    ],
    "id": "moray",
    "desc": "곰치 머리 Moray bite",
-   "ammo": "plant",
+   "ammo": "mine",
    "sprite": "weapons/moray.svg"
   },
   "kraki": {
@@ -252,7 +252,7 @@
    ],
    "id": "kraki",
    "desc": "먹물 촉수 구슬 Ink orb",
-   "ammo": "plant",
+   "ammo": "mine",
    "sprite": "weapons/kraki.svg"
   },
   "polly": {
@@ -272,7 +272,7 @@
    "spread": 16,
    "id": "gull",
    "desc": "소형 폭탄 3발 Bomblets",
-   "ammo": "multidrop",
+   "ammo": "flock",
    "sprite": "weapons/gull.svg"
   },
   "pelly": {
@@ -282,7 +282,7 @@
    "dropN": 4,
    "id": "pelly",
    "desc": "부리 주머니 폭탄 Pouch bomb",
-   "ammo": "multidrop",
+   "ammo": "flock",
    "sprite": "weapons/pelly.svg"
   },
   "alba": {
@@ -343,13 +343,13 @@
    "ammo": "assault",
    "icon": "weapons/icons/bash.svg"
   },
-  "lob": {
+  "lobster": {
    "mode": "melee",
    "melee": "xslash",
    "hit": [
     "연속 베기 CHAIN"
    ],
-   "id": "lob",
+   "id": "lobster",
    "desc": "X자 쌍집게 Cross claws",
    "ammo": "assault",
    "icon": "weapons/icons/xslash.svg"

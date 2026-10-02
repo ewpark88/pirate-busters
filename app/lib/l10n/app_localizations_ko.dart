@@ -952,4 +952,25 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get prepCabinEmpty => '빈 선실';
+
+  @override
+  String get hitTagCrit => '치명';
+
+  @override
+  String get hitTagPierce => '관통';
+
+  @override
+  String get hitTagChain => '연쇄';
+
+  @override
+  String get hitTagBurn => '화상';
+
+  @override
+  String get hitTagMine => '기뢰';
+
+  @override
+  String get hitTagBite => '물어뜯기';
+
+  @override
+  String get hitTagRepair => '수리';
 }

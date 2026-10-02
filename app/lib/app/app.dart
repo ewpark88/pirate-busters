@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pirate_busters/app/app_theme.dart';
 import 'package:pirate_busters/app/providers.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
 import 'package:pirate_busters/port/port_screen.dart';
 import 'package:pirate_busters/settings/language.dart';
+import 'package:pirate_busters/ui/cards/card_motion.dart';
 
 /// 앱 루트. 항구(설계서 §13.2)에서 조선소·선원·출항으로 간다. 프롤로그·튜토리얼 분기는 M7 뒤 묶음.
 class PirateBustersApp extends ConsumerWidget {
@@ -28,9 +30,11 @@ class PirateBustersApp extends ConsumerWidget {
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      theme: ThemeData(
-        fontFamily: 'Jua',
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF1E6FB8)),
+      theme: appTheme(),
+      // 등급 카드 움직임의 공용 시계 (설계서 §10.5). 저사양 모드에서는 멈춘다.
+      builder: (context, child) => CardMotion(
+        enabled: !ref.watch(lowEndProvider),
+        child: child ?? const SizedBox.shrink(),
       ),
       home: const PortScreen(),
     );

@@ -1,5 +1,5 @@
 {
- "version": "0.19",
+ "version": "0.22",
  "coordSpace": "character canvas 240x324, anchor 120,315",
  "phases": [
   {
@@ -5933,7 +5933,7 @@
    ],
    "basedOn": "shark"
   },
-  "lob": {
+  "lobster": {
    "duration": 3.0,
    "tracks": {
     "root": [
@@ -7277,7 +7277,7 @@
    "name": "상어 난동꾼 샤키",
    "en": "Sharky the Brawler",
    "species": "shark",
-   "family": "boarding",
+   "family": "assault",
    "rarity": "common"
   },
   {
@@ -7286,7 +7286,7 @@
    "name": "농게 로프 크래비",
    "en": "Crabby the Roper",
    "species": "fiddler_crab",
-   "family": "boarding",
+   "family": "assault",
    "rarity": "rare"
   },
   {
@@ -7295,16 +7295,16 @@
    "name": "대게 방패병 킹",
    "en": "King the Shieldcrab",
    "species": "snow_crab",
-   "family": "boarding",
+   "family": "assault",
    "rarity": "rare"
   },
   {
    "num": 34,
-   "k": "lob",
+   "k": "lobster",
    "name": "바닷가재 쌍집게 랍",
    "en": "Lob the Lobster",
    "species": "lobster",
-   "family": "boarding",
+   "family": "assault",
    "rarity": "hero"
   },
   {
@@ -7313,7 +7313,7 @@
    "name": "해골 선장 데비",
    "en": "Davy the Skeleton Captain",
    "species": "skeleton",
-   "family": "boarding",
+   "family": "assault",
    "rarity": "legend"
   },
   {
@@ -7416,6 +7416,19 @@
     "shards": 10,
     "shake": 1.15,
     "glow": 6
+   },
+   "mythic": {
+    "color": "#7af0ff",
+    "hi": "#ff9ae8",
+    "aura": 3,
+    "motes": 7,
+    "glint": 3,
+    "aim": "#bff8ff",
+    "trail": "prism",
+    "ring": 3,
+    "shards": 14,
+    "shake": 1.2,
+    "glow": 8
    }
   },
   "fields": {
@@ -7423,7 +7436,7 @@
    "motes": "발밑에서 떠오르는 반짝임 수",
    "glint": "발사 순간 손끝 반짝 크기 단계",
    "aim": "조준 점선 색",
-   "trail": "발사체 꼬리 모양",
+   "trail": "발사체 꼬리 모양 · prism(신화: 색이 도는 꼬리)",
    "ring": "명중 시 등급색 고리 수",
    "shards": "명중 시 별 조각 수",
    "shake": "화면 흔들림 배율",
@@ -7437,8 +7450,680 @@
    "pierce": "accent: 작살 밧줄 빛 + trail(noSmoke) + 두 칸 impact(두 번째 +0.06초)",
    "skip": "trail(noSmoke) + 튕길 때마다 bounce",
    "underwater": "물 위 trail(noSmoke), 물속 trail(water) + 입수 지점 bounce",
-   "boarding": "발사체 없음 → slash(베기 궤적) + 명중 impact",
-   "support": "명중 없음 → repair(공용 초록 수리 + 등급 고리·반짝임)"
+   "support": "명중 없음 → repair(공용 초록 수리 + 등급 고리·반짝임)",
+   "assault": "발사체 없음 → slash(베기 궤적) + 명중 impact"
   }
- }
+ },
+ "states": {
+  "aim": {
+   "duration": 1.2,
+   "loop": true,
+   "expr": "aim",
+   "tracks": {
+    "root": [
+     {
+      "t": 0,
+      "ease": "io",
+      "dx": -3,
+      "sy": 1.02
+     },
+     {
+      "t": 0.6,
+      "ease": "io",
+      "dx": -4,
+      "sy": 1.025
+     },
+     {
+      "t": 1.2,
+      "ease": "io",
+      "dx": -3,
+      "sy": 1.02
+     }
+    ],
+    "arm": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": -30
+     },
+     {
+      "t": 0.3,
+      "ease": "io",
+      "rot": -32
+     },
+     {
+      "t": 0.6,
+      "ease": "io",
+      "rot": -29
+     },
+     {
+      "t": 0.9,
+      "ease": "io",
+      "rot": -32
+     },
+     {
+      "t": 1.2,
+      "ease": "io",
+      "rot": -30
+     }
+    ],
+    "held": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": -30
+     },
+     {
+      "t": 0.3,
+      "ease": "io",
+      "rot": -32
+     },
+     {
+      "t": 0.6,
+      "ease": "io",
+      "rot": -29
+     },
+     {
+      "t": 0.9,
+      "ease": "io",
+      "rot": -32
+     },
+     {
+      "t": 1.2,
+      "ease": "io",
+      "rot": -30
+     }
+    ],
+    "arm_back": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 12
+     },
+     {
+      "t": 1.2,
+      "ease": "io",
+      "rot": 12
+     }
+    ],
+    "head": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": -5
+     },
+     {
+      "t": 0.6,
+      "ease": "io",
+      "rot": -6
+     },
+     {
+      "t": 1.2,
+      "ease": "io",
+      "rot": -5
+     }
+    ],
+    "eyes": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": -5
+     },
+     {
+      "t": 0.6,
+      "ease": "io",
+      "rot": -6
+     },
+     {
+      "t": 1.2,
+      "ease": "io",
+      "rot": -5
+     }
+    ]
+   }
+  },
+  "fall": {
+   "duration": 0.8,
+   "loop": true,
+   "expr": "hit",
+   "tracks": {
+    "root": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": -14,
+      "dy": 0
+     },
+     {
+      "t": 0.4,
+      "ease": "io",
+      "rot": 14,
+      "dy": -4
+     },
+     {
+      "t": 0.8,
+      "ease": "io",
+      "rot": -14,
+      "dy": 0
+     }
+    ],
+    "arm": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": -150
+     },
+     {
+      "t": 0.2,
+      "ease": "io",
+      "rot": -120
+     },
+     {
+      "t": 0.4,
+      "ease": "io",
+      "rot": -155
+     },
+     {
+      "t": 0.6,
+      "ease": "io",
+      "rot": -120
+     },
+     {
+      "t": 0.8,
+      "ease": "io",
+      "rot": -150
+     }
+    ],
+    "held": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": -150
+     },
+     {
+      "t": 0.4,
+      "ease": "io",
+      "rot": -155
+     },
+     {
+      "t": 0.8,
+      "ease": "io",
+      "rot": -150
+     }
+    ],
+    "arm_back": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 140
+     },
+     {
+      "t": 0.2,
+      "ease": "io",
+      "rot": 115
+     },
+     {
+      "t": 0.4,
+      "ease": "io",
+      "rot": 145
+     },
+     {
+      "t": 0.6,
+      "ease": "io",
+      "rot": 115
+     },
+     {
+      "t": 0.8,
+      "ease": "io",
+      "rot": 140
+     }
+    ],
+    "legs": [
+     {
+      "t": 0,
+      "ease": "io",
+      "sy": 0.92
+     },
+     {
+      "t": 0.4,
+      "ease": "io",
+      "sy": 0.98
+     },
+     {
+      "t": 0.8,
+      "ease": "io",
+      "sy": 0.92
+     }
+    ],
+    "head": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 8
+     },
+     {
+      "t": 0.4,
+      "ease": "io",
+      "rot": -8
+     },
+     {
+      "t": 0.8,
+      "ease": "io",
+      "rot": 8
+     }
+    ],
+    "back": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": -10
+     },
+     {
+      "t": 0.4,
+      "ease": "io",
+      "rot": 10
+     },
+     {
+      "t": 0.8,
+      "ease": "io",
+      "rot": -10
+     }
+    ],
+    "eyes": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 8
+     },
+     {
+      "t": 0.4,
+      "ease": "io",
+      "rot": -8
+     },
+     {
+      "t": 0.8,
+      "ease": "io",
+      "rot": 8
+     }
+    ]
+   }
+  },
+  "swim": {
+   "duration": 1.2,
+   "loop": true,
+   "expr": "default",
+   "tracks": {
+    "root": [
+     {
+      "t": 0,
+      "ease": "io",
+      "dy": 0,
+      "rot": -3
+     },
+     {
+      "t": 0.6,
+      "ease": "io",
+      "dy": 4,
+      "rot": 3
+     },
+     {
+      "t": 1.2,
+      "ease": "io",
+      "dy": 0,
+      "rot": -3
+     }
+    ],
+    "arm": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": -70
+     },
+     {
+      "t": 0.6,
+      "ease": "io",
+      "rot": 25
+     },
+     {
+      "t": 1.2,
+      "ease": "io",
+      "rot": -70
+     }
+    ],
+    "held": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": -70
+     },
+     {
+      "t": 0.6,
+      "ease": "io",
+      "rot": 25
+     },
+     {
+      "t": 1.2,
+      "ease": "io",
+      "rot": -70
+     }
+    ],
+    "arm_back": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 25
+     },
+     {
+      "t": 0.6,
+      "ease": "io",
+      "rot": -70
+     },
+     {
+      "t": 1.2,
+      "ease": "io",
+      "rot": 25
+     }
+    ],
+    "head": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": -6
+     },
+     {
+      "t": 0.6,
+      "ease": "io",
+      "rot": -2
+     },
+     {
+      "t": 1.2,
+      "ease": "io",
+      "rot": -6
+     }
+    ],
+    "back": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": -8
+     },
+     {
+      "t": 0.6,
+      "ease": "io",
+      "rot": 8
+     },
+     {
+      "t": 1.2,
+      "ease": "io",
+      "rot": -8
+     }
+    ],
+    "eyes": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": -6
+     },
+     {
+      "t": 0.6,
+      "ease": "io",
+      "rot": -2
+     },
+     {
+      "t": 1.2,
+      "ease": "io",
+      "rot": -6
+     }
+    ]
+   }
+  },
+  "win": {
+   "duration": 1.0,
+   "loop": true,
+   "expr": "win",
+   "tracks": {
+    "root": [
+     {
+      "t": 0,
+      "ease": "out",
+      "dy": 0,
+      "sy": 0.9
+     },
+     {
+      "t": 0.12,
+      "ease": "out",
+      "dy": -4,
+      "sy": 1.06
+     },
+     {
+      "t": 0.45,
+      "ease": "in",
+      "dy": -26,
+      "sy": 1.02
+     },
+     {
+      "t": 0.8,
+      "ease": "out",
+      "dy": 0,
+      "sy": 0.92
+     },
+     {
+      "t": 1.0,
+      "ease": "io",
+      "dy": 0,
+      "sy": 0.9
+     }
+    ],
+    "arm": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": -150
+     },
+     {
+      "t": 0.45,
+      "ease": "io",
+      "rot": -165
+     },
+     {
+      "t": 1.0,
+      "ease": "io",
+      "rot": -150
+     }
+    ],
+    "held": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": -150
+     },
+     {
+      "t": 0.45,
+      "ease": "io",
+      "rot": -165
+     },
+     {
+      "t": 1.0,
+      "ease": "io",
+      "rot": -150
+     }
+    ],
+    "arm_back": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": -30
+     },
+     {
+      "t": 0.45,
+      "ease": "io",
+      "rot": -60
+     },
+     {
+      "t": 1.0,
+      "ease": "io",
+      "rot": -30
+     }
+    ],
+    "head": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": -6
+     },
+     {
+      "t": 0.45,
+      "ease": "io",
+      "rot": -10
+     },
+     {
+      "t": 1.0,
+      "ease": "io",
+      "rot": -6
+     }
+    ],
+    "eyes": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": -6
+     },
+     {
+      "t": 0.45,
+      "ease": "io",
+      "rot": -10
+     },
+     {
+      "t": 1.0,
+      "ease": "io",
+      "rot": -6
+     }
+    ]
+   }
+  },
+  "lose": {
+   "duration": 1.6,
+   "loop": true,
+   "expr": "lose",
+   "tracks": {
+    "root": [
+     {
+      "t": 0,
+      "ease": "io",
+      "sy": 0.94,
+      "rot": -1.5
+     },
+     {
+      "t": 0.8,
+      "ease": "io",
+      "sy": 0.93,
+      "rot": 1.5
+     },
+     {
+      "t": 1.6,
+      "ease": "io",
+      "sy": 0.94,
+      "rot": -1.5
+     }
+    ],
+    "head": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 16,
+      "dy": 6
+     },
+     {
+      "t": 0.8,
+      "ease": "io",
+      "rot": 18,
+      "dy": 7
+     },
+     {
+      "t": 1.6,
+      "ease": "io",
+      "rot": 16,
+      "dy": 6
+     }
+    ],
+    "arm": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 28
+     },
+     {
+      "t": 1.6,
+      "ease": "io",
+      "rot": 28
+     }
+    ],
+    "held": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 28
+     },
+     {
+      "t": 1.6,
+      "ease": "io",
+      "rot": 28
+     }
+    ],
+    "arm_back": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": -26
+     },
+     {
+      "t": 1.6,
+      "ease": "io",
+      "rot": -26
+     }
+    ],
+    "back": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 6
+     },
+     {
+      "t": 1.6,
+      "ease": "io",
+      "rot": 6
+     }
+    ],
+    "eyes": [
+     {
+      "t": 0,
+      "ease": "io",
+      "rot": 16,
+      "dy": 6
+     },
+     {
+      "t": 0.8,
+      "ease": "io",
+      "rot": 18,
+      "dy": 7
+     },
+     {
+      "t": 1.6,
+      "ease": "io",
+      "rot": 16,
+      "dy": 6
+     }
+    ]
+   }
+  }
+ },
+ "expressions": [
+  "default",
+  "aim",
+  "attack",
+  "hit",
+  "win",
+  "lose"
+ ],
+ "stateNote": "상태 동작은 부위 이름 기준 공용 트랙(없는 부위는 건너뜀). expr 은 그 상태에서 쓸 표정. 낙하의 아래로 떨어지는 이동·헤엄의 물 높이는 게임이 준다"
 }

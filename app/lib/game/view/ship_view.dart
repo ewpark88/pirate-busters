@@ -9,10 +9,11 @@ import 'package:pirate_busters/game/anim/anim_data.dart';
 import 'package:pirate_busters/game/anim/character_rig.dart';
 import 'package:pirate_busters/game/coords.dart';
 import 'package:pirate_busters/game/sprites.dart';
+import 'package:pirate_busters/game/view/cabin_painter.dart';
 import 'package:pirate_busters/game/view/damage_painter.dart';
 import 'package:pirate_busters/game/view/torn_edge_painter.dart';
 
-/// 배 한 척: 격자 타일, 돛대, 선실의 해적. 시뮬레이션 상태를 그리기만 한다.
+/// 배 한 척: 격자 타일, 돛대, 선실 칸 안의 해적. 시뮬레이션 상태를 그리기만 한다.
 ///
 /// 로컬 원점은 배 가운데의 용골 바닥이고, 오른쪽 배는 좌우를 뒤집는다(scale.x = −1).
 /// 파도 위아래·기울기(파도 + 침수)와 이동 연출을 반영한다 (설계서 §2.5, §2.6).
@@ -41,15 +42,17 @@ class ShipView extends PositionComponent with HasGameReference {
   Future<void> onLoad() async {
     final team = side == 0 ? 'blue' : 'red';
     for (var slot = 0; slot < _state.crew.size; slot++) {
-      final id = session.speciesOf(_state.crew.pirates[slot].spec.id);
+      final spec = _state.crew.pirates[slot].spec;
       final rig = await CharacterRig.load(
         game.images,
-        id,
+        session.speciesOf(spec.id),
         team,
         phase: slot * 0.27,
+        states: anims.states,
       );
-      final cabin = _state.cabins[slot];
-      rig.home.setValues(_localX(cabin.x + 0.5), -cabin.y * _cell);
+      rig
+        ..tier = anims.rarity.of(spec.rarity)
+        ..home.setFrom(cabinFeet(slot));
       rigs.add(rig);
       await add(rig);
     }
@@ -57,11 +60,26 @@ class ShipView extends PositionComponent with HasGameReference {
 
   double _localX(num cx) => (cx - _width / 2) * _cell;
 
+  /// [x], [y] 칸의 사각형(로컬 좌표).
+  Rect cellRect(int x, int y) =>
+      Rect.fromLTWH(_localX(x), -(y + 1) * _cell, _cell, _cell);
+
+  /// 해적 [slot] 이 선실 칸 안에 설 발 위치: 칸 가운데, 바닥 널 위 (ADR-057).
+  Vector2 cabinFeet(int slot) {
+    final cabin = _state.cabins[slot];
+    return Vector2(
+      _localX(cabin.x + 0.5),
+      -cabin.y * _cell - Coords.cabinFloor,
+    );
+  }
+
+  bool _isCabin(int x, int y) => _state.cabins.any((c) => c.x == x && c.y == y);
+
   /// 해적 [slot] 의 공격 동작.
   void playAttack(int slot) {
     final id = session.speciesOf(_state.crew.pirates[slot].spec.id);
     final clip = anims.attacks[id];
-    if (clip != null && slot < rigs.length) rigs[slot].play(clip);
+    if (clip != null && slot < rigs.length) rigs[slot].play(clip, glint: true);
   }
 
   /// 판 시작 때 [cell] 칸이 철판이었는가 (착탄 소리).
@@ -71,8 +89,39 @@ class ShipView extends PositionComponent with HasGameReference {
       _built.materials[cell] == BlockMaterial.iron.index;
 
   void playHit(int slot) {
-    if (slot >= 0 && slot < rigs.length) rigs[slot].play(anims.hit);
+    if (slot >= 0 && slot < rigs.length) {
+      rigs[slot].play(anims.hit, expr: 'hit');
+    }
   }
+
+  /// 판 시작 때 [cell] 칸의 타일 그림(무너지는 덩어리용). 빈 칸이면 null.
+  Sprite? builtTile(int cell) {
+    final m = cell >= 0 && cell < _built.materials.length
+        ? _built.materials[cell]
+        : ShipGrid.emptyCell;
+    if (m == ShipGrid.emptyCell) return null;
+    final y = cell ~/ _width;
+    return sprites.tile(
+      BlockMaterial.values[m],
+      cell % _width,
+      y,
+      keel: y == 0,
+    );
+  }
+
+  /// 맞은 방향으로 흔들렸다가 돌아온다 (설계서 §10.4). [dir] 은 화면에서 밀리는
+  /// 쪽(+1 오른쪽). 그리기만 하고 기울기 판정(§2.5)과는 무관하다.
+  void rock(int dir) {
+    _rockDir = dir.sign.toDouble();
+    _rockT = 0;
+  }
+
+  double _rockDir = 0;
+  double _rockT = 10;
+
+  /// 흔들림 각(라디안): 2° 로 밀렸다가 0.6초쯤 출렁이며 잦아든다.
+  double get _rock =>
+      _rockDir * 0.035 * math.exp(-5 * _rockT) * math.cos(_rockT * 14);
 
   /// 지금 그리는 뱃머리 x(시뮬레이션 단위). 이동 연출 중이면 중간 값.
   double get bowX {
@@ -96,7 +145,8 @@ class ShipView extends PositionComponent with HasGameReference {
     final tilt =
         Wave(rules, session.state.turn).roll(side, session.turnMs) +
         floodTilt(_state, rules);
-    angle = -facing * tilt * math.pi / 180000;
+    _rockT += dt;
+    angle = -facing * tilt * math.pi / 180000 + _rock;
     _updateCrew(dt);
   }
 
@@ -121,8 +171,7 @@ class ShipView extends PositionComponent with HasGameReference {
       if (!frozen) {
         switch (status) {
           case PirateStatus.aboard:
-            final cabin = _state.cabins[slot];
-            _targets[slot].setValues(_localX(cabin.x + 0.5), -cabin.y * _cell);
+            _targets[slot].setFrom(cabinFeet(slot));
           case PirateStatus.swimming:
             // 뱃머리 1칸 앞 해수면(시뮬레이션 swimmerPosition), 물결에 까딱인다.
             final sea = (heave - _state.draft) * _cell / cellUnit;
@@ -135,9 +184,21 @@ class ShipView extends PositionComponent with HasGameReference {
             break;
         }
         rig.alpha += ((status == PirateStatus.down ? 0 : 1) - rig.alpha) * k;
+      } else if (shot.side == side &&
+          shot.slot == slot &&
+          crew.pirates[slot].spec.ammo == AmmoType.assault) {
+        // 강습탄은 해적 자신이 날아간다: 나는 동안 선실은 비어 보인다 (§10.4).
+        rig.alpha = 0;
       }
       rig.home.add((_targets[slot] - rig.home) * k);
       rig.lean = _leanOf(slot);
+      // 상태 동작과 표정 (설계서 §10.1): 떨어지는 중, 헤엄, 판이 끝나면 승리·패배.
+      final state = session.state;
+      rig.state = status == PirateStatus.swimming
+          ? (rig.home.distanceTo(_targets[slot]) > 8 ? 'fall' : 'swim')
+          : state.isOver && state.winner >= 0
+          ? (state.winner == side ? 'win' : 'lose')
+          : (rig.lean > 0 ? 'aim' : null);
     }
   }
 
@@ -164,11 +225,11 @@ class ShipView extends PositionComponent with HasGameReference {
         : null;
     final materials = snap?.materials ?? grid.rawMaterials;
     final hp = snap?.hp ?? grid.rawHp;
-    _renderRig(canvas, materials);
+    CabinPainter.rig(canvas, sprites, materials, _width, blue: side == 0);
     for (var y = 0; y < grid.height; y++) {
       for (var x = 0; x < grid.width; x++) {
         final i = y * grid.width + x;
-        final rect = Rect.fromLTWH(_localX(x), -(y + 1) * _cell, _cell, _cell);
+        final rect = cellRect(x, y);
         final m = materials[i];
         if (m == ShipGrid.emptyCell) {
           if (_built.materials[i] != ShipGrid.emptyCell) {
@@ -178,16 +239,17 @@ class ShipView extends PositionComponent with HasGameReference {
         }
         final mat = BlockMaterial.values[m];
         final stage = ShipGrid.stageFor(hp[i], mat.durability);
-        final tile = sprites.tile(mat, variant: i * 7, keel: y == 0);
-        if (tile == null) {
-          _renderNet(canvas, rect, stage);
-          continue;
+        sprites
+            .tile(mat, x, y, keel: y == 0)
+            .render(
+              canvas,
+              position: Vector2(rect.left, rect.top),
+              size: Vector2.all(_cell),
+            );
+        // 선실 칸은 재질 테두리 안에 안쪽 벽을 깐다. 해적은 그 위에 그려진다.
+        if (_isCabin(x, y)) {
+          CabinPainter.room(canvas, rect, sprites.roomWall(x, y));
         }
-        tile.render(
-          canvas,
-          position: rect.topLeft.toVector2(),
-          size: Vector2.all(_cell),
-        );
         // 금은 이웃 부서진 칸 쪽에서 들어와 이어져 보인다 (설계서 §10.2).
         TornEdgePainter.damage(canvas, rect, i, stage, _mask(materials, x, y));
       }
@@ -200,10 +262,9 @@ class ShipView extends PositionComponent with HasGameReference {
             _built.materials[i] == ShipGrid.emptyCell) {
           continue;
         }
-        final rect = Rect.fromLTWH(_localX(x), -(y + 1) * _cell, _cell, _cell);
         TornEdgePainter.torn(
           canvas,
-          rect,
+          cellRect(x, y),
           i,
           _mask(materials, x, y, block: true),
         );
@@ -227,58 +288,4 @@ class ShipView extends PositionComponent with HasGameReference {
         (at(x, y + 1) ? TornEdgePainter.up : 0) |
         (at(x, y - 1) ? TornEdgePainter.down : 0);
   }
-
-  static final Paint _netPaint = Paint()
-    ..color = const Color(0xFFD9CBA8)
-    ..style = PaintingStyle.stroke
-    ..strokeWidth = 1.5;
-
-  /// 망사(돛) 칸: 에셋에 없어 코드로 그린다 (ADR-029).
-  void _renderNet(Canvas canvas, Rect r, DamageStage stage) {
-    final step = stage == DamageStage.intact ? 8.0 : 12.0;
-    for (var d = 0.0; d <= r.width; d += step) {
-      canvas
-        ..drawLine(
-          Offset(r.left + d, r.top),
-          Offset(r.left + d, r.bottom),
-          _netPaint,
-        )
-        ..drawLine(
-          Offset(r.left, r.top + d),
-          Offset(r.right, r.top + d),
-          _netPaint,
-        );
-    }
-  }
-
-  /// 돛대·돛·깃발 (장식, 판정 없음). 가장 높은 블록 위 가운데에 세운다.
-  void _renderRig(Canvas canvas, List<int> materials) {
-    var top = 0;
-    for (var i = 0; i < materials.length; i++) {
-      if (materials[i] != ShipGrid.emptyCell) top = i ~/ _width + 1;
-    }
-    final team = side == 0 ? 'blue' : 'red';
-    final mast = sprites.get('ship/rig/mast.png');
-    final mastSize = mast.srcSize / 3.2;
-    final baseY = -top * _cell;
-    final mastPos = Vector2(-mastSize.x / 2, baseY - mastSize.y);
-    mast.render(canvas, position: mastPos, size: mastSize);
-    final sail = sprites.get('ship/rig/sail_$team.png');
-    final sailSize = sail.srcSize / 4.2;
-    sail.render(
-      canvas,
-      position: Vector2(-sailSize.x / 2, mastPos.y + 16),
-      size: sailSize,
-    );
-    final flag = sprites.get('ship/rig/flag_$team.png');
-    flag.render(
-      canvas,
-      position: Vector2(4, mastPos.y - 10),
-      size: flag.srcSize / 3.6,
-    );
-  }
-}
-
-extension on Offset {
-  Vector2 toVector2() => Vector2(dx, dy);
 }

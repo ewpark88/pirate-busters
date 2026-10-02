@@ -58,7 +58,31 @@ dart run tool/import_assets.dart --check     # pubspec 목록 검사만
 
 - 원본: `art/pb_v0.22_main/` = `D:\Projects\이미지참고용\pb_v0.22_main` 위에 `이미지참고용\png`(랍스터 전체 PNG·40명 표정 부위)를 덮어쓴 것.
 - 새로 온 것: 표정 6종(`png/characters/<id>/expr_<team>@Nx/`, 머리·눈 + expr.json), `anims.json` `states`·`expressions`·`rarityFx.tiers.mythic`, `ship/tiles_v2`, `style/modes.json`, 신화 카드, 사거리·코스트·세트 아이콘, 화면 시안(`reference/screens`). 랍 키는 `lob` → `lobster`.
-- **아직 앱에 넣지 않았다.** 패키지에 39명의 몸 PNG 가 없어 `import_assets.dart` 를 그대로 돌리면 지금 앱의 v0.21 캐릭터가 지워진다. 바뀐 파일만 덮어쓰는 방식은 계획서 A11 에서 만든다.
+- **앱에 넣었다 (A11, ADR-059).** 패키지에 39명의 몸 PNG 가 없어서, 지우고 다시 채우는 방식 대신 덮어쓰기만 하는 `--merge` 로 넣는다.
+
+```bash
+dart run tool/import_assets.dart --merge art/pb_v0.22_main   # 지우지 않고 덮어쓴다
+dart run tool/import_assets.dart --check                     # pubspec 폴더 목록 + 몸 부위 없는 캐릭터 검사
+```
+
+- `--merge` 는 패키지에 있는 @2x 파일만 덮어쓰고, 새 키로 대체된 옛 파일(`obsoleteImages`: `characters/lob`, 옛 이름 탄종 아이콘 등)을 지운다. 패키지의 랍 초상은 아직 `lob_*` 이름이라 `lobster_*` 로 바꿔 넣는다(`renamedImages`). 디자인 쪽이 이름을 고치면 이 표를 지운다.
+- 데이터 파일은 `anims.json`·`tokens.json`·`weapons.json` 세 가지만 넣는다. 패키지의 `ui/cards/cards.json`·`ui/icons/sets.json` 은 설명·세트 이름 글자가 들어 있어 앱에 넣지 않는다(절대 규칙 10). 카드 좌표는 `ui/cards/rarity_card.dart`, 세트 구성은 `ui/cards/card_icons.dart` 에 옮겨 적었다(패키지 값이 바뀌면 같이 고친다).
+- 탄종 아이콘 파일 이름은 탄종 키와 같다(`ammo/icons/<AmmoType.jsonName>.png`).
+- 표정 부위(`characters/<id>/expr_<team>/`, 머리·눈 × 6표정 + expr.json)가 약 1천 장 늘어 앱 이미지가 14MB → 25MB 가 됐다.
+- 전장 타일은 `ship/tiles_v2` 를 쓴다(`game/sprites.dart`). 예전 `ship/tiles`·`ship/rooms` 는 조선소 화면 등에서 아직 쓸 수 있어 남겨 두었다.
+- `tokens.json` 의 `character.battleScale 0.16`·`roomSlot "3x2칸"` 은 앱이 쓰지 않는다. 앱은 선실 한 칸에 맞춘 0.09 를 쓴다(`game/coords.dart`, ADR-057).
+
+## 글꼴 (설계서 §14.4, A11)
+
+`app/assets/fonts/` 에 OFL 글꼴 세 가지를 라이선스 파일과 함께 둔다. 출처는 Google Fonts 저장소(`github.com/google/fonts/ofl/`).
+
+| 역할 | 글꼴 | 파일 | 라이선스 |
+| --- | --- | --- | --- |
+| 제목·숫자 | Black Han Sans | `BlackHanSans-Regular.ttf` | `OFL-BlackHanSans.txt` |
+| 본문 | IBM Plex Sans KR | `IBMPlexSansKR-Regular.ttf`, `-Bold.ttf` | `OFL-IBMPlexSansKR.txt` |
+| 둥근 강조(버튼) | Jua | `Jua-Regular.ttf` | `OFL.txt` |
+
+역할은 `app/lib/app/app_theme.dart` 가 정한다. 골든 테스트는 `app/test/test_fonts.dart` 로 세 글꼴을 읽는다.
 
 ## Flame 재생기 (M4)
 

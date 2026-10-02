@@ -1010,4 +1010,25 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get prepCabinEmpty => 'Empty cabin';
+
+  @override
+  String get hitTagCrit => 'CRIT';
+
+  @override
+  String get hitTagPierce => 'PIERCE';
+
+  @override
+  String get hitTagChain => 'CHAIN';
+
+  @override
+  String get hitTagBurn => 'BURN';
+
+  @override
+  String get hitTagMine => 'MINE';
+
+  @override
+  String get hitTagBite => 'BITE';
+
+  @override
+  String get hitTagRepair => 'REPAIR';
 }

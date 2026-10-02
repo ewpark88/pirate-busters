@@ -1,5 +1,6 @@
 import 'package:pb_data/src/ammo_ladder.dart';
 import 'package:pb_data/src/json_reader.dart';
+import 'package:pb_data/src/species_keys.dart';
 import 'package:pb_sim/pb_sim.dart';
 
 /// 등급 배율(‰): 일반 1.00 · 희귀 1.10 · 영웅 1.25 · 전설 1.45 · 신화 1.65 (설계서 §4.4).
@@ -96,6 +97,8 @@ class PirateDef {
     );
     need(ok: radiusCells >= 0 && radiusCells <= 2, what: '폭발 반경 0~2칸 (§4.8)');
     need(ok: blockDmg >= 0 && pirateDmg >= 0, what: '피해는 0 이상');
+    final wrongKey = speciesProblem(id, species);
+    need(ok: wrongKey == null, what: wrongKey ?? '');
   }
 
   final String id;
