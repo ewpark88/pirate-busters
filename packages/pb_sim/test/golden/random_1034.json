@@ -2,9 +2,9 @@
  "name": "random_1034",
  "expect": {
   "outcome": "timeDecision",
-  "winner": 0,
+  "winner": 1,
   "turns": 30,
-  "hash": "68bc7b90"
+  "hash": "7a5b2075"
  },
  "replay": {
   "version": 7,
@@ -14,7 +14,7 @@
    "turnTimeMs": 25000,
    "firesPerTurn": 2,
    "maxWind": 3,
-   "windAccel": 44,
+   "windAccel": 26,
    "sunkHullPercent": 30,
    "fuelPerTurn": 30,
    "stormTurns": 4,
@@ -976,7 +976,7 @@
       "power": 7451
      }
     ],
-    "hash": "3439655a"
+    "hash": "df054ef3"
    },
    {
     "turn": 23,
@@ -1001,7 +1001,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "87429a62"
+    "hash": "1625270a"
    },
    {
     "turn": 24,
@@ -1023,7 +1023,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "a274c104"
+    "hash": "e1044f24"
    },
    {
     "turn": 25,
@@ -1047,7 +1047,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "221d93fc"
+    "hash": "ce22bda9"
    },
    {
     "turn": 26,
@@ -1059,7 +1059,7 @@
       "dx": -45
      }
     ],
-    "hash": "649e2426"
+    "hash": "38f3683b"
    },
    {
     "turn": 27,
@@ -1092,7 +1092,7 @@
       "power": 8748
      }
     ],
-    "hash": "99432ed8"
+    "hash": "240963b1"
    },
    {
     "turn": 28,
@@ -1130,7 +1130,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "8c407e55"
+    "hash": "00367c24"
    },
    {
     "turn": 29,
@@ -1146,7 +1146,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "56cbe0d5"
+    "hash": "aebd958d"
    },
    {
     "turn": 30,
@@ -1164,7 +1164,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "68bc7b90"
+    "hash": "7a5b2075"
    }
   ]
  }

@@ -6,9 +6,11 @@ import 'package:pirate_busters/game/coords.dart';
 /// 카메라 목표 계산 (설계서 §2.1, 렌더 전용). Flame 과 무관한 순수 계산이라 테스트한다.
 ///
 /// 수치는 에셋 tokens.json `camera` 를 따른다: 착탄 뒤 1.3초 머묾, 착탄 화면 폭 700.
-/// 기본 화면은 내 배와 앞바다, 조준할수록 줌아웃. 탄을 쏘면 발사부터 착탄·파괴 연출이
-/// 끝날 때까지 탄을 따라가고 탄이 화면 밖으로 나가지 않는다(높이 올라가면 넓게 본다).
-/// 상대 턴도 같다 (설계서 §2.1, ADR-043). 핀치 줌은 1.5배 확대부터 간격 42칸까지.
+/// 기본 화면은 내 배와 앞바다, 조준할수록 줌아웃. 탄을 쏘면 탄을 화면 가운데 가까이
+/// 두고 거의 같은 줌으로 따라간다(높이 올라가면 해수면이 보일 만큼만 넓힌다). 탄이 목표
+/// 배에 가까워지면 목표 배가 들어오고, 착탄·파괴 연출이 끝날 때까지 착탄 지점에 머문 뒤
+/// 천천히 돌아간다. 상대 턴도 같다 (설계서 §2.1·§10.4, ADR-043·ADR-069). 핀치 줌은
+/// 1.5배 확대부터 간격 42칸까지.
 class CameraDirector {
   /// 기본 화면 폭(월드 px, 약 24칸). 전장이 넓어 보여 900(28칸)에서 줄였다 (ADR-072).
   static const double baseWidth = 760;
@@ -29,6 +31,18 @@ class CameraDirector {
 
   /// 탄을 따라갈 때는 더 빨리 붙는다(탄이 화면 밖으로 나가지 않게).
   static const double shotFollowRate = 12;
+
+  /// 탄을 따라가는 화면 폭(월드 px). 기본 화면과 같은 줌이다.
+  static const double shotWidth = baseWidth;
+
+  /// 탄이 목표 배에서 이 거리(월드 px) 안으로 들어오면 목표 배가 화면에 들어오기 시작한다.
+  static const double approachDist = 900;
+
+  /// 착탄 지점에서 머문 뒤 돌아갈 때 쓰는 느린 추종(휙 넘어가지 않게, 설계서 §10.4)과 그 시간.
+  static const double returnRate = 1.8;
+  static const double returnSec = 1.2;
+  double _returnLeft = 0;
+  bool _holding = false;
 
   /// 탄 위·아래 여백(월드 px). 아래는 해수면·배까지 보이게.
   static const double shotMarginTop = 90;
@@ -84,36 +98,44 @@ class CameraDirector {
     bool holdImpact = false,
     double aspect = 0.46,
   }) {
-    _rate = projectile != null ? shotFollowRate : followRate;
+    final impactAt = _impact;
+    // 착탄 뒤 1.3초, 또는 부서지는 연출이 끝날 때까지 착탄 지점에 머문다.
+    final holding = impactAt != null && (_impactLeft > 0 || holdImpact);
+    if (_holding && !holding) _returnLeft = returnSec;
+    _holding = holding;
+    _rate = projectile != null
+        ? shotFollowRate
+        : _returnLeft > 0
+        ? returnRate
+        : followRate;
     if (overview) {
       final w = ((myX - enemyX).abs() + 800).clamp(baseWidth, maxWidth);
       return (Vector2((myX + enemyX) / 2, -150), w);
     }
-    final impactAt = _impact;
-    // 착탄 뒤 1.3초, 또는 부서지는 연출이 끝날 때까지 착탄 지점에 머문다.
-    if (impactAt != null && (_impactLeft > 0 || holdImpact)) {
+    if (holding) {
       final double y = math.min(-60, impactAt.y);
       return (Vector2(impactAt.x, y), impactWidth);
     }
     if (projectile != null) {
-      // 탄과 맞을 배(없으면 상대 배)를 한 화면에.
+      // 탄을 가운데에 두고 같은 줌으로 따라간다. 맞을 배(없으면 상대 배)에 가까워지면
+      // 그 배가 들어오도록 가운데를 옮기고 넓힌다.
       final aimX = targetX ?? enemyX;
+      final dist = (projectile.x - aimX).abs();
+      final near = (1 - dist / approachDist).clamp(0.0, 1.0);
       // 세로: 탄 위 여백부터 해수면 아래 여백까지가 화면 높이 안에 든다.
       final top = math.min(projectile.y, -60) - shotMarginTop;
       const bottom = shotMarginBottom;
-      final byHeight = (bottom - top) / aspect;
-      final w = math
-          .max((projectile.x - aimX).abs() + 500, byHeight)
-          .clamp(
-            baseWidth,
-            maxWidth,
-          );
+      final follow = math.max(shotWidth, (bottom - top) / aspect);
+      final both = math.max(follow, dist + 500);
+      final w = (follow + (both - follow) * near).clamp(minWidth, maxWidth);
       final halfH = w * aspect / 2;
       final double y = math.min(
         math.max((top + bottom) / 2, top + halfH),
         bottom - halfH,
       );
-      return (Vector2((projectile.x + aimX) / 2, y), w);
+      final x =
+          projectile.x + ((projectile.x + aimX) / 2 - projectile.x) * near;
+      return (Vector2(x, y), w);
     }
     final feet = focusFeet;
     if (feet != null) {
@@ -144,6 +166,7 @@ class CameraDirector {
   void update(double dt, (Vector2, double) goal) {
     // 착탄 지점은 다음 착탄까지 남겨 둔다: 부서지는 연출이 길면 계속 머문다.
     _impactLeft = math.max(0, _impactLeft - dt);
+    _returnLeft = math.max(0, _returnLeft - dt);
     _punch = math.max(0, _punch - dt / punchSec);
     final k = 1 - math.exp(-_rate * dt);
     center.add((goal.$1 - center) * k);
