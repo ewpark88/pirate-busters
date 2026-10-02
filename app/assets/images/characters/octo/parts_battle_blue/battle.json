@@ -1,0 +1,5 @@
+{
+  "battleScale": 0.09375,
+  "outlinePad": 22,
+  "note": "각 PNG 는 parts_<team>@2x 의 같은 부위에 사방 outlinePad px 여백을 더한 것. offset 에서 outlinePad 를 빼서 놓는다"
+}

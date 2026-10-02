@@ -2,7 +2,7 @@ import 'package:flame/cache.dart';
 import 'package:flame/components.dart';
 import 'package:pb_sim/pb_sim.dart';
 
-/// 전장에서 쓰는 이미지 (에셋 v0.22, docs/ASSETS.md). 모두 @2x.
+/// 전장에서 쓰는 이미지 (에셋 v0.22·v0.24, docs/ASSETS.md). 모두 @2x.
 class BattleSprites {
   BattleSprites._(this._images);
 
@@ -10,8 +10,7 @@ class BattleSprites {
     for (final m in ['pine', 'oak', 'cork', 'bot', 'mesh'])
       for (var v = 0; v < 4; v++) 'ship/tiles_v2/${m}_$v.png',
     'ship/tiles_v2/iron.png',
-    'ship/tiles_v2/room_0.png',
-    'ship/tiles_v2/room_1.png',
+    for (var v = 0; v < 4; v++) roomFile(v),
     'ship/rig/mast.png',
     'ship/rig/sail_blue.png',
     'ship/rig/sail_red.png',
@@ -67,7 +66,11 @@ class BattleSprites {
     return get('ship/tiles_v2/${name}_${variantOf(x, y)}.png');
   }
 
-  /// 선실 칸 안쪽 벽 (설계서 §10.2, ADR-057). 등불 타일은 1칸짜리 에셋이 없다.
-  Sprite roomWall(int x, int y) =>
-      get('ship/tiles_v2/room_${variantOf(x, y) % 2}.png');
+  /// 등불 선실 타일 [v](0~3): 짝수·홀수가 벽 무늬, 2 이상이면 등불이 왼쪽
+  /// (에셋 v0.24 `ship/rooms/room1_lantern_*`, ADR-062).
+  static String roomFile(int v) =>
+      'ship/rooms/room1_lantern_${v % 2}${v >= 2 ? '_left' : ''}.png';
+
+  /// 선실 칸 안쪽 벽과 등불 (설계서 §10.2, ADR-057). 칸 위치로 정해진다.
+  Sprite roomWall(int x, int y) => get(roomFile(variantOf(x, y)));
 }
