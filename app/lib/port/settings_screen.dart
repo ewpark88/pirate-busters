@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pirate_busters/app/providers.dart';
+import 'package:pirate_busters/audio/music_director.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
 import 'package:pirate_busters/settings/language.dart';
 import 'package:pirate_busters/ui/meta_icons.dart';
@@ -50,6 +51,12 @@ class SettingsScreen extends ConsumerWidget {
               title: Text(l10n.soundOn),
               value: ref.watch(soundOnProvider),
               onChanged: (on) => ref.read(soundOnProvider.notifier).set(on: on),
+            ),
+            SwitchListTile(
+              secondary: MetaIcons.image(MetaIcons.sound, size: 24),
+              title: Text(l10n.musicOn),
+              value: ref.watch(musicOnProvider),
+              onChanged: (on) => ref.read(musicOnProvider.notifier).set(on: on),
             ),
             SwitchListTile(
               secondary: MetaIcons.image(MetaIcons.vibrate, size: 24),

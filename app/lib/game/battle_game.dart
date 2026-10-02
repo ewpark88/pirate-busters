@@ -21,6 +21,7 @@ import 'package:pirate_busters/game/view/sea_theme.dart';
 import 'package:pirate_busters/game/view/sea_view.dart';
 import 'package:pirate_busters/game/view/ship_view.dart';
 import 'package:pirate_busters/game/view/shot_view.dart';
+import 'package:pirate_busters/game/view/water_fx.dart';
 import 'package:pirate_busters/game/weapon_styles.dart';
 
 /// 전장 (개발 계획서 M4). 매 프레임 [BattleSession] 을 진행하고 결과를 그린다.
@@ -53,6 +54,11 @@ class BattleGame extends FlameGame {
   /// 조준 각도·힘 글자 (설계서 §10.4). 화면이 l10n 으로 바꿔 넣는다.
   String Function(int degrees) aimAngleText = (d) => '$d°';
   String Function(int percent) aimPowerText = (p) => '$p%';
+
+  /// 판이 끝난 뒤 연출(격침)까지 끝났다. 결과 창은 이것을 기다린다 (설계서 §10.4).
+  final ValueNotifier<bool> settled = ValueNotifier(false);
+  final Set<int> _sinkShown = {};
+  bool _endPlayed = false;
 
   /// 저사양 모드: 바다 굴절 셰이더를 끈다 (설계서 §10.2).
   final ValueNotifier<bool> lowEnd = ValueNotifier(false);
@@ -130,6 +136,11 @@ class BattleGame extends FlameGame {
         priority: 10,
       ),
       _shot,
+      LeakBubbles(
+        session: session,
+        fx: _fx,
+        cellWorld: (side, cell) => _cues.cellWorld(side, cell),
+      ),
       EffectBadges(session: session, weapons: weapons, priority: 25)
         ..turnsText = (turns) => turnsText(turns),
       _fx,
@@ -169,10 +180,35 @@ class BattleGame extends FlameGame {
       if (e.kind == SimEventKind.turnEnd) onTurnEnd?.call(e);
     }
     _cues.dispatch(cues);
+    _watchEnd();
     // 명중 순간 0.07초는 연출만 멈춘다. 시뮬레이션은 위에서 이미 진행했다 (§10.4).
     final visual = _cues.stop.visualDt(dt);
     _updateCamera(visual);
     super.update(visual);
+  }
+
+  /// 판이 끝난 뒤: 가라앉기 시작한 배에 큰 물보라·물안개와 격침음, 다 가라앉으면
+  /// 승리·패배 악구를 내고 [settled] 를 켠다 (설계서 §10.3, §10.4).
+  void _watchEnd() {
+    if (!session.state.isOver) return;
+    for (final ship in _ships) {
+      if (ship.motion.sinking && _sinkShown.add(ship.side)) {
+        _fx.sinkSplash(
+          Vector2(_shipCenterX(ship.side), 0),
+          session.state.sides[ship.side].grid.width * Coords.cell,
+        );
+        playSfx(Sfx.sink);
+      }
+    }
+    if (session.playback != null || !_ships.every((s) => s.motion.settled)) {
+      return;
+    }
+    if (!_endPlayed) {
+      _endPlayed = true;
+      final winner = session.state.winner;
+      playSfx(winner >= 0 && winner == viewSide ? Sfx.win : Sfx.lose);
+    }
+    settled.value = true;
   }
 
   /// 수면 높이(월드 px): 두 배의 파도 위아래 사이를 잇는다. 배와 물이 함께 오르내린다.
@@ -220,8 +256,7 @@ class BattleGame extends FlameGame {
       ..zoom = size.x / (director.width * director.punchScale);
   }
 
-  /// 효과음. 설정에서 끄면 내지 않는다 (설계서 §13.8).
-  @visibleForTesting
+  /// 효과음. 설정의 효과음을 끄면 내지 않는다 (설계서 §13.8). HUD 버튼 소리도 쓴다.
   void playSfx(Sfx sfx, {double volume = 1}) {
     if (soundOn.value) sound.play(sfx, volume: volume);
   }

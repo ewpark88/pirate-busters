@@ -4,6 +4,8 @@ import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pirate_busters/app/providers.dart';
+import 'package:pirate_busters/audio/music_director.dart';
+import 'package:pirate_busters/audio/sound_service.dart';
 import 'package:pirate_busters/battle/battle_session.dart';
 import 'package:pirate_busters/battle/battle_setup.dart';
 import 'package:pirate_busters/campaign/campaign_map_screen.dart';
@@ -56,7 +58,11 @@ class _PortScreenState extends ConsumerState<PortScreen> {
   void initState() {
     super.initState();
     _rebuild();
-    WidgetsBinding.instance.addPostFrameCallback((_) => unawaited(_firstRun()));
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // 항구 곡 (설계서 §10.3).
+      ref.read(musicTrackProvider.notifier).play(Music.port);
+      unawaited(_firstRun());
+    });
   }
 
   /// 처음 실행: 프롤로그(건너뛰기 가능) 뒤 캠페인 지도(튜토리얼 3판)로 (설계서 §13.1, §15.2).

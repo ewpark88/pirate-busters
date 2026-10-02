@@ -540,5 +540,9 @@
         "type": "String"
       }
     }
+  },
+  "musicOn": "Music",
+  "@musicOn": {
+    "description": "설정: 배경음악 켜기 (설계서 §10.3)"
   }
 }

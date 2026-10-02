@@ -26,6 +26,11 @@ abstract interface class SettingsStore {
   bool get vibration;
 
   Future<void> setVibration({required bool on});
+
+  /// 배경음악 (설계서 §10.3 ‘설정의 음악 끄기’). 기본 켬.
+  bool get music;
+
+  Future<void> setMusic({required bool on});
 }
 
 /// Hive CE 상자 하나(`settings`)에 둔다.
@@ -78,6 +83,14 @@ class HiveSettingsStore implements SettingsStore {
   Future<void> setVibration({required bool on}) =>
       _box.put(_vibrationKey, on ? 'on' : 'off');
 
+  @override
+  bool get music => _box.get(_musicKey) != 'off';
+
+  @override
+  Future<void> setMusic({required bool on}) =>
+      _box.put(_musicKey, on ? 'on' : 'off');
+
+  static const String _musicKey = 'music';
   static const String _soundKey = 'sound';
   static const String _vibrationKey = 'vibration';
 }
@@ -115,4 +128,10 @@ class MemorySettingsStore implements SettingsStore {
 
   @override
   Future<void> setVibration({required bool on}) async => vibration = on;
+
+  @override
+  bool music = true;
+
+  @override
+  Future<void> setMusic({required bool on}) async => music = on;
 }

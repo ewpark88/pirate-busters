@@ -1,6 +1,8 @@
 import 'package:flame/cache.dart';
 import 'package:flame/components.dart';
 import 'package:pb_sim/pb_sim.dart';
+import 'package:pirate_busters/game/view/explosion_fx.dart';
+import 'package:pirate_busters/game/view/water_fx.dart';
 
 /// 전장에서 쓰는 이미지 (에셋 v0.22·v0.24, docs/ASSETS.md). 모두 @2x.
 class BattleSprites {
@@ -20,6 +22,8 @@ class BattleSprites {
     limitForward,
     limitBack,
     limitSplash,
+    ...ExplosionFx.files,
+    ...WaterFx.files,
     'fx/cannonball.png',
     'fx/explosion.png',
     'fx/splash.png',

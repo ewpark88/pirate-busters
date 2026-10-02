@@ -983,4 +983,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String aimPower(String pct) {
     return '힘 $pct%';
   }
+
+  @override
+  String get musicOn => '배경음악';
 }

@@ -235,4 +235,10 @@ class _RecordingSound implements SoundService {
 
   @override
   void play(Sfx sfx, {double pitch = 1, double volume = 1}) => played.add(sfx);
+
+  @override
+  Future<void> loadMusic(Map<Music, Uint8List> wavs) async {}
+
+  @override
+  void playMusic(Music? track, {double speed = 1}) {}
 }

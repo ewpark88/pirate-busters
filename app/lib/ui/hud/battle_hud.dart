@@ -22,8 +22,16 @@ class BattleHud extends StatelessWidget {
     required this.onPause,
     required this.onRestart,
     this.hint,
+    this.settled = true,
+    this.onClick,
     super.key,
   });
+
+  /// 버튼 누름 소리 (설계서 §10.3). 화면이 효과음 설정을 따라 낸다.
+  final VoidCallback? onClick;
+
+  /// 판이 끝난 뒤 연출(격침)이 끝났다. 끝나야 결과 창을 띄운다 (설계서 §10.4).
+  final bool settled;
 
   final BattleSession session;
 
@@ -86,7 +94,10 @@ class BattleHud extends StatelessWidget {
                   // 일시정지는 AI 전만(§13.4). 핫시트에서는 설정 창만 연다.
                   IconButton(
                     tooltip: _hotseat ? l10n.settings : l10n.pause,
-                    onPressed: () => onPause(true),
+                    onPressed: () {
+                      onClick?.call();
+                      onPause(true);
+                    },
                     icon: _hotseat
                         ? const Icon(Icons.settings, size: 34)
                         : MetaIcons.image(MetaIcons.pause, size: 34),
@@ -102,12 +113,21 @@ class BattleHud extends StatelessWidget {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    MoveControls(session: session, side: _controlSide),
+                    MoveControls(
+                      session: session,
+                      side: _controlSide,
+                      onClick: onClick,
+                    ),
                     const Spacer(),
                     PirateCards(session: session, side: _controlSide),
                     const Spacer(),
                     FilledButton(
-                      onPressed: session.canAct ? session.endTurn : null,
+                      onPressed: session.canAct
+                          ? () {
+                              onClick?.call();
+                              session.endTurn();
+                            }
+                          : null,
                       style: FilledButton.styleFrom(
                         backgroundColor: HudColors.border,
                         padding: const EdgeInsets.symmetric(
@@ -195,7 +215,7 @@ class BattleHud extends StatelessWidget {
             ),
           ),
         ),
-      if (session.isOver && session.playback == null)
+      if (session.isOver && session.playback == null && settled)
         ResultOverlay(
           state: session.state,
           viewer: _hotseat ? null : 0,

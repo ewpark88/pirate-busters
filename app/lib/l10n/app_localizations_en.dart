@@ -1041,4 +1041,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String aimPower(String pct) {
     return 'Power $pct%';
   }
+
+  @override
+  String get musicOn => 'Music';
 }

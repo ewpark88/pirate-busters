@@ -16,10 +16,18 @@ import 'package:pirate_busters/ui/meta_icons.dart';
 /// 앞 이동이 끝날 때마다 1/10칸짜리 `MOVE` 를 이어서 낸다. 누르고 있으면 갈 수 있는
 /// 끝 지점을 전장에 점선으로 보여준다. 연료가 0 이면 버튼을 잠그고 게이지를 깜빡인다.
 class MoveControls extends StatefulWidget {
-  const MoveControls({required this.session, required this.side, super.key});
+  const MoveControls({
+    required this.session,
+    required this.side,
+    this.onClick,
+    super.key,
+  });
 
   final BattleSession session;
   final int side;
+
+  /// 버튼 누름 소리 (설계서 §10.3).
+  final VoidCallback? onClick;
 
   @override
   State<MoveControls> createState() => _MoveControlsState();
@@ -51,6 +59,7 @@ class _MoveControlsState extends State<MoveControls>
 
   void _press(int dir) {
     if (!_enabled) return;
+    widget.onClick?.call();
     _dir = dir;
     _s.moveHeld = true;
     unawaited(_ticker.start());

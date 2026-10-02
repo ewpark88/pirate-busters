@@ -120,6 +120,17 @@ dart run tool/import_assets.dart --merge art/pb_v0.24_main
 - 비교 페이지 31~37단계 화면 47장을 실제 크기 배로 다시 그렸다(보스 화면만 1.4배). A12 화면 시안 대조는 이 그림을 쓴다.
 - 앱 이미지는 바뀌지 않는다. `boss/` 는 `deferredImages` 로 R3 까지 가져오지 않는다.
 
+## 소리 (설계서 §10.3, A13, ADR-068)
+
+소리 파일은 없다. 효과음과 배경음악을 모두 `app/lib/audio/pcm_synth.dart` 로 코드 합성한다. 만든 소리는 프로젝트 저작물이라 CC0 으로 둔다.
+
+| 곡 | 선율 출처 | 쓰는 곳 |
+| --- | --- | --- |
+| *Sailor's Hornpipe* (College Hornpipe) | 영국 민요, 18세기. 저작권 없음 | 항구 (`Music.port`) |
+| *Drunken Sailor* | 선원 민요, 19세기 기록. 저작권 없음 | 전투 (`Music.battle`), 폭풍 타임 1.2배 |
+
+선율은 앱이 짧은 루프로 편곡한 것이다(`audio/shanty_music.dart`). 효과음 레시피는 `audio/sfx_bank.dart` 에 있다.
+
 ## 글꼴 (설계서 §14.4, A11)
 
 `app/assets/fonts/` 에 OFL 글꼴 세 가지를 라이선스 파일과 함께 둔다. 출처는 Google Fonts 저장소(`github.com/google/fonts/ofl/`).

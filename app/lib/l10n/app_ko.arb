@@ -285,5 +285,6 @@
   "hitTagBite": "물어뜯기",
   "hitTagRepair": "수리",
   "aimAngle": "{deg}°",
-  "aimPower": "힘 {pct}%"
+  "aimPower": "힘 {pct}%",
+  "musicOn": "배경음악"
 }

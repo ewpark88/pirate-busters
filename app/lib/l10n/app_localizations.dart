@@ -1813,6 +1813,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Power {pct}%'**
   String aimPower(String pct);
+
+  /// 설정: 배경음악 켜기 (설계서 §10.3)
+  ///
+  /// In en, this message translates to:
+  /// **'Music'**
+  String get musicOn;
 }
 
 class _AppLocalizationsDelegate

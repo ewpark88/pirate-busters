@@ -3,6 +3,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pirate_busters/app/app_theme.dart';
 import 'package:pirate_busters/app/providers.dart';
+import 'package:pirate_busters/audio/music_director.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
 import 'package:pirate_busters/port/port_screen.dart';
 import 'package:pirate_busters/settings/language.dart';
@@ -32,9 +33,11 @@ class PirateBustersApp extends ConsumerWidget {
       ],
       theme: appTheme(),
       // 등급 카드 움직임의 공용 시계 (설계서 §10.5). 저사양 모드에서는 멈춘다.
-      builder: (context, child) => CardMotion(
-        enabled: !ref.watch(lowEndProvider),
-        child: child ?? const SizedBox.shrink(),
+      builder: (context, child) => MusicDirector(
+        child: CardMotion(
+          enabled: !ref.watch(lowEndProvider),
+          child: child ?? const SizedBox.shrink(),
+        ),
       ),
       home: const PortScreen(),
     );

@@ -49,8 +49,12 @@ class ImpactAccent extends Component {
     return 1 - (1 - v) * (1 - v);
   }
 
-  static Paint _stroke(Color c, double width, double op) => Paint()
-    ..style = PaintingStyle.stroke
+  // Paint 는 하나를 고쳐 쓴다(프레임 부담, A13).
+  static final Paint _strokePaint = Paint()..style = PaintingStyle.stroke;
+  static final Paint _fillPaint = Paint();
+  static final Paint _flashPaint = Paint()..blendMode = BlendMode.screen;
+
+  static Paint _stroke(Color c, double width, double op) => _strokePaint
     ..strokeWidth = width
     ..color = c.withValues(alpha: op.clamp(0, 1));
 
@@ -108,8 +112,7 @@ class ImpactAccent extends Component {
     if (tier.aura >= 2 && t < .25) {
       c.drawRect(
         Rect.fromCenter(center: p, width: 8000, height: 8000),
-        Paint()
-          ..blendMode = BlendMode.screen
+        _flashPaint
           ..color = (tier.aura > 2 ? RarityPainter.hue(t * 1400) : color)
               .withValues(alpha: .18 * (1 - t / .25)),
       );
@@ -145,7 +148,7 @@ class ImpactAccent extends Component {
         ..close();
       c.drawPath(
         path,
-        Paint()..color = col.withValues(alpha: op * (k == 0 ? .95 : .55)),
+        _fillPaint..color = col.withValues(alpha: op * (k == 0 ? .95 : .55)),
       );
     }
   }
