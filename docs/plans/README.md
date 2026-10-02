@@ -27,3 +27,4 @@
 | [2026-10-02-remaining-work.md](2026-10-02-remaining-work.md) | 남은 개발건 정리 (2026-10-02 기준) |
 | [2026-10-02-battle-polish.md](2026-10-02-battle-polish.md) | 전투 연출이 허접한 원인과 A13 "전투 연출 손질" 신설 계획 |
 | [2026-10-02-pvp-hold-no-kpi.md](2026-10-02-pvp-hold-no-kpi.md) | PvP 서버 Cloudflare 확정·착수 보류, Firebase 분석·KPI 측정 제외 (ADR-066·067) |
+| [2026-10-02-A14-shot-slow-camera.md](2026-10-02-A14-shot-slow-camera.md) | 탄 비행 1.3배 느리게(중력 9.5)·카메라 탄 중심 추적, A14 신설 |
