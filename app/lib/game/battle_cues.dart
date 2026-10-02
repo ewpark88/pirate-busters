@@ -105,6 +105,8 @@ class BattleCues {
       switch (e.kind) {
         case SimEventKind.fire:
           ships[e.side].playAttack(e.slot);
+          // 쏜 배는 쏜 쪽 반대로 살짝 밀린다 (A20).
+          ships[e.side].recoil(-facingOf(e.side));
           playSfx(Sfx.cannon);
         case SimEventKind.impact when landsQuietly(spec):
           // 수리·설치 연출은 뒤따르는 repaired·mineAttached 이벤트가 그린다.

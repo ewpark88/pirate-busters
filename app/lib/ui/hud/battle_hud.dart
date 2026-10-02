@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:pirate_busters/app/app_theme.dart';
 import 'package:pirate_busters/battle/battle_session.dart';
 import 'package:pirate_busters/battle/playback.dart';
 import 'package:pirate_busters/battle/session_views.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
+import 'package:pirate_busters/port/port_widgets.dart';
 import 'package:pirate_busters/ui/hud/gap_bar.dart';
 import 'package:pirate_busters/ui/hud/hud_scale.dart';
 import 'package:pirate_busters/ui/hud/hud_style.dart';
@@ -11,6 +13,8 @@ import 'package:pirate_busters/ui/hud/pause_menu.dart';
 import 'package:pirate_busters/ui/hud/pirate_cards.dart';
 import 'package:pirate_busters/ui/hud/result_overlay.dart';
 import 'package:pirate_busters/ui/hud/top_bar.dart';
+import 'package:pirate_busters/ui/kit/kit_art.dart';
+import 'package:pirate_busters/ui/kit/pb_button.dart';
 import 'package:pirate_busters/ui/meta_icons.dart';
 
 /// 전투 HUD 전체 (설계서 §13.4). 판정은 하지 않고 [BattleSession] 을 그리기만 한다.
@@ -61,6 +65,13 @@ class BattleHud extends StatelessWidget {
     },
   );
 
+  /// 조준·탄 비행·착탄 연출 중이다. 위쪽 정보를 흐려 배와 착탄 지점을 가리지
+  /// 않는다 (설계서 §13.4 연출 중 HUD).
+  bool get _busy => session.aim != null || session.playback != null;
+
+  /// 연출 중 위쪽 정보의 진하기.
+  static const double busyOpacity = 0.25;
+
   bool get _awaitingTap {
     final p = session.playback;
     return p is ShotPlayback &&
@@ -90,23 +101,32 @@ class BattleHud extends StatelessWidget {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(child: TopBar(session: session)),
+                  Expanded(
+                    child: AnimatedOpacity(
+                      key: const ValueKey('hud-top'),
+                      opacity: _busy ? busyOpacity : 1,
+                      duration: const Duration(milliseconds: 220),
+                      child: Column(
+                        children: [
+                          TopBar(session: session),
+                          const SizedBox(height: 4),
+                          GapBar(state: session.state, overview: overview),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 6),
                   // 일시정지는 AI 전만(§13.4). 핫시트에서는 설정 창만 연다.
-                  IconButton(
+                  PbIconButton(
                     tooltip: _hotseat ? l10n.settings : l10n.pause,
+                    icon: _hotseat ? PortIcons.gear : MetaIcons.pause,
                     onPressed: () {
                       onClick?.call();
                       onPause(true);
                     },
-                    icon: _hotseat
-                        ? const Icon(Icons.settings, size: 34)
-                        : MetaIcons.image(MetaIcons.pause, size: 34),
-                    color: HudColors.text,
                   ),
                 ],
               ),
-              const SizedBox(height: 4),
-              GapBar(state: session.state, overview: overview),
               const Spacer(),
               Opacity(
                 opacity: myTurn ? 1 : 0.5,
@@ -121,28 +141,19 @@ class BattleHud extends StatelessWidget {
                     const Spacer(),
                     PirateCards(session: session, side: _controlSide),
                     const Spacer(),
-                    FilledButton(
+                    PbButton(
+                      label: l10n.endTurn,
+                      icon: MetaIcons.endTurn,
+                      kind: PbButtonKind.gold,
+                      height: 50,
+                      minWidth: 110,
+                      fontSize: 17,
                       onPressed: session.canAct
                           ? () {
                               onClick?.call();
                               session.endTurn();
                             }
                           : null,
-                      style: FilledButton.styleFrom(
-                        backgroundColor: HudColors.border,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 18,
-                          vertical: 14,
-                        ),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          MetaIcons.image(MetaIcons.endTurn),
-                          const SizedBox(width: 6),
-                          Text(l10n.endTurn),
-                        ],
-                      ),
                     ),
                   ],
                 ),
@@ -152,17 +163,17 @@ class BattleHud extends StatelessWidget {
         ),
       ),
       if (myTurn && !session.isOver && session.remainingMs <= 5000)
-        // 5초부터 카운트다운 (설계서 §2.3).
+        // 5초부터 카운트다운 (설계서 §2.3). 배 위가 아니라 턴 타이머 아래 (§13.4).
         Align(
-          alignment: const Alignment(0, -0.2),
+          alignment: const Alignment(0, -0.62),
           child: IgnorePointer(
-            child: Text(
+            child: OutlinedText(
               '${(session.remainingMs + 999) ~/ 1000}',
-              style: const TextStyle(
-                fontSize: 96,
-                color: HudColors.danger,
-                shadows: [Shadow(blurRadius: 8)],
-              ),
+              key: const ValueKey('countdown'),
+              size: 56,
+              color: HudColors.danger,
+              font: AppFonts.display,
+              stroke: 6,
             ),
           ),
         ),

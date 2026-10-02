@@ -4,6 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pirate_busters/app/providers.dart';
 import 'package:pirate_busters/battle/battle_session.dart';
+import 'package:pirate_busters/battle/session_views.dart';
+import 'package:pirate_busters/game/view/shot_view.dart';
+import 'package:pirate_busters/input/pull_aim.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
 import 'package:pirate_busters/settings/language.dart';
 import 'package:pirate_busters/settings/settings_store.dart';
@@ -110,6 +113,42 @@ void main() {
       await tester.drag(card, const Offset(-80, 80));
       await tester.pump();
       expect(session.state.sides[side].shotsFired, 0);
+    });
+  });
+
+  group('연출 중 HUD와 탄 시인성 (설계서 §13.4, §10.4, A17)', () {
+    testWidgets('조준하는 동안 위쪽 정보가 흐려졌다가 그만두면 돌아온다', (tester) async {
+      final session = await _pumpHud(tester, const Locale('ko'));
+      double top() => tester
+          .widget<AnimatedOpacity>(find.byKey(const ValueKey('hud-top')))
+          .opacity;
+      expect(top(), 1);
+      session.setAim(0, const AimShot(angle: 30000, power: 500), 0.5);
+      await tester.pumpAndSettle();
+      expect(top(), BattleHud.busyOpacity);
+      session.clearAim();
+      await tester.pumpAndSettle();
+      expect(top(), 1);
+    });
+
+    testWidgets('카운트다운은 화면 위쪽(턴 타이머 아래)에 뜬다', (tester) async {
+      final session = await _pumpHud(tester, const Locale('ko'));
+      session.update(session.remainingMs - 3000);
+      await tester.pump();
+      final y = tester.getCenter(find.byKey(const ValueKey('countdown'))).dy;
+      expect(y, lessThan(360 * 0.3), reason: '배가 있는 화면 가운데를 가리지 않는다');
+    });
+
+    test('멀리 뺀 화면에서도 탄이 화면에서 최소 크기 이상이다', () {
+      for (final zoom in [0.2, 0.35, 0.6, 1.0, 2.0]) {
+        final screen = 18 * ShotView.visibleScale(zoom) * zoom;
+        expect(
+          screen,
+          greaterThanOrEqualTo(ShotView.minScreenPx - 0.01),
+          reason: 'zoom $zoom',
+        );
+      }
+      expect(ShotView.visibleScale(2), 1, reason: '가까우면 원래 크기');
     });
   });
 }
