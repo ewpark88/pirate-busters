@@ -204,7 +204,9 @@ class TurnChooser {
         FireCommand(t: fireT, slot: s.slot, angle: angle, power: s.power),
       );
       if (s.tapTick > 0) {
-        commands.add(TapCommand(t: fireT, slot: s.slot, ticks: s.tapTick));
+        commands.add(
+          TapCommand(t: fireT, slot: s.slot, ticks: s.tapTick, dir: s.tapDir),
+        );
       }
       t = fireT + dials.thinkMs;
     }

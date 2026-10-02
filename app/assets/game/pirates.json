@@ -27,6 +27,59 @@
       }
     },
     {
+      "id": "p02_starry",
+      "nameKey": "pirate_p02_name",
+      "descKey": "pirate_p02_desc",
+      "loreKey": "pirate_p02_lore",
+      "family": "lob",
+      "rarity": "common",
+      "hp": 240,
+      "cooldownTurns": 1,
+      "ammo": {
+        "type": "fire"
+      },
+      "projectile": {},
+      "onHit": {
+        "radiusCells": 1,
+        "blockDmg": 40,
+        "pirateDmg": 80
+      },
+      "growth": {},
+      "render": {
+        "species": "starry",
+        "props": [],
+        "teamColorPart": "bandana"
+      }
+    },
+    {
+      "id": "p03_crabs",
+      "nameKey": "pirate_p03_name",
+      "descKey": "pirate_p03_desc",
+      "loreKey": "pirate_p03_lore",
+      "family": "lob",
+      "rarity": "rare",
+      "hp": 240,
+      "cooldownTurns": 1,
+      "ammo": {
+        "type": "explosive"
+      },
+      "projectile": {},
+      "onHit": {
+        "radiusCells": 1,
+        "blockDmg": 40,
+        "pirateDmg": 80
+      },
+      "ability": {
+        "type": "twin"
+      },
+      "growth": {},
+      "render": {
+        "species": "crabs",
+        "props": [],
+        "teamColorPart": "bandana"
+      }
+    },
+    {
       "id": "p04_uni",
       "nameKey": "pirate_p04_name",
       "descKey": "pirate_p04_desc",
@@ -48,6 +101,37 @@
       "growth": {},
       "render": {
         "species": "uni",
+        "props": [],
+        "teamColorPart": "bandana"
+      }
+    },
+    {
+      "id": "p05_volke",
+      "nameKey": "pirate_p05_name",
+      "descKey": "pirate_p05_desc",
+      "loreKey": "pirate_p05_lore",
+      "family": "lob",
+      "rarity": "legend",
+      "hp": 240,
+      "cooldownTurns": 2,
+      "ammo": {
+        "type": "explosive"
+      },
+      "projectile": {
+        "range": "veryLong"
+      },
+      "onHit": {
+        "radiusCells": 1,
+        "blockDmg": 40,
+        "pirateDmg": 80
+      },
+      "ability": {
+        "type": "drill",
+        "value": 3
+      },
+      "growth": {},
+      "render": {
+        "species": "volke",
         "props": [],
         "teamColorPart": "bandana"
       }
@@ -108,6 +192,90 @@
       }
     },
     {
+      "id": "p08_bones",
+      "nameKey": "pirate_p08_name",
+      "descKey": "pirate_p08_desc",
+      "loreKey": "pirate_p08_lore",
+      "family": "direct",
+      "rarity": "rare",
+      "hp": 220,
+      "cooldownTurns": 1,
+      "ammo": {
+        "type": "sniper"
+      },
+      "projectile": {
+        "range": "veryLong"
+      },
+      "onHit": {
+        "radiusCells": 0,
+        "blockDmg": 60,
+        "pirateDmg": 100
+      },
+      "ability": {
+        "type": "scope"
+      },
+      "growth": {},
+      "render": {
+        "species": "bones",
+        "props": [],
+        "teamColorPart": "bandana"
+      }
+    },
+    {
+      "id": "p09_lion",
+      "nameKey": "pirate_p09_name",
+      "descKey": "pirate_p09_desc",
+      "loreKey": "pirate_p09_lore",
+      "family": "direct",
+      "rarity": "hero",
+      "hp": 220,
+      "cooldownTurns": 2,
+      "ammo": {
+        "type": "burst",
+        "spreadDeg": 12
+      },
+      "projectile": {},
+      "onHit": {
+        "radiusCells": 0,
+        "blockDmg": 60,
+        "pirateDmg": 100
+      },
+      "ability": {
+        "type": "shred"
+      },
+      "growth": {},
+      "render": {
+        "species": "lion",
+        "props": [],
+        "teamColorPart": "bandana"
+      }
+    },
+    {
+      "id": "p10_volt",
+      "nameKey": "pirate_p10_name",
+      "descKey": "pirate_p10_desc",
+      "loreKey": "pirate_p10_lore",
+      "family": "direct",
+      "rarity": "legend",
+      "hp": 220,
+      "cooldownTurns": 2,
+      "ammo": {
+        "type": "chain"
+      },
+      "projectile": {},
+      "onHit": {
+        "radiusCells": 0,
+        "blockDmg": 60,
+        "pirateDmg": 100
+      },
+      "growth": {},
+      "render": {
+        "species": "volt",
+        "props": [],
+        "teamColorPart": "bandana"
+      }
+    },
+    {
       "id": "p11_finn",
       "nameKey": "pirate_p11_name",
       "descKey": "pirate_p11_desc",
@@ -128,6 +296,120 @@
       "growth": {},
       "render": {
         "species": "sword",
+        "props": [],
+        "teamColorPart": "bandana"
+      }
+    },
+    {
+      "id": "p12_nar",
+      "nameKey": "pirate_p12_name",
+      "descKey": "pirate_p12_desc",
+      "loreKey": "pirate_p12_lore",
+      "family": "pierce",
+      "rarity": "rare",
+      "hp": 260,
+      "cooldownTurns": 1,
+      "ammo": {
+        "type": "pierce"
+      },
+      "projectile": {},
+      "onHit": {
+        "radiusCells": 0,
+        "blockDmg": 50,
+        "pirateDmg": 70
+      },
+      "ability": {
+        "type": "skewer",
+        "value": 3
+      },
+      "growth": {},
+      "render": {
+        "species": "nar",
+        "props": [],
+        "teamColorPart": "bandana"
+      }
+    },
+    {
+      "id": "p13_walrus",
+      "nameKey": "pirate_p13_name",
+      "descKey": "pirate_p13_desc",
+      "loreKey": "pirate_p13_lore",
+      "family": "pierce",
+      "rarity": "rare",
+      "hp": 260,
+      "cooldownTurns": 1,
+      "ammo": {
+        "type": "pierce"
+      },
+      "projectile": {},
+      "onHit": {
+        "radiusCells": 0,
+        "blockDmg": 50,
+        "pirateDmg": 70
+      },
+      "ability": {
+        "type": "rip"
+      },
+      "growth": {},
+      "render": {
+        "species": "walrus",
+        "props": [],
+        "teamColorPart": "bandana"
+      }
+    },
+    {
+      "id": "p14_saw",
+      "nameKey": "pirate_p14_name",
+      "descKey": "pirate_p14_desc",
+      "loreKey": "pirate_p14_lore",
+      "family": "pierce",
+      "rarity": "hero",
+      "hp": 260,
+      "cooldownTurns": 1,
+      "ammo": {
+        "type": "pierce"
+      },
+      "projectile": {},
+      "onHit": {
+        "radiusCells": 0,
+        "blockDmg": 50,
+        "pirateDmg": 70
+      },
+      "ability": {
+        "type": "saw"
+      },
+      "growth": {},
+      "render": {
+        "species": "saw",
+        "props": [],
+        "teamColorPart": "bandana"
+      }
+    },
+    {
+      "id": "p15_moby",
+      "nameKey": "pirate_p15_name",
+      "descKey": "pirate_p15_desc",
+      "loreKey": "pirate_p15_lore",
+      "family": "pierce",
+      "rarity": "legend",
+      "hp": 260,
+      "cooldownTurns": 2,
+      "ammo": {
+        "type": "pierce"
+      },
+      "projectile": {},
+      "onHit": {
+        "radiusCells": 0,
+        "blockDmg": 50,
+        "pirateDmg": 70
+      },
+      "ability": {
+        "type": "pull",
+        "value": 3
+      },
+      "growth": {},
+      "render": {
+        "species": "moby",
         "props": [],
         "teamColorPart": "bandana"
       }
@@ -158,6 +440,120 @@
       }
     },
     {
+      "id": "p17_pingu",
+      "nameKey": "pirate_p17_name",
+      "descKey": "pirate_p17_desc",
+      "loreKey": "pirate_p17_lore",
+      "family": "skip",
+      "rarity": "rare",
+      "hp": 240,
+      "cooldownTurns": 1,
+      "ammo": {
+        "type": "skip"
+      },
+      "projectile": {},
+      "onHit": {
+        "radiusCells": 0,
+        "blockDmg": 30,
+        "pirateDmg": 60
+      },
+      "ability": {
+        "type": "slide",
+        "value": 2
+      },
+      "growth": {},
+      "render": {
+        "species": "pingu",
+        "props": [],
+        "teamColorPart": "bandana"
+      }
+    },
+    {
+      "id": "p18_sheldon",
+      "nameKey": "pirate_p18_name",
+      "descKey": "pirate_p18_desc",
+      "loreKey": "pirate_p18_lore",
+      "family": "skip",
+      "rarity": "rare",
+      "hp": 240,
+      "cooldownTurns": 1,
+      "ammo": {
+        "type": "skip"
+      },
+      "projectile": {},
+      "onHit": {
+        "radiusCells": 0,
+        "blockDmg": 30,
+        "pirateDmg": 60
+      },
+      "ability": {
+        "type": "ricochet"
+      },
+      "growth": {},
+      "render": {
+        "species": "sheldon",
+        "props": [],
+        "teamColorPart": "bandana"
+      }
+    },
+    {
+      "id": "p19_dolphy",
+      "nameKey": "pirate_p19_name",
+      "descKey": "pirate_p19_desc",
+      "loreKey": "pirate_p19_lore",
+      "family": "skip",
+      "rarity": "hero",
+      "hp": 240,
+      "cooldownTurns": 1,
+      "ammo": {
+        "type": "skip"
+      },
+      "projectile": {},
+      "onHit": {
+        "radiusCells": 0,
+        "blockDmg": 30,
+        "pirateDmg": 60
+      },
+      "ability": {
+        "type": "cling"
+      },
+      "growth": {},
+      "render": {
+        "species": "dolphy",
+        "props": [],
+        "teamColorPart": "bandana"
+      }
+    },
+    {
+      "id": "p20_orca",
+      "nameKey": "pirate_p20_name",
+      "descKey": "pirate_p20_desc",
+      "loreKey": "pirate_p20_lore",
+      "family": "skip",
+      "rarity": "legend",
+      "hp": 240,
+      "cooldownTurns": 2,
+      "ammo": {
+        "type": "skip"
+      },
+      "projectile": {},
+      "onHit": {
+        "radiusCells": 0,
+        "blockDmg": 30,
+        "pirateDmg": 60
+      },
+      "ability": {
+        "type": "wave",
+        "value": 80
+      },
+      "growth": {},
+      "render": {
+        "species": "orca",
+        "props": [],
+        "teamColorPart": "bandana"
+      }
+    },
+    {
       "id": "p21_puffy",
       "nameKey": "pirate_p21_name",
       "descKey": "pirate_p21_desc",
@@ -178,6 +574,122 @@
       "growth": {},
       "render": {
         "species": "puffer",
+        "props": [],
+        "teamColorPart": "bandana"
+      }
+    },
+    {
+      "id": "p22_jelly",
+      "nameKey": "pirate_p22_name",
+      "descKey": "pirate_p22_desc",
+      "loreKey": "pirate_p22_lore",
+      "family": "underwater",
+      "rarity": "rare",
+      "hp": 220,
+      "cooldownTurns": 1,
+      "ammo": {
+        "type": "mine"
+      },
+      "projectile": {},
+      "onHit": {
+        "radiusCells": 1,
+        "blockDmg": 40,
+        "pirateDmg": 50
+      },
+      "ability": {
+        "type": "floatMine"
+      },
+      "growth": {},
+      "render": {
+        "species": "jelly",
+        "props": [],
+        "teamColorPart": "bandana"
+      }
+    },
+    {
+      "id": "p23_bara",
+      "nameKey": "pirate_p23_name",
+      "descKey": "pirate_p23_desc",
+      "loreKey": "pirate_p23_lore",
+      "family": "underwater",
+      "rarity": "rare",
+      "hp": 220,
+      "cooldownTurns": 1,
+      "ammo": {
+        "type": "pierce"
+      },
+      "projectile": {
+        "range": "long"
+      },
+      "onHit": {
+        "radiusCells": 1,
+        "blockDmg": 40,
+        "pirateDmg": 50
+      },
+      "ability": {
+        "type": "torpedo"
+      },
+      "growth": {},
+      "render": {
+        "species": "bara",
+        "props": [],
+        "teamColorPart": "bandana"
+      }
+    },
+    {
+      "id": "p24_moray",
+      "nameKey": "pirate_p24_name",
+      "descKey": "pirate_p24_desc",
+      "loreKey": "pirate_p24_lore",
+      "family": "underwater",
+      "rarity": "hero",
+      "hp": 220,
+      "cooldownTurns": 2,
+      "ammo": {
+        "type": "mine"
+      },
+      "projectile": {},
+      "onHit": {
+        "radiusCells": 1,
+        "blockDmg": 40,
+        "pirateDmg": 50
+      },
+      "ability": {
+        "type": "gnaw",
+        "value": 25
+      },
+      "growth": {},
+      "render": {
+        "species": "moray",
+        "props": [],
+        "teamColorPart": "bandana"
+      }
+    },
+    {
+      "id": "p25_kraki",
+      "nameKey": "pirate_p25_name",
+      "descKey": "pirate_p25_desc",
+      "loreKey": "pirate_p25_lore",
+      "family": "underwater",
+      "rarity": "legend",
+      "hp": 220,
+      "cooldownTurns": 2,
+      "ammo": {
+        "type": "mine"
+      },
+      "projectile": {},
+      "onHit": {
+        "radiusCells": 1,
+        "blockDmg": 40,
+        "pirateDmg": 50
+      },
+      "ability": {
+        "type": "tentacle",
+        "value": 3
+      },
+      "growth": {},
+      "render": {
+        "species": "kraki",
         "props": [],
         "teamColorPart": "bandana"
       }
@@ -259,6 +771,63 @@
       }
     },
     {
+      "id": "p29_alba",
+      "nameKey": "pirate_p29_name",
+      "descKey": "pirate_p29_desc",
+      "loreKey": "pirate_p29_lore",
+      "family": "air",
+      "rarity": "hero",
+      "hp": 200,
+      "cooldownTurns": 1,
+      "ammo": {
+        "type": "homing"
+      },
+      "projectile": {},
+      "onHit": {
+        "radiusCells": 0,
+        "blockDmg": 50,
+        "pirateDmg": 90
+      },
+      "ability": {
+        "type": "steer"
+      },
+      "growth": {},
+      "render": {
+        "species": "alba",
+        "props": [],
+        "teamColorPart": "bandana"
+      }
+    },
+    {
+      "id": "p30_manta",
+      "nameKey": "pirate_p30_name",
+      "descKey": "pirate_p30_desc",
+      "loreKey": "pirate_p30_lore",
+      "family": "air",
+      "rarity": "legend",
+      "hp": 200,
+      "cooldownTurns": 2,
+      "ammo": {
+        "type": "homing"
+      },
+      "projectile": {},
+      "onHit": {
+        "radiusCells": 0,
+        "blockDmg": 50,
+        "pirateDmg": 90
+      },
+      "ability": {
+        "type": "blindTrail",
+        "value": 3
+      },
+      "growth": {},
+      "render": {
+        "species": "manta",
+        "props": [],
+        "teamColorPart": "bandana"
+      }
+    },
+    {
       "id": "p31_sharky",
       "nameKey": "pirate_p31_name",
       "descKey": "pirate_p31_desc",
@@ -279,6 +848,119 @@
       "growth": {},
       "render": {
         "species": "shark",
+        "props": [],
+        "teamColorPart": "bandana"
+      }
+    },
+    {
+      "id": "p32_crabby",
+      "nameKey": "pirate_p32_name",
+      "descKey": "pirate_p32_desc",
+      "loreKey": "pirate_p32_lore",
+      "family": "assault",
+      "rarity": "rare",
+      "hp": 280,
+      "cooldownTurns": 1,
+      "ammo": {
+        "type": "assault"
+      },
+      "projectile": {},
+      "onHit": {
+        "radiusCells": 1,
+        "blockDmg": 20,
+        "pirateDmg": 90
+      },
+      "ability": {
+        "type": "grab"
+      },
+      "growth": {},
+      "render": {
+        "species": "crabby",
+        "props": [],
+        "teamColorPart": "bandana"
+      }
+    },
+    {
+      "id": "p33_king",
+      "nameKey": "pirate_p33_name",
+      "descKey": "pirate_p33_desc",
+      "loreKey": "pirate_p33_lore",
+      "family": "assault",
+      "rarity": "rare",
+      "hp": 280,
+      "cooldownTurns": 1,
+      "ammo": {
+        "type": "assault"
+      },
+      "projectile": {},
+      "onHit": {
+        "radiusCells": 1,
+        "blockDmg": 20,
+        "pirateDmg": 90
+      },
+      "ability": {
+        "type": "sealCabin"
+      },
+      "growth": {},
+      "render": {
+        "species": "king",
+        "props": [],
+        "teamColorPart": "bandana"
+      }
+    },
+    {
+      "id": "p34_lob",
+      "nameKey": "pirate_p34_name",
+      "descKey": "pirate_p34_desc",
+      "loreKey": "pirate_p34_lore",
+      "family": "assault",
+      "rarity": "hero",
+      "hp": 280,
+      "cooldownTurns": 1,
+      "ammo": {
+        "type": "assault"
+      },
+      "projectile": {},
+      "onHit": {
+        "radiusCells": 1,
+        "blockDmg": 20,
+        "pirateDmg": 90
+      },
+      "ability": {
+        "type": "leap"
+      },
+      "growth": {},
+      "render": {
+        "species": "lobster",
+        "props": [],
+        "teamColorPart": "bandana"
+      }
+    },
+    {
+      "id": "p35_davy",
+      "nameKey": "pirate_p35_name",
+      "descKey": "pirate_p35_desc",
+      "loreKey": "pirate_p35_lore",
+      "family": "assault",
+      "rarity": "legend",
+      "hp": 280,
+      "cooldownTurns": 2,
+      "ammo": {
+        "type": "assault"
+      },
+      "projectile": {},
+      "onHit": {
+        "radiusCells": 1,
+        "blockDmg": 20,
+        "pirateDmg": 90
+      },
+      "ability": {
+        "type": "summon",
+        "value": 3
+      },
+      "growth": {},
+      "render": {
+        "species": "davy",
         "props": [],
         "teamColorPart": "bandana"
       }
@@ -305,6 +987,122 @@
       "growth": {},
       "render": {
         "species": "turtle",
+        "props": [],
+        "teamColorPart": "bandana"
+      }
+    },
+    {
+      "id": "p37_pumpum",
+      "nameKey": "pirate_p37_name",
+      "descKey": "pirate_p37_desc",
+      "loreKey": "pirate_p37_lore",
+      "family": "support",
+      "rarity": "common",
+      "hp": 260,
+      "cooldownTurns": 1,
+      "ammo": {
+        "type": "support"
+      },
+      "projectile": {},
+      "onHit": {
+        "radiusCells": 0,
+        "blockDmg": 0,
+        "pirateDmg": 0
+      },
+      "ability": {
+        "type": "bail",
+        "value": 150
+      },
+      "growth": {},
+      "render": {
+        "species": "pumpum",
+        "props": [],
+        "teamColorPart": "bandana"
+      }
+    },
+    {
+      "id": "p38_cook",
+      "nameKey": "pirate_p38_name",
+      "descKey": "pirate_p38_desc",
+      "loreKey": "pirate_p38_lore",
+      "family": "support",
+      "rarity": "rare",
+      "hp": 260,
+      "cooldownTurns": 1,
+      "ammo": {
+        "type": "support"
+      },
+      "projectile": {},
+      "onHit": {
+        "radiusCells": 0,
+        "blockDmg": 0,
+        "pirateDmg": 0
+      },
+      "ability": {
+        "type": "cooldownCut",
+        "value": 1
+      },
+      "growth": {},
+      "render": {
+        "species": "cook",
+        "props": [],
+        "teamColorPart": "bandana"
+      }
+    },
+    {
+      "id": "p39_corey",
+      "nameKey": "pirate_p39_name",
+      "descKey": "pirate_p39_desc",
+      "loreKey": "pirate_p39_lore",
+      "family": "support",
+      "rarity": "hero",
+      "hp": 260,
+      "cooldownTurns": 1,
+      "ammo": {
+        "type": "support"
+      },
+      "projectile": {},
+      "onHit": {
+        "radiusCells": 0,
+        "blockDmg": 0,
+        "pirateDmg": 0
+      },
+      "ability": {
+        "type": "coral",
+        "value": 2
+      },
+      "growth": {},
+      "render": {
+        "species": "corey",
+        "props": [],
+        "teamColorPart": "bandana"
+      }
+    },
+    {
+      "id": "p40_lamp",
+      "nameKey": "pirate_p40_name",
+      "descKey": "pirate_p40_desc",
+      "loreKey": "pirate_p40_lore",
+      "family": "support",
+      "rarity": "legend",
+      "hp": 260,
+      "cooldownTurns": 2,
+      "ammo": {
+        "type": "support"
+      },
+      "projectile": {},
+      "onHit": {
+        "radiusCells": 0,
+        "blockDmg": 0,
+        "pirateDmg": 0
+      },
+      "ability": {
+        "type": "lantern",
+        "value": 30
+      },
+      "growth": {},
+      "render": {
+        "species": "lamp",
         "props": [],
         "teamColorPart": "bandana"
       }

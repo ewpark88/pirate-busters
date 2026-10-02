@@ -149,7 +149,13 @@ int _nearestCabin(SideState target, int cx, int cy) {
 
 /// 방향 전환 탭(알바, 설계서 §4.8): [dir] 이 음수면 아래, 아니면 위로 45° 꺾는다.
 /// 고유 능력이 [Ability.steer] 이고 아직 쓰지 않은 탄만. 꺾었으면 true.
-bool steerOnTap(MatchState state, Projectile p, int dir, int tick) {
+bool steerOnTap(
+  MatchState state,
+  Projectile p,
+  int dir,
+  int tick, {
+  bool emit = true,
+}) {
   if (p.spec.ability != Ability.steer || p.steered) return false;
   final up = dir < 0 ? -1 : 1;
   final forward = p.vx >= 0 ? 1 : -1;
@@ -158,9 +164,11 @@ bool steerOnTap(MatchState state, Projectile p, int dir, int tick) {
     ..vx = vx
     ..vy = vy
     ..steered = true;
-  state.events.add(
-    SimEvent(SimEventKind.steered, side: p.side, x: p.x, y: p.y, value: tick),
-  );
+  if (emit) {
+    state.events.add(
+      SimEvent(SimEventKind.steered, side: p.side, x: p.x, y: p.y, value: tick),
+    );
+  }
   return true;
 }
 

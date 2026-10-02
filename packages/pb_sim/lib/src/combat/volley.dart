@@ -47,7 +47,10 @@ int runVolley(
       flying = true;
       if (tick <= p.startTick) continue;
       // 방향 전환 탭(알바, §4.8): 이 틱을 날기 전에 꺾는다.
-      if (tick == tapTick && dry == null) steerOnTap(state, p, tapDir, tick);
+      // 미리 계산(AI 조준)에서도 같은 틱에 꺾되 이벤트는 내지 않는다.
+      if (tick == tapTick) {
+        steerOnTap(state, p, tapDir, tick, emit: dry == null);
+      }
       final at = msAfterTicks(ms, tick);
       if (p.spec.ammo == AmmoType.homing) steerHoming(state, p, at);
       final vyBefore = p.vy;

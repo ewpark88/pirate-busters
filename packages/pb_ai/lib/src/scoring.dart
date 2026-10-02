@@ -12,6 +12,9 @@ abstract final class Scores {
   static const int repair = 25;
   static const int repairUnderwater = 40;
 
+  /// 상태 효과·고유 지원 효과 한 번의 가치 (ADR-078, 임시값).
+  static const int ability = 30;
+
   static int module(ModuleKind k) => switch (k) {
     ModuleKind.magazine => 80,
     ModuleKind.captain => 70,
@@ -52,6 +55,9 @@ ShotValue scoreLandings(
     if (l.spec.ammo == AmmoType.support) {
       if (l.side == shooter && l.hitShip) {
         _repairValue(state.sides[shooter], l, v);
+        v.flat += _supportValue(state.sides[shooter], l.spec);
+      } else if (l.spec.ability == Ability.coral) {
+        v.flat += Scores.ability;
       }
       continue;
     }
@@ -68,9 +74,32 @@ ShotValue scoreLandings(
       continue;
     }
     _impactValue(state.sides[l.side], l, v);
+    v.flat += _abilityValue(l.spec);
   }
   return v;
 }
+
+/// 고유 지원 효과의 가치: 배수는 침수가 있을 때, 쿨다운 감소는 쉬는 아군 수만큼,
+/// 램프·방벽은 한 번 (ADR-078).
+int _supportValue(SideState own, PirateSpec spec) => switch (spec.ability) {
+  Ability.bail => own.flood > 0 ? Scores.flood * 2 : 0,
+  Ability.cooldownCut =>
+    own.crew.pirates.where((p) => p.cooldown > 0).length * Scores.ability,
+  Ability.lantern || Ability.coral => Scores.ability,
+  _ => 0,
+};
+
+/// 상대 배 명중 때 거는 상태·고유 효과의 가치 (ADR-075·078).
+int _abilityValue(PirateSpec spec) => switch (spec.ability) {
+  Ability.steer ||
+  Ability.pull ||
+  Ability.sealCabin ||
+  Ability.blindTrail ||
+  Ability.grab ||
+  Ability.saw => Scores.ability,
+  Ability.wave => Scores.flood * 2,
+  _ => 0,
+};
 
 bool _hasSwimmer(SideState s) =>
     s.crew.pirates.any((p) => p.status == PirateStatus.swimming);
