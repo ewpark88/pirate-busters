@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math' as math;
 import 'dart:ui' as ui;
 
 import 'package:flame/components.dart';
@@ -82,16 +83,49 @@ void main() {
       }
     });
 
-    test('탄이 날면 탄과 표적이 한 화면에 들어온다', () {
+    test('탄이 날면 탄을 가운데에 두고 기본 줌으로 따라간다 (§2.1, ADR-069)', () {
       final c = CameraDirector();
       final (center, w) = c.target(
         myX: -900,
         enemyX: 900,
         facing: 1,
-        projectile: Vector2(-500, -200),
+        projectile: Vector2(-500, -60),
       );
-      expect(w, greaterThanOrEqualTo(1400 + 400));
-      expect(center.x, 200);
+      expect(w, CameraDirector.shotWidth);
+      expect(center.x, -500);
+      // 높이 올라가면 해수면이 보일 만큼만 넓힌다.
+      final (_, high) = c.target(
+        myX: -900,
+        enemyX: 900,
+        facing: 1,
+        projectile: Vector2(-500, -400),
+      );
+      expect(high, greaterThan(CameraDirector.shotWidth));
+      expect(high, lessThan(1800), reason: '두 배를 다 넣을 만큼 빠지지는 않는다');
+    });
+
+    test('탄이 목표 배에 가까워지면 목표 배가 화면에 들어온다', () {
+      final c = CameraDirector();
+      final (center, w) = c.target(
+        myX: -900,
+        enemyX: 900,
+        facing: 1,
+        projectile: Vector2(700, -200),
+      );
+      expect(center.x - w / 2, lessThan(700));
+      expect(center.x + w / 2, greaterThan(900), reason: '목표 배 가운데가 보인다');
+    });
+
+    test('착탄 지점에서 머문 뒤에는 천천히 돌아간다 (§10.4)', () {
+      final c = CameraDirector()..impact(Vector2(800, -40));
+      final first = c.target(myX: -900, enemyX: 900, facing: 1);
+      c.update(1.4, first);
+      // 머묾이 끝난 뒤의 목표: 돌아가는 동안은 느리게 따라간다.
+      final goal = c.target(myX: -900, enemyX: 900, facing: 1);
+      final before = c.center.x;
+      c.update(0.1, goal);
+      final slow = (c.center.x - before).abs() / (goal.$1.x - before).abs();
+      expect(slow, lessThan(1 - math.exp(-CameraDirector.followRate * 0.1)));
     });
 
     test('탄이 높이 올라가도 화면 밖으로 나가지 않고, 착탄 연출이 끝날 때까지 머문다 (§2.1)', () {

@@ -14,7 +14,7 @@
    "turnTimeMs": 25000,
    "firesPerTurn": 2,
    "maxWind": 3,
-   "windAccel": 44,
+   "windAccel": 26,
    "sunkHullPercent": 30,
    "fuelPerTurn": 30,
    "stormTurns": 4,
@@ -1118,6 +1118,10 @@
       "type": "TAP",
       "slot": 0,
       "ticks": 8
+     },
+     {
+      "t": 32958,
+      "type": "END_TURN"
      }
     ],
     "hash": "979d325e"
