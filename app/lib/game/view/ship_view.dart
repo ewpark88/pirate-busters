@@ -105,7 +105,7 @@ class ShipView extends PositionComponent with HasGameReference {
       BlockMaterial.values[m],
       cell % _width,
       y,
-      keel: y == 0,
+      wet: BattleSprites.isWet(y, _state.draft),
     );
   }
 
@@ -240,7 +240,7 @@ class ShipView extends PositionComponent with HasGameReference {
         final mat = BlockMaterial.values[m];
         final stage = ShipGrid.stageFor(hp[i], mat.durability);
         sprites
-            .tile(mat, x, y, keel: y == 0)
+            .tile(mat, x, y, wet: BattleSprites.isWet(y, _state.draft))
             .render(
               canvas,
               position: Vector2(rect.left, rect.top),
