@@ -72,6 +72,31 @@ dart run tool/import_assets.dart --check                     # pubspec 폴더 �
 - 전장 타일은 `ship/tiles_v2` 를 쓴다(`game/sprites.dart`). 예전 `ship/tiles`·`ship/rooms` 는 조선소 화면 등에서 아직 쓸 수 있어 남겨 두었다.
 - `tokens.json` 의 `character.battleScale 0.16`·`roomSlot "3x2칸"` 은 앱이 쓰지 않는다. 앱은 선실 한 칸에 맞춘 0.09 를 쓴다(`game/coords.dart`, ADR-057).
 
+## v0.23 (2026-10-02, ADR-061)
+
+- 원본: `art/pb_v0.23_main/` = `art/pb_v0.22_main/` 위에 `이미지참고용\pb_v0.23_update`(새 SVG·PNG·JSON, `README_v0.23.md`)와 `이미지참고용\reference\screens_v2`(비교 페이지 29~37단계 화면 74장)를 덮어쓴 것. v0.23 은 추가만 하는 패키지라 v0.22 파일을 하나도 바꾸지 않는다.
+- 새로 온 것:
+  - 해역 배경(`bg/<해역>/` 6해역 × 레이어 7장, `bg/regions.json`)과 이동 한계 표식(`bg/props/limit_*`)
+  - 메타 아이콘 85개(`ui/meta/<묶음>/`, `icons.json`)
+  - 기능 모듈 9종(`ship/modules/`)
+  - 특수·화재 타일(`ship/tiles_v2/` 얼음·금박·유령 판자·방패·불붙은 블록·그을린 블록)
+  - 보스(`boss/`), 컷신 구성(`story/cutscenes.json`)과 말풍선(`ui/story/`)
+- **아직 앱에 넣지 않았다.** 이미 끝난 화면에 적용하는 일은 계획서 A12, 뒷 단계 화면은 그 단계에서 한다. 넣을 때는 `--merge` 를 쓴다.
+- 해역 배경 레이어 순서(README): sky(고정) → clouds(.08) → far(.18) → haze(.18) → mid(.4) → glow(.4) → 배·해적 → sea(1.0).
+  - far·mid 에는 `style/modes.json` 의 색 행렬을 씌운다.
+  - glow 는 행렬 없이 모드가 어두울수록 불투명도를 올린다.
+  - 지옥 모드의 비·번개는 코드로 그린다.
+- **흘수선 아래 칸:** 참나무·소나무만 `tiles_v2/bot_*`(젖은 타일)다(README). 앱은 칸 가운데가 잠긴 깊이 아래면 젖은 것으로 본다(`BattleSprites.isWet`, A11).
+- **데이터로 쓰지 않는 파일:**
+  - `ship/hulls/hulls.json`: 격자 크기와 선실 수는 설계서 §3.1 과 같다. 하지만 블록을 꽉 채운 그림이라 건조 포인트(BALANCE.md A3.1)의 약 2배이고, 추천 설계도도 프리깃 기준이다. 앱 추천 설계도(`app/assets/game/blueprints.json`, 슬루프)를 바꾸지 않는다.
+  - `boss/bosses.json`: 선원 목록에 같은 해적이 중복되고 중간·해역 보스가 같다. 크라켄 촉수 6개·체력 칸 4/3/2/1 은 설계서·BALANCE.md 에 근거가 없다(계획서 11장, R3).
+  - `story/cutscenes.json`: `lineKey` 4개(`story_prologue_1_tok` 등)가 앱 ARB 에 없다. 앱 키(`story_prologue_n`)에 맞춘다.
+- **디자인 쪽 요청 중 v0.23 에서도 남은 것(ADR-057):**
+  - `style/tokens.json` `battleScale 0.16`·`roomSlot` 3×2칸(README 문장만 0.095·1칸이다)
+  - 새 배율에 맞춘 전투 외곽선(`parts_battle_*`) 다시 굽기
+  - 1칸 등불 선실 타일
+  - 랍 초상 이름 `ui/portraits/lob_*` → `lobster_*`
+
 ## 글꼴 (설계서 §14.4, A11)
 
 `app/assets/fonts/` 에 OFL 글꼴 세 가지를 라이선스 파일과 함께 둔다. 출처는 Google Fonts 저장소(`github.com/google/fonts/ofl/`).
