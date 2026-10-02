@@ -14,6 +14,7 @@ import 'package:pirate_busters/ui/labels.dart';
 
 /// 개발용 테스트 대전 (ADR-053): 등급별로 묶인 해적 중 내 덱·상대 덱을 코스트 한도
 /// 없이 골라 AI 와 바로 붙는다. 마지막 선택은 저장해 두고 다음에 그대로 쓴다.
+/// 더미배 연습(ADR-073)은 반격하지 않는 배를 상대로 해적을 바꿔 가며 쏜다.
 class TestBattleScreen extends ConsumerStatefulWidget {
   const TestBattleScreen({super.key});
 
@@ -44,11 +45,13 @@ class _TestBattleScreenState extends ConsumerState<TestBattleScreen> {
     unawaited(ref.read(fleetStoreProvider).setTestDeck(_side, deck));
   }
 
-  void _start() {
+  /// [dummy] 면 반격 없는 더미배 연습 (ADR-073). 상대 덱이 비면 무작위 4명이 탄다.
+  void _start({bool dummy = false}) {
     final test = TestBattle(
       deck: List.of(_decks[0]),
       enemyDeck: List.of(_decks[1]),
       level: _level,
+      dummy: dummy,
     );
     unawaited(
       Navigator.of(context).push(
@@ -70,6 +73,11 @@ class _TestBattleScreenState extends ConsumerState<TestBattleScreen> {
       appBar: AppBar(
         title: Text(l10n.devTestBattle),
         actions: [
+          TextButton(
+            key: const ValueKey('practice'),
+            onPressed: _decks[0].isEmpty ? null : () => _start(dummy: true),
+            child: Text(l10n.devPractice),
+          ),
           Padding(
             padding: const EdgeInsets.all(8),
             child: FilledButton(

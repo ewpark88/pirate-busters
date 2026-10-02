@@ -934,6 +934,15 @@ class AppLocalizationsKo extends AppLocalizations {
   String get devStart => '시작';
 
   @override
+  String get devPractice => '더미배 연습';
+
+  @override
+  String get devToolsOn => '개발 도구를 켰습니다';
+
+  @override
+  String get devToolsOff => '개발 도구를 껐습니다';
+
+  @override
   String get storyReplay => '이야기 다시 보기';
 
   @override

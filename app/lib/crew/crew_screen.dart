@@ -16,12 +16,14 @@ import 'package:pirate_busters/ui/kit/pb_scaffold.dart';
 
 /// 간이 선원 편성 (설계서 §13.7, 개발 계획서 M5): 해적을 선실 슬롯에 끌어다 놓는다.
 /// 코스트 한도(플레이어 레벨, §4.5)를 넘는 해적은 놓을 수 없다. 바꾸면 바로 저장한다.
-/// 보여 주는 해적은 보유 해적(시작 해적 + 보상, §4.6)뿐이고, 전원은 개발 빌드에서만.
+/// 보여 주는 해적은 보유 해적(시작 해적 + 보상, §4.6)뿐이고, 전원은 개발 도구가
+/// 켜졌을 때만 (ADR-053, ADR-073).
 class CrewScreen extends ConsumerStatefulWidget {
-  const CrewScreen({super.key, this.showAll = devTools});
+  const CrewScreen({super.key, this.showAll});
 
-  /// 보유와 상관없이 해적 전원을 보여 준다 (개발용, ADR-053).
-  final bool showAll;
+  /// 보유와 상관없이 해적 전원을 보여 준다 (개발용, ADR-053). null 이면 개발 도구
+  /// 스위치(`devToolsProvider`)를 따른다.
+  final bool? showAll;
 
   @override
   ConsumerState<CrewScreen> createState() => _CrewScreenState();
@@ -125,7 +127,9 @@ class _CrewScreenState extends ConsumerState<CrewScreen> {
                       CostBar(used: used, limit: progress.costLimit),
                       const SizedBox(height: 6),
                       Expanded(
-                        child: SingleChildScrollView(child: DeckEvalView(eval)),
+                        child: SingleChildScrollView(
+                          child: DeckEvalView(eval),
+                        ),
                       ),
                     ],
                   ),
@@ -145,7 +149,8 @@ class _CrewScreenState extends ConsumerState<CrewScreen> {
                     crossAxisSpacing: 6,
                     children: [
                       for (final def in catalog.data.pirates)
-                        if (widget.showAll || owned.contains(def.id))
+                        if ((widget.showAll ?? ref.watch(devToolsProvider)) ||
+                            owned.contains(def.id))
                           PirateTile(
                             def: def,
                             spec: catalog.pirates.byId(def.id),

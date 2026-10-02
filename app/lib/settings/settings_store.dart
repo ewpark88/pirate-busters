@@ -31,6 +31,11 @@ abstract interface class SettingsStore {
   bool get music;
 
   Future<void> setMusic({required bool on});
+
+  /// 숨은 스위치로 켠 개발 도구 (ADR-073). 기본 끔.
+  bool get devTools;
+
+  Future<void> setDevTools({required bool on});
 }
 
 /// Hive CE 상자 하나(`settings`)에 둔다.
@@ -90,6 +95,14 @@ class HiveSettingsStore implements SettingsStore {
   Future<void> setMusic({required bool on}) =>
       _box.put(_musicKey, on ? 'on' : 'off');
 
+  @override
+  bool get devTools => _box.get(_devToolsKey) == 'on';
+
+  @override
+  Future<void> setDevTools({required bool on}) =>
+      _box.put(_devToolsKey, on ? 'on' : 'off');
+
+  static const String _devToolsKey = 'dev_tools';
   static const String _musicKey = 'music';
   static const String _soundKey = 'sound';
   static const String _vibrationKey = 'vibration';
@@ -134,4 +147,10 @@ class MemorySettingsStore implements SettingsStore {
 
   @override
   Future<void> setMusic({required bool on}) async => music = on;
+
+  @override
+  bool devTools = false;
+
+  @override
+  Future<void> setDevTools({required bool on}) async => devTools = on;
 }

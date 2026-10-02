@@ -992,6 +992,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get devStart => 'Start';
 
   @override
+  String get devPractice => 'Dummy practice';
+
+  @override
+  String get devToolsOn => 'Developer tools on';
+
+  @override
+  String get devToolsOff => 'Developer tools off';
+
+  @override
   String get storyReplay => 'Replay stories';
 
   @override
