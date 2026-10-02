@@ -36,3 +36,4 @@
 | [2026-10-02-R1a-sim-modules.md](2026-10-02-R1a-sim-modules.md) | R1a 행동 모듈·상태 효과 엔진 세부 계획, 설계 결정 제안 P1~P10 (ADR-074) |
 | [2026-10-02-aim-visual-polish.md](2026-10-02-aim-visual-polish.md) | 당겨 쏠 때 조준 표시 다듬기(진주알 점선·화살촉·새총 주머니·10칸 힘 링·숫자 알약, 렌더 전용) |
 | [2026-10-02-aim-commit-fuel-half.md](2026-10-02-aim-commit-fuel-half.md) | 조준 작업 커밋(공유 트리 덩어리 분리)과 배 움직임 반(1칸당 연료 2배, ADR-077), 돛 탑승 질문 답 |
+| [2026-10-02-quality-recheck.md](2026-10-02-quality-recheck.md) | 퀄리티 재점검: 진단 항목 대조, 전투 아트 보강 A24 신설(ADR-079), A21 판 길이 재측정 방침 |
