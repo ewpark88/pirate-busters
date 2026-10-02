@@ -1,0 +1,115 @@
+{
+  "id": "corey",
+  "team": "blue",
+  "scale": 2,
+  "expressions": {
+    "aim": [
+      {
+        "id": "eyes",
+        "file": "aim_eyes.png",
+        "offset": [
+          179,
+          352
+        ],
+        "size": [
+          122,
+          48
+        ],
+        "pivot": [
+          61.0,
+          24.0
+        ]
+      }
+    ],
+    "attack": [
+      {
+        "id": "eyes",
+        "file": "attack_eyes.png",
+        "offset": [
+          179,
+          319
+        ],
+        "size": [
+          154,
+          81
+        ],
+        "pivot": [
+          61.0,
+          57.0
+        ]
+      }
+    ],
+    "default": [
+      {
+        "id": "eyes",
+        "file": "default_eyes.png",
+        "offset": [
+          179,
+          352
+        ],
+        "size": [
+          122,
+          48
+        ],
+        "pivot": [
+          61.0,
+          24.0
+        ]
+      }
+    ],
+    "hit": [
+      {
+        "id": "eyes",
+        "file": "hit_eyes.png",
+        "offset": [
+          185,
+          328
+        ],
+        "size": [
+          141,
+          64
+        ],
+        "pivot": [
+          55.0,
+          48.0
+        ]
+      }
+    ],
+    "lose": [
+      {
+        "id": "eyes",
+        "file": "lose_eyes.png",
+        "offset": [
+          179,
+          352
+        ],
+        "size": [
+          122,
+          69
+        ],
+        "pivot": [
+          61.0,
+          24.0
+        ]
+      }
+    ],
+    "win": [
+      {
+        "id": "eyes",
+        "file": "win_eyes.png",
+        "offset": [
+          183,
+          326
+        ],
+        "size": [
+          154,
+          59
+        ],
+        "pivot": [
+          57.0,
+          50.0
+        ]
+      }
+    ]
+  }
+}

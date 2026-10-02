@@ -5,8 +5,11 @@ import 'package:pb_sim/pb_sim.dart';
 import 'package:pirate_busters/battle/battle_session.dart';
 import 'package:pirate_busters/battle/playback.dart';
 import 'package:pirate_busters/battle/session_views.dart';
+import 'package:pirate_busters/game/anim/rarity_fx.dart';
 import 'package:pirate_busters/game/coords.dart';
 import 'package:pirate_busters/game/sprites.dart';
+import 'package:pirate_busters/game/view/aim_painter.dart';
+import 'package:pirate_busters/game/view/trail_painter.dart';
 import 'package:pirate_busters/game/weapon_styles.dart';
 import 'package:pirate_busters/input/pull_aim.dart';
 
@@ -17,11 +20,15 @@ class ShotView extends Component {
     required this.session,
     required this.sprites,
     this.weapons,
+    this.rarity = const RarityFx({}),
     super.priority,
   });
 
   final BattleSession session;
   final BattleSprites sprites;
+
+  /// 등급별 연출 값: 조준 점선 색, 발사체 꼬리 (설계서 §10.5).
+  final RarityFx rarity;
 
   /// 해적별 투사체 그림. 없으면 모두 공용 포탄(테스트).
   final WeaponStyles? weapons;
@@ -47,6 +54,24 @@ class ShotView extends Component {
     return all.reduce((a, b) => a.x * facing >= b.x * facing ? a : b);
   }
 
+  /// 강습 해적의 몸 그림. 강습탄은 해적 자신이 날아가 착지한다 (설계서 §10.4).
+  final Map<String, Sprite> _bodies = {};
+
+  @override
+  Future<void> onLoad() async {
+    final images = findGame()!.images;
+    for (final side in session.state.sides) {
+      for (final pirate in side.crew.pirates) {
+        if (pirate.spec.ammo != AmmoType.assault) continue;
+        final id = session.speciesOf(pirate.spec.id);
+        final team = side.side == 0 ? 'blue' : 'red';
+        _bodies['${side.side}/$id'] = Sprite(
+          await images.load('characters/$id/${id}_${team}_battle.png'),
+        );
+      }
+    }
+  }
+
   /// 날고 있는 탄마다 그 해적의 무기 그림(분열 조각·소형 폭탄은 따로)을 그린다.
   void _renderShots(Canvas canvas) {
     final p = session.playback;
@@ -54,6 +79,8 @@ class ShotView extends Component {
     final t = p.tick;
     final spec = session.state.sides[p.side].crew.pirates[p.slot].spec;
     final own = weapons?.of(session.speciesOf(spec.id));
+    final tier = rarity.of(spec.rarity);
+    final sec = t / simTickHz;
     for (final (i, trace) in p.traces.indexed) {
       if (t < trace.startTick || t >= trace.endTick) continue;
       final pos = _at(trace, t);
@@ -64,6 +91,30 @@ class ShotView extends Component {
               AmmoType.flock => WeaponStyles.bomblet,
               _ => own,
             };
+      // 고유 꼬리 위에 등급 꼬리를 겹친다 (설계서 §10.1, §10.5). 물속은 등급색 거품.
+      final tail = _tail(trace, t);
+      TrailPainter.base(
+        canvas,
+        tail,
+        style == null ? 'smoke' : style.trail,
+        sec,
+        color: style?.trailColor,
+      );
+      TrailPainter.tier(canvas, tail, tier, sec, water: pos.y > 0);
+      final body = _bodies['${p.side}/${session.speciesOf(spec.id)}'];
+      if (body != null) {
+        canvas
+          ..save()
+          ..translate(pos.x, pos.y)
+          ..scale(facingOf(p.side).toDouble(), 1);
+        body.render(
+          canvas,
+          size: Vector2(240, 324) * Coords.pirateScale,
+          anchor: Anchor.center,
+        );
+        canvas.restore();
+        continue;
+      }
       final w = weapons;
       if (style == null || w == null) {
         sprites
@@ -88,6 +139,16 @@ class ShotView extends Component {
       canvas.restore();
     }
   }
+
+  /// 꼬리 점 수와 점 사이 간격(틱). 지나온 약 0.16초를 오래된 것부터 담는다.
+  static const int tailPoints = 12;
+  static const double tailStep = 0.4;
+
+  static List<Offset> _tail(ShotTrace trace, double tick) => [
+    for (var k = tailPoints; k >= 0; k--)
+      if (tick - k * tailStep >= trace.startTick)
+        _at(trace, tick - k * tailStep).toOffset(),
+  ];
 
   static Vector2 _at(ShotTrace trace, double tick) {
     final last = trace.xs.length - 1;
@@ -124,15 +185,25 @@ class ShotView extends Component {
         .previewShot(aim.slot, aim.shot.angle, aim.shot.power)
         .head(30);
     _renderRangeEnd(canvas, aim.slot, path.xs.first);
-    final dot = sprites.get('fx/trajectory_dot.png');
-    for (var i = 0; i <= path.lastTick; i += 2) {
-      dot.render(
-        canvas,
-        position: Coords.point(path.xs[i], path.ys[i]),
-        size: Vector2.all(8),
-        anchor: Anchor.center,
-      );
-    }
+    // 점선은 멀어질수록 흐려지고 색은 등급을 따른다 (설계서 §10.4, §10.5).
+    final side = session.state.activeSide;
+    final spec = session.state.sides[side].crew.pirates[aim.slot].spec;
+    final color = rarity.of(spec.rarity).aim;
+    final pts = [
+      for (var i = 0; i <= path.lastTick; i += 2)
+        Coords.point(path.xs[i], path.ys[i]).toOffset(),
+    ];
+    // 첫 점은 발사 지점(해적 몸)이라 고무줄·호·링이 대신한다.
+    AimPainter.trajectory(canvas, pts.sublist(1), color);
+    AimPainter.sling(
+      canvas,
+      pts.first,
+      facing: facingOf(side),
+      angleMdeg: aim.shot.angle,
+      stretch: aim.stretch,
+      power: aim.shot.power / maxFirePower,
+      color: color,
+    );
   }
 
   static final Paint _rangePaint = Paint()

@@ -4,11 +4,10 @@ import 'package:pb_sim/pb_sim.dart';
 import 'package:pirate_busters/crew/deck_eval.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
 import 'package:pirate_busters/l10n/data_text.dart';
+import 'package:pirate_busters/ui/cards/card_icons.dart';
+import 'package:pirate_busters/ui/cards/rarity_card.dart';
 import 'package:pirate_busters/ui/hud/ammo_label.dart';
 import 'package:pirate_busters/ui/labels.dart';
-
-String _portrait(String species) =>
-    'assets/images/ui/portraits/${species}_blue.png';
 
 /// 선실 슬롯 하나: 해적을 끌어다 놓는 곳. 누르면 비운다.
 class CabinSlot extends StatelessWidget {
@@ -44,7 +43,7 @@ class CabinSlot extends StatelessWidget {
         onTap: onTap,
         child: Container(
           width: 68,
-          height: 84,
+          height: 96,
           margin: const EdgeInsets.only(right: 4),
           decoration: BoxDecoration(
             color: const Color(0xFF1E2129),
@@ -60,8 +59,8 @@ class CabinSlot extends StatelessWidget {
                 )
               : Draggable<String>(
                   data: p.id,
-                  feedback: _Face(species: species(p.id)),
-                  child: _Face(species: species(p.id)),
+                  feedback: _Face(p),
+                  child: _Face(p),
                 ),
         ),
       );
@@ -69,16 +68,17 @@ class CabinSlot extends StatelessWidget {
   );
 }
 
+/// 선실에 탄 해적: 등급 프레임 카드 (설계서 §10.5).
 class _Face extends StatelessWidget {
-  const _Face({required this.species});
+  const _Face(this.pirate);
 
-  final String species;
+  final PirateDef pirate;
 
   @override
   Widget build(BuildContext context) => SizedBox(
     width: 64,
-    height: 80,
-    child: Image.asset(_portrait(species), fit: BoxFit.contain),
+    height: 91,
+    child: RarityCard(rarity: pirate.rarity, species: pirate.species),
   );
 }
 
@@ -177,13 +177,25 @@ class PirateTile extends StatelessWidget {
         padding: const EdgeInsets.all(3),
         child: Column(
           children: [
+            // 등급 프레임 카드 옆에 사거리·코스트·세트 아이콘 (설계서 §10.5, §13.7).
             Expanded(
-              child: Image.asset(_portrait(def.species), fit: BoxFit.contain),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Flexible(
+                    child: RarityCard(
+                      rarity: def.rarity,
+                      species: def.species,
+                    ),
+                  ),
+                  CardIcons.column(spec, def.species),
+                ],
+              ),
             ),
             _line(dataText(l10n, def.nameKey), const Color(0xFFEFE6D2)),
             _line(
               '${Labels.rarity(l10n, def.rarity)} · '
-              '${Labels.family(l10n, def.family)} · ${spec.cost}',
+              '${Labels.family(l10n, def.family)}',
               const Color(0xFF9A917F),
             ),
             Row(
@@ -213,10 +225,13 @@ class PirateTile extends StatelessWidget {
     );
   }
 
-  Widget _line(String text, Color color) => Text(
-    text,
-    maxLines: 1,
-    overflow: TextOverflow.ellipsis,
-    style: TextStyle(color: color, fontSize: 10),
+  /// 한 줄 글자. 칸보다 길면 자르지 않고 줄여서 다 보여준다 (설계서 §14.4).
+  Widget _line(String text, Color color) => FittedBox(
+    fit: BoxFit.scaleDown,
+    child: Text(
+      text,
+      maxLines: 1,
+      style: TextStyle(color: color, fontSize: 10),
+    ),
   );
 }

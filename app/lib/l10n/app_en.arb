@@ -515,5 +515,12 @@
   "storyTitleBossAfter": "After the sea boss",
   "prepMyShip": "My ship",
   "prepCabins": "Cabins",
-  "prepCabinEmpty": "Empty cabin"
+  "prepCabinEmpty": "Empty cabin",
+  "hitTagCrit": "CRIT",
+  "hitTagPierce": "PIERCE",
+  "hitTagChain": "CHAIN",
+  "hitTagBurn": "BURN",
+  "hitTagMine": "MINE",
+  "hitTagBite": "BITE",
+  "hitTagRepair": "REPAIR"
 }

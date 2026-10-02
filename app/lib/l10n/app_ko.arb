@@ -276,5 +276,12 @@
   "storyTitleBossAfter": "해역 보스 뒤",
   "prepMyShip": "내 배",
   "prepCabins": "선실 배치",
-  "prepCabinEmpty": "빈 선실"
+  "prepCabinEmpty": "빈 선실",
+  "hitTagCrit": "치명",
+  "hitTagPierce": "관통",
+  "hitTagChain": "연쇄",
+  "hitTagBurn": "화상",
+  "hitTagMine": "기뢰",
+  "hitTagBite": "물어뜯기",
+  "hitTagRepair": "수리"
 }

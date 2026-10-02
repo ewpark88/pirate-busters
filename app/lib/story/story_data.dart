@@ -38,11 +38,11 @@ abstract final class StoryData {
     ],
     's1_5_after': [StoryCut('story_s1_5_after', species: 'crabs', enemy: true)],
     's1_12_before': [
-      StoryCut('story_s1_12_before_1', species: 'lob', enemy: true),
+      StoryCut('story_s1_12_before_1', species: 'lobster', enemy: true),
       StoryCut('story_s1_12_before_2', species: 'octo'),
     ],
     's1_12_after': [
-      StoryCut('story_s1_12_after_1', species: 'lob', enemy: true),
+      StoryCut('story_s1_12_after_1', species: 'lobster', enemy: true),
       StoryCut('story_s1_12_after_2', species: 'turtle'),
       StoryCut('story_s1_12_after_3', species: 'octo'),
     ],

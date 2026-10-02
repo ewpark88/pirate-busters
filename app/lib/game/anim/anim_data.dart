@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'dart:math' as math;
 
 import 'package:flame/components.dart';
+import 'package:pirate_busters/game/anim/rarity_fx.dart';
 
 /// 키 하나: 시각 [t](초)와 속성 값, 도착 보간 방식 [ease] (io | out | in | lin | step).
 class AnimKey {
@@ -45,7 +46,7 @@ class AnimEvent {
 }
 
 class AnimClip {
-  AnimClip(this.duration, this.tracks, this.events);
+  AnimClip(this.duration, this.tracks, this.events, {this.expr});
 
   factory AnimClip.fromJson(Map<String, dynamic> j) => AnimClip(
     (j['duration'] as num).toDouble(),
@@ -63,16 +64,24 @@ class AnimClip {
           e,
         ),
     ],
+    expr: j['expr'] as String?,
   );
 
+  /// 이 동작 동안 짓는 표정(상태 동작만). 없으면 null.
+  final String? expr;
   final double duration;
   final Map<String, List<AnimKey>> tracks;
   final List<AnimEvent> events;
 }
 
-/// `assets/data/anims.json`: 캐릭터별 공격 동작과 공용 피격.
+/// `assets/data/anims.json`: 캐릭터별 공격 동작, 공용 피격, 등급별 연출 값.
 class PbAnims {
-  PbAnims(this.attacks, this.hit);
+  PbAnims(
+    this.attacks,
+    this.hit, {
+    this.rarity = const RarityFx({}),
+    this.states = const {},
+  });
 
   factory PbAnims.fromJsonString(String source) {
     final j = jsonDecode(source) as Map<String, dynamic>;
@@ -81,6 +90,12 @@ class PbAnims {
         (k, v) => MapEntry(k, AnimClip.fromJson(v as Map<String, dynamic>)),
       ),
       AnimClip.fromJson(j['hit'] as Map<String, dynamic>),
+      rarity: RarityFx.fromJson(j['rarityFx'] as Map<String, dynamic>?),
+      states: {
+        for (final MapEntry(:key, :value)
+            in (j['states'] as Map<String, dynamic>? ?? const {}).entries)
+          key: AnimClip.fromJson(value as Map<String, dynamic>),
+      },
     );
   }
 
@@ -88,6 +103,12 @@ class PbAnims {
 
   final Map<String, AnimClip> attacks;
   final AnimClip hit;
+
+  /// 등급별 전투 연출 값 (설계서 §10.5).
+  final RarityFx rarity;
+
+  /// 되풀이하는 상태 동작: aim · fall · swim · win · lose (설계서 §10.1).
+  final Map<String, AnimClip> states;
 }
 
 double _ease(String e, double u) => switch (e) {

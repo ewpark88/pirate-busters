@@ -7,6 +7,7 @@ import 'package:pirate_busters/battle/battle_session.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
 import 'package:pirate_busters/settings/language.dart';
 import 'package:pirate_busters/settings/settings_store.dart';
+import 'package:pirate_busters/ui/cards/rarity_card.dart';
 import 'package:pirate_busters/ui/hud/battle_hud.dart';
 
 import 'test_catalog.dart';
@@ -99,15 +100,8 @@ void main() {
     ) async {
       final session = await _pumpHud(tester, const Locale('en'));
       final side = session.state.activeSide;
-      // 카드는 해적 초상 그림으로 찾는다.
-      final card = find
-          .byWidgetPredicate(
-            (w) =>
-                w is Image &&
-                w.image is AssetImage &&
-                (w.image as AssetImage).assetName.contains('portraits'),
-          )
-          .first;
+      // 카드는 등급 프레임 카드로 찾는다 (설계서 §10.5).
+      final card = find.byType(RarityCard).first;
       await tester.tap(card);
       await tester.pump();
       expect(session.selected, isNotNull);

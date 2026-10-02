@@ -1759,6 +1759,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Empty cabin'**
   String get prepCabinEmpty;
+
+  /// No description provided for @hitTagCrit.
+  ///
+  /// In en, this message translates to:
+  /// **'CRIT'**
+  String get hitTagCrit;
+
+  /// No description provided for @hitTagPierce.
+  ///
+  /// In en, this message translates to:
+  /// **'PIERCE'**
+  String get hitTagPierce;
+
+  /// No description provided for @hitTagChain.
+  ///
+  /// In en, this message translates to:
+  /// **'CHAIN'**
+  String get hitTagChain;
+
+  /// No description provided for @hitTagBurn.
+  ///
+  /// In en, this message translates to:
+  /// **'BURN'**
+  String get hitTagBurn;
+
+  /// No description provided for @hitTagMine.
+  ///
+  /// In en, this message translates to:
+  /// **'MINE'**
+  String get hitTagMine;
+
+  /// No description provided for @hitTagBite.
+  ///
+  /// In en, this message translates to:
+  /// **'BITE'**
+  String get hitTagBite;
+
+  /// No description provided for @hitTagRepair.
+  ///
+  /// In en, this message translates to:
+  /// **'REPAIR'**
+  String get hitTagRepair;
 }
 
 class _AppLocalizationsDelegate

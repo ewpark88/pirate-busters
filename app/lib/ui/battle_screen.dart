@@ -11,6 +11,7 @@ import 'package:pirate_busters/battle/battle_stats.dart';
 import 'package:pirate_busters/campaign/stage_spec.dart';
 import 'package:pirate_busters/dev/test_battle.dart';
 import 'package:pirate_busters/game/battle_game.dart';
+import 'package:pirate_busters/game/hit_tag.dart';
 import 'package:pirate_busters/input/field_gestures.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
 import 'package:pirate_busters/l10n/data_text.dart';
@@ -163,7 +164,19 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
     final number = NumberFormat.decimalPattern(
       Localizations.localeOf(context).toLanguageTag(),
     );
-    _game.damageText = (amount) => l10n.damagePopup(number.format(amount));
+    _game
+      ..damageText = ((amount) => l10n.damagePopup(number.format(amount)))
+      ..turnsText = number.format
+      // 명중 이름표 (설계서 §10.4).
+      ..tagText = (tag) => switch (tag) {
+        HitTag.crit => l10n.hitTagCrit,
+        HitTag.pierce => l10n.hitTagPierce,
+        HitTag.chain => l10n.hitTagChain,
+        HitTag.burn => l10n.hitTagBurn,
+        HitTag.mine => l10n.hitTagMine,
+        HitTag.bite => l10n.hitTagBite,
+        HitTag.repair => l10n.hitTagRepair,
+      };
     return _scaffold();
   }
 

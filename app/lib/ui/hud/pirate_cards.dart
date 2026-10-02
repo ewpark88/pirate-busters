@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pb_sim/pb_sim.dart';
 import 'package:pirate_busters/battle/battle_session.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
+import 'package:pirate_busters/ui/cards/rarity_card.dart';
 import 'package:pirate_busters/ui/hud/ammo_label.dart';
 import 'package:pirate_busters/ui/hud/hud_style.dart';
 
@@ -103,12 +104,13 @@ class _PirateCardState extends State<_PirateCard> {
       onTap: () => _s.select(widget.slot),
       child: Opacity(
         opacity: _ready ? 1 : 0.45,
+        // 카드 모양은 등급 프레임을 따른다 (설계서 §10.5, §13.4). 고른 카드와
+        // 팀은 바깥 테두리 색으로 알린다.
         child: Container(
           width: 72,
-          height: 88,
-          decoration: BoxDecoration(
-            color: HudColors.panel,
-            borderRadius: BorderRadius.circular(10),
+          height: 102,
+          foregroundDecoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(8),
             border: Border.all(
               color: aiming || picked
                   ? HudColors.warn
@@ -120,12 +122,10 @@ class _PirateCardState extends State<_PirateCard> {
             alignment: Alignment.bottomCenter,
             children: [
               Positioned.fill(
-                child: Padding(
-                  padding: const EdgeInsets.all(4),
-                  child: Image.asset(
-                    'assets/images/ui/portraits/${species}_$team.png',
-                    fit: BoxFit.contain,
-                  ),
+                child: RarityCard(
+                  rarity: pirate.spec.rarity,
+                  species: species,
+                  team: team,
                 ),
               ),
               Positioned(

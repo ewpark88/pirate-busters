@@ -1,11 +1,11 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pb_sim/pb_sim.dart';
+import 'package:pirate_busters/app/app_theme.dart';
 import 'package:pirate_busters/app/providers.dart';
 import 'package:pirate_busters/campaign/battle_prep_screen.dart';
 import 'package:pirate_busters/campaign/campaign_map_screen.dart';
@@ -24,22 +24,17 @@ import 'package:pirate_busters/settings/settings_store.dart';
 import 'package:pirate_busters/shipyard/shipyard_screen.dart';
 import 'package:pirate_busters/story/cutscene_screen.dart';
 import 'package:pirate_busters/story/story_data.dart';
+import 'package:pirate_busters/ui/cards/rarity_card.dart';
 
 import 'test_catalog.dart';
+import 'test_fonts.dart';
 
 /// 골든은 글꼴 그리기가 OS 마다 달라 만든 환경(Windows)에서만 비교한다 (설계서 §14.4).
 /// 다시 만들기: `flutter test test/screens_golden_test.dart --update-goldens`.
 final bool _skipGolden = !Platform.isWindows;
 
-Future<void> _loadJua() async {
-  final bytes = File('assets/fonts/Jua-Regular.ttf').readAsBytesSync();
-  final loader = FontLoader('Jua')
-    ..addFont(Future.value(ByteData.view(bytes.buffer)));
-  await loader.load();
-}
-
 void main() {
-  setUpAll(_loadJua);
+  setUpAll(loadAppFonts);
   final stage = testCampaign.stage('1-2');
   const progress = PlayerProgress(
     level: 3,
@@ -111,6 +106,24 @@ void main() {
       reward: reward,
     ),
     'cutscene': CutsceneScreen(cuts: StoryData.of(StoryData.prologue)!),
+    // 등급 카드 프레임 5종: 일반 · 희귀 · 영웅 · 전설 · 신화 (설계서 §10.5).
+    'cards': Scaffold(
+      body: Center(
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            for (final rarity in Rarity.values)
+              Padding(
+                padding: const EdgeInsets.all(4),
+                child: SizedBox(
+                  width: 110,
+                  child: RarityCard(rarity: rarity, species: 'octo'),
+                ),
+              ),
+          ],
+        ),
+      ),
+    ),
   };
 
   for (final (name, size) in const [
@@ -140,7 +153,7 @@ void main() {
                 ],
                 child: MaterialApp(
                   debugShowCheckedModeBanner: false,
-                  theme: ThemeData(fontFamily: 'Jua'),
+                  theme: appTheme(),
                   locale: locale,
                   supportedLocales: supportedLocales,
                   localizationsDelegates: const [
@@ -153,7 +166,7 @@ void main() {
                 ),
               ),
             );
-            await tester.pump();
+            await loadImages(tester);
             await expectLater(
               find.byType(MaterialApp),
               matchesGoldenFile(

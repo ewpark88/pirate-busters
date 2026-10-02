@@ -177,6 +177,34 @@ void main() {
       );
     });
 
+    test('render.species 는 설계서 §4.3 에셋 키 표와 같아야 한다', () {
+      for (final p in _load().pirates) {
+        expect(speciesKeys[p.id], p.species, reason: p.id);
+      }
+      expect(speciesKeys, hasLength(40));
+      expect(speciesKeys.values.toSet(), hasLength(40), reason: '키는 겹치지 않는다');
+      // 랍은 계열 키 lob 과 헷갈리지 않게 lobster 다.
+      expect(speciesKeys['p34_lob'], 'lobster');
+      expect(speciesProblem('p34_lob', 'lob'), isNotNull);
+      expect(speciesProblem('p11_finn', 'sword'), isNull);
+      expect(speciesProblem('p11_finn', 'finn'), isNotNull);
+      // 표에 없는 id 도 그림이 있는 키만 쓸 수 있다.
+      expect(speciesProblem('x', 'octo'), isNull);
+      expect(speciesProblem('x', 'dragon'), isNotNull);
+      void bad(Map<String, Object?> o) => expect(
+        () => GameData.parse(ammoJson: ammoJson, piratesJson: _pirate(o)),
+        throwsA(isA<DataFormatError>()),
+        reason: '$o',
+      );
+      bad({
+        'render': {'species': 'dragon'},
+      });
+      bad({
+        'id': 'p01_octo',
+        'render': {'species': 'uni'},
+      });
+    });
+
     test('성장 특성은 파싱만 한다', () {
       final root =
           jsonDecode(

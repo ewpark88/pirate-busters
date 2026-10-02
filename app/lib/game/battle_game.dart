@@ -9,9 +9,12 @@ import 'package:pirate_busters/battle/battle_session.dart';
 import 'package:pirate_busters/battle/battle_stats.dart';
 import 'package:pirate_busters/battle/playback.dart';
 import 'package:pirate_busters/game/anim/anim_data.dart';
+import 'package:pirate_busters/game/battle_cues.dart';
 import 'package:pirate_busters/game/camera_director.dart';
 import 'package:pirate_busters/game/coords.dart';
+import 'package:pirate_busters/game/hit_tag.dart';
 import 'package:pirate_busters/game/sprites.dart';
+import 'package:pirate_busters/game/view/effect_badges.dart';
 import 'package:pirate_busters/game/view/fx_layer.dart';
 import 'package:pirate_busters/game/view/sea_theme.dart';
 import 'package:pirate_busters/game/view/sea_view.dart';
@@ -42,6 +45,10 @@ class BattleGame extends FlameGame {
   /// 피해 숫자 글자. 화면이 l10n·NumberFormat 으로 바꿔 넣는다 (설계서 §14.2).
   String Function(int amount) damageText = (amount) => '$amount';
 
+  /// 명중 이름표와 남은 턴 수 글자 (설계서 §10.4). 화면이 l10n 으로 바꿔 넣는다.
+  String Function(HitTag tag) tagText = (tag) => tag.name;
+  String Function(int turns) turnsText = (turns) => '$turns';
+
   /// 저사양 모드: 바다 굴절 셰이더를 끈다 (설계서 §10.2).
   final ValueNotifier<bool> lowEnd = ValueNotifier(false);
 
@@ -54,6 +61,7 @@ class BattleGame extends FlameGame {
   late final List<ShipView> _ships;
   late final ShotView _shot;
   late final FxLayer _fx;
+  late final BattleCues _cues;
   double _pinchStart = 1;
 
   /// 사람이 보는 진영(AI 전은 0, 핫시트는 지금 턴 진영).
@@ -87,6 +95,7 @@ class BattleGame extends FlameGame {
       session: session,
       sprites: sprites,
       weapons: weapons,
+      rarity: anims.rarity,
       priority: 20,
     );
     _fx = FxLayer(
@@ -109,9 +118,33 @@ class BattleGame extends FlameGame {
         priority: 10,
       ),
       _shot,
+      EffectBadges(session: session, weapons: weapons, priority: 25)
+        ..turnsText = (turns) => turnsText(turns),
       _fx,
     ]);
+    _cues = BattleCues(
+      session: session,
+      ships: _ships,
+      fx: _fx,
+      director: director,
+      rarity: anims.rarity,
+      weapons: weapons,
+      playSfx: playSfx,
+      damageText: (amount) => damageText(amount),
+      tagText: (tag) => tagText(tag),
+    );
     overview.addListener(() => director.overview = overview.value);
+    // 저사양 모드에서는 등급 고리의 입자와 외곽 빛을 줄인다 (설계서 §12).
+    void applyLowEnd() {
+      for (final ship in _ships) {
+        for (final rig in ship.rigs) {
+          rig.fewer = lowEnd.value;
+        }
+      }
+    }
+
+    lowEnd.addListener(applyLowEnd);
+    applyLowEnd();
   }
 
   @override
@@ -122,9 +155,11 @@ class BattleGame extends FlameGame {
       stats.record(e);
       if (e.kind == SimEventKind.turnEnd) onTurnEnd?.call(e);
     }
-    _dispatch(cues);
-    _updateCamera(dt);
-    super.update(dt);
+    _cues.dispatch(cues);
+    // 명중 순간 0.07초는 연출만 멈춘다. 시뮬레이션은 위에서 이미 진행했다 (§10.4).
+    final visual = _cues.stop.visualDt(dt);
+    _updateCamera(visual);
+    super.update(visual);
   }
 
   /// 수면 높이(월드 px): 두 배의 파도 위아래 사이를 잇는다. 배와 물이 함께 오르내린다.
@@ -169,87 +204,13 @@ class BattleGame extends FlameGame {
             shake * ((session.turnMs ~/ 16).isEven ? 1 : -1),
             shake * 0.5,
           )
-      ..zoom = size.x / director.width;
-  }
-
-  Vector2 _cellWorld(int side, int cell) {
-    final s = session.state.sides[side];
-    final (x, y) = s.frame.cellCenter(
-      cell % s.grid.width,
-      cell ~/ s.grid.width,
-    );
-    return Coords.point(x, y);
+      ..zoom = size.x / (director.width * director.punchScale);
   }
 
   /// 효과음. 설정에서 끄면 내지 않는다 (설계서 §13.8).
   @visibleForTesting
   void playSfx(Sfx sfx, {double volume = 1}) {
     if (soundOn.value) sound.play(sfx, volume: volume);
-  }
-
-  void _dispatch(List<SimEvent> cues) {
-    var woodPlayed = false;
-    for (final e in cues) {
-      switch (e.kind) {
-        case SimEventKind.fire:
-          _ships[e.side].playAttack(e.slot);
-          playSfx(Sfx.cannon);
-        case SimEventKind.impact:
-          final at = Coords.point(e.x, e.y);
-          _fx.explosion(at);
-          director.impact(at);
-          playSfx(
-            _ships[e.side].isIron(e.cell) ? Sfx.clang : Sfx.cannon,
-            volume: 0.8,
-          );
-        case SimEventKind.splash:
-          final at = Coords.point(e.x, 0);
-          _fx.splash(at);
-          director.impact(at);
-          playSfx(Sfx.splash);
-        case SimEventKind.blockDestroyed:
-          _fx.blockBroken(_cellWorld(e.side, e.cell));
-          if (!woodPlayed) playSfx(Sfx.wood);
-          woodPlayed = true;
-        case SimEventKind.blockCollapsed:
-          _fx.collapsed(_cellWorld(e.side, e.cell));
-        case SimEventKind.move:
-          // 한계선에 닿으면 물살이 튄다 (설계서 §2.6).
-          final side = session.state.sides[e.side];
-          final (lo, hi) = moveLimits(session.state.rules, session.state.turn);
-          if (side.offset == lo || side.offset == hi) {
-            _fx.splash(Coords.point(e.x, 0));
-          }
-        case SimEventKind.bounce:
-          _fx.splash(Coords.point(e.x, 0));
-          playSfx(Sfx.splash, volume: 0.6);
-        case SimEventKind.pirateHit:
-          _ships[e.side].playHit(e.slot);
-          final rig = e.slot >= 0 && e.slot < _ships[e.side].rigs.length
-              ? _ships[e.side].rigs[e.slot]
-              : null;
-          if (rig != null) {
-            _fx.damageNumber(
-              rig.absolutePosition - Vector2(0, 40),
-              damageText(e.value),
-            );
-          }
-        case SimEventKind.turnStart ||
-            SimEventKind.turnEnd ||
-            SimEventKind.pirateFell ||
-            SimEventKind.pirateReturned ||
-            SimEventKind.pirateDown ||
-            SimEventKind.flood ||
-            SimEventKind.stormStart ||
-            // 분열·설치·수리·턴 효과·모듈 파괴 연출은 M5 앱 단계에서 붙인다.
-            SimEventKind.divide ||
-            SimEventKind.mineAttached ||
-            SimEventKind.repaired ||
-            SimEventKind.effectFired ||
-            SimEventKind.moduleDestroyed:
-          break;
-      }
-    }
   }
 
   /// 핀치 줌 시작·진행 (설계서 §2.1). 화면이 제스처를 넘긴다.
@@ -268,8 +229,10 @@ class BattleGame extends FlameGame {
     int? best;
     var bestDist = 30.0 * 30.0;
     for (var slot = 0; slot < ship.rigs.length; slot++) {
-      // 발 위치에서 몸 가운데(약 0.8칸 위)를 잡는다.
-      final body = ship.rigs[slot].absolutePosition - Vector2(0, 26);
+      // 발 위치에서 몸 가운데(키의 절반 위)를 잡는다.
+      final body =
+          ship.rigs[slot].absolutePosition -
+          Vector2(0, Coords.pirateHeight / 2);
       final d = body.distanceToSquared(world);
       if (d < bestDist) {
         bestDist = d;

@@ -1,0 +1,211 @@
+{
+  "id": "lamp",
+  "team": "red",
+  "scale": 2,
+  "expressions": {
+    "aim": [
+      {
+        "id": "head",
+        "file": "aim_head.png",
+        "offset": [
+          113,
+          148
+        ],
+        "size": [
+          267,
+          406
+        ],
+        "pivot": [
+          127.0,
+          280.0
+        ]
+      },
+      {
+        "id": "eyes",
+        "file": "aim_eyes.png",
+        "offset": [
+          175,
+          336
+        ],
+        "size": [
+          134,
+          52
+        ],
+        "pivot": [
+          65.0,
+          28.0
+        ]
+      }
+    ],
+    "attack": [
+      {
+        "id": "head",
+        "file": "attack_head.png",
+        "offset": [
+          113,
+          148
+        ],
+        "size": [
+          267,
+          406
+        ],
+        "pivot": [
+          127.0,
+          280.0
+        ]
+      },
+      {
+        "id": "eyes",
+        "file": "attack_eyes.png",
+        "offset": [
+          175,
+          303
+        ],
+        "size": [
+          166,
+          85
+        ],
+        "pivot": [
+          65.0,
+          61.0
+        ]
+      }
+    ],
+    "default": [
+      {
+        "id": "head",
+        "file": "default_head.png",
+        "offset": [
+          113,
+          148
+        ],
+        "size": [
+          267,
+          406
+        ],
+        "pivot": [
+          127.0,
+          280.0
+        ]
+      },
+      {
+        "id": "eyes",
+        "file": "default_eyes.png",
+        "offset": [
+          175,
+          336
+        ],
+        "size": [
+          134,
+          52
+        ],
+        "pivot": [
+          65.0,
+          28.0
+        ]
+      }
+    ],
+    "hit": [
+      {
+        "id": "head",
+        "file": "hit_head.png",
+        "offset": [
+          113,
+          148
+        ],
+        "size": [
+          267,
+          406
+        ],
+        "pivot": [
+          127.0,
+          280.0
+        ]
+      },
+      {
+        "id": "eyes",
+        "file": "hit_eyes.png",
+        "offset": [
+          181,
+          312
+        ],
+        "size": [
+          153,
+          68
+        ],
+        "pivot": [
+          59.0,
+          52.0
+        ]
+      }
+    ],
+    "lose": [
+      {
+        "id": "head",
+        "file": "lose_head.png",
+        "offset": [
+          113,
+          148
+        ],
+        "size": [
+          267,
+          406
+        ],
+        "pivot": [
+          127.0,
+          280.0
+        ]
+      },
+      {
+        "id": "eyes",
+        "file": "lose_eyes.png",
+        "offset": [
+          175,
+          336
+        ],
+        "size": [
+          134,
+          73
+        ],
+        "pivot": [
+          65.0,
+          28.0
+        ]
+      }
+    ],
+    "win": [
+      {
+        "id": "head",
+        "file": "win_head.png",
+        "offset": [
+          113,
+          148
+        ],
+        "size": [
+          267,
+          406
+        ],
+        "pivot": [
+          127.0,
+          280.0
+        ]
+      },
+      {
+        "id": "eyes",
+        "file": "win_eyes.png",
+        "offset": [
+          179,
+          310
+        ],
+        "size": [
+          166,
+          63
+        ],
+        "pivot": [
+          61.0,
+          54.0
+        ]
+      }
+    ]
+  }
+}
