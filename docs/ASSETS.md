@@ -127,9 +127,40 @@ dart run tool/import_assets.dart --merge art/pb_v0.24_main
 - 앱은 예시 PNG 를 넣지 않고 규칙을 코드로 그린다(`app/lib/game/view/damage_*.dart`, A15). 색은 `damage_style.dart` 에 옮겨 두었다.
 - `fx/impact/scorch.png` 는 A15 부터 쓰지 않는다(그을음은 코드로 그림). 폴더째 가져오므로 다음 가져오기 정리 때 뺀다.
 
+## 음원 (A19, CC0)
+
+설계서 §10.3(ADR-071): CC0 녹음·샘플 음원을 먼저 쓰고, 불러오지 못한 소리만 아래 「소리」 절의 코드 합성음으로 대신한다. 파일은 `app/assets/audio/` 한 폴더에 있다(`sfx_<소리>_<번호>.ogg`, `music_<곡>.ogg`). 목록은 `app/lib/audio/sound_library.dart` `AudioAssets`, 재생은 `SoloudSoundService`(변형을 돌아가며 쓰고 재생 속도를 ±6% 흔든다, 승리·패배 악구는 흔들지 않음). 모두 CC0 이라 표기 의무는 없지만 출처를 남긴다(절대 규칙 8). Kenney 팩의 라이선스 원문은 `app/assets/audio/LICENSE_kenney_*.txt`.
+
+| 출처 (모두 CC0 1.0) | 원작자 | 받은 곳 |
+| --- | --- | --- |
+| Impact Sounds 1.0 | Kenney (kenney.nl) | https://kenney.nl/assets/impact-sounds |
+| Interface Sounds 1.0 | Kenney | https://kenney.nl/assets/interface-sounds |
+| Music Jingles | Kenney | https://kenney.nl/assets/music-jingles |
+| 25 CC0 bang / firework SFX | rubberduck | https://opengameart.org/content/25-cc0-bang-firework-sfx |
+| 40 CC0 water / splash / slime SFX | rubberduck | https://opengameart.org/content/40-cc0-water-splash-slime-sfx |
+| Pirate Game Tune (`pirate1uf.ogg`, 2015) | Tozan | https://opengameart.org/content/pirate-game-tune |
+| OPL2 - Unknown - Drunken Sailor (루프) | TheOuterLinux | https://opengameart.org/content/opl2-unkown-drunken-sailor |
+
+| 소리 (`Sfx`) | 앱 파일 | 원본 파일 |
+| --- | --- | --- |
+| 포성 `cannon` | `sfx_cannon_1.ogg` `sfx_cannon_2.ogg` `sfx_cannon_3.ogg` | 25 bang: `cannon_01` `cannon_03` `cannon_04` |
+| 나무 부서짐 `wood` | `sfx_wood_1.ogg` `sfx_wood_2.ogg` `sfx_wood_3.ogg` | Impact: `impactPlank_medium_000` `impactWood_heavy_000` `impactPlank_medium_002` |
+| 물보라 `splash` | `sfx_splash_1.ogg` `sfx_splash_2.ogg` `sfx_splash_3.ogg` | water: `splash_02` `splash_03` `splash_06` |
+| 철판 튕김 `clang` | `sfx_clang_1.ogg` `sfx_clang_2.ogg` `sfx_clang_3.ogg` | Impact: `impactMetal_heavy_000` `001` `002` |
+| 유폭 `boom` | `sfx_boom_1.ogg` `sfx_boom_2.ogg` `sfx_boom_3.ogg` | 25 bang: `bang_04` `bang_05` `cannon_02` |
+| 격침 `sink` | `sfx_sink_1.ogg` `sfx_sink_2.ogg` | water: `splash_01` `splash_07` |
+| 승리 악구 `win` | `sfx_win_1.ogg` `sfx_win_2.ogg` `sfx_win_3.ogg` | Jingles: `jingles_STEEL02` `STEEL15` `STEEL10` (음이 올라가는 스틸드럼) |
+| 패배 악구 `lose` | `sfx_lose_1.ogg` `sfx_lose_2.ogg` `sfx_lose_3.ogg` | Jingles: `jingles_STEEL14` `STEEL07` `STEEL16` (음이 내려가는 스틸드럼) |
+| 버튼 누름 `click` | `sfx_click_1.ogg` `sfx_click_2.ogg` `sfx_click_3.ogg` | Interface: `click_001` `select_001` `select_002` |
+
+| 곡 (`Music`) | 앱 파일 | 원본 |
+| --- | --- | --- |
+| 항구 `port` | `music_port.ogg` (78초, 1.5MB) | Pirate Game Tune |
+| 전투 `battle` | `music_battle.ogg` (19초 루프, 0.4MB) | OPL2 Drunken Sailor. 폭풍 타임에는 1.2배 |
+
 ## 소리 (설계서 §10.3, A13, ADR-068)
 
-소리 파일은 없다. 효과음과 배경음악을 모두 `app/lib/audio/pcm_synth.dart` 로 코드 합성한다. 만든 소리는 프로젝트 저작물이라 CC0 으로 둔다.
+효과음과 배경음악의 코드 합성판이다. A19 부터는 위 「음원」 절의 파일을 못 읽을 때만 쓴다. `app/lib/audio/pcm_synth.dart` 로 합성한다. 만든 소리는 프로젝트 저작물이라 CC0 으로 둔다.
 
 | 곡 | 선율 출처 | 쓰는 곳 |
 | --- | --- | --- |

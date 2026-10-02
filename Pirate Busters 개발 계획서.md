@@ -787,9 +787,9 @@ M7                                                ████████
 
 **선행:** A13(합성음). 진단에서 음원 파일이 하나도 없고 모든 소리가 합성음이라 크게 뒤진다고 나왔다. 설계서 §10.3 을 CC0 음원 우선으로 고쳤다(사용자 승인, ADR-068 의 음원 결정을 바꾼다).
 
-- [ ] CC0 효과음(§10.3 목록)과 항구·전투 배경음악을 고르고 출처·라이선스를 `docs/ASSETS.md` 에 적는다(절대 규칙 8)
-- [ ] 소리마다 변형 2~3개를 돌리고 높이를 조금씩 흔든다. 불러오기 실패 시 합성음으로 대신한다
-- [ ] 테스트: 변형 순환, 실패 시 대체, 음악 끄기
+- [x] CC0 효과음(§10.3 목록)과 항구·전투 배경음악을 고르고 출처·라이선스를 `docs/ASSETS.md` 에 적는다(절대 규칙 8) — 했다: 효과음 9종 26개(Kenney Impact·Interface·Music Jingles, OpenGameArt rubberduck), 항구 Tozan "Pirate Game Tune", 전투 TheOuterLinux "OPL2 Drunken Sailor"(루프). 모두 출처 페이지에서 CC0 확인, `app/assets/audio/`(2.6MB), docs/ASSETS.md 「음원 (A19, CC0)」
+- [x] 소리마다 변형 2~3개를 돌리고 높이를 조금씩 흔든다. 불러오기 실패 시 합성음으로 대신한다 — 했다: `sound_library.dart`(AudioAssets·SoundLibrary·VariantPicker, 재생 속도 ±6%, 승리·패배 악구는 그대로), `SoloudSoundService.loadClips`·`loadMusicClips`
+- [x] 테스트: 변형 순환, 실패 시 대체, 음악 끄기 — 했다: `sound_library_test`(5)
 
 **완료 조건:** 모든 효과음·배경음악이 CC0 음원으로 나고 출처가 적혀 있다. verify 통과.
 
