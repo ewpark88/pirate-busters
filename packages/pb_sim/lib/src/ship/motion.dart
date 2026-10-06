@@ -80,7 +80,7 @@ MoveResult applyMove(
   final speed = moveSpeedOf(side);
   side
     ..offset += signed
-    ..fuel -= dist * side.fuelPerCell ~/ cellUnit;
+    ..fuel -= fuelFor(side, dist);
   // 한계선 앞 감속 구간은 절반 속도: 그 구간을 지난 거리만큼 시간을 한 번 더 센다.
   final (lo, hi) = moveLimits(rules, turn);
   final limit = signed > 0 ? hi : lo;
@@ -94,6 +94,11 @@ MoveResult applyMove(
   final ms = ((dist + inZone) * 1000 + speed - 1) ~/ speed;
   return MoveResult(signed, ms);
 }
+
+/// [side] 배가 [dist](1/1000칸)를 갈 때 쓰는 연료(×[SideState.fuelUnit], 설계서 §2.7).
+/// 이동 버튼의 남을 연료 미리보기도 이 값을 쓴다.
+int fuelFor(SideState side, int dist) =>
+    dist.abs() * side.fuelPerCell ~/ cellUnit;
 
 /// 연료를 [amount] 채운다(탱크 상한까지).
 void refuel(SideState side, int amount) {

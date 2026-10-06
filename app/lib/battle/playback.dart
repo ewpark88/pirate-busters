@@ -20,7 +20,8 @@ sealed class Playback {
 
 /// 탄 비행. 여러 발(분열 조각·연사·다중투하)도 시뮬레이션이 남긴 경로
 /// ([MatchState.lastTraces])를 그대로 그리고, 착탄·파괴·피격 이벤트는 각자의 틱에
-/// 낸다. 첫 착탄 전까지는 [before] 격자 스냅숏을 그린다.
+/// 낸다. 배는 [live] 를 그린다: [before] 에서 시작해 이벤트가 나올 때마다 그 칸의
+/// 피해를 더하므로, 탄이 닿기 전에는 그대로이고 탄마다 차례로 부서진다 (A33).
 ///
 /// 분열탄은 계산을 미룬 채 날아가며 탭을 기다린다([awaitingTap]). 이때 경로는 앱이
 /// 같은 계산으로 예측한 한 발이고, 탭하거나 착탄 틱이 되면 세션이 `TAP` 을 내고
@@ -37,6 +38,7 @@ class ShotPlayback extends Playback {
     required List<(int, SimEvent)> timed,
     int breakMs = 0,
   }) : flightMs = roundDiv(lastTick * 1000, simTickHz),
+       live = [for (final g in before) GridSnapshot.copy(g)],
        _timed = timed,
        super(roundDiv(lastTick * 1000, simTickHz) + breakMs) {
     for (final (tick, e) in timed) {
@@ -146,6 +148,9 @@ class ShotPlayback extends Playback {
   /// 쏘기 전 양쪽 격자(재질, 내구도). 첫 착탄 전까지 이 모습으로 그린다.
   final List<GridSnapshot> before;
 
+  /// 지금까지 나온 이벤트만큼 피해를 더한 양쪽 격자. 화면은 이것을 그린다.
+  final List<GridSnapshot> live;
+
   final List<(int, SimEvent)> _timed;
   int _released = 0;
   int? _landTick;
@@ -163,7 +168,9 @@ class ShotPlayback extends Playback {
   List<SimEvent> takeDue({bool all = false}) {
     final out = <SimEvent>[];
     while (_released < _timed.length && (all || _timed[_released].$1 <= tick)) {
-      out.add(_timed[_released++].$2);
+      final e = _timed[_released++].$2;
+      if (e.side >= 0 && e.side < live.length) live[e.side].apply(e);
+      out.add(e);
     }
     return out;
   }
@@ -192,6 +199,29 @@ class GridSnapshot {
     : materials = List.of(grid.rawMaterials),
       hp = List.of(grid.rawHp);
 
+  GridSnapshot.copy(GridSnapshot other)
+    : materials = List.of(other.materials),
+      hp = List.of(other.hp);
+
   final List<int> materials;
   final List<int> hp;
+
+  /// 내구도 합계 (선체 막대, 설계서 §13.4).
+  int get totalHp => hp.fold(0, (a, b) => a + b);
+
+  /// 시뮬레이션 이벤트 [e] 가 이 격자에 남긴 변화를 더한다 (A33). 칸 피해·파괴·
+  /// 붕괴·수리만 본다.
+  void apply(SimEvent e) {
+    final i = e.cell;
+    if (i < 0 || i >= hp.length) return;
+    switch (e.kind) {
+      case SimEventKind.blockHit || SimEventKind.repaired:
+        hp[i] = e.y;
+      case SimEventKind.blockDestroyed || SimEventKind.blockCollapsed:
+        hp[i] = 0;
+        materials[i] = ShipGrid.emptyCell;
+      case _:
+        break;
+    }
+  }
 }

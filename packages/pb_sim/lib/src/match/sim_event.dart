@@ -53,7 +53,8 @@ enum SimEventKind {
   /// 설치탄이 배에 붙음. [SimEvent.cell] = 붙은 칸, [SimEvent.side] = 붙은 배.
   mineAttached,
 
-  /// 수리됨. [SimEvent.cell] = 칸, [SimEvent.side] = 고친 배.
+  /// 수리됨. [SimEvent.cell] = 칸, [SimEvent.side] = 고친 배, [SimEvent.y] = 고친 뒤
+  /// 내구도.
   repaired,
 
   /// 예약된 턴 효과가 터짐(설치탄 폭발·투하·다시 물기). [SimEvent.value] = 효과 종류.
@@ -101,6 +102,11 @@ enum SimEventKind {
 
   /// 해적이 치유됐다(쿡). [SimEvent.slot], [SimEvent.value] = 회복량.
   healed,
+
+  /// 블록이 피해를 입었다(부서진 경우도). [SimEvent.cell] = 칸, [SimEvent.side] = 맞은
+  /// 배, [SimEvent.value] = 깎인 내구도, [SimEvent.y] = 남은 내구도(부서지면 0).
+  /// 화면이 착탄 순간에 맞춰 내구도를 줄이는 데 쓴다 (A33).
+  blockHit,
 }
 
 /// 턴이 끝난 이유. 순서는 이벤트 값으로 쓰인다.

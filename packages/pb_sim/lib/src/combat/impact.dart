@@ -1,3 +1,4 @@
+import 'package:pb_sim/src/combat/block_damage.dart';
 import 'package:pb_sim/src/combat/crack_spread.dart';
 import 'package:pb_sim/src/combat/module_effects.dart';
 import 'package:pb_sim/src/match/match_state.dart';
@@ -52,9 +53,7 @@ void resolveImpact(
     if (dmg <= 0 || !grid.inBounds(bx, by)) return;
     final i = grid.indexOf(bx, by);
     if (grid.hasBlock(bx, by) && !hitCells.contains(i)) hitCells.add(i);
-    if (grid.damage(bx, by, dmg)) {
-      events.add(SimEvent(SimEventKind.blockDestroyed, side: side, cell: i));
-    }
+    damageBlock(grid, side, bx, by, dmg, events);
   }
 
   final damage = spec.blockDamage * blockPercent ~/ 100;

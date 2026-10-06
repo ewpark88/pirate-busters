@@ -280,6 +280,7 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
               hint: _hint(AppLocalizations.of(context)),
               settled: settled,
               onClick: () => _game.playSfx(Sfx.click),
+              calm: _game.calmShake.value,
             ),
           ),
         ),

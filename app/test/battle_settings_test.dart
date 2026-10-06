@@ -23,6 +23,7 @@ import 'package:pirate_busters/game/view/sea_view.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
 import 'package:pirate_busters/settings/language.dart';
 import 'package:pirate_busters/settings/settings_store.dart';
+import 'package:pirate_busters/ui/hud/hud_gauge.dart';
 import 'package:pirate_busters/ui/hud/move_controls.dart';
 
 import 'test_catalog.dart';
@@ -105,9 +106,7 @@ void main() {
         ),
       );
       await tester.pump();
-      return tester
-          .widget<LinearProgressIndicator>(find.byType(LinearProgressIndicator))
-          .value;
+      return tester.widget<HudGauge>(find.byType(HudGauge)).value;
     }
 
     // 연료가 탱크를 넘는 상태(연료통이 부서지기 직전 등)에서도 게이지는 가득 찬 것으로.

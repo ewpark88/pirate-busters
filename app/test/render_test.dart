@@ -194,6 +194,29 @@ void main() {
       expect(pulled, greaterThan(w));
     });
 
+    test('고른 해적을 당겨 줌아웃해도 해적 발은 화면에서 같은 자리에 머문다 (A33)', () {
+      for (final facing in [1, -1]) {
+        final feet = Vector2(-500.0 * facing, -64);
+        final c = CameraDirector()..focusFeet = feet;
+        (double, double) screen(double stretch) {
+          final (center, w) = c.target(
+            myX: -600.0 * facing,
+            enemyX: 600.0 * facing,
+            facing: facing,
+            aimStretch: stretch,
+          );
+          return ((feet.x - center.x) / w, (feet.y - center.y) / w);
+        }
+
+        final (x0, y0) = screen(0);
+        for (final s in [0.3, 0.7, 1.0]) {
+          final (x, y) = screen(s);
+          expect(x, closeTo(x0, 1e-6));
+          expect(y, closeTo(y0, 1e-6));
+        }
+      }
+    });
+
     test('착탄 지점을 1.3초 보여준 뒤 돌아간다', () {
       final c = CameraDirector()..impact(Vector2(300, -40));
       final (a, _) = c.target(myX: 0, enemyX: 900, facing: 1);

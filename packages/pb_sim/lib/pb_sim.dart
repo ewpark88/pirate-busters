@@ -5,9 +5,10 @@
 /// (`tool/check_architecture.dart` 가 검사한다).
 library;
 
-export 'src/combat/ammo_rules.dart' show flockDropHeight;
+export 'src/combat/ammo_rules.dart' show armShot, flockDropHeight, steerHoming;
 export 'src/combat/crack_spread.dart';
 export 'src/combat/flight.dart' show predictFirstHit;
+export 'src/combat/hit_effects.dart' show Reach, reachOf;
 export 'src/combat/impact.dart';
 export 'src/combat/launch.dart';
 export 'src/combat/preview.dart';

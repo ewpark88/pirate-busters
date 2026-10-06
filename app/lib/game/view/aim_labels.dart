@@ -6,14 +6,15 @@ import 'package:pirate_busters/app/app_theme.dart';
 import 'package:pirate_busters/game/view/aim_painter.dart';
 
 /// 조준 숫자 (설계서 §10.4 ‘각도 숫자와 힘(%)을 함께 보여준다’): 발사 지점
-/// 아래 한 줄에 각도·힘 알약을 나란히. 글자는 화면이 l10n 으로 만들어 넘긴다(§14.2).
+/// 뒤쪽 위 한 줄에 각도·힘 알약을 나란히. 당기는 엄지(뒤쪽 아래)와 점선(앞쪽 위)
+/// 어느 쪽에도 가리지 않는다 (A33). 글자는 화면이 l10n 으로 만들어 넘긴다(§14.2).
 abstract final class AimLabels {
   static final TextPaint _text = TextPaint(
     style: const TextStyle(
       // Black Han Sans 에는 ‘°’ 가 없어 본문 글꼴 굵게 쓴다.
       fontFamily: AppFonts.body,
       fontWeight: FontWeight.w700,
-      fontSize: 9,
+      fontSize: 10,
       color: Color(0xFFFFFFFF),
       shadows: [
         Shadow(color: AimPainter.outline, blurRadius: 2),
@@ -28,16 +29,24 @@ abstract final class AimLabels {
     ..strokeWidth = 1
     ..color = const Color(0xFFC9962E);
 
-  /// 숫자 줄 가운데: 발사 지점 아래 32px. 각도 알약과 힘 알약이 이 줄에 나란히
-  /// 놓여 힘 링·점선과 겹치지 않는다.
-  static Offset powerAt(Offset from) => from + const Offset(0, 32);
+  /// 숫자 줄 가운데: 발사 지점에서 뒤로 [back]px, 위로 [up]px. [facing] 은 쏘는 배가
+  /// 보는 방향. 힘 링 바깥이라 링·점선과 겹치지 않는다.
+  static Offset powerAt(Offset from, int facing) =>
+      from + Offset(-facing * back, -up);
+  static const double back = 30;
+  static const double up = 34;
 
   /// 알약 사이 틈(px).
   static const double gap = 3;
 
   /// 가로 [wa]·[wp] 인 각도·힘 알약의 가운데: 줄 가운데에 둘을 붙여 놓는다.
-  static (Offset, Offset) rowAt(Offset from, double wa, double wp) {
-    final mid = powerAt(from);
+  static (Offset, Offset) rowAt(
+    Offset from,
+    double wa,
+    double wp, {
+    int facing = 1,
+  }) {
+    final mid = powerAt(from, facing);
     final left = mid.dx - (wa + gap + wp) / 2;
     return (
       Offset(left + wa / 2, mid.dy),
@@ -50,8 +59,14 @@ abstract final class AimLabels {
     Offset from, {
     required String angle,
     required String power,
+    int facing = 1,
   }) {
-    final (a, p) = rowAt(from, _width(angle), _width(power));
+    final (a, p) = rowAt(
+      from,
+      _width(angle),
+      _width(power),
+      facing: facing,
+    );
     _pillText(c, a, angle);
     _pillText(c, p, power);
   }

@@ -734,5 +734,21 @@
   },
   "shipGrowReady": "You can grow your ship! Visit the shipyard",
   "devStagePick": "Pick stage (dev)",
-  "ok": "OK"
+  "ok": "OK",
+  "hullPercent": "Hull {percent}%",
+  "@hullPercent": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "fuelPercent": "{percent}%",
+  "@fuelPercent": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  }
 }

@@ -96,6 +96,8 @@ class BattleCues {
     emote(cues, weight);
     var jolted = false;
     Vector2? hitAt;
+    // 착탄마다 블록 피해를 모아 숫자 하나로 띄운다 (§10.4, A33).
+    var hull = 0;
     final collapsed = <int, List<int>>{};
     void joltOnce(double scale) {
       if (jolted) return;
@@ -117,6 +119,11 @@ class BattleCues {
           director.impact(Coords.point(e.x, e.y));
         case SimEventKind.impact:
           final at = Coords.point(e.x, e.y);
+          // 첫 착탄 전 피해(그물·돛 통과)는 이 착탄 숫자에 합친다.
+          if (hitAt != null) {
+            hullNumber(hitAt, hull, weight);
+            hull = 0;
+          }
           hitAt = at;
           // 맞은 배는 쏜 쪽 반대로 밀린다.
           final push = facingOf(1 - e.side);
@@ -138,7 +145,6 @@ class BattleCues {
           }
           director.impact(at, punch: weight.punch);
           ships[e.side].rock(push);
-          flashCell(e);
           joltOnce(FxLayer.familyJolt(spec?.family) * tier.shake);
           for (final (sfx, volume) in impactLayers(
             weight,
@@ -163,6 +169,10 @@ class BattleCues {
           );
           if (!woodPlayed) playSfx(Sfx.wood);
           woodPlayed = true;
+        case SimEventKind.blockHit:
+          // 턴 끝 화재처럼 착탄 없이 깎인 칸은 번쩍이지 않는다(불 연출이 따로 있다).
+          if (hitAt != null || spec != null) flashCell(e);
+          hull += e.value;
         case SimEventKind.blockCollapsed:
           // 끊긴 칸은 묶음이 끝난 뒤 덩어리로 묶어 떨어뜨린다 (§10.4, A32).
           (collapsed[e.side] ??= []).add(e.cell);
@@ -252,6 +262,7 @@ class BattleCues {
           playSfx(Sfx.ko);
       }
     }
+    hullNumber(hitAt, hull, weight);
     for (final MapEntry(key: side, value: cells) in collapsed.entries) {
       fx.collapseCells(
         cells,

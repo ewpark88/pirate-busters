@@ -28,8 +28,12 @@ class BattleHud extends StatelessWidget {
     this.hint,
     this.settled = true,
     this.onClick,
+    this.calm = false,
     super.key,
   });
+
+  /// 화면 흔들림 줄이기 (설계서 §13.8): 게이지 흔들림·번쩍임을 뺀다.
+  final bool calm;
 
   /// 버튼 누름 소리 (설계서 §10.3). 화면이 효과음 설정을 따라 낸다.
   final VoidCallback? onClick;
@@ -108,7 +112,7 @@ class BattleHud extends StatelessWidget {
                       duration: const Duration(milliseconds: 220),
                       child: Column(
                         children: [
-                          TopBar(session: session),
+                          TopBar(session: session, calm: calm),
                           const SizedBox(height: 4),
                           GapBar(state: session.state, overview: overview),
                         ],

@@ -64,6 +64,10 @@ class CameraDirector {
   static const double focusWidth = 440;
   static final Vector2 focusOffset = Vector2(50, -10);
 
+  /// 고른 해적을 끝까지 당겼을 때 화면 폭 증가 비율. 해적 자리를 고정한 채 앞을
+  /// 예전(폭 +80%, 가운데 +200px)과 비슷하게 보이도록 넓힌다 (A33).
+  static const double aimFocusZoom = 1.1;
+
   Vector2? _impact;
   double _impactLeft = 0;
 
@@ -152,14 +156,15 @@ class CameraDirector {
     }
     final feet = focusFeet;
     if (feet != null) {
-      // 당기는 만큼 이 폭에서 줌아웃하고 앞(상대 쪽)을 더 보여준다.
-      final fw = focusWidth * (1 + 0.8 * aimStretch);
+      // 당기는 만큼 줌아웃해 앞(상대 쪽)을 더 보여준다. 해적 발을 기준점으로 늘려
+      // 해적이 화면에서 같은 자리에 머문다: 당기는 손가락 밑에서 미끄러지지 않는다 (A33).
+      final k = 1 + aimFocusZoom * aimStretch;
       return (
         Vector2(
-          feet.x + facing * (focusOffset.x + 200 * aimStretch),
-          feet.y + focusOffset.y,
+          feet.x + facing * focusOffset.x * k,
+          feet.y + focusOffset.y * k,
         ),
-        fw,
+        focusWidth * k,
       );
     }
     final w = (baseWidth * (1 + 0.6 * aimStretch) / userZoom).clamp(

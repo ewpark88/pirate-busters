@@ -7,6 +7,8 @@ import 'package:pb_sim/pb_sim.dart';
 import 'package:pirate_busters/audio/sound_service.dart';
 import 'package:pirate_busters/game/battle_cues.dart';
 import 'package:pirate_busters/game/coords.dart';
+import 'package:pirate_busters/game/view/fx_text.dart';
+import 'package:pirate_busters/game/view/hit_weight.dart';
 import 'package:pirate_busters/game/view/water_fx.dart';
 
 /// 해적 반응 연출 (설계서 §10.4, A32): 바다 추락과 쓰러짐. 판정은 끝났다.
@@ -25,11 +27,10 @@ extension CrewCues on BattleCues {
     });
   }
 
-  /// 맞은 칸이 아직 남아 있으면 0.1초 하얗게 번쩍인다 (설계서 §10.4 명중, A32).
+  /// 맞은 칸이 0.1초 하얗게 번쩍인다 (설계서 §10.4 명중, A32). 이번에 부서진 칸도
+  /// 번쩍인다: `blockHit` 마다 부른다 (A33).
   void flashCell(SimEvent e) {
-    final s = session.state.sides[e.side];
-    final w = s.grid.width;
-    if (e.cell < 0 || !s.grid.hasBlock(e.cell % w, e.cell ~/ w)) return;
+    if (e.cell < 0) return;
     fx.spawn(
       RectangleComponent(
         position: cellWorld(e.side, e.cell),
@@ -43,6 +44,17 @@ extension CrewCues on BattleCues {
           RemoveEffect(delay: .1),
         ],
       ),
+    );
+  }
+
+  /// 한 착탄의 선체 피해 합 [amount] 를 맞은 곳 [at] 위에 띄운다 (설계서 §10.4 피해
+  /// 숫자, A33). 해적 숫자보다 조금 위에서 시작한다.
+  void hullNumber(Vector2? at, int amount, HitWeight weight) {
+    if (at == null || amount <= 0) return;
+    fx.damageNumber(
+      at - Vector2(0, Coords.cell),
+      damageText(amount),
+      style: DamageStyle.of(weight),
     );
   }
 
