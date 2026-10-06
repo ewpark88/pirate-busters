@@ -76,6 +76,9 @@ class BattleHud extends StatelessWidget {
   /// 연출 중 위쪽 정보의 진하기.
   static const double busyOpacity = 0.25;
 
+  /// 흐려지고 돌아오는 시간.
+  static const Duration fade = Duration(milliseconds: 220);
+
   bool get _awaitingTap {
     final p = session.playback;
     return p is ShotPlayback &&
@@ -106,17 +109,24 @@ class BattleHud extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Expanded(
-                    child: AnimatedOpacity(
-                      key: const ValueKey('hud-top'),
-                      opacity: _busy ? busyOpacity : 1,
-                      duration: const Duration(milliseconds: 220),
-                      child: Column(
-                        children: [
-                          TopBar(session: session, calm: calm),
-                          const SizedBox(height: 4),
-                          GapBar(state: session.state, overview: overview),
-                        ],
-                      ),
+                    // 선체 막대는 피해 순간 잠깐 또렷해진다 (§13.4, TopBar).
+                    child: Column(
+                      children: [
+                        TopBar(
+                          session: session,
+                          calm: calm,
+                          opacity: _busy ? busyOpacity : 1,
+                        ),
+                        const SizedBox(height: 4),
+                        AnimatedOpacity(
+                          opacity: _busy ? busyOpacity : 1,
+                          duration: fade,
+                          child: GapBar(
+                            state: session.state,
+                            overview: overview,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                   const SizedBox(width: 6),

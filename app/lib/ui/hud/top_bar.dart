@@ -3,25 +3,41 @@ import 'package:pb_sim/pb_sim.dart';
 import 'package:pirate_busters/battle/battle_session.dart';
 import 'package:pirate_busters/battle/session_views.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
+import 'package:pirate_busters/ui/hud/hit_clear.dart';
 import 'package:pirate_busters/ui/hud/hud_style.dart';
 import 'package:pirate_busters/ui/hud/side_status.dart';
 import 'package:pirate_busters/ui/meta_icons.dart';
 
 /// 위 가운데: 남은 턴, 누구 턴, 턴 타이머, 바람 / 위 양쪽: 선체·침수·선원 (설계서 §13.4).
 class TopBar extends StatelessWidget {
-  const TopBar({required this.session, this.calm = false, super.key});
+  const TopBar({
+    required this.session,
+    this.calm = false,
+    this.opacity = 1,
+    super.key,
+  });
 
   final BattleSession session;
+
+  /// 연출 중 진하기 (§13.4). 선체 패널은 피해 순간 잠깐 1 로 돌아온다.
+  final double opacity;
 
   /// 화면 흔들림 줄이기 (설계서 §13.8).
   final bool calm;
 
-  Widget _side(int side) => ShipStatusPanel(
-    side: session.state.sides[side],
-    hull: session.visibleHull(side),
-    sunkPercent: session.state.rules.sunkHullPercent,
-    calm: calm,
-  );
+  Widget _side(int side) {
+    final hull = session.visibleHull(side);
+    return HitClear(
+      value: hull,
+      opacity: opacity,
+      child: ShipStatusPanel(
+        side: session.state.sides[side],
+        hull: hull,
+        sunkPercent: session.state.rules.sunkHullPercent,
+        calm: calm,
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) => Row(
@@ -31,9 +47,14 @@ class TopBar extends StatelessWidget {
       Expanded(
         child: Center(
           // 영어가 길어도 줄어들 뿐 넘치지 않는다 (설계서 §14.4).
-          child: FittedBox(
-            fit: BoxFit.scaleDown,
-            child: _TurnInfo(session: session),
+          child: AnimatedOpacity(
+            key: const ValueKey('hud-top'),
+            opacity: opacity,
+            duration: const Duration(milliseconds: 220),
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: _TurnInfo(session: session),
+            ),
           ),
         ),
       ),

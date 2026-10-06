@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:pirate_busters/ui/hud/hit_clear.dart';
 import 'package:pirate_busters/ui/hud/hud_gauge.dart';
 
 Widget _gauge(double v, {double? preview}) => Directionality(
@@ -48,6 +49,26 @@ void main() {
       await tester.pumpWidget(_gauge(.7, preview: .4));
       await tester.pump();
       expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('연출 중 흐린 선체 패널은 피해를 받는 순간 잠깐 또렷해졌다가 다시 흐려진다', (
+      tester,
+    ) async {
+      Widget clear(double v) => HitClear(
+        value: v,
+        opacity: .25,
+        child: const SizedBox(width: 10, height: 10),
+      );
+      double opacity() =>
+          tester.widget<AnimatedOpacity>(find.byType(AnimatedOpacity)).opacity;
+      await tester.pumpWidget(clear(1));
+      expect(opacity(), .25);
+      await tester.pumpWidget(clear(.8));
+      expect(opacity(), 1, reason: '피해 순간');
+      await tester.pump(HitClear.clearFor + const Duration(milliseconds: 50));
+      expect(opacity(), .25);
+      await tester.pumpWidget(clear(.9));
+      expect(opacity(), .25, reason: '수리로 늘 때는 그대로');
     });
   });
 }
