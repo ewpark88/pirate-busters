@@ -1165,7 +1165,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get tutorial_hint_1 => '해적 카드를 누르고, 배 위 해적을 뒤로 당겨서 쏘세요';
 
   @override
-  String get tutorial_hint_2 => '◀ ▶ 버튼으로 움직이세요. 연료가 남은 만큼만 갑니다';
+  String get tutorial_hint_2 => '◀ ▶ 버튼을 꾹 누르고 있으면 배가 움직입니다. 연료가 남은 만큼만 갑니다';
 
   @override
   String get tutorial_hint_3 => '흘수선 아래 구멍은 침수! 톡을 내 배에 쏴서 수리하세요';

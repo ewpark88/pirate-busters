@@ -1238,7 +1238,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tutorial_hint_2 =>
-      'Move with the ◀ ▶ buttons. You only go as far as your fuel allows';
+      'Press and hold ◀ ▶ to move. You only go as far as your fuel allows';
 
   @override
   String get tutorial_hint_3 =>

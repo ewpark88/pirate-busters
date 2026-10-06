@@ -34,7 +34,10 @@ class MatchSummary {
       // 무승부는 pb_sim 이 정한다(승자 −1). 앱이 침수 % 로 다시 재지 않는다 (§2.4).
       draw: state.outcome != MatchOutcome.ongoing && state.winner < 0,
       outcome: state.outcome,
-      turns: state.turn,
+      // 시간 판정으로 끝나면 턴 번호가 최대 턴 다음으로 넘어가 있다 (A25 점검: ‘사용 턴 31’).
+      turns: state.turn > state.rules.maxTurns
+          ? state.rules.maxTurns
+          : state.turn,
       floodPercent: me.flood * 100 ~/ fullFlood,
       hullPercent: me.grid.initialTotalHp == 0
           ? 0

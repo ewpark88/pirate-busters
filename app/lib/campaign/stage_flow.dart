@@ -25,6 +25,9 @@ abstract final class StageFlow {
     int? seed,
   }) {
     final navigator = Navigator.of(context);
+    // 판이 끝날 때 이 화면(결과 화면의 ‘다시 하기’ 등)은 이미 닫혀 있을 수 있다:
+    // 위젯의 ref 대신 앱 전체 컨테이너를 쓴다 (A25 점검 버그).
+    final container = ProviderScope.containerOf(context, listen: false);
     final matchSeed = seed ?? newSeed();
     final startedAt = DateTime.now();
     ref.read(analyticsProvider).log(Events.matchStart, {
@@ -36,8 +39,15 @@ abstract final class StageFlow {
         builder: (_) => BattleScreen(
           seed: matchSeed,
           stage: stage,
-          onOver: (state, replay, stats) =>
-              _finish(navigator, ref, stage, state, replay, stats, startedAt),
+          onOver: (state, replay, stats) => _finish(
+            navigator,
+            container,
+            stage,
+            state,
+            replay,
+            stats,
+            startedAt,
+          ),
         ),
       ),
     );
@@ -45,7 +55,7 @@ abstract final class StageFlow {
 
   static Future<void> _finish(
     NavigatorState navigator,
-    WidgetRef ref,
+    ProviderContainer ref,
     StageSpec stage,
     MatchState state,
     Replay? replay,

@@ -123,18 +123,25 @@ void showPbToast(BuildContext context, String message) {
       left: 0,
       right: 0,
       child: IgnorePointer(
-        child: Center(
-          child: PopIn(
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              decoration: BoxDecoration(
-                image: KitArt.nine(
-                  KitArt.buttonSecondary,
-                  KitArt.buttonSlice,
-                  KitArt.buttonScale,
+        // 오버레이에는 Material 이 없어 글자에 노란 겹밑줄이 그어진다 (A25 점검).
+        child: Material(
+          type: MaterialType.transparency,
+          child: Center(
+            child: PopIn(
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 10,
                 ),
+                decoration: BoxDecoration(
+                  image: KitArt.nine(
+                    KitArt.buttonSecondary,
+                    KitArt.buttonSlice,
+                    KitArt.buttonScale,
+                  ),
+                ),
+                child: OutlinedText(message, maxLines: 2),
               ),
-              child: OutlinedText(message, maxLines: 2),
             ),
           ),
         ),

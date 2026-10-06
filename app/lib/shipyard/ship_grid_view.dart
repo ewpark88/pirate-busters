@@ -11,9 +11,17 @@ import 'package:pirate_busters/shipyard/shipyard_model.dart';
 /// 재질 칸·흘수선은 [ShipGridPainter] 가 그리고, 선실·모듈 그림은 전장과 같은 자리
 /// (포문은 앞벽 밖으로, 망루는 위 칸으로)에 그림 위젯으로 겹친다.
 class ShipGridView extends StatelessWidget {
-  const ShipGridView({required this.model, required this.cell, super.key});
+  const ShipGridView({
+    required this.model,
+    required this.cell,
+    this.bare = false,
+    super.key,
+  });
 
   final ShipyardModel model;
+
+  /// 격자선·흘수선·선실 번호 없이 배만 그린다(결과 화면 등 장식용).
+  final bool bare;
 
   /// 한 칸의 화면 크기.
   final double cell;
@@ -46,9 +54,10 @@ class ShipGridView extends StatelessWidget {
       child: Stack(
         clipBehavior: Clip.none,
         children: [
-          Positioned.fill(
-            child: CustomPaint(painter: ShipGridPainter(model, cell)),
-          ),
+          if (!bare)
+            Positioned.fill(
+              child: CustomPaint(painter: ShipGridPainter(model, cell)),
+            ),
           for (var y = 0; y < h; y++)
             for (var x = 0; x < model.width; x++) ...[
               if (model.materialAt(x, y) case final m?)
@@ -66,7 +75,8 @@ class ShipGridView extends StatelessWidget {
                   rect: _moduleRect(at(x, y), kind, k),
                   child: Image.asset(moduleImage(kind), fit: BoxFit.fill),
                 ),
-              if (model.cabinSlotAt(x, y) case final slot when slot >= 0)
+              if (model.cabinSlotAt(x, y) case final slot
+                  when slot >= 0 && !bare)
                 Positioned(
                   left: at(x, y).left + 3,
                   top: at(x, y).top + 1,
@@ -80,11 +90,12 @@ class ShipGridView extends StatelessWidget {
                   ),
                 ),
             ],
-          Positioned.fill(
-            child: CustomPaint(
-              painter: ShipGridPainter(model, cell, overlay: true),
+          if (!bare)
+            Positioned.fill(
+              child: CustomPaint(
+                painter: ShipGridPainter(model, cell, overlay: true),
+              ),
             ),
-          ),
         ],
       ),
     );

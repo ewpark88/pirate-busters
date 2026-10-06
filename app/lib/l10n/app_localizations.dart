@@ -2183,7 +2183,7 @@ abstract class AppLocalizations {
   /// No description provided for @tutorial_hint_2.
   ///
   /// In en, this message translates to:
-  /// **'Move with the ◀ ▶ buttons. You only go as far as your fuel allows'**
+  /// **'Press and hold ◀ ▶ to move. You only go as far as your fuel allows'**
   String get tutorial_hint_2;
 
   /// No description provided for @tutorial_hint_3.
