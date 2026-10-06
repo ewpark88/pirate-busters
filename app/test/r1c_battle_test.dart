@@ -272,6 +272,12 @@ void main() {
       final recorder = ui.PictureRecorder();
       game.render(Canvas(recorder));
       recorder.endRecording().dispose();
+      // 무너져 떨어져 나간 칸은 배 속도 그리지 않게 기록한다 (A33, 플레이 점검).
+      game.cues.dispatch([
+        SimEvent(SimEventKind.blockCollapsed, side: 1, cell: cells.first),
+      ]);
+      final ship = game.world.children.whereType<ShipView>().last;
+      expect(ship.gone, contains(cells.first));
     });
   });
 }

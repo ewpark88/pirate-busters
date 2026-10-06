@@ -35,6 +35,9 @@ class ShipView extends PositionComponent with HasGameReference {
   final BattleSprites sprites;
   final PbAnims anims;
   final GridSnapshot _built;
+
+  /// 지지가 끊겨 떨어져 나간 칸 (`blockCollapsed`). 배 속을 그리지 않는다.
+  final Set<int> gone = {};
   final List<CharacterRig> rigs = [];
 
   static const double _cell = Coords.cell;
@@ -223,12 +226,15 @@ class ShipView extends PositionComponent with HasGameReference {
         final m = materials[i];
         _mats[i] = m == ShipGrid.emptyCell ? _built.materials[i] : m;
         // 돛대 칸은 타일·손상 대신 MastPainter 가 기둥으로 그린다 (§3.3).
-        _codes[i] = DamageLayer.codeOf(
-          m,
-          _built.materials[i],
-          hp[i],
-          grid.maxHpAt(i),
-        );
+        // 무너져 떨어져 나간 칸은 배 속도 남기지 않는다 (A33, 점검 버그).
+        _codes[i] = gone.contains(i)
+            ? DamageLayer.none
+            : DamageLayer.codeOf(
+                m,
+                _built.materials[i],
+                hp[i],
+                grid.maxHpAt(i),
+              );
         if (m == ShipGrid.emptyCell || BlockMaterial.values[m].rig) continue;
         final join = PlankJoin.mask(materials, _width, x, y);
         final tile = sprites.tileOf(m, x, y, _state.draft);

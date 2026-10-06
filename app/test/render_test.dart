@@ -217,6 +217,23 @@ void main() {
       }
     });
 
+    test('착탄에 머무는 동안 맞은 큰 배 전체가 화면에 들어온다 (A33, 점검 버그 9)', () {
+      // 폭 20칸(800px) 배의 뱃머리 끝을 맞혔다.
+      const shipX = 600.0;
+      const shipW = 800.0;
+      final c = CameraDirector()
+        ..impact(Vector2(shipX + 380, -40), ship: (shipX, shipW));
+      final (center, w) = c.target(myX: -600, enemyX: shipX, facing: 1);
+      expect(center.x - w / 2, lessThanOrEqualTo(shipX - shipW / 2));
+      expect(center.x + w / 2, greaterThanOrEqualTo(shipX + shipW / 2));
+      // 작은 배는 예전처럼 착탄 지점 가까이 폭 700 으로 머문다.
+      final small = CameraDirector()
+        ..impact(Vector2(shipX + 100, -40), ship: (shipX, 160));
+      final (sc, sw) = small.target(myX: -600, enemyX: shipX, facing: 1);
+      expect(sw, CameraDirector.impactWidth);
+      expect(sc.x - sw / 2, lessThanOrEqualTo(shipX - 80));
+    });
+
     test('착탄 지점을 1.3초 보여준 뒤 돌아간다', () {
       final c = CameraDirector()..impact(Vector2(300, -40));
       final (a, _) = c.target(myX: 0, enemyX: 900, facing: 1);

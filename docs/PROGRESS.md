@@ -583,6 +583,11 @@
 - HUD: 공용 `HudGauge`(잔상·찰 때 초록·낮음 경고·흔들림 줄이기), 선체 패널 `ShipStatusPanel`(진영색 배지·침수·선원 칸), 이동 버튼 둥근 누름 버튼·연료 남을 몫 미리보기. 글자 `hullPercent`·`fuelPercent`
 - 조준: 줌아웃 기준점을 해적 발로(`CameraDirector.aimFocusZoom`), 새총·점선·숫자 화면 크기 보정(`AimPainter.screenScale`), 숫자는 뒤쪽 위, 약할 때 옅은 새총, 24px 미만 각도 평활, 점 2.4·끝 0.55, 유도탄 미리보기 = 실제 경로(테스트)
 
+**플레이 점검(A25)에서 넘겨받은 것**
+- 무너진 칸의 배 속: 떨어져 나간 칸(`blockCollapsed`)은 `ShipView.gone` 으로 빈 칸 취급, 상하좌우가 모두 빈 부서진 칸도 그리지 않음(`DamageLayer.floating`)
+- 착탄 카메라: 맞은 배 전체 + 여백 90px 이 들어오는 폭으로 머묾(`impact(ship:)`)
+- 시작 타이머: `StartGate` — 프레임이 3번 연속 0.05초 안에 나오거나 8초가 지나야 판 시계를 돌린다
+
 **설계서 변경 (사용자 승인)**
 - §13.4 연출 중 HUD: 선체 막대는 피해를 받는 순간 잠깐 또렷해진다. `HitClear` 로 0.9초
 

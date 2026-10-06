@@ -71,6 +71,12 @@ class CameraDirector {
   Vector2? _impact;
   double _impactLeft = 0;
 
+  /// 맞은 배의 가운데 x 와 폭. 착탄에 머무는 동안 배 전체를 담는다 (A33).
+  (double, double)? _impactShip;
+
+  /// 착탄 화면에서 배 양옆에 남길 여백(월드 px).
+  static const double impactShipMargin = 90;
+
   /// 명중 때 당기는 줌 (설계서 §10.4, A32): 화면 폭을 한 방 크기에 비례하는 비율
   /// (4~12%, `HitWeight.punch`)만큼 [punchIn] 초에 빠르게 좁혔다가 [punchOut] 초에
   /// 걸쳐 부드럽게 푼다.
@@ -90,8 +96,9 @@ class CameraDirector {
 
   /// 착탄 지점을 잠깐 보여준다. [punch] 가 0 보다 크면 그 비율로 당기는 줌도 건다.
   /// 이미 당긴 줌보다 약하면 덮어쓰지 않는다.
-  void impact(Vector2 at, {double punch = 0}) {
+  void impact(Vector2 at, {double punch = 0, (double, double)? ship}) {
     _impact = at.clone();
+    _impactShip = ship;
     _impactLeft = impactHoldSec;
     if (punch > 0 && punch >= 1 - punchScale) {
       _punchZoom = punch;
@@ -131,7 +138,15 @@ class CameraDirector {
     }
     if (holding) {
       final double y = math.min(-60, impactAt.y);
-      return (Vector2(impactAt.x, y), impactWidth);
+      final ship = _impactShip;
+      if (ship == null) return (Vector2(impactAt.x, y), impactWidth);
+      // 맞은 배가 화면 끝에 잘리지 않게: 배 전체 + 여백이 들어오는 폭으로 넓히고,
+      // 가운데는 착탄 지점에서 배가 다 보이는 범위로만 옮긴다.
+      final (sx, sw) = ship;
+      final w = math.max(impactWidth, sw + 2 * impactShipMargin);
+      final reach = (w - sw) / 2 - impactShipMargin;
+      final x = impactAt.x.clamp(sx - reach, sx + reach);
+      return (Vector2(x, y), w);
     }
     if (projectile != null) {
       // 탄을 가운데에 두고 같은 줌으로 따라간다. 맞을 배(없으면 상대 배)에 가까워지면
