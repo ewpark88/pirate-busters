@@ -6,6 +6,7 @@ import 'package:pb_ai/pb_ai.dart';
 import 'package:pirate_busters/app/providers.dart';
 import 'package:pirate_busters/campaign/battle_prep_screen.dart';
 import 'package:pirate_busters/campaign/campaign_map_screen.dart';
+import 'package:pirate_busters/campaign/prep_enemy_ship.dart';
 import 'package:pirate_busters/crew/crew_screen.dart';
 import 'package:pirate_busters/crew/crew_widgets.dart';
 import 'package:pirate_busters/data/fleet_store.dart';
@@ -152,7 +153,9 @@ void main() {
         fleet: fleet,
       );
       final l10n = _l10n(tester, BattlePrepScreen);
-      expect(find.byType(BlueprintPreview), findsOneWidget);
+      // 내 배와 상대 배 미리보기 (설계서 §13.3).
+      expect(find.byType(BlueprintPreview), findsNWidgets(2));
+      expect(find.byType(PrepEnemyShip), findsOneWidget);
       expect(
         find.image(AssetImage(MetaIcons.personality(stage.personality))),
         findsOneWidget,
@@ -172,7 +175,7 @@ void main() {
         progress: const PlayerProgress(tutorialDone: 3),
       );
       final l10n = _l10n(tester, BattlePrepScreen);
-      expect(find.byType(BlueprintPreview), findsOneWidget);
+      expect(find.byType(BlueprintPreview), findsNWidgets(2));
       expect(find.text(l10n.prepBlueprintEmpty), findsOneWidget);
     });
   });

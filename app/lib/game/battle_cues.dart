@@ -93,7 +93,7 @@ class BattleCues {
     final shown = <HitTag>{};
     // 한 방 크기: 이 묶음 전체로 매겨 멈춤·흔들림·줌·숫자·진동을 맞춘다 (§10.4, A32).
     final weight = HitWeight.of(cues, critHit: tag == HitTag.crit);
-    emote(cues, weight);
+    emote(cues, weight, quiet: landsQuietly(spec));
     var jolted = false;
     Vector2? hitAt;
     // 착탄마다 블록 피해를 모아 숫자 하나로 띄운다 (§10.4, A33).

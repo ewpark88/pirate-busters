@@ -6,6 +6,7 @@ import 'package:pb_sim/src/combat/module_effects.dart';
 import 'package:pb_sim/src/combat/volley.dart';
 import 'package:pb_sim/src/command/command.dart';
 import 'package:pb_sim/src/hash/state_hasher.dart';
+import 'package:pb_sim/src/match/boss_gimmick.dart';
 import 'package:pb_sim/src/match/judge.dart';
 import 'package:pb_sim/src/match/match_state.dart';
 import 'package:pb_sim/src/match/rules.dart';
@@ -268,7 +269,7 @@ class Match {
     final side = state.activeSide;
     final turn = state.turn;
     if (!state.isOver) endTurnUpkeep(state);
-    state.sides[side].crew.endOwnTurn();
+    state.sides[side].crew.endOwnTurn(cooldownStepOf(state.rules, side));
     state.events.add(
       SimEvent(
         SimEventKind.turnEnd,

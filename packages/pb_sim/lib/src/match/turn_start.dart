@@ -1,6 +1,8 @@
 import 'package:pb_sim/src/combat/barrier_effects.dart';
 import 'package:pb_sim/src/combat/effect_runner.dart';
+import 'package:pb_sim/src/match/boss_gimmick.dart';
 import 'package:pb_sim/src/match/judge.dart';
+import 'package:pb_sim/src/match/mast_seats.dart';
 import 'package:pb_sim/src/match/match_state.dart';
 import 'package:pb_sim/src/match/sim_event.dart';
 import 'package:pb_sim/src/ship/motion.dart';
@@ -28,6 +30,7 @@ void beginTurn(MatchState state) {
     );
   }
   expireBarriers(state);
+  updatePatrol(state);
   refuel(state.sides[side], rules.fuelPerTurn);
   state.sides[side]
     ..moveFallenSeats()

@@ -1046,10 +1046,11 @@ class AppLocalizationsKo extends AppLocalizations {
   String get personality_rusher => '돌격형';
 
   @override
-  String get gimmick_bow_iron_shield => '뱃머리 철판 방패: 정면 직사 피해가 크게 줄어든다';
+  String get gimmick_bow_iron_shield =>
+      '뱃머리 철판 방패: 방패가 서 있는 동안 직사 피해 절반. 뱃머리를 먼저 부숴라';
 
   @override
-  String get gimmick_patrol_closing_in => '초계선이 턴마다 다가오고 쿨다운이 빨리 줄어든다';
+  String get gimmick_patrol_closing_in => '초계선이 턴마다 한 칸씩 다가오고 쿨다운이 두 배로 빨리 준다';
 
   @override
   String resultMission(Object text) {
@@ -1164,7 +1165,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get tutorial_hint_1 => '해적 카드를 누르고, 배 위 해적을 뒤로 당겨서 쏘세요';
 
   @override
-  String get tutorial_hint_2 => '◀ ▶ 버튼으로 움직이세요. 연료가 남은 만큼만 갑니다';
+  String get tutorial_hint_2 => '◀ ▶ 버튼을 꾹 누르고 있으면 배가 움직입니다. 연료가 남은 만큼만 갑니다';
 
   @override
   String get tutorial_hint_3 => '흘수선 아래 구멍은 침수! 톡을 내 배에 쏴서 수리하세요';
@@ -1408,4 +1409,92 @@ class AppLocalizationsKo extends AppLocalizations {
   String fuelPercent(int percent) {
     return '$percent%';
   }
+
+  @override
+  String get bossBanner => '보스 등장!';
+
+  @override
+  String get barkFire1 => '받아라!';
+
+  @override
+  String get barkFire2 => '정확히 노렸다!';
+
+  @override
+  String get barkFire3 => '한 방 더 간다!';
+
+  @override
+  String get barkFire4 => '포탄 배달이요!';
+
+  @override
+  String get barkHurt1 => '으악, 따끔해!';
+
+  @override
+  String get barkHurt2 => '이 정도는 끄떡없어!';
+
+  @override
+  String get barkHurt3 => '배가 흔들린다!';
+
+  @override
+  String get barkHurt4 => '갚아 주마!';
+
+  @override
+  String get barkAllyDown1 => '동료가 쓰러졌다! 버텨!';
+
+  @override
+  String get barkAllyDown2 => '너의 몫까지 싸운다!';
+
+  @override
+  String get barkAllyDown3 => '정신 차려, 금방 끝낼게!';
+
+  @override
+  String get barkAllyDown4 => '가만두지 않겠다!';
+
+  @override
+  String get barkTauntStart1 => '해적 단속이다! 항복해라!';
+
+  @override
+  String get barkTauntStart2 => '그 조각배로 덤빈다고?';
+
+  @override
+  String get barkTauntStart3 => '초계대 앞에선 다 소용없다!';
+
+  @override
+  String get barkTauntStart4 => '집게 맛 좀 봐라!';
+
+  @override
+  String get barkTauntLow1 => '이, 이럴 리가 없어!';
+
+  @override
+  String get barkTauntLow2 => '물이 샌다! 펌프를 돌려!';
+
+  @override
+  String get barkTauntLow3 => '제법이군… 하지만 아직이다!';
+
+  @override
+  String get barkTauntLow4 => '후퇴는 없다, 버텨라!';
+
+  @override
+  String get goalTitle => '다음 목표';
+
+  @override
+  String get goalGo => '도전';
+
+  @override
+  String goalStars(Object have, Object total) {
+    return '별 $have / $total';
+  }
+
+  @override
+  String goalShipNeed(Object stage) {
+    return '배 확장: $stage 클리어';
+  }
+
+  @override
+  String get goalShipDone => '배를 다 키웠다';
+
+  @override
+  String get goalAllClear => '이 해역을 모두 깼다!';
+
+  @override
+  String get emphasisMast => '돛대 부러짐!';
 }

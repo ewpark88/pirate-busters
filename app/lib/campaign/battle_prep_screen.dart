@@ -5,7 +5,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pb_ai/pb_ai.dart';
 import 'package:pirate_busters/app/app_theme.dart';
 import 'package:pirate_busters/app/providers.dart';
+import 'package:pirate_busters/battle/battle_setup.dart';
 import 'package:pirate_busters/campaign/prep_cabins.dart';
+import 'package:pirate_busters/campaign/prep_enemy_ship.dart';
 import 'package:pirate_busters/campaign/stage_flow.dart';
 import 'package:pirate_busters/campaign/stage_node.dart';
 import 'package:pirate_busters/campaign/stage_spec.dart';
@@ -223,45 +225,16 @@ class _BattlePrepScreenState extends ConsumerState<BattlePrepScreen> {
             ],
           ),
           const SizedBox(height: 6),
-          // 스테이지 전 대사: 상대 선장 → 우리 선원, 탭하면 넘긴다 (설계서 §15.4).
+          // 상대 배 미리보기와 스테이지 전 대사(상대 선장 → 우리 선원), 누르면 넘긴다
+          // (설계서 §13.3, §15.4).
           Expanded(
-            child: GestureDetector(
-              behavior: HitTestBehavior.opaque,
+            child: PrepEnemyShip(
+              blueprint: BattleSetup(
+                ref.read(gameCatalogProvider),
+              ).enemyBlueprintOf(stage),
+              line: keys.isEmpty ? '' : dataText(l10n, keys[_line]),
+              tapHint: l10n.dialogueTap,
               onTap: () => setState(() => _line = (_line + 1) % keys.length),
-              child: Container(
-                padding: const EdgeInsets.fromLTRB(12, 8, 12, 6),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFF4E8CC),
-                  borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: const Color(0xFF14161C), width: 2),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: SingleChildScrollView(
-                        child: Text(
-                          keys.isEmpty ? '' : dataText(l10n, keys[_line]),
-                          style: const TextStyle(
-                            fontSize: 16,
-                            color: Color(0xFF2A2116),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: Text(
-                        l10n.dialogueTap,
-                        style: const TextStyle(
-                          color: Color(0xFF7A6A50),
-                          fontSize: 11,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
             ),
           ),
         ],

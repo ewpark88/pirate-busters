@@ -1110,11 +1110,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get gimmick_bow_iron_shield =>
-      'Iron bow shield: direct-fire damage from the front is greatly reduced';
+      'Iron bow shield: direct fire deals half damage while it stands. Break the bow first';
 
   @override
   String get gimmick_patrol_closing_in =>
-      'The cutter closes in every turn and its cooldowns drop faster';
+      'The cutter closes in one cell each turn and its cooldowns drop twice as fast';
 
   @override
   String resultMission(Object text) {
@@ -1238,7 +1238,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tutorial_hint_2 =>
-      'Move with the ◀ ▶ buttons. You only go as far as your fuel allows';
+      'Press and hold ◀ ▶ to move. You only go as far as your fuel allows';
 
   @override
   String get tutorial_hint_3 =>
@@ -1483,4 +1483,92 @@ class AppLocalizationsEn extends AppLocalizations {
   String fuelPercent(int percent) {
     return '$percent%';
   }
+
+  @override
+  String get bossBanner => 'Boss!';
+
+  @override
+  String get barkFire1 => 'Take that!';
+
+  @override
+  String get barkFire2 => 'Right on target!';
+
+  @override
+  String get barkFire3 => 'One more coming!';
+
+  @override
+  String get barkFire4 => 'Cannonball delivery!';
+
+  @override
+  String get barkHurt1 => 'Ouch, that stings!';
+
+  @override
+  String get barkHurt2 => 'Barely a scratch!';
+
+  @override
+  String get barkHurt3 => 'The ship\'s rocking!';
+
+  @override
+  String get barkHurt4 => 'You\'ll pay for that!';
+
+  @override
+  String get barkAllyDown1 => 'Crew down! Hold on!';
+
+  @override
+  String get barkAllyDown2 => 'I\'ll fight for both of us!';
+
+  @override
+  String get barkAllyDown3 => 'Hang in there, we\'ll finish fast!';
+
+  @override
+  String get barkAllyDown4 => 'Now I\'m angry!';
+
+  @override
+  String get barkTauntStart1 => 'Pirate patrol! Surrender!';
+
+  @override
+  String get barkTauntStart2 => 'You call that a ship?';
+
+  @override
+  String get barkTauntStart3 => 'Nothing gets past the patrol!';
+
+  @override
+  String get barkTauntStart4 => 'Taste the claw!';
+
+  @override
+  String get barkTauntLow1 => 'Th-this can\'t be!';
+
+  @override
+  String get barkTauntLow2 => 'We\'re leaking! Man the pumps!';
+
+  @override
+  String get barkTauntLow3 => 'Not bad… but not done yet!';
+
+  @override
+  String get barkTauntLow4 => 'No retreat, hold the line!';
+
+  @override
+  String get goalTitle => 'Next goal';
+
+  @override
+  String get goalGo => 'Go';
+
+  @override
+  String goalStars(Object have, Object total) {
+    return 'Stars $have / $total';
+  }
+
+  @override
+  String goalShipNeed(Object stage) {
+    return 'Grow ship: clear $stage';
+  }
+
+  @override
+  String get goalShipDone => 'Ship fully grown';
+
+  @override
+  String get goalAllClear => 'Every stage here is cleared!';
+
+  @override
+  String get emphasisMast => 'Mast down!';
 }

@@ -8,7 +8,7 @@ class CrewReactions {
 
   /// 바다로 떨어지는 시간(초)과 포물선 꼭대기 높이(로컬 px).
   static const double fallSec = 0.7;
-  static const double fallArc = 48;
+  static const double fallArc = 90;
 
   final Map<int, _Fall> _falls = {};
 

@@ -70,17 +70,17 @@ extension CrewCues on BattleCues {
       fx.spawn(
         SpriteComponent(
           sprite: fx.sprites.get('fx/impact/dizzy_star.png'),
-          position: head + Vector2(math.cos(a) * 12, math.sin(a) * 4),
-          size: Vector2.all(14),
+          position: head + Vector2(math.cos(a) * 18, math.sin(a) * 6),
+          size: Vector2.all(22),
           anchor: Anchor.center,
           priority: 8,
           children: [
             MoveAlongPathEffect(
               Path()..addOval(
                 Rect.fromCenter(
-                  center: Offset(-math.cos(a) * 12, -math.sin(a) * 4),
-                  width: 24,
-                  height: 8,
+                  center: Offset(-math.cos(a) * 18, -math.sin(a) * 6),
+                  width: 36,
+                  height: 12,
                 ),
               ),
               EffectController(duration: .5, infinite: true),

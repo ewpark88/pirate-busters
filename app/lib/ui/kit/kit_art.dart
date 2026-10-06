@@ -60,9 +60,45 @@ class OutlinedText extends StatelessWidget {
   final double stroke;
   final int maxLines;
 
+  /// 이미 아주 굵은 제목 글꼴은 외곽선이 글자 속을 메워 상자처럼 보인다(A25 점검):
+  /// 글자 크기의 12% 를 넘지 않게 한다.
+  double get strokeWidth =>
+      font == AppFonts.display && stroke > size * 0.12 ? size * 0.12 : stroke;
+
+  /// 제목 글꼴은 한글을 겹친 조각으로 만들어, 선 외곽선을 그리면 조각 사이 안쪽 선까지
+  /// 그려져 상자처럼 보인다(A25 점검). 이 글꼴은 8방향 그림자로 외곽선을 낸다.
+  bool get shadowOutline => font == AppFonts.display;
+
   @override
   Widget build(BuildContext context) {
     final base = TextStyle(fontFamily: font, fontSize: size);
+    if (shadowOutline) {
+      final w = strokeWidth / 2;
+      return Text(
+        text,
+        maxLines: maxLines,
+        overflow: TextOverflow.ellipsis,
+        style: base.copyWith(
+          color: color,
+          shadows: [
+            for (final (dx, dy) in const [
+              (-1.0, -1.0),
+              (0.0, -1.0),
+              (1.0, -1.0),
+              (-1.0, 0.0),
+              (1.0, 0.0),
+              (-1.0, 1.0),
+              (0.0, 1.0),
+              (1.0, 1.0),
+            ])
+              Shadow(
+                color: const Color(0xFF14161C),
+                offset: Offset(dx * w, dy * w),
+              ),
+          ],
+        ),
+      );
+    }
     return Stack(
       children: [
         // 외곽선 층은 RichText 라 글자 찾기·읽어 주기에는 한 번만 잡힌다.
@@ -76,7 +112,7 @@ class OutlinedText extends StatelessWidget {
               style: base.copyWith(
                 foreground: Paint()
                   ..style = PaintingStyle.stroke
-                  ..strokeWidth = stroke
+                  ..strokeWidth = strokeWidth
                   ..strokeJoin = StrokeJoin.round
                   ..color = const Color(0xFF14161C),
               ),

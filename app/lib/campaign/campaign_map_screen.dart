@@ -27,6 +27,22 @@ class CampaignMapScreen extends ConsumerStatefulWidget {
 
   final int sea;
 
+  /// 튜토리얼을 마치고 해역을 처음 열면 해역 인트로 (설계서 §13.3, §15.4). 한 번만.
+  /// 지도와 항구 ‘다음 목표’ 카드가 함께 쓴다(카드로 바로 들어가도 인트로를 본다).
+  static Future<void> seaIntro(BuildContext context, WidgetRef ref) async {
+    final progress = ref.read(progressProvider);
+    final cuts = StoryData.of(StoryData.sea1Intro);
+    if (!progress.tutorialFinished ||
+        progress.hasSeen(StoryData.sea1Intro) ||
+        cuts == null) {
+      return;
+    }
+    await ref
+        .read(progressProvider.notifier)
+        .update((p) => p.seeStory(StoryData.sea1Intro));
+    if (context.mounted) await CutsceneScreen.show(context, cuts);
+  }
+
   /// 앞 스테이지를 깼을 때만 연다. 첫 스테이지는 항상 열려 있다.
   static bool unlocked(List<StageSpec> stages, int index, PlayerProgress p) =>
       index == 0 || p.hasCleared(stages[index - 1].id);
@@ -67,20 +83,8 @@ class _CampaignMapScreenState extends ConsumerState<CampaignMapScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) => unawaited(_intro()));
   }
 
-  /// 튜토리얼을 마치고 해역을 처음 열면 해역 인트로 (설계서 §13.3, §15.4). 한 번만.
   Future<void> _intro() async {
-    if (widget.sea != 1) return;
-    final progress = ref.read(progressProvider);
-    final cuts = StoryData.of(StoryData.sea1Intro);
-    if (!progress.tutorialFinished ||
-        progress.hasSeen(StoryData.sea1Intro) ||
-        cuts == null) {
-      return;
-    }
-    await ref
-        .read(progressProvider.notifier)
-        .update((p) => p.seeStory(StoryData.sea1Intro));
-    if (mounted) await CutsceneScreen.show(context, cuts);
+    if (widget.sea == 1) await CampaignMapScreen.seaIntro(context, ref);
   }
 
   @override

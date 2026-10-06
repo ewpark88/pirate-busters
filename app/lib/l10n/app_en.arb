@@ -579,8 +579,8 @@
   "personality_hunter": "Hunter",
   "personality_sinker": "Sinker",
   "personality_rusher": "Rusher",
-  "gimmick_bow_iron_shield": "Iron bow shield: direct-fire damage from the front is greatly reduced",
-  "gimmick_patrol_closing_in": "The cutter closes in every turn and its cooldowns drop faster",
+  "gimmick_bow_iron_shield": "Iron bow shield: direct fire deals half damage while it stands. Break the bow first",
+  "gimmick_patrol_closing_in": "The cutter closes in one cell each turn and its cooldowns drop twice as fast",
   "resultMission": "Mission: {text}",
   "resultInTurns": "Win within {turns} turns",
   "rewardGold": "Gold +{gold}",
@@ -616,7 +616,7 @@
   "story_s1_12_after_2": "Tok: We got the first shard back! The Heart feels a little warmer.",
   "story_s1_12_after_3": "Octo: Next is Fog Strait. The skeletons want to lift their curse with a shard?",
   "tutorial_hint_1": "Tap a pirate card, then pull the pirate on deck backwards to fire",
-  "tutorial_hint_2": "Move with the ◀ ▶ buttons. You only go as far as your fuel allows",
+  "tutorial_hint_2": "Press and hold ◀ ▶ to move. You only go as far as your fuel allows",
   "tutorial_hint_3": "Holes below the waterline mean flooding! Fire Tok at your own ship to repair",
   "resultDoubleDone": "Reward doubled",
   "replaySave": "Save replay",
@@ -750,5 +750,40 @@
         "type": "int"
       }
     }
-  }
+  },
+  "bossBanner": "Boss!",
+  "barkFire1": "Take that!",
+  "barkFire2": "Right on target!",
+  "barkFire3": "One more coming!",
+  "barkFire4": "Cannonball delivery!",
+  "barkHurt1": "Ouch, that stings!",
+  "barkHurt2": "Barely a scratch!",
+  "barkHurt3": "The ship's rocking!",
+  "barkHurt4": "You'll pay for that!",
+  "barkAllyDown1": "Crew down! Hold on!",
+  "barkAllyDown2": "I'll fight for both of us!",
+  "barkAllyDown3": "Hang in there, we'll finish fast!",
+  "barkAllyDown4": "Now I'm angry!",
+  "barkTauntStart1": "Pirate patrol! Surrender!",
+  "barkTauntStart2": "You call that a ship?",
+  "barkTauntStart3": "Nothing gets past the patrol!",
+  "barkTauntStart4": "Taste the claw!",
+  "barkTauntLow1": "Th-this can't be!",
+  "barkTauntLow2": "We're leaking! Man the pumps!",
+  "barkTauntLow3": "Not bad… but not done yet!",
+  "barkTauntLow4": "No retreat, hold the line!",
+  "goalTitle": "Next goal",
+  "goalGo": "Go",
+  "goalStars": "Stars {have} / {total}",
+  "@goalStars": {
+    "description": "항구 다음 목표 카드 별 진행 (설계서 §13.2)",
+    "placeholders": {
+      "have": {},
+      "total": {}
+    }
+  },
+  "goalShipNeed": "Grow ship: clear {stage}",
+  "goalShipDone": "Ship fully grown",
+  "goalAllClear": "Every stage here is cleared!",
+  "emphasisMast": "Mast down!"
 }

@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
 import 'package:pb_ai/pb_ai.dart';
 import 'package:pb_sim/pb_sim.dart';
 import 'package:pirate_busters/app/providers.dart';
@@ -16,15 +15,17 @@ import 'package:pirate_busters/campaign/stage_spec.dart';
 import 'package:pirate_busters/dev/practice_bar.dart';
 import 'package:pirate_busters/dev/test_battle.dart';
 import 'package:pirate_busters/game/battle_game.dart';
-import 'package:pirate_busters/game/emotion_cues.dart';
-import 'package:pirate_busters/game/hit_tag.dart';
 import 'package:pirate_busters/input/field_gestures.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
 import 'package:pirate_busters/l10n/data_text.dart';
 import 'package:pirate_busters/meta/my_ship.dart';
 import 'package:pirate_busters/platform/analytics.dart';
 import 'package:pirate_busters/platform/remote_values.dart';
+import 'package:pirate_busters/ui/battle_texts_l10n.dart';
 import 'package:pirate_busters/ui/hud/battle_hud.dart';
+import 'package:pirate_busters/ui/hud/boss_banner.dart';
+import 'package:pirate_busters/ui/hud/speech_bubbles.dart';
+import 'package:pirate_busters/ui/hud/tutorial_finger.dart';
 
 /// 전투 화면: 전장(Flame) 위에 HUD(Flutter 위젯)를 겹친다 (설계서 §13.4).
 /// 전장의 게임 루프가 매 프레임 [BattleSession] 을 진행한다.
@@ -214,40 +215,7 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
     _game.calmShake.value = ref.watch(calmShakeProvider);
     _session.autoEnd.enabled = ref.watch(autoEndTurnProvider);
     final l10n = AppLocalizations.of(context);
-    final number = NumberFormat.decimalPattern(
-      Localizations.localeOf(context).toLanguageTag(),
-    );
-    _game
-      ..damageText = ((amount) => l10n.damagePopup(number.format(amount)))
-      ..turnsText = number.format
-      ..aimAngleText = ((d) => l10n.aimAngle(number.format(d)))
-      ..aimPowerText = ((p) => l10n.aimPower(number.format(p)))
-      // 감정 연출 강조 문구 (설계서 §10.4).
-      ..emphasisText = ((e) => switch (e) {
-        Emphasis.boom => l10n.emphasisBoom,
-        Emphasis.doubleHit => l10n.emphasisDoubleHit,
-        Emphasis.cabin => l10n.emphasisCabin,
-      })
-      // 명중 이름표 (설계서 §10.4).
-      ..tagText = (tag) => switch (tag) {
-        HitTag.crit => l10n.hitTagCrit,
-        HitTag.pierce => l10n.hitTagPierce,
-        HitTag.chain => l10n.hitTagChain,
-        HitTag.burn => l10n.hitTagBurn,
-        HitTag.mine => l10n.hitTagMine,
-        HitTag.bite => l10n.hitTagBite,
-        HitTag.repair => l10n.hitTagRepair,
-        HitTag.seal => l10n.hitTagSeal,
-        HitTag.pull => l10n.hitTagPull,
-        HitTag.wind => l10n.hitTagWind,
-        HitTag.blind => l10n.hitTagBlind,
-        HitTag.bail => l10n.hitTagBail,
-        HitTag.boost => l10n.hitTagBoost,
-        HitTag.heal => l10n.hitTagHeal,
-        HitTag.wall => l10n.hitTagWall,
-        HitTag.revive => l10n.hitTagRevive,
-        HitTag.intercept => l10n.hitTagIntercept,
-      };
+    applyBattleTexts(_game, l10n, Localizations.localeOf(context));
     return _scaffold();
   }
 
@@ -284,6 +252,19 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
             ),
           ),
         ),
+        Positioned.fill(
+          child: SpeechBubbles(
+            session: _session,
+            sea: widget.stage?.sea,
+            nameKeyOf: (id) => ref.read(gameCatalogProvider).def(id).nameKey,
+          ),
+        ),
+        if (widget.stage?.tutorialStep case final step? when step > 0)
+          Positioned.fill(
+            child: TutorialFinger(session: _session, step: step),
+          ),
+        if (widget.stage?.gimmick case final gimmick?)
+          Positioned.fill(child: BossBanner(gimmick: gimmick)),
         if (_test case TestBattle(dummy: true, :final deck))
           PracticeBar(deck: deck, onPick: _practice),
       ],

@@ -13,6 +13,7 @@ import 'package:pirate_busters/game/battle_cues.dart';
 import 'package:pirate_busters/game/battle_texts.dart';
 import 'package:pirate_busters/game/camera_director.dart';
 import 'package:pirate_busters/game/coords.dart';
+import 'package:pirate_busters/game/emotion_cues.dart';
 import 'package:pirate_busters/game/impact_sound.dart';
 import 'package:pirate_busters/game/pirate_pick.dart';
 import 'package:pirate_busters/game/sprites.dart';
@@ -175,10 +176,8 @@ class BattleGame extends FlameGame with BattleTexts {
     applyLowEnd();
   }
 
-  /// 흔들림 떨림의 시계(초).
+  /// 흔들림 떨림의 시계(초), 한 프레임 효과음 묶음과 휘파람 (설계서 §10.3, A32).
   double _shakeT = 0;
-
-  /// 한 프레임 효과음 묶음과 내려오는 탄의 휘파람 (설계서 §10.3, A32).
   final SfxMixer _mixer = SfxMixer();
   final WhistleCue _whistle = WhistleCue();
 
@@ -214,7 +213,7 @@ class BattleGame extends FlameGame with BattleTexts {
           session.state.sides[ship.side].grid.width * Coords.cell,
         );
         playSfx(Sfx.sink);
-        _cues.stop.slow(lowEnd.value ? 0.3 : 0.6); // 격침 슬로모션 (§10.4)
+        _cues.stop.slow(EmotionCues.slowFor(lowEnd: lowEnd.value)); // §10.4
       }
     }
     if (session.playback != null || !_ships.every((s) => s.motion.settled)) {

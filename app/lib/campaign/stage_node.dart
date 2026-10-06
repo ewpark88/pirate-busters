@@ -115,14 +115,21 @@ class StageNode extends StatelessWidget {
                   ),
                   child: locked
                       ? Image.asset(PortIcons.lock, width: size * 0.42)
-                      : OutlinedText(
-                          stageName(l10n, stage),
-                          size: stage.kind == StageKind.tutorial
-                              ? 13
-                              : stage.isBoss
-                              ? 24
-                              : 20,
-                          font: AppFonts.display,
+                      // 긴 이름(튜토리얼 n)은 잘리지 않게 원 안에 줄여 넣는다(A25 점검).
+                      : Padding(
+                          padding: EdgeInsets.symmetric(horizontal: size * 0.1),
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: OutlinedText(
+                              stageName(l10n, stage),
+                              size: stage.kind == StageKind.tutorial
+                                  ? 15
+                                  : stage.isBoss
+                                  ? 24
+                                  : 20,
+                              font: AppFonts.display,
+                            ),
+                          ),
                         ),
                 ),
                 if (stage.isBoss && !locked)
