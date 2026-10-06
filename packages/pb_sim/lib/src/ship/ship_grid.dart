@@ -28,9 +28,26 @@ class ShipGrid {
     for (final c in blueprint.cells) {
       final i = c.y * hull.width + c.x;
       materials[i] = c.material.index;
-      hp[i] = c.material.durability;
+      hp[i] = c.material.durability * hull.hpPermille ~/ 1000;
     }
-    return ShipGrid._(hull, materials, hp, _sumOf(hp), List.of(materials));
+    // 돛대 칸 (설계서 §3.3): 돛대 레벨만큼 내구도가 오른다.
+    for (final m in blueprint.modules) {
+      final rig = m.kind.rig;
+      if (rig == null) continue;
+      for (final (x, y) in m.rigCells(hull.height)) {
+        final i = y * hull.width + x;
+        materials[i] = rig.index;
+        hp[i] = rig.durabilityAt(m.level) * hull.hpPermille ~/ 1000;
+      }
+    }
+    return ShipGrid._(
+      hull,
+      materials,
+      hp,
+      _sumOf(hp),
+      List.of(materials),
+      List.of(hp),
+    );
   }
 
   ShipGrid._(
@@ -39,6 +56,7 @@ class ShipGrid {
     this._hp,
     this.initialTotalHp,
     this._built,
+    this._max,
   );
 
   /// 빈 칸의 재질 값.
@@ -50,6 +68,12 @@ class ShipGrid {
 
   /// 판 시작 때의 재질. 부서진 칸(구멍, 설계서 §2.5)을 가려낸다.
   final List<int> _built;
+
+  /// 칸마다 최대 내구도 (돛대 칸은 레벨이 반영된다).
+  final List<int> _max;
+
+  /// 칸 [index] 의 최대 내구도. 손상 단계 경계의 기준이다.
+  int maxHpAt(int index) => _max[index];
 
   int get width => hull.width;
   int get height => hull.height;
@@ -88,7 +112,7 @@ class ShipGrid {
   DamageStage stageAt(int x, int y) {
     final m = materialAt(x, y);
     if (m == null) return DamageStage.destroyed;
-    return stageFor(hpAt(x, y), m.durability);
+    return stageFor(hpAt(x, y), _max[indexOf(x, y)]);
   }
 
   /// 내구도 [durability] 인 블록이 [hp] 남았을 때의 손상 단계. 렌더도 이 함수를
@@ -118,7 +142,7 @@ class ShipGrid {
   bool repair(int x, int y, int amount) {
     if (!hasBlock(x, y) || stageAt(x, y) != DamageStage.holed) return false;
     final i = indexOf(x, y);
-    final max = BlockMaterial.values[_materials[i]].durability;
+    final max = _max[i];
     final next = _hp[i] + amount;
     _hp[i] = next > max ? max : next;
     return true;

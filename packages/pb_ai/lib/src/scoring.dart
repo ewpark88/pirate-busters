@@ -18,7 +18,7 @@ abstract final class Scores {
   static int module(ModuleKind k) => switch (k) {
     ModuleKind.magazine => 80,
     ModuleKind.captain => 70,
-    ModuleKind.mast => 60,
+    ModuleKind(isMast: true) => 60,
     ModuleKind.pump || ModuleKind.fuelTank => 50,
     _ => 20,
   };

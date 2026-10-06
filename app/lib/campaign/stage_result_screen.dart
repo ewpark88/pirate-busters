@@ -13,6 +13,7 @@ import 'package:pirate_busters/campaign/stage_spec.dart';
 import 'package:pirate_busters/campaign/star_rules.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
 import 'package:pirate_busters/l10n/data_text.dart';
+import 'package:pirate_busters/meta/my_ship.dart';
 import 'package:pirate_busters/ui/kit/kit_art.dart';
 import 'package:pirate_busters/ui/kit/kit_motion.dart';
 import 'package:pirate_busters/ui/kit/pb_panel.dart';
@@ -43,6 +44,13 @@ class StageResultScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     final catalog = ref.watch(gameCatalogProvider);
+    final growReady =
+        reward.firstClear &&
+        growOpenedBy(
+          stage.id,
+          ref.watch(progressProvider),
+          ref.watch(campaignProvider),
+        );
     // 승패·무승부는 pb_sim 의 판정을 그대로 쓴다 (설계서 §2.4, §13.5).
     final title = summary.won
         ? l10n.resultWin
@@ -128,7 +136,7 @@ class StageResultScreen extends ConsumerWidget {
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            _rewards(l10n, catalog.def),
+                            _rewards(l10n, catalog.def, growReady: growReady),
                             const SizedBox(height: 6),
                             Text(
                               '${l10n.statTurns(summary.turns)} · '
@@ -240,7 +248,11 @@ class StageResultScreen extends ConsumerWidget {
     );
   }
 
-  Widget _rewards(AppLocalizations l10n, PirateDef Function(String id) def) {
+  Widget _rewards(
+    AppLocalizations l10n,
+    PirateDef Function(String id) def, {
+    bool growReady = false,
+  }) {
     const accent = TextStyle(color: Color(0xFFFFC24A), fontSize: 14);
     return Column(
       children: [
@@ -266,6 +278,7 @@ class StageResultScreen extends ConsumerWidget {
           builder: (context, v) => OutlinedText(l10n.rewardXp(v), size: 17),
         ),
         if (reward.firstClear) Text(l10n.rewardFirstClear, style: accent),
+        if (growReady) Text(l10n.shipGrowReady, style: accent),
         if (reward.newPirate != null)
           Text(
             l10n.rewardPirate(dataText(l10n, def(reward.newPirate!).nameKey)),

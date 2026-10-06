@@ -4,13 +4,20 @@ import 'package:pb_sim/pb_sim.dart';
 Blueprint sampleBlueprint() => Blueprint(
   HullSpec.sloop,
   [
-    for (var x = 0; x < 12; x++) BlockCell(x, 0, BlockMaterial.oak),
-    for (var x = 0; x < 12; x++) BlockCell(x, 1, BlockMaterial.pine),
+    // 선체 틀(§3.4): 용골 줄 x 2~9, 그 위 줄 x 1~10. 빠진 몫은 위쪽 양끝에 둔다.
+    for (var x = 2; x < 10; x++) BlockCell(x, 0, BlockMaterial.oak),
+    for (var x = 1; x < 11; x++) BlockCell(x, 1, BlockMaterial.pine),
     const BlockCell(1, 2, BlockMaterial.cork),
     const BlockCell(2, 2, BlockMaterial.iron),
     for (var x = 3; x < 9; x++) BlockCell(x, 2, BlockMaterial.pine),
     const BlockCell(9, 2, BlockMaterial.iron),
     for (var x = 4; x < 8; x++) BlockCell(x, 3, BlockMaterial.net),
+    const BlockCell(0, 2, BlockMaterial.oak),
+    const BlockCell(10, 2, BlockMaterial.oak),
+    const BlockCell(11, 2, BlockMaterial.oak),
+    const BlockCell(9, 3, BlockMaterial.oak),
+    const BlockCell(10, 3, BlockMaterial.pine),
+    const BlockCell(11, 3, BlockMaterial.pine),
   ],
   cabins: const [
     CabinCell(3, 2),
@@ -18,7 +25,7 @@ Blueprint sampleBlueprint() => Blueprint(
     CabinCell(6, 2),
     CabinCell(8, 2),
   ],
-  modules: const [ModuleCell(11, 1, ModuleKind.captain)],
+  modules: const [ModuleCell(10, 1, ModuleKind.captain)],
 );
 
 PirateSpec _p(

@@ -29,7 +29,9 @@ void beginTurn(MatchState state) {
   }
   expireBarriers(state);
   refuel(state.sides[side], rules.fuelPerTurn);
-  state.sides[side].crew.startOwnTurn(side, state.events);
+  state.sides[side]
+    ..moveFallenSeats()
+    ..crew.startOwnTurn(side, state.events);
   runTurnEffects(state);
   judgeInstant(state);
 }

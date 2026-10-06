@@ -3,12 +3,16 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:pb_sim/pb_sim.dart';
 import 'package:pirate_busters/app/providers.dart';
+import 'package:pirate_busters/battle/battle_setup.dart';
 import 'package:pirate_busters/data/fleet_store.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
 import 'package:pirate_busters/l10n/data_text.dart';
+import 'package:pirate_busters/meta/ship_upgrades.dart';
 import 'package:pirate_busters/platform/analytics.dart';
 import 'package:pirate_busters/shipyard/ship_grid_editor.dart';
+import 'package:pirate_busters/shipyard/ship_upgrade_sheet.dart';
 import 'package:pirate_busters/shipyard/shipyard_model.dart';
 import 'package:pirate_busters/shipyard/tool_palette.dart';
 import 'package:pirate_busters/ui/kit/kit_art.dart';
@@ -28,28 +32,47 @@ class ShipyardScreen extends ConsumerStatefulWidget {
 }
 
 class _ShipyardScreenState extends ConsumerState<ShipyardScreen> {
-  final ShipyardModel _model = ShipyardModel();
+  late ShipyardModel _model;
   int _slot = 0;
 
   FleetStore get _fleet => ref.read(fleetStoreProvider);
+
+  ShipUpgrades get _ship => ref.read(progressProvider).ship;
 
   @override
   void initState() {
     super.initState();
     _slot = _fleet.activeSlot;
+    _model = ShipyardModel(hull: _ship.hull);
     _loadSlot(_slot);
   }
 
-  @override
-  void dispose() {
-    _model.dispose();
-    super.dispose();
+  /// 확장 단계·선형 레벨이 바뀌면 그 격자로 다시 연다 (설계서 §3.1, §13.6).
+  void _syncHull(HullSpec hull) {
+    if (_model.hull.stage == hull.stage && _model.hull.level == hull.level) {
+      return;
+    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      setState(() {
+        _model.dispose();
+        _model = ShipyardModel(hull: hull);
+        _loadSlot(_slot);
+      });
+    });
   }
 
-  /// 칸이 비었으면 추천 설계도 ‘밸런스’로 시작한다.
+  /// 칸이 비었으면 지금 단계의 추천 설계도 ‘밸런스’로 시작한다. 작은 단계에서 키운
+  /// 설계도는 새 칸이 빈 채로 이어 고친다 (설계서 §3.1).
   void _loadSlot(int slot) {
     final catalog = ref.read(gameCatalogProvider);
-    _model.load(_fleet.blueprint(slot) ?? catalog.presets.first.blueprint);
+    final draft = _fleet.draft(slot, _ship.stage);
+    if (draft != null && _model.loadJson(draft)) return;
+    _model.load(
+      _ship.unlockedOnly(
+        catalog.preset(BattleSetup.defaultPreset, stage: _ship.stage).blueprint,
+      ),
+    );
   }
 
   Future<void> _save(AppLocalizations l10n) async {
@@ -65,9 +88,17 @@ class _ShipyardScreenState extends ConsumerState<ShipyardScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final ship = ref.watch(progressProvider).ship;
+    _syncHull(ship.hull);
     return PbScaffold(
       title: l10n.menuShipyard,
       actions: [
+        PbIconButton(
+          icon: MetaIcons.gold,
+          tooltip: l10n.shipUpgrades,
+          onPressed: () => unawaited(showShipUpgrades(context)),
+        ),
+        const SizedBox(width: 6),
         PbIconButton(
           icon: MetaIcons.blueprint,
           tooltip: l10n.loadPreset,
@@ -99,7 +130,15 @@ class _ShipyardScreenState extends ConsumerState<ShipyardScreen> {
                     flex: 2,
                     child: PbPanel(
                       padding: const EdgeInsets.all(8),
-                      child: ToolPalette(model: _model),
+                      child: ToolPalette(
+                        model: _model,
+                        ship: ship,
+                        onLocked: (tool, gold) => unawaited(
+                          unlockTool(context, ref, tool, gold).then((ok) {
+                            if (ok) _model.selectTool(tool);
+                          }),
+                        ),
+                      ),
                     ),
                   ),
                 ],
@@ -118,7 +157,7 @@ class _ShipyardScreenState extends ConsumerState<ShipyardScreen> {
 
   /// 추천 설계도 불러오기 (설계서 §3.4).
   Future<void> _pickPreset(AppLocalizations l10n) async {
-    final presets = ref.read(gameCatalogProvider).presets;
+    final presets = ref.read(gameCatalogProvider).presetsAt(_ship.stage);
     final i = await showPbChoice<int>(
       context,
       title: l10n.loadPreset,
@@ -127,7 +166,7 @@ class _ShipyardScreenState extends ConsumerState<ShipyardScreen> {
           (i, dataText(l10n, presets[i].nameKey), null),
       ],
     );
-    if (i != null) _model.load(presets[i].blueprint);
+    if (i != null) _model.load(_ship.unlockedOnly(presets[i].blueprint));
   }
 
   /// 수치 줄: 넘친 값은 빨간색 (설계서 §13.6 “수치가 바로 바뀐다”).

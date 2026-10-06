@@ -19,6 +19,15 @@ int totalWeight(Iterable<BlockCell> cells) {
   return w;
 }
 
+/// 배 무게(×1000): 블록 + 돛대(설계서 §3.3, BALANCE.md A3.2).
+int shipWeight(Iterable<BlockCell> cells, Iterable<ModuleCell> modules) {
+  var w = totalWeight(cells);
+  for (final m in modules) {
+    w += m.kind.weight;
+  }
+  return w;
+}
+
 /// 흘수선 높이(1/1000칸): (총무게 − 부력재) ÷ (선형 폭 × 나눗수) (설계서 §3.4).
 int waterlineOfWeight(HullSpec hull, int weight, MatchRules rules) {
   final h = weight ~/ (hull.width * rules.waterlineDivisor);
@@ -66,7 +75,7 @@ class ShipStats {
       if (m.kind == ModuleKind.captain) captains++;
       if (m.kind == ModuleKind.fuelTank) tanks++;
     }
-    final weight = totalWeight(cells);
+    final weight = shipWeight(cells, modules);
     return ShipStats._(
       cost: cost,
       weight: weight,

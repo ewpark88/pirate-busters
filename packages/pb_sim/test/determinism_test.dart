@@ -10,7 +10,7 @@ import 'fixtures.dart';
 /// 커밋 메시지에 이유를 적는다 (개발 계획서 §2.4 DoD 2).
 /// R1a-1·R1a-2: 지속 상태·화재 칸·부활·방벽을 해시에 넣어 갱신했다(판 결과는 같다,
 /// ADR-075·ADR-078).
-const int _goldenHash = 1847957209;
+const int _goldenHash = 1246316596;
 
 int _hash(Match m) => hashMatchState(m.state);
 

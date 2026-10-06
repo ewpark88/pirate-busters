@@ -6,7 +6,7 @@ import 'fixtures.dart';
 /// [m] 재질로만 지은 용골 한 줄(12칸) 격자.
 ShipGrid _keel(BlockMaterial m) => ShipGrid.fromBlueprint(
   Blueprint(
-    HullSpec.sloop,
+    boxSloop,
     [for (var x = 0; x < 12; x++) BlockCell(x, 0, m)],
     cabins: const [
       CabinCell(0, 0),
@@ -82,7 +82,7 @@ void main() {
       final ship = SideState(
         side: 1,
         blueprint: Blueprint(
-          HullSpec.sloop,
+          boxSloop,
           [
             for (var x = 0; x < 12; x++) BlockCell(x, 0, BlockMaterial.oak),
             for (var x = 5; x <= 7; x++) BlockCell(x, 1, BlockMaterial.oak),

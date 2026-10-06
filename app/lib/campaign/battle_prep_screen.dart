@@ -3,10 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pb_ai/pb_ai.dart';
-import 'package:pb_sim/pb_sim.dart';
 import 'package:pirate_busters/app/app_theme.dart';
 import 'package:pirate_busters/app/providers.dart';
-import 'package:pirate_busters/battle/battle_setup.dart';
 import 'package:pirate_busters/campaign/prep_cabins.dart';
 import 'package:pirate_busters/campaign/stage_flow.dart';
 import 'package:pirate_busters/campaign/stage_node.dart';
@@ -16,6 +14,7 @@ import 'package:pirate_busters/data/fleet_store.dart';
 import 'package:pirate_busters/data/game_catalog.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
 import 'package:pirate_busters/l10n/data_text.dart';
+import 'package:pirate_busters/meta/my_ship.dart';
 import 'package:pirate_busters/shipyard/blueprint_preview.dart';
 import 'package:pirate_busters/story/cutscene_screen.dart';
 import 'package:pirate_busters/story/story_data.dart';
@@ -87,12 +86,7 @@ class _BattlePrepScreenState extends ConsumerState<BattlePrepScreen> {
                         deck: deck,
                         used: used,
                         limit: progress.costLimit,
-                        cabins:
-                            fleet
-                                .blueprint(fleet.activeSlot)
-                                ?.hull
-                                .cabinSlots ??
-                            HullSpec.sloop.cabinSlots,
+                        cabins: progress.ship.hull.cabinSlots,
                       ),
                     ),
                   ),
@@ -151,7 +145,8 @@ class _BattlePrepScreenState extends ConsumerState<BattlePrepScreen> {
     FleetStore fleet,
     GameCatalog catalog,
   ) {
-    final mine = fleet.blueprint(fleet.activeSlot);
+    final ship = ref.read(progressProvider).ship;
+    final mine = fleet.blueprint(fleet.activeSlot, stage: ship.stage);
     return PbPanel(
       title: l10n.prepMyShip,
       child: Column(
@@ -159,7 +154,7 @@ class _BattlePrepScreenState extends ConsumerState<BattlePrepScreen> {
         children: [
           Expanded(
             child: BlueprintPreview(
-              blueprint: mine ?? BattleSetup(catalog).defaultBlueprint,
+              blueprint: myBlueprint(fleet, catalog, ship),
             ),
           ),
           if (mine == null)

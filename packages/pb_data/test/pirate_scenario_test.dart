@@ -14,7 +14,7 @@ final GameData _data = GameData.parse(
 
 final Blueprint _ship = parsePresets(
   jsonDecode(File('$_gameDir/blueprints.json').readAsStringSync()),
-).first.blueprint;
+).firstWhere((p) => p.stage == HullSpec.maxStage).blueprint;
 
 /// 왼쪽(0) 이 [id] 해적과 옥토, 오른쪽은 옥토·톡. 파도 없음, 왼쪽이 선공.
 /// [gap] 을 주면 두 배를 같은 거리만큼 당겨 뱃머리 간격을 맞춘다.

@@ -13,6 +13,7 @@ import 'package:pirate_busters/crew/crew_screen.dart';
 import 'package:pirate_busters/dev/dev_flags.dart';
 import 'package:pirate_busters/dev/test_battle_screen.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
+import 'package:pirate_busters/meta/my_ship.dart';
 import 'package:pirate_busters/meta/progress.dart';
 import 'package:pirate_busters/port/port_game.dart';
 import 'package:pirate_busters/port/port_widgets.dart';
@@ -46,7 +47,7 @@ class _PortScreenState extends ConsumerState<PortScreen> {
     _session = BattleSession(
       BattleSetup(catalog).newMatchFor(
         1,
-        blueprint: fleet.blueprint(fleet.activeSlot),
+        blueprint: myBlueprint(fleet, catalog, ref.read(progressProvider).ship),
         deck: fleet.deck,
       ),
       humanSides: const {0},
@@ -130,6 +131,10 @@ class _PortScreenState extends ConsumerState<PortScreen> {
                 const Spacer(),
                 PortTabs(
                   shipyardLocked: !progress.shipyardUnlocked,
+                  shipyardDot: hasShipUpgradeReady(
+                    progress,
+                    ref.watch(campaignProvider),
+                  ),
                   onShipyard: () => _shipyard(progress),
                   onCrew: () => _open(const CrewScreen()),
                   onSail: _sail,

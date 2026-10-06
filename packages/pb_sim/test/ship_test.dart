@@ -10,7 +10,7 @@ Map<String, Object?> _parse(String s) => jsonDecode(s) as Map<String, Object?>;
 void main() {
   test('재질 5종의 수치는 설계서 §3.2 표와 같다', () {
     final table = {
-      for (final m in BlockMaterial.values)
+      for (final m in BlockMaterial.blocks)
         m.name: [m.durability, m.weight, m.cost],
     };
     expect(table, {
@@ -26,6 +26,60 @@ void main() {
     expect(BlockMaterial.net.slowsShots && BlockMaterial.net.blocksAir, isTrue);
   });
 
+  test('선체 틀은 용골 줄 양끝 2칸, 그 위 줄 1칸을 뺀 V 자다 (설계서 §3.4, BALANCE.md A3.1)', () {
+    const s = HullSpec.sloop;
+    expect([s.frameInset(0), s.frameInset(1), s.frameInset(2)], [2, 1, 0]);
+    expect(
+      [s.inFrame(1, 0), s.inFrame(2, 0), s.inFrame(9, 0), s.inFrame(10, 0)],
+      [
+        false,
+        true,
+        true,
+        false,
+      ],
+    );
+    expect(
+      [s.inFrame(0, 1), s.inFrame(1, 1), s.inFrame(0, 2)],
+      [false, true, true],
+    );
+    const dinghy = HullSpec(
+      id: 'dinghy_test',
+      width: 6,
+      height: 5,
+      cabinSlots: 2,
+      buildPoints: 20,
+      moveSpeed: 2800,
+      fuelTank: 80,
+      fuelPerCell: 8,
+      moduleLimit: 1,
+    );
+    expect(dinghy.frameInset(0), 1, reason: '폭 6 이하는 용골 줄 양끝 1칸');
+    expect(boxSloop.inFrame(0, 0), isTrue, reason: '테스트용 직사각형');
+  });
+
+  test('선체 틀 밖에 블록을 두면 거부한다 (설계서 §3.4)', () {
+    Blueprint withKeelAt(int x) => Blueprint(
+      HullSpec.sloop,
+      [
+        ...sampleBlueprint().cells,
+        BlockCell(x, 0, BlockMaterial.pine),
+      ],
+      cabins: sampleCabins,
+      modules: const [ModuleCell(10, 1, ModuleKind.captain)],
+    );
+    expect(() => withKeelAt(1), throwsArgumentError);
+    expect(() => withKeelAt(10), throwsArgumentError);
+    expect(
+      buildProblem(
+        HullSpec.sloop,
+        [const BlockCell(0, 0, BlockMaterial.oak)],
+        cabins: const [],
+        modules: const [],
+      ),
+      contains('선체 틀 밖'),
+    );
+  });
+
   test('슬루프는 12×8, 선실 4, 건조 포인트 60 이다', () {
     const s = HullSpec.sloop;
     expect([s.width, s.height, s.cabinSlots, s.buildPoints], [12, 8, 4, 60]);
@@ -35,7 +89,7 @@ void main() {
 
   test('설계도는 비용을 합산하고 칸을 (y, x) 순으로 정렬한다', () {
     final b = Blueprint(
-      HullSpec.sloop,
+      boxSloop,
       const [
         BlockCell(3, 1, BlockMaterial.iron),
         BlockCell(0, 0, BlockMaterial.oak),
@@ -81,7 +135,7 @@ void main() {
     ];
     expect(
       () => Blueprint(
-        HullSpec.sloop,
+        boxSloop,
         [
           ...keel,
           const BlockCell(8, 2, BlockMaterial.pine),
@@ -93,7 +147,7 @@ void main() {
     );
     expect(
       () => Blueprint(
-        HullSpec.sloop,
+        boxSloop,
         const [
           BlockCell(0, 1, BlockMaterial.oak),
           BlockCell(1, 1, BlockMaterial.oak),
@@ -113,7 +167,7 @@ void main() {
     // 대각선은 이어진 것이 아니다.
     expect(
       () => Blueprint(
-        HullSpec.sloop,
+        boxSloop,
         [
           ...keel,
           const BlockCell(4, 1, BlockMaterial.pine),
@@ -125,7 +179,7 @@ void main() {
     );
     expect(
       Blueprint(
-        HullSpec.sloop,
+        boxSloop,
         [
           ...keel,
           const BlockCell(3, 1, BlockMaterial.pine),
@@ -141,7 +195,7 @@ void main() {
   test('격자 밖 블록·같은 칸 중복·건조 포인트 초과는 거부한다', () {
     expect(
       () => Blueprint(
-        HullSpec.sloop,
+        boxSloop,
         const [
           BlockCell(12, 0, BlockMaterial.oak),
         ],
@@ -152,7 +206,7 @@ void main() {
     );
     expect(
       () => Blueprint(
-        HullSpec.sloop,
+        boxSloop,
         const [
           BlockCell(1, 1, BlockMaterial.oak),
           BlockCell(1, 1, BlockMaterial.pine),
@@ -164,7 +218,7 @@ void main() {
     );
     expect(
       () => Blueprint(
-        HullSpec.sloop,
+        boxSloop,
         [
           for (var x = 0; x < 12; x++) BlockCell(x, 0, BlockMaterial.iron),
           for (var x = 0; x < 4; x++) BlockCell(x, 1, BlockMaterial.iron),
@@ -178,7 +232,7 @@ void main() {
 
   test('선실은 선실 슬롯 수만큼, 블록 위에, 서로 다른 칸에 있어야 한다', () {
     Blueprint build(List<CabinCell> cabins) => Blueprint(
-      HullSpec.sloop,
+      boxSloop,
       [
         for (var x = 0; x < 12; x++) BlockCell(x, 0, BlockMaterial.oak),
       ],

@@ -93,11 +93,11 @@ void main() {
             );
           }
           // 재질 타일(망사 포함)과 선실 안쪽 벽 타일을 읽어 둔다 (§10.2).
-          for (final m in BlockMaterial.values) {
+          for (final m in BlockMaterial.blocks) {
             expect(ship.sprites.tile(m, 1, 2).image.width, 64, reason: m.name);
           }
           // 흘수선 아래 참나무·소나무만 젖은 타일이다 (§10.2, ADR-061).
-          for (final m in BlockMaterial.values) {
+          for (final m in BlockMaterial.blocks) {
             final wet = ship.sprites.tile(m, 3, 0, wet: true).image;
             final dry = ship.sprites.tile(m, 3, 0).image;
             if (m == BlockMaterial.oak || m == BlockMaterial.pine) {

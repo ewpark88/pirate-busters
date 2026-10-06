@@ -36,6 +36,10 @@ abstract final class MetaIcons {
   // 항구 재화 (§13.2). 진주는 R4.
   static const String gold = '$_dir/currency/gold.png';
 
+  /// 잠김·빨간 점 (§13.2, §13.6).
+  static const String lock = '$_dir/meta/lock.png';
+  static const String redDot = '$_dir/meta/reddot.png';
+
   /// 조선소 추천 설계도 불러오기 (§13.6).
   static const String blueprint = '$_dir/currency/blueprint.png';
 

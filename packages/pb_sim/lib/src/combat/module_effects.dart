@@ -54,7 +54,11 @@ void settleModules(
     if (!m.intact) continue;
     final struck =
         m.kind == ModuleKind.magazine && hit.contains(grid.indexOf(m.x, m.y));
-    if (grid.hasBlock(m.x, m.y) && !struck) continue;
+    // 돛대는 붙인 칸이나 돛대 칸 하나만 없어져도 부러진다 (설계서 §3.3).
+    final rigGone =
+        m.kind.isMast &&
+        m.cell.rigCells(grid.height).any((c) => !grid.hasBlock(c.$1, c.$2));
+    if (grid.hasBlock(m.x, m.y) && !struck && !rigGone) continue;
     m.intact = false;
     events.add(
       SimEvent(
@@ -70,7 +74,11 @@ void settleModules(
       case ModuleKind.fuelTank:
         if (ship.fuel > ship.tank) ship.fuel = ship.tank;
         _explode(ship, m, _fuelTankBlast, events, rng);
-      case ModuleKind.mast:
+      case ModuleKind.mast ||
+          ModuleKind.mastBamboo ||
+          ModuleKind.mastOak ||
+          ModuleKind.mastIron ||
+          ModuleKind.mastCrow:
         _breakMast(ship, m, events);
         // 무너진 블록 위의 모듈도 부서진다: 처음부터 다시 훑는다.
         settleModules(ship, events, rng: rng);
