@@ -12,7 +12,9 @@ import 'package:pirate_busters/game/sprites.dart';
 import 'package:pirate_busters/game/view/cabin_painter.dart';
 import 'package:pirate_busters/game/view/damage_layer.dart';
 import 'package:pirate_busters/game/view/fire_view.dart';
+import 'package:pirate_busters/game/view/hull_trim.dart';
 import 'package:pirate_busters/game/view/module_painter.dart';
+import 'package:pirate_busters/game/view/plank_join.dart';
 import 'package:pirate_busters/game/view/ship_motion.dart';
 
 /// 배 한 척: 격자 타일, 돛대, 선실 칸 안의 해적, 불(`FireView`). 그리기만 한다.
@@ -109,14 +111,9 @@ class ShipView extends PositionComponent with HasGameReference {
     final m = cell >= 0 && cell < _built.materials.length
         ? _built.materials[cell]
         : ShipGrid.emptyCell;
-    if (m == ShipGrid.emptyCell) return null;
-    final y = cell ~/ _width;
-    return sprites.tile(
-      BlockMaterial.values[m],
-      cell % _width,
-      y,
-      wet: BattleSprites.isWet(y, _state.draft),
-    );
+    return m == ShipGrid.emptyCell
+        ? null
+        : sprites.tileOf(m, cell % _width, cell ~/ _width, _state.draft);
   }
 
   /// 흔들림·격침 연출 (설계서 §10.4).
@@ -250,13 +247,9 @@ class ShipView extends PositionComponent with HasGameReference {
         }
         final mat = BlockMaterial.values[m];
         _codes[i] = ShipGrid.stageFor(hp[i], mat.durability).index;
-        sprites
-            .tile(mat, x, y, wet: BattleSprites.isWet(y, _state.draft))
-            .render(
-              canvas,
-              position: Vector2(rect.left, rect.top),
-              size: Vector2.all(_cell),
-            );
+        final join = PlankJoin.mask(materials, _width, x, y);
+        final tile = sprites.tileOf(m, x, y, _state.draft);
+        PlankJoin.drawTile(canvas, tile, rect, join);
         // 선실 칸은 재질 테두리 안에 안쪽 벽을 깐다. 해적은 그 위에 그려진다.
         if (_isCabin(x, y)) {
           CabinPainter.room(canvas, rect, sprites.roomWall(x, y));
@@ -265,6 +258,13 @@ class ShipView extends PositionComponent with HasGameReference {
         if (module != null) ModulePainter.draw(canvas, sprites, rect, module);
       }
     }
+    HullTrim.paint(
+      canvas,
+      hull: grid.hull,
+      materials: materials,
+      tileAt: (m, x, y) => sprites.tileOf(m, x, y, _state.draft),
+      cellRect: cellRect,
+    );
     // 배 속·그을음·금·구멍·찢긴 변·파편은 타일을 모두 그린 뒤 한 장으로 얹는다.
     var wetRows = 0;
     while (wetRows < grid.height &&

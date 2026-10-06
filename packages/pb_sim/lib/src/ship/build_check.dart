@@ -6,7 +6,7 @@ import 'package:pb_sim/src/ship/module.dart';
 /// 화면에 쓰지 않는다), 지키면 null. 조선소 화면은 [disconnectedBlocks] 로 끊긴
 /// 블록을 따로 칠한다.
 ///
-/// 순서: 격자 범위 → 칸 중복 → 블록 건조 포인트 → 용골 연결 → 선실 → 모듈 → 합계
+/// 순서: 격자 범위 → 선체 틀(§3.4) → 칸 중복 → 블록 건조 포인트 → 용골 연결 → 선실 → 모듈 → 합계
 /// 건조 포인트. [cells] 는 (y, x) 순으로 정렬돼 있어야 한다.
 String? buildProblem(
   HullSpec hull,
@@ -20,6 +20,7 @@ String? buildProblem(
     if (c.x < 0 || c.x >= hull.width || c.y < 0 || c.y >= hull.height) {
       return '격자 밖 블록: (${c.x}, ${c.y})';
     }
+    if (!hull.inFrame(c.x, c.y)) return '선체 틀 밖 블록: (${c.x}, ${c.y})';
     if (i > 0 && cells[i - 1].x == c.x && cells[i - 1].y == c.y) {
       return '같은 칸에 블록이 둘: (${c.x}, ${c.y})';
     }

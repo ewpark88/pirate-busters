@@ -10,7 +10,7 @@ const _captain = ModuleCell(11, 1, ModuleKind.captain);
 
 /// 용골(참나무) + 1층(소나무) + (1, 2..3) 소나무 기둥. 비용 38. 선실은 1층.
 Blueprint _ship(List<ModuleCell> modules, {bool captain = true}) => Blueprint(
-  HullSpec.sloop,
+  boxSloop,
   [
     for (var x = 0; x < 12; x++) BlockCell(x, 0, BlockMaterial.oak),
     for (var x = 0; x < 12; x++) BlockCell(x, 1, BlockMaterial.pine),
@@ -96,7 +96,7 @@ void main() {
       expect(b.cost, 38 + 3 * 3 + 2);
       expect(
         () => Blueprint(
-          HullSpec.sloop,
+          boxSloop,
           sampleBlueprint().cells,
           cabins: sampleCabins,
           modules: const [
@@ -125,11 +125,11 @@ void main() {
         CabinCell(2, 0),
         CabinCell(3, 0),
       ];
-      final loose = disconnectedBlocks(HullSpec.sloop, cells);
+      final loose = disconnectedBlocks(boxSloop, cells);
       expect([for (final c in loose) '${c.x},${c.y}'], ['8,3']);
       expect(
         buildProblem(
-          HullSpec.sloop,
+          boxSloop,
           cells,
           cabins: cabins,
           modules: const [ModuleCell(4, 0, ModuleKind.captain)],
@@ -138,7 +138,7 @@ void main() {
       );
       expect(
         buildProblem(
-          HullSpec.sloop,
+          boxSloop,
           cells.sublist(0, 5),
           cabins: cabins,
           modules: const [],
@@ -147,7 +147,7 @@ void main() {
       );
       expect(
         buildProblem(
-          HullSpec.sloop,
+          boxSloop,
           cells.sublist(0, 5),
           cabins: cabins,
           modules: const [ModuleCell(4, 0, ModuleKind.captain)],
@@ -168,10 +168,15 @@ void main() {
     });
 
     test('모듈이 든 설계도는 JSON 으로 저장했다 읽어도 같다', () {
-      final b = _ship(const [
-        ModuleCell(0, 1, ModuleKind.pump),
-        ModuleCell(5, 1, ModuleKind.gunPort),
-      ]);
+      final b = Blueprint(
+        HullSpec.sloop,
+        sampleBlueprint().cells,
+        cabins: sampleCabins,
+        modules: const [
+          ModuleCell(10, 1, ModuleKind.captain),
+          ModuleCell(5, 2, ModuleKind.gunPort),
+        ],
+      );
       final text = jsonEncode(b.toJson());
       final back = Blueprint.fromJson(
         jsonDecode(text) as Map<String, Object?>,
@@ -187,7 +192,7 @@ void main() {
       expect(light.modules.weightPermille, greaterThan(1000));
       expect(light.modules.weightPermille, lessThan(1200));
       final iron = Blueprint(
-        HullSpec.sloop,
+        boxSloop,
         [for (var x = 0; x < 12; x++) BlockCell(x, 0, BlockMaterial.iron)],
         cabins: const [
           CabinCell(0, 0),
@@ -201,7 +206,7 @@ void main() {
       expect(ShipModules.weightFuelPermilleOf(iron), 1160);
       expect(
         _side(iron).fuelPerCell,
-        HullSpec.sloop.fuelPerCell * SideState.fuelUnit * 1160 ~/ 1000,
+        boxSloop.fuelPerCell * SideState.fuelUnit * 1160 ~/ 1000,
       );
     });
 

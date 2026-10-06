@@ -82,7 +82,7 @@ class _Recorder implements Controller {
 }
 
 /// R1a-1 섞인 판(시드 4242, 스크립트 35·36)의 기대 해시. 의도한 규칙 변경일 때만 갱신한다.
-const int _mixedHash = 2153910199;
+const int _mixedHash = 3160831122;
 
 List<SimEvent> _of(Match m, SimEventKind kind) =>
     m.state.events.where((e) => e.kind == kind).toList();
@@ -198,8 +198,8 @@ void main() {
 
     test('화약고가 터지면 둘레 칸에 불이 붙는다 (§3.3)', () {
       final blueprint = Blueprint(
-        HullSpec.sloop,
-        sampleBlueprint().cells,
+        boxSloop,
+        boxSampleBlueprint().cells,
         cabins: sampleCabins,
         modules: const [
           ModuleCell(11, 1, ModuleKind.captain),

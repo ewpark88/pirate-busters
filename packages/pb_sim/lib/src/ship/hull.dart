@@ -10,6 +10,7 @@ class HullSpec {
     required this.fuelTank,
     required this.fuelPerCell,
     required this.moduleLimit,
+    this.framed = true,
   });
 
   /// 슬루프: 12×8, 선실 4, 건조 포인트 60, 2.8칸/초, 탱크 80, 1칸당 연료 8,
@@ -55,6 +56,28 @@ class HullSpec {
 
   /// 선장실을 뺀 기능 모듈 수 상한 (설계서 §3.3, BALANCE.md A3.3).
   final int moduleLimit;
+
+  /// 선체 틀(§3.4)을 쓰는가. 게임의 모든 선형은 true 다. false 는 틀과 무관한 규칙을
+  /// 직사각형 격자로 확인하는 테스트용이다.
+  final bool framed;
+
+  /// 선체 틀(설계서 §3.4, BALANCE.md A3.1): 줄 [y] 의 양쪽 끝에서 쓸 수 없는 칸 수.
+  /// 용골 줄은 2칸(폭 6 이하는 1칸), 그 위 줄은 1칸, 나머지는 0 이다. 아래가 좁은
+  /// V 자라 어떻게 쌓아도 배 모양이 된다.
+  int frameInset(int y) => !framed
+      ? 0
+      : switch (y) {
+          0 => width <= 6 ? 1 : 2,
+          1 => 1,
+          _ => 0,
+        };
+
+  /// (x, y) 가 격자 안이고 선체 틀 안인가.
+  bool inFrame(int x, int y) {
+    if (y < 0 || y >= height) return false;
+    final inset = frameInset(y);
+    return x >= inset && x < width - inset;
+  }
 
   /// id 로 찾는다. 없으면 [FormatException].
   static HullSpec byId(String id) {

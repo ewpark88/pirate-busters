@@ -17,11 +17,36 @@ abstract class FleetStore {
     try {
       final json = jsonDecode(text);
       if (json is! Map<String, Object?>) return null;
-      if (Blueprint.problemOfJson(json) != null) return null;
-      return Blueprint.fromJson(json);
+      final fitted = fitToFrame(json);
+      if (Blueprint.problemOfJson(fitted) != null) return null;
+      return Blueprint.fromJson(fitted);
     } on FormatException {
       return null;
     }
+  }
+
+  /// 선체 틀(설계서 §3.4)이 생기기 전에 저장한 설계도를 살린다: 틀 밖 블록과 그 칸의
+  /// 모듈을 뺀다. 나머지 규칙(용골 연결·선실)은 그대로 검사한다.
+  static Map<String, Object?> fitToFrame(Map<String, Object?> json) {
+    final hullId = json['hull'];
+    if (hullId is! String) return json;
+    final hull = HullSpec.byId(hullId);
+    bool keep(Object? raw) =>
+        raw is! List<Object?> ||
+        raw.length < 2 ||
+        raw[0] is! int ||
+        raw[1] is! int ||
+        hull.inFrame(raw[0]! as int, raw[1]! as int);
+    List<Object?> only(Object? list) => [
+      if (list is List<Object?>)
+        for (final raw in list)
+          if (keep(raw)) raw,
+    ];
+    return {
+      ...json,
+      'cells': only(json['cells']),
+      'modules': only(json['modules']),
+    };
   }
 
   Future<void> saveBlueprint(int slot, Blueprint blueprint) =>

@@ -6,7 +6,7 @@ import 'fixtures.dart';
 /// 12 × 3 을 소나무로 채우고 착탄 칸 (6, 1) 만 참나무인 배. 두 걸음 안이 모두 블록이라
 /// 조각이 바다로 흩어지지 않는다.
 Blueprint _fullOak() => Blueprint(
-  HullSpec.sloop,
+  boxSloop,
   [
     for (var y = 0; y < 3; y++)
       for (var x = 0; x < 12; x++)
@@ -135,7 +135,7 @@ void main() {
     test('도중에 빈 칸·착탄 칸을 고르면 그 자리에서 멈춘다', () {
       // (0, 1) 의 이웃은 (0, 0) 하나뿐이고 (0, 0) 의 이웃 중 착탄 칸이 아닌 블록은
       // 없다 → 조각은 사라지거나 (0, 0) 에서 멈춘다. 다른 칸에는 가지 않는다.
-      final g = ShipGrid.fromBlueprint(sampleBlueprint());
+      final g = ShipGrid.fromBlueprint(boxSampleBlueprint());
       for (final (x, y) in [(1, 0), (1, 1), (1, 2)]) {
         g.removeAt(g.indexOf(x, y));
       }

@@ -77,6 +77,8 @@ class ShipGridPainter extends CustomPainter {
     final h = model.height;
     for (var y = 0; y < h; y++) {
       for (var x = 0; x < model.width; x++) {
+        // 선체 틀 밖 칸은 그리지 않아 격자가 배 모양으로 보인다 (설계서 §3.4).
+        if (!model.hull.inFrame(x, y)) continue;
         final r = Rect.fromLTWH(x * cell, (h - 1 - y) * cell, cell, cell);
         final m = model.materialAt(x, y);
         if (!overlay) {

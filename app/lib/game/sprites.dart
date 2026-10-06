@@ -92,6 +92,10 @@ class BattleSprites {
     return get('ship/tiles_v2/${name}_${variantOf(x, y)}.png');
   }
 
+  /// 재질 번호 [material] 칸의 타일. 잠긴 깊이 [draft] 로 젖은 타일을 고른다.
+  Sprite tileOf(int material, int x, int y, int draft) =>
+      tile(BlockMaterial.values[material], x, y, wet: isWet(y, draft));
+
   /// 등불 선실 타일 [v](0~3): 짝수·홀수가 벽 무늬, 2 이상이면 등불이 왼쪽
   /// (에셋 v0.24 `ship/rooms/room1_lantern_*`, ADR-062).
   static String roomFile(int v) =>

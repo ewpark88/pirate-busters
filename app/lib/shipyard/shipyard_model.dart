@@ -133,7 +133,8 @@ class ShipyardModel extends ChangeNotifier {
 
   /// 지금 도구를 ([x], [y]) 칸에 쓴다. 끌기 중이면 같은 획으로 친다.
   void apply(int x, int y) {
-    if (x < 0 || y < 0 || x >= width || y >= height) return;
+    // 선체 틀 밖에는 아무것도 놓지 않는다 (설계서 §3.4).
+    if (!hull.inFrame(x, y)) return;
     if (!_strokeOpen) _remember();
     final i = y * width + x;
     final changed = switch (tool) {
