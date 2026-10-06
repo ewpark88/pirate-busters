@@ -23,6 +23,34 @@ void main() {
       expect(t.onBatch(heavy, cabinHit: false), Emphasis.boom);
     });
 
+    test('돛대가 부러지면 선실 직격 다음, 큰 피해보다 앞서 돛대 문구를 띄운다 (A30)', () {
+      expect(
+        (EmotionTracker()..turnStart(1)).onBatch(
+          heavy,
+          cabinHit: false,
+          mastBroken: true,
+        ),
+        Emphasis.mast,
+      );
+      expect(
+        (EmotionTracker()..turnStart(1)).onBatch(
+          light,
+          cabinHit: true,
+          mastBroken: true,
+        ),
+        Emphasis.cabin,
+      );
+      expect(
+        (EmotionTracker()..turnStart(1)).onBatch(
+          HitWeight.none,
+          cabinHit: false,
+          mastBroken: true,
+        ),
+        Emphasis.mast,
+        reason: '피해가 작아도 돛대가 부러지면 띄운다',
+      );
+    });
+
     test('같은 턴 두 번째 명중에 연속 명중을 띄운다', () {
       final t = EmotionTracker()..turnStart(1);
       expect(t.onBatch(light, cabinHit: false), isNull);

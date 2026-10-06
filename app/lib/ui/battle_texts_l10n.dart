@@ -19,6 +19,7 @@ void applyBattleTexts(BattleGame game, AppLocalizations l10n, Locale locale) {
       Emphasis.boom => l10n.emphasisBoom,
       Emphasis.doubleHit => l10n.emphasisDoubleHit,
       Emphasis.cabin => l10n.emphasisCabin,
+      Emphasis.mast => l10n.emphasisMast,
     })
     // 명중 이름표 (설계서 §10.4).
     ..tagText = (tag) => switch (tag) {

@@ -6,7 +6,6 @@ import 'package:pirate_busters/game/view/fx_text.dart';
 import 'package:pirate_busters/game/view/hit_weight.dart';
 
 /// 큰 강조 문구 (설계서 §10.4 감정 연출). 글자는 화면이 l10n 으로 만든다 (§14.2).
-/// 돛대 부러짐은 A30 에서 더한다.
 enum Emphasis {
   /// 큰 피해(묵직한 한 방).
   boom,
@@ -16,10 +15,13 @@ enum Emphasis {
 
   /// 선실 직격.
   cabin,
+
+  /// 돛대 부러짐 (A30, 설계서 §3.3).
+  mast,
 }
 
-/// 감정 연출 판단 (설계서 §10.4, A32): 한 턴에 강조 문구는 하나만 띄운다. 선실 직격이
-/// 가장 앞이고, 그다음 큰 피해, 같은 턴 두 번째 명중 순이다. 화면용이라 판정과 무관하고
+/// 감정 연출 판단 (설계서 §10.4, A32·A30): 한 턴에 강조 문구는 하나만 띄운다. 선실
+/// 직격이 가장 앞이고, 그다음 돛대 부러짐, 큰 피해, 같은 턴 두 번째 명중 순이다. 화면용이라 판정과 무관하고
 /// 같은 이벤트 순서면 같은 결과다.
 class EmotionTracker {
   int _turn = -1;
@@ -33,14 +35,20 @@ class EmotionTracker {
     _shown = false;
   }
 
-  /// 착탄 묶음 하나: [weight] 는 한 방 크기, [cabinHit] 는 선실 칸을 직접 맞혔는가.
-  /// 띄울 문구가 있으면 돌려준다.
-  Emphasis? onBatch(HitWeight weight, {required bool cabinHit}) {
-    if (weight.score == 0) return null;
+  /// 착탄 묶음 하나: [weight] 는 한 방 크기, [cabinHit] 는 선실 칸을 직접 맞혔는가,
+  /// [mastBroken] 은 이 묶음에서 돛대가 부러졌는가. 띄울 문구가 있으면 돌려준다.
+  Emphasis? onBatch(
+    HitWeight weight, {
+    required bool cabinHit,
+    bool mastBroken = false,
+  }) {
+    if (weight.score == 0 && !mastBroken) return null;
     _hits++;
     if (_shown) return null;
     final pick = cabinHit
         ? Emphasis.cabin
+        : mastBroken
+        ? Emphasis.mast
         : weight.isHeavy
         ? Emphasis.boom
         : _hits >= 2
@@ -72,9 +80,19 @@ extension EmotionCues on BattleCues {
     final side = session.state.sides[hit.side];
     final w = side.grid.width;
     final cabinHit = side.cabins.any((c) => c.y * w + c.x == hit!.cell);
+    // 돛대가 부러졌다: 돛대 모듈이 부서진 이벤트 (설계서 §3.3, A30).
+    final mast = cues.any(
+      (e) =>
+          e.kind == SimEventKind.moduleDestroyed &&
+          ModuleKind.values[e.value].isMast,
+    );
     final fewer = fx.few(2) == 1;
-    if (cabinHit) stop.slow(slowFor(lowEnd: fewer));
-    final pick = emotion.onBatch(weight, cabinHit: cabinHit);
+    if (cabinHit || mast) stop.slow(slowFor(lowEnd: fewer));
+    final pick = emotion.onBatch(
+      weight,
+      cabinHit: cabinHit,
+      mastBroken: mast,
+    );
     if (pick == null) return;
     fx.emphasis(
       // 맞은 곳 바로 위: 카메라가 물러나도 위쪽 HUD 와 겹치지 않을 만큼만 띄운다.

@@ -2773,6 +2773,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Every stage here is cleared!'**
   String get goalAllClear;
+
+  /// No description provided for @emphasisMast.
+  ///
+  /// In en, this message translates to:
+  /// **'Mast down!'**
+  String get emphasisMast;
 }
 
 class _AppLocalizationsDelegate
