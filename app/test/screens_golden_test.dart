@@ -17,11 +17,14 @@ import 'package:pirate_busters/data/fleet_store.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
 import 'package:pirate_busters/meta/progress.dart';
 import 'package:pirate_busters/meta/progress_store.dart';
+import 'package:pirate_busters/port/port_goal_card.dart';
 import 'package:pirate_busters/port/port_widgets.dart';
 import 'package:pirate_busters/port/settings_screen.dart';
 import 'package:pirate_busters/settings/language.dart';
 import 'package:pirate_busters/settings/settings_store.dart';
+import 'package:pirate_busters/shipyard/blueprint_preview.dart';
 import 'package:pirate_busters/shipyard/shipyard_screen.dart';
+import 'package:pirate_busters/story/backdrop_picture.dart';
 import 'package:pirate_busters/story/cutscene_screen.dart';
 import 'package:pirate_busters/story/story_data.dart';
 import 'package:pirate_busters/ui/cards/rarity_card.dart';
@@ -65,31 +68,57 @@ void main() {
     'port': Builder(
       builder: (context) {
         final l10n = AppLocalizations.of(context);
+        // 전장 그림(Flame)은 골든에서 그리지 않아 같은 해역 바다 그림과 내 배
+        // 미리보기를 깐다. 위·아래 바와 다음 목표 카드는 화면 그대로다.
         return Scaffold(
-          backgroundColor: const Color(0xFF7FC0EC),
-          body: SafeArea(
-            child: Column(
-              children: [
-                PortTopBar(
-                  progress: progress,
-                  onSettings: () {},
-                  onHotseat: () {},
-                ),
-                const Spacer(),
-                PortTabs(
-                  shipyardLocked: false,
-                  onShipyard: () {},
-                  onCrew: () {},
-                  onSail: () {},
-                  // 탭 라벨은 화면과 같이 l10n 에서 (설계서 §14.4).
-                  labels: (
-                    shipyard: l10n.menuShipyard,
-                    crew: l10n.menuCrew,
-                    sail: l10n.portSail,
+          body: Stack(
+            fit: StackFit.expand,
+            children: [
+              const BackdropPicture(region: 'tropic'),
+              Align(
+                alignment: const Alignment(0.2, 0.25),
+                child: SizedBox(
+                  width: 300,
+                  height: 200,
+                  child: BlueprintPreview(
+                    blueprint: testCatalog.preset('balanced').blueprint,
                   ),
                 ),
-              ],
-            ),
+              ),
+              SafeArea(
+                child: Column(
+                  children: [
+                    PortTopBar(
+                      progress: progress,
+                      onSettings: () {},
+                      onHotseat: () {},
+                    ),
+                    Expanded(
+                      child: Align(
+                        alignment: const Alignment(-0.95, 0),
+                        child: PortGoalCard(
+                          progress: progress,
+                          campaign: testCampaign,
+                          onStage: (_) {},
+                        ),
+                      ),
+                    ),
+                    PortTabs(
+                      shipyardLocked: false,
+                      onShipyard: () {},
+                      onCrew: () {},
+                      onSail: () {},
+                      // 탭 라벨은 화면과 같이 l10n 에서 (설계서 §14.4).
+                      labels: (
+                        shipyard: l10n.menuShipyard,
+                        crew: l10n.menuCrew,
+                        sail: l10n.portSail,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         );
       },

@@ -32,7 +32,8 @@ class LimitMarks extends Component {
       _limit(
         canvas,
         BattleSprites.limitForward,
-        Coords.x(start + facing * hi),
+        // 초계선 보스는 전진 한계가 턴마다 다가온다 (설계서 §5.4).
+        Coords.x(start + facing * (hi + side.forwardBonus)),
         facing,
         forwardAnchor,
       );

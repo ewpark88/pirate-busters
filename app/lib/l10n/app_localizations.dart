@@ -1997,13 +1997,13 @@ abstract class AppLocalizations {
   /// No description provided for @gimmick_bow_iron_shield.
   ///
   /// In en, this message translates to:
-  /// **'Iron bow shield: direct-fire damage from the front is greatly reduced'**
+  /// **'Iron bow shield: direct fire deals half damage while it stands. Break the bow first'**
   String get gimmick_bow_iron_shield;
 
   /// No description provided for @gimmick_patrol_closing_in.
   ///
   /// In en, this message translates to:
-  /// **'The cutter closes in every turn and its cooldowns drop faster'**
+  /// **'The cutter closes in one cell each turn and its cooldowns drop twice as fast'**
   String get gimmick_patrol_closing_in;
 
   /// No description provided for @resultMission.
@@ -2611,6 +2611,168 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'OK'**
   String get ok;
+
+  /// No description provided for @bossBanner.
+  ///
+  /// In en, this message translates to:
+  /// **'Boss!'**
+  String get bossBanner;
+
+  /// No description provided for @barkFire1.
+  ///
+  /// In en, this message translates to:
+  /// **'Take that!'**
+  String get barkFire1;
+
+  /// No description provided for @barkFire2.
+  ///
+  /// In en, this message translates to:
+  /// **'Right on target!'**
+  String get barkFire2;
+
+  /// No description provided for @barkFire3.
+  ///
+  /// In en, this message translates to:
+  /// **'One more coming!'**
+  String get barkFire3;
+
+  /// No description provided for @barkFire4.
+  ///
+  /// In en, this message translates to:
+  /// **'Cannonball delivery!'**
+  String get barkFire4;
+
+  /// No description provided for @barkHurt1.
+  ///
+  /// In en, this message translates to:
+  /// **'Ouch, that stings!'**
+  String get barkHurt1;
+
+  /// No description provided for @barkHurt2.
+  ///
+  /// In en, this message translates to:
+  /// **'Barely a scratch!'**
+  String get barkHurt2;
+
+  /// No description provided for @barkHurt3.
+  ///
+  /// In en, this message translates to:
+  /// **'The ship\'s rocking!'**
+  String get barkHurt3;
+
+  /// No description provided for @barkHurt4.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ll pay for that!'**
+  String get barkHurt4;
+
+  /// No description provided for @barkAllyDown1.
+  ///
+  /// In en, this message translates to:
+  /// **'Crew down! Hold on!'**
+  String get barkAllyDown1;
+
+  /// No description provided for @barkAllyDown2.
+  ///
+  /// In en, this message translates to:
+  /// **'I\'ll fight for both of us!'**
+  String get barkAllyDown2;
+
+  /// No description provided for @barkAllyDown3.
+  ///
+  /// In en, this message translates to:
+  /// **'Hang in there, we\'ll finish fast!'**
+  String get barkAllyDown3;
+
+  /// No description provided for @barkAllyDown4.
+  ///
+  /// In en, this message translates to:
+  /// **'Now I\'m angry!'**
+  String get barkAllyDown4;
+
+  /// No description provided for @barkTauntStart1.
+  ///
+  /// In en, this message translates to:
+  /// **'Pirate patrol! Surrender!'**
+  String get barkTauntStart1;
+
+  /// No description provided for @barkTauntStart2.
+  ///
+  /// In en, this message translates to:
+  /// **'You call that a ship?'**
+  String get barkTauntStart2;
+
+  /// No description provided for @barkTauntStart3.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing gets past the patrol!'**
+  String get barkTauntStart3;
+
+  /// No description provided for @barkTauntStart4.
+  ///
+  /// In en, this message translates to:
+  /// **'Taste the claw!'**
+  String get barkTauntStart4;
+
+  /// No description provided for @barkTauntLow1.
+  ///
+  /// In en, this message translates to:
+  /// **'Th-this can\'t be!'**
+  String get barkTauntLow1;
+
+  /// No description provided for @barkTauntLow2.
+  ///
+  /// In en, this message translates to:
+  /// **'We\'re leaking! Man the pumps!'**
+  String get barkTauntLow2;
+
+  /// No description provided for @barkTauntLow3.
+  ///
+  /// In en, this message translates to:
+  /// **'Not bad… but not done yet!'**
+  String get barkTauntLow3;
+
+  /// No description provided for @barkTauntLow4.
+  ///
+  /// In en, this message translates to:
+  /// **'No retreat, hold the line!'**
+  String get barkTauntLow4;
+
+  /// No description provided for @goalTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Next goal'**
+  String get goalTitle;
+
+  /// No description provided for @goalGo.
+  ///
+  /// In en, this message translates to:
+  /// **'Go'**
+  String get goalGo;
+
+  /// 항구 다음 목표 카드 별 진행 (설계서 §13.2)
+  ///
+  /// In en, this message translates to:
+  /// **'Stars {have} / {total}'**
+  String goalStars(Object have, Object total);
+
+  /// No description provided for @goalShipNeed.
+  ///
+  /// In en, this message translates to:
+  /// **'Grow ship: clear {stage}'**
+  String goalShipNeed(Object stage);
+
+  /// No description provided for @goalShipDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Ship fully grown'**
+  String get goalShipDone;
+
+  /// No description provided for @goalAllClear.
+  ///
+  /// In en, this message translates to:
+  /// **'Every stage here is cleared!'**
+  String get goalAllClear;
 }
 
 class _AppLocalizationsDelegate

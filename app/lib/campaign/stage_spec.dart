@@ -79,6 +79,7 @@ class StageSpec {
     this.gimmick,
     this.enemyStage = HullSpec.maxStage,
     this.enemyMastLevel = 1,
+    this.enemyBlueprint,
   });
 
   factory StageSpec.fromJson(JsonReader r, {required int sea}) {
@@ -119,7 +120,26 @@ class StageSpec {
       gimmick: r.stringOrNull('gimmick'),
       enemyStage: r.integerOr('enemyStage', HullSpec.maxStage),
       enemyMastLevel: r.integerOr('enemyMastLevel', 1),
+      enemyBlueprint: _blueprintOrNull(r),
     );
+  }
+
+  /// 스테이지 전용 적 설계도(첫 판처럼 추천 설계도가 아닌 배). 규칙 위반은 [DataFormatError].
+  static Blueprint? _blueprintOrNull(JsonReader r) {
+    if (!r.has('enemyBlueprint')) return null;
+    final raw = r.raw('enemyBlueprint');
+    if (raw is! Map<String, Object?>) {
+      throw DataFormatError('${r.path}.enemyBlueprint', '객체여야 한다');
+    }
+    try {
+      final problem = Blueprint.problemOfJson(raw);
+      if (problem != null) {
+        throw DataFormatError('${r.path}.enemyBlueprint', problem);
+      }
+      return Blueprint.fromJson(raw);
+    } on FormatException catch (e) {
+      throw DataFormatError('${r.path}.enemyBlueprint', e.message);
+    }
   }
 
   static T _enumOf<T extends Enum>(List<T> values, String name, String path) =>
@@ -140,6 +160,9 @@ class StageSpec {
   /// 적 배 확장 단계(설계서 §3.1, BALANCE.md A3.1)와 돛대 레벨(A3.2).
   final int enemyStage;
   final int enemyMastLevel;
+
+  /// 스테이지 전용 적 설계도. 있으면 [enemyPreset] 대신 쓴다 (설계서 §13.1 첫 판).
+  final Blueprint? enemyBlueprint;
   final List<String> enemyDeck;
   final AiLevel aiLevel;
   final Personality personality;
@@ -165,7 +188,7 @@ class StageSpec {
   /// 튜토리얼 판 번호 1~3 (§13.1). 캠페인 스테이지는 0.
   final int tutorialStep;
 
-  /// 보스 기믹 id (§5.4). 글자는 ARB `gimmick_<id>`, 판정 반영은 R3.
+  /// 보스 기믹 id (§5.4). 글자는 ARB `gimmick_<id>`, 판정은 `BossGimmick`(해역 1 은 A29).
   final String? gimmick;
 
   bool get isBoss => kind == StageKind.boss || kind == StageKind.midBoss;
@@ -186,6 +209,7 @@ class StageSpec {
     enemyDeck: enemyDeck,
     enemyStage: enemyStage,
     enemyMastLevel: enemyMastLevel,
+    enemyBlueprint: enemyBlueprint,
     aiLevel: aiLevel ?? this.aiLevel,
     personality: personality,
     waveLevel: waveLevel ?? this.waveLevel,
@@ -257,7 +281,9 @@ class SeaSpec {
         '${s.id}: unknown reward pirate ${s.rewardPirate}',
       if (s.enemyDeck.isEmpty) '${s.id}: empty enemy deck',
       if (s.enemyDeck.length >
-          HullSpec.byId('sloop', stage: s.enemyStage).cabinSlots)
+          (s.enemyBlueprint?.hull ??
+                  HullSpec.byId('sloop', stage: s.enemyStage))
+              .cabinSlots)
         '${s.id}: enemy deck larger than stage ${s.enemyStage} cabins',
       if (s.kind == StageKind.tutorial &&
           (s.tutorialStep < 1 || s.tutorialStep > 3))
