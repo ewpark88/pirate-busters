@@ -18,6 +18,7 @@ import 'package:pirate_busters/game/view/fx_layer.dart';
 import 'package:pirate_busters/game/view/fx_text.dart';
 import 'package:pirate_busters/game/view/hit_weight.dart';
 import 'package:pirate_busters/game/view/ship_view.dart';
+import 'package:pirate_busters/game/view/shot_fx.dart';
 import 'package:pirate_busters/game/view/shot_view.dart';
 import 'package:pirate_busters/game/view/water_fx.dart';
 import 'package:pirate_busters/game/weapon_styles.dart';
@@ -107,6 +108,7 @@ class BattleCues {
           ships[e.side].playAttack(e.slot);
           // 쏜 배는 쏜 쪽 반대로 살짝 밀린다 (A20).
           ships[e.side].recoil(-facingOf(e.side));
+          fx.muzzle(Coords.point(e.x, e.y), facingOf(e.side));
           playSfx(Sfx.cannon);
         case SimEventKind.impact when landsQuietly(spec):
           // 수리·설치 연출은 뒤따르는 repaired·mineAttached 이벤트가 그린다.
@@ -145,7 +147,7 @@ class BattleCues {
           final at = Coords.point(e.x, 0);
           fx
             ..splash(at)
-            ..nudge(0.3);
+            ..waterHit(at);
           director.impact(at);
           playSfx(Sfx.splash);
         case SimEventKind.blockDestroyed:

@@ -1,9 +1,13 @@
+import 'dart:async';
+
 import 'package:flame/components.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:pb_sim/pb_sim.dart';
 import 'package:pirate_busters/battle/battle_session.dart';
 import 'package:pirate_busters/game/battle_game.dart';
 import 'package:pirate_busters/input/aim_mode.dart';
+import 'package:pirate_busters/input/aim_ticks.dart';
 import 'package:pirate_busters/input/pull_aim.dart';
 
 /// 전장 위 제스처 (설계서 §2.1, §2.2, ADR-033): 배 위 해적을 한 손가락으로 끌면
@@ -31,6 +35,9 @@ class _FieldGesturesState extends State<FieldGestures> {
   Offset _start = Offset.zero;
   bool _pinching = false;
 
+  /// 힘 링 눈금마다 가벼운 진동, 최대 힘에서 딸깍 (설계서 §10.4 발사).
+  final AimTicks _ticks = AimTicks();
+
   /// 당김 입력 시각(놓을 때 미끄러짐을 걸러 낸다).
   final Stopwatch _clock = Stopwatch()..start();
 
@@ -56,6 +63,7 @@ class _FieldGesturesState extends State<FieldGestures> {
       minAngle: lo,
       maxAngle: hi,
     )..start();
+    _ticks.reset();
   }
 
   void _onUpdate(ScaleUpdateDetails d) {
@@ -73,6 +81,17 @@ class _FieldGesturesState extends State<FieldGestures> {
     final delta = d.localFocalPoint - _start;
     aim.drag(delta.dx, delta.dy, ms: _clock.elapsedMilliseconds);
     _s.setAim(_slot, aim.shot, aim.stretch, cancelling: aim.isCancelling);
+    final tick = _ticks.update(
+      aim.isCancelling ? 0 : aim.shot.power,
+      maxFirePower,
+    );
+    if (tick != null && widget.game.vibrationOn.value) {
+      unawaited(
+        tick == AimTick.full
+            ? HapticFeedback.mediumImpact()
+            : HapticFeedback.selectionClick(),
+      );
+    }
   }
 
   void _onEnd(ScaleEndDetails d) {
