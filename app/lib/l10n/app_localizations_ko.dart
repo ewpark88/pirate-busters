@@ -1450,4 +1450,26 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get barkTauntLow4 => '후퇴는 없다, 버텨라!';
+
+  @override
+  String get goalTitle => '다음 목표';
+
+  @override
+  String get goalGo => '도전';
+
+  @override
+  String goalStars(Object have, Object total) {
+    return '별 $have / $total';
+  }
+
+  @override
+  String goalShipNeed(Object stage) {
+    return '배 확장: $stage 클리어';
+  }
+
+  @override
+  String get goalShipDone => '배를 다 키웠다';
+
+  @override
+  String get goalAllClear => '이 해역을 모두 깼다!';
 }

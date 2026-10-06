@@ -1524,4 +1524,26 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get barkTauntLow4 => 'No retreat, hold the line!';
+
+  @override
+  String get goalTitle => 'Next goal';
+
+  @override
+  String get goalGo => 'Go';
+
+  @override
+  String goalStars(Object have, Object total) {
+    return 'Stars $have / $total';
+  }
+
+  @override
+  String goalShipNeed(Object stage) {
+    return 'Grow ship: clear $stage';
+  }
+
+  @override
+  String get goalShipDone => 'Ship fully grown';
+
+  @override
+  String get goalAllClear => 'Every stage here is cleared!';
 }

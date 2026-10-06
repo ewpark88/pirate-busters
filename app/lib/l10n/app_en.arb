@@ -751,5 +751,18 @@
   "barkTauntLow1": "Th-this can't be!",
   "barkTauntLow2": "We're leaking! Man the pumps!",
   "barkTauntLow3": "Not bad… but not done yet!",
-  "barkTauntLow4": "No retreat, hold the line!"
+  "barkTauntLow4": "No retreat, hold the line!",
+  "goalTitle": "Next goal",
+  "goalGo": "Go",
+  "goalStars": "Stars {have} / {total}",
+  "@goalStars": {
+    "description": "항구 다음 목표 카드 별 진행 (설계서 §13.2)",
+    "placeholders": {
+      "have": {},
+      "total": {}
+    }
+  },
+  "goalShipNeed": "Grow ship: clear {stage}",
+  "goalShipDone": "Ship fully grown",
+  "goalAllClear": "Every stage here is cleared!"
 }

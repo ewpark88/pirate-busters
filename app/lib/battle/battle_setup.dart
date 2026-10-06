@@ -31,6 +31,11 @@ class BattleSetup {
 
   Blueprint get defaultBlueprint => catalog.preset(defaultPreset).blueprint;
 
+  /// 스테이지의 적 설계도: 전용 설계도가 있으면 그것, 없으면 추천 설계도.
+  Blueprint enemyBlueprintOf(StageSpec stage) =>
+      stage.enemyBlueprint ??
+      catalog.preset(stage.enemyPreset, stage: stage.enemyStage).blueprint;
+
   /// 적 설계도의 돛대에 [mastLevel] 을 찍는다.
   static Blueprint enemyShip(Blueprint b, int mastLevel) => mastLevel == 1
       ? b
@@ -110,9 +115,7 @@ class BattleSetup {
       gimmick: BossGimmick.byId(stage.gimmick).index,
     );
     // 적 배: 스테이지의 확장 단계·돛대 레벨 (설계서 §3.1·§3.3, BALANCE.md A3.1·A3.2).
-    final enemy = catalog
-        .preset(stage.enemyPreset, stage: stage.enemyStage)
-        .blueprint;
+    final enemy = enemyBlueprintOf(stage);
     final blueprints = [mine, enemyShip(enemy, stage.enemyMastLevel)];
     final decks = [if (ok) chosen else starterDeck, stage.enemyDeck];
     final limits = [limit, BattleSetup.costLimit];

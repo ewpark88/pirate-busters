@@ -2713,6 +2713,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No retreat, hold the line!'**
   String get barkTauntLow4;
+
+  /// No description provided for @goalTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Next goal'**
+  String get goalTitle;
+
+  /// No description provided for @goalGo.
+  ///
+  /// In en, this message translates to:
+  /// **'Go'**
+  String get goalGo;
+
+  /// 항구 다음 목표 카드 별 진행 (설계서 §13.2)
+  ///
+  /// In en, this message translates to:
+  /// **'Stars {have} / {total}'**
+  String goalStars(Object have, Object total);
+
+  /// No description provided for @goalShipNeed.
+  ///
+  /// In en, this message translates to:
+  /// **'Grow ship: clear {stage}'**
+  String goalShipNeed(Object stage);
+
+  /// No description provided for @goalShipDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Ship fully grown'**
+  String get goalShipDone;
+
+  /// No description provided for @goalAllClear.
+  ///
+  /// In en, this message translates to:
+  /// **'Every stage here is cleared!'**
+  String get goalAllClear;
 }
 
 class _AppLocalizationsDelegate
