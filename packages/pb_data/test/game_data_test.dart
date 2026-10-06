@@ -41,7 +41,7 @@ void main() {
       (int, int) v(AmmoType t, Rarity r) => l.valueOf(t, r);
       expect(
         [for (final r in Rarity.values) v(AmmoType.explosive, r).$1],
-        [40, 60, 70, 80, 90],
+        [30, 50, 60, 70, 80],
       );
       expect(
         [for (final r in Rarity.values) v(AmmoType.split, r).$1],
@@ -152,6 +152,7 @@ void main() {
 
     test('쿨다운은 BALANCE.md A4.2 표와 같다', () {
       const twoTurns = {
+        'p02_starry',
         'p04_uni',
         'p05_volke',
         'p09_lion',

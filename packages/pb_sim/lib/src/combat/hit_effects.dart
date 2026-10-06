@@ -14,7 +14,7 @@ import 'package:pb_sim/src/projectile/projectile.dart';
 import 'package:pb_sim/src/world/world.dart';
 
 /// 관통탄 두 번째 칸부터의 피해 비율(%) (BALANCE.md A4.8, 임시값 ADR-050).
-const int pierceFalloffPercent = 50;
+const int pierceFalloffPercent = 40;
 
 /// 두 배 사이 거리 구분 (설계서 §2.6 거리에 따른 계열 상성).
 enum Reach { near, mid, far }
@@ -74,7 +74,7 @@ bool _ammoHit(
       );
   switch (spec.ammo) {
     case AmmoType.pierce:
-      // 칸마다 피해를 주며 뚫는다. 두 번째 칸부터는 피해 50% (§4.8, ADR-050).
+      // 칸마다 피해를 주며 뚫는다. 두 번째 칸부터는 피해 40% (§4.8, ADR-050·083).
       // 블록이 버티면(철판 등) 멈춘다.
       final percent = p.piercedCells == 0 ? 100 : pierceFalloffPercent;
       impact(blockPercent: percent, piratePercent: percent);

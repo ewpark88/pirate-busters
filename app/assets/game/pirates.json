@@ -34,7 +34,7 @@
       "family": "lob",
       "rarity": "common",
       "hp": 240,
-      "cooldownTurns": 1,
+      "cooldownTurns": 2,
       "ammo": {
         "type": "fire"
       },
@@ -94,7 +94,7 @@
       },
       "projectile": {},
       "onHit": {
-        "radiusCells": 1,
+        "radiusCells": 0,
         "blockDmg": 40,
         "pirateDmg": 80
       },
@@ -127,7 +127,7 @@
       },
       "ability": {
         "type": "drill",
-        "value": 2
+        "value": 1
       },
       "growth": {},
       "render": {
@@ -656,7 +656,7 @@
       },
       "ability": {
         "type": "gnaw",
-        "value": 40
+        "value": 30
       },
       "growth": {},
       "render": {
