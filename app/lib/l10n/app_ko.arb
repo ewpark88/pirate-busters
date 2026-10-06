@@ -312,8 +312,8 @@
   "personality_hunter": "사냥형",
   "personality_sinker": "침몰형",
   "personality_rusher": "돌격형",
-  "gimmick_bow_iron_shield": "뱃머리 철판 방패: 정면 직사 피해가 크게 줄어든다",
-  "gimmick_patrol_closing_in": "초계선이 턴마다 다가오고 쿨다운이 빨리 줄어든다",
+  "gimmick_bow_iron_shield": "뱃머리 철판 방패: 방패가 서 있는 동안 직사 피해 절반. 뱃머리를 먼저 부숴라",
+  "gimmick_patrol_closing_in": "초계선이 턴마다 한 칸씩 다가오고 쿨다운이 두 배로 빨리 준다",
   "resultMission": "미션: {text}",
   "resultInTurns": "{turns}턴 안에 승리",
   "rewardGold": "골드 +{gold}",
@@ -414,5 +414,6 @@
   "shipGrownBody": "{width}×{height}칸 · 선실 {cabins}칸",
   "shipGrowReady": "배를 키울 수 있다! 조선소로 가자",
   "devStagePick": "단계 고르기(개발)",
-  "ok": "확인"
+  "ok": "확인",
+  "bossBanner": "보스 등장!"
 }

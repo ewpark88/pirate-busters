@@ -1098,11 +1098,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get gimmick_bow_iron_shield =>
-      'Iron bow shield: direct-fire damage from the front is greatly reduced';
+      'Iron bow shield: direct fire deals half damage while it stands. Break the bow first';
 
   @override
   String get gimmick_patrol_closing_in =>
-      'The cutter closes in every turn and its cooldowns drop faster';
+      'The cutter closes in one cell each turn and its cooldowns drop twice as fast';
 
   @override
   String resultMission(Object text) {
@@ -1461,4 +1461,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get ok => 'OK';
+
+  @override
+  String get bossBanner => 'Boss!';
 }

@@ -103,7 +103,12 @@ class BattleSetup {
     final mine = blueprint ?? defaultBlueprint;
     final limit = costLimit ?? BattleSetup.costLimit;
     final ok = deckProblem(mine.hull, catalog.pirates, chosen, limit) == null;
-    final base = MatchRules(waveLevel: stage.waveLevel, maxWind: stage.maxWind);
+    // 보스 기믹은 상대(진영 1)에 건다 (설계서 §5.4, BALANCE.md A5.4).
+    final base = MatchRules(
+      waveLevel: stage.waveLevel,
+      maxWind: stage.maxWind,
+      gimmick: BossGimmick.byId(stage.gimmick).index,
+    );
     // 적 배: 스테이지의 확장 단계·돛대 레벨 (설계서 §3.1·§3.3, BALANCE.md A3.1·A3.2).
     final enemy = catalog
         .preset(stage.enemyPreset, stage: stage.enemyStage)

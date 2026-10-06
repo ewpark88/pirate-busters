@@ -1973,13 +1973,13 @@ abstract class AppLocalizations {
   /// No description provided for @gimmick_bow_iron_shield.
   ///
   /// In en, this message translates to:
-  /// **'Iron bow shield: direct-fire damage from the front is greatly reduced'**
+  /// **'Iron bow shield: direct fire deals half damage while it stands. Break the bow first'**
   String get gimmick_bow_iron_shield;
 
   /// No description provided for @gimmick_patrol_closing_in.
   ///
   /// In en, this message translates to:
-  /// **'The cutter closes in every turn and its cooldowns drop faster'**
+  /// **'The cutter closes in one cell each turn and its cooldowns drop twice as fast'**
   String get gimmick_patrol_closing_in;
 
   /// No description provided for @resultMission.
@@ -2587,6 +2587,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'OK'**
   String get ok;
+
+  /// No description provided for @bossBanner.
+  ///
+  /// In en, this message translates to:
+  /// **'Boss!'**
+  String get bossBanner;
 }
 
 class _AppLocalizationsDelegate

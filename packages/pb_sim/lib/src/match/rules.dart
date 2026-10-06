@@ -60,6 +60,8 @@ class MatchRules {
     this.maxTilt = 6000,
     this.breakPauseMs = 600,
     this.limitSlowZone = 500,
+    this.gimmick = 0,
+    this.gimmickSide = 1,
   });
 
   /// [toJson] 결과에서 읽는다. 빠진 키나 범위 밖 값은 [FormatException].
@@ -92,6 +94,10 @@ class MatchRules {
       maxTilt: readInt(json, 'maxTilt'),
       breakPauseMs: readInt(json, 'breakPauseMs'),
       limitSlowZone: readInt(json, 'limitSlowZone'),
+      gimmick: json['gimmick'] == null ? 0 : readInt(json, 'gimmick'),
+      gimmickSide: json['gimmickSide'] == null
+          ? 1
+          : readInt(json, 'gimmickSide'),
     );
     return rules.._check();
   }
@@ -119,6 +125,10 @@ class MatchRules {
       what: 'limitSlowZone $limitSlowZone',
     );
     need(ok: windAccel >= 0, what: 'windAccel $windAccel');
+    need(
+      ok: gimmick >= 0 && (gimmickSide == 0 || gimmickSide == 1),
+      what: 'gimmick $gimmick $gimmickSide',
+    );
     need(
       ok: sunkHullPercent >= 0 && sunkHullPercent <= 100,
       what: 'sunkHullPercent $sunkHullPercent',
@@ -233,6 +243,10 @@ class MatchRules {
   /// “한계 0.5칸 앞부터 감속”). 연료는 거리만큼만 쓴다 (§2.7).
   final int limitSlowZone;
 
+  /// 보스 기믹 코드(`BossGimmick.index`, 0 = 없음)와 그 기믹이 걸린 진영 (설계서 §5.4).
+  final int gimmick;
+  final int gimmickSide;
+
   /// 폭풍 타임이 시작되는 턴 번호.
   int get stormStartTurn => maxTurns - stormTurns + 1;
 
@@ -278,5 +292,7 @@ class MatchRules {
     'maxTilt': maxTilt,
     'breakPauseMs': breakPauseMs,
     'limitSlowZone': limitSlowZone,
+    if (gimmick != 0) 'gimmick': gimmick,
+    if (gimmick != 0) 'gimmickSide': gimmickSide,
   };
 }

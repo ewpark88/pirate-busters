@@ -1034,10 +1034,11 @@ class AppLocalizationsKo extends AppLocalizations {
   String get personality_rusher => '돌격형';
 
   @override
-  String get gimmick_bow_iron_shield => '뱃머리 철판 방패: 정면 직사 피해가 크게 줄어든다';
+  String get gimmick_bow_iron_shield =>
+      '뱃머리 철판 방패: 방패가 서 있는 동안 직사 피해 절반. 뱃머리를 먼저 부숴라';
 
   @override
-  String get gimmick_patrol_closing_in => '초계선이 턴마다 다가오고 쿨다운이 빨리 줄어든다';
+  String get gimmick_patrol_closing_in => '초계선이 턴마다 한 칸씩 다가오고 쿨다운이 두 배로 빨리 준다';
 
   @override
   String resultMission(Object text) {
@@ -1386,4 +1387,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get ok => '확인';
+
+  @override
+  String get bossBanner => '보스 등장!';
 }

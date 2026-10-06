@@ -24,6 +24,7 @@ import 'package:pirate_busters/meta/my_ship.dart';
 import 'package:pirate_busters/platform/analytics.dart';
 import 'package:pirate_busters/platform/remote_values.dart';
 import 'package:pirate_busters/ui/hud/battle_hud.dart';
+import 'package:pirate_busters/ui/hud/boss_banner.dart';
 
 /// 전투 화면: 전장(Flame) 위에 HUD(Flutter 위젯)를 겹친다 (설계서 §13.4).
 /// 전장의 게임 루프가 매 프레임 [BattleSession] 을 진행한다.
@@ -275,6 +276,8 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
             ),
           ),
         ),
+        if (widget.stage?.gimmick case final gimmick?)
+          BossBanner(gimmick: gimmick),
         if (_test case TestBattle(dummy: true, :final deck))
           PracticeBar(deck: deck, onPick: _practice),
       ],

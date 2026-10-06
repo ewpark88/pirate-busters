@@ -50,7 +50,8 @@ int moveReach(
   // 끌려온 배는 다음 턴에 움직이지 못한다(모비, 설계서 §4.8).
   if (side.moveLocked) return 0;
   if (dx == 0 || speed <= 0 || timeLeftMs <= 0) return 0;
-  final (lo, hi) = moveLimits(rules, turn);
+  final (lo, base) = moveLimits(rules, turn);
+  final hi = base + side.forwardBonus;
   final want = dx * moveStep;
   final target = (side.offset + want).clamp(lo, hi);
   var dist = (target - side.offset).abs();
@@ -82,8 +83,8 @@ MoveResult applyMove(
     ..offset += signed
     ..fuel -= dist * side.fuelPerCell ~/ cellUnit;
   // 한계선 앞 감속 구간은 절반 속도: 그 구간을 지난 거리만큼 시간을 한 번 더 센다.
-  final (lo, hi) = moveLimits(rules, turn);
-  final limit = signed > 0 ? hi : lo;
+  final (lo, base) = moveLimits(rules, turn);
+  final limit = signed > 0 ? base + side.forwardBonus : lo;
   final zoneStart = signed > 0
       ? limit - rules.limitSlowZone
       : limit + rules.limitSlowZone;

@@ -165,7 +165,7 @@ class StageSpec {
   /// 튜토리얼 판 번호 1~3 (§13.1). 캠페인 스테이지는 0.
   final int tutorialStep;
 
-  /// 보스 기믹 id (§5.4). 글자는 ARB `gimmick_<id>`, 판정 반영은 R3.
+  /// 보스 기믹 id (§5.4). 글자는 ARB `gimmick_<id>`, 판정은 `BossGimmick`(해역 1 은 A29).
   final String? gimmick;
 
   bool get isBoss => kind == StageKind.boss || kind == StageKind.midBoss;

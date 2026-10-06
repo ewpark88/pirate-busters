@@ -575,8 +575,8 @@
   "personality_hunter": "Hunter",
   "personality_sinker": "Sinker",
   "personality_rusher": "Rusher",
-  "gimmick_bow_iron_shield": "Iron bow shield: direct-fire damage from the front is greatly reduced",
-  "gimmick_patrol_closing_in": "The cutter closes in every turn and its cooldowns drop faster",
+  "gimmick_bow_iron_shield": "Iron bow shield: direct fire deals half damage while it stands. Break the bow first",
+  "gimmick_patrol_closing_in": "The cutter closes in one cell each turn and its cooldowns drop twice as fast",
   "resultMission": "Mission: {text}",
   "resultInTurns": "Win within {turns} turns",
   "rewardGold": "Gold +{gold}",
@@ -730,5 +730,6 @@
   },
   "shipGrowReady": "You can grow your ship! Visit the shipyard",
   "devStagePick": "Pick stage (dev)",
-  "ok": "OK"
+  "ok": "OK",
+  "bossBanner": "Boss!"
 }
