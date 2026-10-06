@@ -3,7 +3,6 @@ import 'dart:ui';
 import 'package:flame/components.dart';
 import 'package:pb_sim/pb_sim.dart';
 import 'package:pirate_busters/game/sprites.dart';
-import 'package:pirate_busters/game/view/cabin_painter.dart';
 
 /// 기능 모듈 그림 (설계서 §3.3, 에셋 v0.23 `ship/modules/`, ADR-063). 그리기만
 /// 한다. 판정은 격자 그대로다.
@@ -23,6 +22,10 @@ abstract final class ModulePainter {
     ModuleKind.captain: (Offset.zero, Size(32, 32)),
     ModuleKind.fuelTank: (Offset.zero, Size(32, 32)),
     ModuleKind.mast: (Offset.zero, Size(32, 32)),
+    ModuleKind.mastBamboo: (Offset.zero, Size(32, 32)),
+    ModuleKind.mastOak: (Offset.zero, Size(32, 32)),
+    ModuleKind.mastIron: (Offset.zero, Size(32, 32)),
+    ModuleKind.mastCrow: (Offset.zero, Size(32, 32)),
   };
 
   /// 칸 [cell] 에 [kind] 모듈을 그린다.
@@ -42,58 +45,8 @@ abstract final class ModulePainter {
         );
   }
 
-  /// 돛대 밑동: 돛대 모듈 칸 위에서 6px 아래(에셋 README v0.23 `rig(x+16, y+6)`).
-  static Offset mastFoot(Rect cell) => Offset(cell.center.dx, cell.top + 6);
-
   /// 칸 번호(y × [width] + x) → 모듈.
   static Map<int, ModuleKind> byCell(ShipModules modules, int width) => {
     for (final m in modules.list) m.y * width + m.x: m.kind,
   };
-
-  /// 돛대 밑동 자리들: 돛대 모듈마다 하나(그 칸이 부서졌으면 없다). 돛대 모듈이
-  /// 없는 배는 null — 가장 높은 블록 위 가운데에 세운다 (ADR-063).
-  static List<Offset>? mastFeet(
-    List<int> materials,
-    int width,
-    Map<int, ModuleKind> moduleAt,
-    Rect Function(int x, int y) cellRect,
-  ) {
-    final masts = [
-      for (final e in moduleAt.entries)
-        if (e.value == ModuleKind.mast) e.key,
-    ]..sort();
-    if (masts.isEmpty) return null;
-    return [
-      for (final i in masts)
-        if (materials[i] != ShipGrid.emptyCell)
-          mastFoot(cellRect(i % width, i ~/ width)),
-    ];
-  }
-
-  /// 돛대·돛·깃발을 [mastFeet] 자리에 세운다.
-  static void rigs(
-    Canvas canvas,
-    BattleSprites sprites,
-    List<int> materials,
-    int width,
-    Map<int, ModuleKind> moduleAt,
-    Rect Function(int x, int y) cellRect, {
-    required bool blue,
-  }) {
-    final feet = mastFeet(materials, width, moduleAt, cellRect);
-    if (feet == null) {
-      CabinPainter.rig(canvas, sprites, materials, width, blue: blue);
-      return;
-    }
-    for (final foot in feet) {
-      CabinPainter.rig(
-        canvas,
-        sprites,
-        materials,
-        width,
-        blue: blue,
-        foot: foot,
-      );
-    }
-  }
 }

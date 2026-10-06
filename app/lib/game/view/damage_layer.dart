@@ -21,6 +21,18 @@ class DamageLayer {
   static const int none = -1;
   static const int broken = 3;
 
+  /// 칸 하나의 손상 코드: 지금 재질 [material], 판 시작 재질 [built], 내구도 [hp]/[max].
+  /// 돛대 칸은 손상 그림을 얹지 않는다(돛대는 MastPainter 가 그린다, 설계서 §3.3).
+  static int codeOf(int material, int built, int hp, int max) {
+    if (material == ShipGrid.emptyCell) {
+      return built == ShipGrid.emptyCell || BlockMaterial.values[built].rig
+          ? none
+          : broken;
+    }
+    if (BlockMaterial.values[material].rig) return none;
+    return ShipGrid.stageFor(hp, max).index;
+  }
+
   /// 칸 단계 [codes](칸 번호 = y × width + x, y 는 위로 는다)와 젖은 줄 수
   /// [wetRows](아래부터)로 손상을 그린다. [materials] 는 칸별 재질이고 부서진
   /// 칸은 판 시작 때 재질이다.

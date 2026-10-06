@@ -13,8 +13,9 @@ class ShipGridEditor extends StatelessWidget {
   @override
   Widget build(BuildContext context) => LayoutBuilder(
     builder: (context, box) {
+      // 패널 테두리 그림이 아래 줄을 덮지 않게 높이에 여유를 둔다.
       final cell = (box.maxWidth / model.width)
-          .clamp(0, box.maxHeight / model.height)
+          .clamp(0, box.maxHeight * 0.9 / model.height)
           .toDouble();
       (int, int) at(Offset p) =>
           (p.dx ~/ cell, model.height - 1 - (p.dy ~/ cell));
@@ -68,6 +69,7 @@ class ShipGridPainter extends CustomPainter {
     ..color = const Color(0xFFE0402F)
     ..style = PaintingStyle.stroke
     ..strokeWidth = 3;
+  static final Paint _pole = Paint()..color = const Color(0xFF8B5A2B);
   static final Paint _water = Paint()
     ..color = const Color(0xCC3FA9F5)
     ..strokeWidth = 2;
@@ -77,6 +79,8 @@ class ShipGridPainter extends CustomPainter {
     final h = model.height;
     for (var y = 0; y < h; y++) {
       for (var x = 0; x < model.width; x++) {
+        // 선체 틀 밖 칸은 그리지 않아 격자가 배 모양으로 보인다 (설계서 §3.4).
+        if (!model.hull.inFrame(x, y)) continue;
         final r = Rect.fromLTWH(x * cell, (h - 1 - y) * cell, cell, cell);
         final m = model.materialAt(x, y);
         if (!overlay) {
@@ -93,6 +97,27 @@ class ShipGridPainter extends CustomPainter {
       }
     }
     if (!overlay) return;
+    // 돛대 칸 (설계서 §3.3): 기둥으로 보이고, 블록과 겹치면 빨간 칸, 꼭대기는 돛 자리.
+    final seats = model.seatCells;
+    for (final (x, y) in model.rigCells) {
+      final r = Rect.fromLTWH(x * cell, (h - 1 - y) * cell, cell, cell);
+      canvas.drawRect(
+        Rect.fromCenter(center: r.center, width: cell * 0.22, height: cell),
+        _pole,
+      );
+      if (model.materialAt(x, y) != null) canvas.drawRect(r.deflate(2), _red);
+      if (seats.contains(y * model.width + x)) {
+        canvas.drawRect(
+          Rect.fromLTRB(
+            r.left + 3,
+            r.bottom - cell * 0.2,
+            r.right - 3,
+            r.bottom,
+          ),
+          _pole,
+        );
+      }
+    }
     // 흘수선: 무게로 정해지는 잠긴 깊이 (설계서 §3.4).
     final wl = model.stats.waterline / 1000 * cell;
     canvas.drawLine(

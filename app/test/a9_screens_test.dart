@@ -12,6 +12,7 @@ import 'package:pirate_busters/data/fleet_store.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
 import 'package:pirate_busters/meta/progress.dart';
 import 'package:pirate_busters/meta/progress_store.dart';
+import 'package:pirate_busters/meta/ship_upgrades.dart';
 import 'package:pirate_busters/platform/remote_overrides.dart';
 import 'package:pirate_busters/platform/remote_values.dart';
 import 'package:pirate_busters/settings/language.dart';
@@ -140,11 +141,14 @@ void main() {
 
     testWidgets('내 배 미리보기·선실 배치·성격 아이콘이 보인다', (tester) async {
       final fleet = MemoryFleetStore();
-      await fleet.saveBlueprint(0, testCatalog.presets.first.blueprint);
+      await fleet.saveBlueprint(0, testCatalog.preset('balanced').blueprint);
       await _pump(
         tester,
         BattlePrepScreen(stage: stage),
-        progress: const PlayerProgress(tutorialDone: 3),
+        progress: const PlayerProgress(
+          tutorialDone: 3,
+          ship: ShipUpgrades(stage: 4),
+        ),
         fleet: fleet,
       );
       final l10n = _l10n(tester, BattlePrepScreen);
@@ -157,7 +161,7 @@ void main() {
       expect(find.image(AssetImage(MetaIcons.factionOfSea(1))), findsOneWidget);
       expect(find.text(l10n.sea_1_faction), findsOneWidget);
       expect(find.text(l10n.prepCabins), findsOneWidget);
-      // 시작 덱 2명, 슬루프 선실 4개 → 빈 선실 2개.
+      // 시작 덱 2명, 큰 슬루프 선실 4개 → 빈 선실 2개.
       expect(find.text(l10n.prepCabinEmpty), findsNWidgets(2));
     });
 

@@ -101,21 +101,62 @@ class ShipyardModel extends ChangeNotifier {
       canSave ? Blueprint(hull, cells, cabins: cabins, modules: modules) : null;
 
   /// [b] 로 바꾼다(되돌리기 가능).
-  void load(Blueprint b) {
+  void load(Blueprint b) => loadParts(b.cells, b.cabins, b.modules);
+
+  /// 규칙에 아직 맞지 않는 설계도(키운 초안 등)도 칸 그대로 불러온다. 격자 밖은 버린다.
+  void loadParts(
+    Iterable<BlockCell> cells,
+    Iterable<CabinCell> cabins,
+    Iterable<ModuleCell> modules,
+  ) {
     _remember();
     _materials.fillRange(0, _materials.length, null);
     _modules.fillRange(0, _modules.length, null);
     _cabins.clear();
-    for (final c in b.cells) {
-      _materials[c.y * width + c.x] = c.material;
+    bool inside(int x, int y) => x >= 0 && y >= 0 && x < width && y < height;
+    for (final c in cells) {
+      if (inside(c.x, c.y)) _materials[c.y * width + c.x] = c.material;
     }
-    for (final c in b.cabins) {
-      _cabins.add(c.y * width + c.x);
+    for (final c in cabins) {
+      if (inside(c.x, c.y) && _cabins.length < hull.cabinSlots) {
+        _cabins.add(c.y * width + c.x);
+      }
     }
-    for (final m in b.modules) {
-      _modules[m.y * width + m.x] = m.kind;
+    for (final m in modules) {
+      if (inside(m.x, m.y)) _modules[m.y * width + m.x] = m.kind;
     }
     notifyListeners();
+  }
+
+  /// 초안 JSON 을 불러온다(형식이 깨진 칸은 건너뛴다). 읽을 칸이 없으면 false.
+  bool loadJson(Map<String, Object?> json) {
+    List<T> each<T>(Object? list, T Function(List<Object?> raw) read) => [
+      if (list is List<Object?>)
+        for (final raw in list)
+          if (raw is List<Object?>) ...?_tryRead(() => read(raw)),
+    ];
+    final cells = each(json['cells'], (r) {
+      return BlockCell(
+        r[0]! as int,
+        r[1]! as int,
+        BlockMaterial.byName(r[2]! as String),
+      );
+    });
+    if (cells.isEmpty) return false;
+    loadParts(
+      cells,
+      each(json['cabins'], (r) => CabinCell(r[0]! as int, r[1]! as int)),
+      each(json['modules'], ModuleCell.fromJson),
+    );
+    return true;
+  }
+
+  static List<T>? _tryRead<T>(T Function() read) {
+    try {
+      return [read()];
+    } on Object {
+      return null;
+    }
   }
 
   /// 한 획 시작(누르기·끌기 시작). 끝은 [endStroke].
@@ -133,7 +174,8 @@ class ShipyardModel extends ChangeNotifier {
 
   /// 지금 도구를 ([x], [y]) 칸에 쓴다. 끌기 중이면 같은 획으로 친다.
   void apply(int x, int y) {
-    if (x < 0 || y < 0 || x >= width || y >= height) return;
+    // 선체 틀 밖에는 아무것도 놓지 않는다 (설계서 §3.4).
+    if (!hull.inFrame(x, y)) return;
     if (!_strokeOpen) _remember();
     final i = y * width + x;
     final changed = switch (tool) {
@@ -178,9 +220,22 @@ class ShipyardModel extends ChangeNotifier {
     return true;
   }
 
-  /// 블록 위에서만. 선실 슬롯이 다 차면 더 놓지 않는다. 선실을 빼면 선실 옵션도 뺀다.
+  /// 돛대 칸 (설계서 §3.3): 돛대 모듈 칸 위로 종류만큼, 격자 위끝까지.
+  List<(int, int)> get rigCells => [
+    for (var i = 0; i < _modules.length; i++)
+      if (_modules[i] case final k? when k.isMast)
+        ...ModuleCell(i % width, i ~/ width, k).rigCells(height),
+  ];
+
+  /// 돛 자리 칸 인덱스: 돛대마다 꼭대기 칸.
+  Set<int> get seatCells => {
+    for (final (x, y) in mastSeats(hull, modules)) y * width + x,
+  };
+
+  /// 블록 위나 돛 자리에서만. 선실 슬롯이 다 차면 더 놓지 않는다. 선실을 빼면
+  /// 선실 옵션도 뺀다.
   bool _toggleCabin(int i) {
-    if (_materials[i] == null) return false;
+    if (_materials[i] == null && !seatCells.contains(i)) return false;
     if (_cabins.remove(i)) {
       if (_modules[i]?.cabinOption ?? false) _modules[i] = null;
       return true;
@@ -196,7 +251,9 @@ class ShipyardModel extends ChangeNotifier {
   bool _toggleModule(int i, ModuleKind kind) {
     if (_materials[i] == null) return false;
     if (_modules[i] == kind) {
+      final seats = seatCells;
       _modules[i] = null;
+      _cabins.removeWhere((c) => seats.contains(c) && !seatCells.contains(c));
       return true;
     }
     if (kind.cabinOption != _cabins.contains(i)) return false;

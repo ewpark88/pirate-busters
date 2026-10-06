@@ -31,6 +31,24 @@ class BattleSetup {
 
   Blueprint get defaultBlueprint => catalog.preset(defaultPreset).blueprint;
 
+  /// 적 설계도의 돛대에 [mastLevel] 을 찍는다.
+  static Blueprint enemyShip(Blueprint b, int mastLevel) => mastLevel == 1
+      ? b
+      : Blueprint(
+          b.hull,
+          b.cells,
+          cabins: b.cabins,
+          modules: [
+            for (final m in b.modules)
+              ModuleCell(
+                m.x,
+                m.y,
+                m.kind,
+                level: m.kind.isMast ? mastLevel : 1,
+              ),
+          ],
+        );
+
   /// 새 판. [seed] 로 선공·바람이 정해진다. 왼쪽(0)이 플레이어.
   Match newMatch(
     int seed, {
@@ -86,7 +104,11 @@ class BattleSetup {
     final limit = costLimit ?? BattleSetup.costLimit;
     final ok = deckProblem(mine.hull, catalog.pirates, chosen, limit) == null;
     final base = MatchRules(waveLevel: stage.waveLevel, maxWind: stage.maxWind);
-    final blueprints = [mine, catalog.preset(stage.enemyPreset).blueprint];
+    // 적 배: 스테이지의 확장 단계·돛대 레벨 (설계서 §3.1·§3.3, BALANCE.md A3.1·A3.2).
+    final enemy = catalog
+        .preset(stage.enemyPreset, stage: stage.enemyStage)
+        .blueprint;
+    final blueprints = [mine, enemyShip(enemy, stage.enemyMastLevel)];
     final decks = [if (ok) chosen else starterDeck, stage.enemyDeck];
     final limits = [limit, BattleSetup.costLimit];
     final match = Match.start(

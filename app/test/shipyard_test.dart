@@ -19,17 +19,17 @@ void main() {
     test('누르면 설치, 한 번 끌기는 되돌리기 한 번, 길게 누르면 지운다', () {
       final m = ShipyardModel()
         ..selectTool(const MaterialTool(BlockMaterial.pine))
-        ..apply(0, 0);
-      expect(m.materialAt(0, 0), BlockMaterial.pine);
+        ..apply(2, 0);
+      expect(m.materialAt(2, 0), BlockMaterial.pine);
       m.beginStroke();
-      for (var x = 1; x < 5; x++) {
+      for (var x = 3; x < 7; x++) {
         m.apply(x, 0);
       }
       m.endStroke();
       expect(m.cells, hasLength(5));
       m.undo();
       expect(m.cells, hasLength(1), reason: '끌기 한 획이 한 번에 돌아간다');
-      m.eraseAt(0, 0);
+      m.eraseAt(2, 0);
       expect(m.cells, isEmpty);
       m.undo();
       expect(m.cells, hasLength(1));
@@ -38,27 +38,38 @@ void main() {
     test('선실은 블록 위·슬롯 수까지, 포문은 선실에만, 선실을 빼면 포문도 빠진다', () {
       final m = ShipyardModel()
         ..selectTool(const MaterialTool(BlockMaterial.oak));
-      for (var x = 0; x < 6; x++) {
+      for (var x = 2; x < 8; x++) {
         m.apply(x, 0);
       }
       m
         ..selectTool(const CabinTool())
-        ..apply(0, 3); // 블록이 없다
+        ..apply(2, 3); // 블록이 없다
       expect(m.cabins, isEmpty);
-      for (var x = 0; x < 5; x++) {
+      for (var x = 2; x < 7; x++) {
         m.apply(x, 0);
       }
       expect(m.cabins, hasLength(4), reason: '슬루프 선실 4');
       m
         ..selectTool(const ModuleTool(ModuleKind.gunPort))
-        ..apply(5, 0);
-      expect(m.moduleAt(5, 0), isNull, reason: '선실이 아닌 칸');
-      m.apply(0, 0);
-      expect(m.moduleAt(0, 0), ModuleKind.gunPort);
+        ..apply(7, 0);
+      expect(m.moduleAt(7, 0), isNull, reason: '선실이 아닌 칸');
+      m.apply(2, 0);
+      expect(m.moduleAt(2, 0), ModuleKind.gunPort);
       m
         ..selectTool(const CabinTool())
-        ..apply(0, 0);
-      expect(m.moduleAt(0, 0), isNull);
+        ..apply(2, 0);
+      expect(m.moduleAt(2, 0), isNull);
+    });
+
+    test('선체 틀 밖 칸에는 아무것도 놓지 않는다 (설계서 §3.4)', () {
+      final m = ShipyardModel()
+        ..selectTool(const MaterialTool(BlockMaterial.oak))
+        ..apply(1, 0)
+        ..apply(0, 1)
+        ..apply(11, 1);
+      expect(m.cells, isEmpty);
+      m.apply(1, 1);
+      expect(m.materialAt(1, 1), BlockMaterial.oak);
     });
 
     test('용골과 끊긴 블록은 빨간 칸이고 그 상태로는 저장할 수 없다', () {

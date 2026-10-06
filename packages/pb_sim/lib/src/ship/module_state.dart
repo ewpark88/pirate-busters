@@ -24,8 +24,8 @@ abstract final class ModuleNumbers {
   static const int fuelTankRadius = 1;
   static const int fuelTankBlockDamage = 40;
 
-  /// 돛대가 부러지면 1칸당 연료 ×2, 속도 −50%.
-  static const int mastFuelFactor = 2;
+  /// 돛대가 부러지면 속도 −50%. 1칸당 연료 배율은 돛대 종류마다
+  /// (`ModuleKind.brokenFuelPermille`, 소나무 2배·대나무 1.5배).
   static const int mastSpeedPercent = 50;
 }
 
@@ -57,8 +57,10 @@ class ShipModules {
   final int weightPermille;
 
   /// 설계도의 무게 연료 배율(‰) ([weightFuelPermille]).
-  static int weightFuelPermilleOf(Blueprint blueprint) =>
-      weightFuelPermille(blueprint.hull, totalWeight(blueprint.cells));
+  static int weightFuelPermilleOf(Blueprint blueprint) => weightFuelPermille(
+    blueprint.hull,
+    shipWeight(blueprint.cells, blueprint.modules),
+  );
 
   /// 남아 있는 [kind] 모듈 수.
   int intactCount(ModuleKind kind) {
@@ -75,6 +77,30 @@ class ShipModules {
       if (m.kind == kind && !m.intact) return true;
     }
     return false;
+  }
+
+  /// 돛대가 하나라도 부러졌다 (설계서 §3.3).
+  bool get anyMastLost => list.any((m) => m.kind.isMast && !m.intact);
+
+  /// 부러진 돛대 중 가장 큰 1칸당 연료 배율(‰). 없으면 1000.
+  int get brokenMastFuelPermille {
+    var p = 1000;
+    for (final m in list) {
+      if (m.kind.isMast && !m.intact && m.kind.brokenFuelPermille > p) {
+        p = m.kind.brokenFuelPermille;
+      }
+    }
+    return p;
+  }
+
+  /// 꼭대기 칸이 ([x], [y]) 인 남은 돛대. 없으면 null (돛 자리, 설계서 §3.3).
+  ModuleState? mastWithSeat(int x, int y, int height) {
+    for (final m in list) {
+      if (!m.kind.isMast || !m.intact) continue;
+      final rig = m.cell.rigCells(height);
+      if (rig.isNotEmpty && rig.last == (x, y)) return m;
+    }
+    return null;
   }
 
   /// 칸 ([x], [y]) 에 남아 있는 [kind] 모듈이 있다(선실 옵션 확인용).

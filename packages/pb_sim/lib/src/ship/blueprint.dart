@@ -78,7 +78,15 @@ class Blueprint {
 
   static (HullSpec, List<BlockCell>, List<CabinCell>, List<ModuleCell>)
   _partsFromJson(Map<String, Object?> json) => (
-    HullSpec.byId(readString(json, 'hull')),
+    HullSpec.byId(
+      readString(json, 'hull'),
+      stage: json['stage'] == null
+          ? HullSpec.maxStage
+          : asInt(json['stage'], 'stage'),
+      level: json['hullLevel'] == null
+          ? 1
+          : asInt(json['hullLevel'], 'hullLevel'),
+    ),
     [for (final raw in readList(json, 'cells')) _cellFromJson(raw)],
     [for (final raw in readList(json, 'cabins')) _cabinFromJson(raw)],
     [for (final raw in readList(json, 'modules')) ModuleCell.fromJson(raw)],
@@ -101,10 +109,12 @@ class Blueprint {
   /// 총 건조 비용(블록 + 모듈).
   final int cost;
 
-  /// `{"hull": "sloop", "cells": [[x, y, "oak"], ...], "cabins": [[x, y], ...],
+  /// `{"hull": "sloop", ("stage": 1~3,) "cells": [[x, y, "oak"], ...], "cabins": [[x, y], ...],
   /// "modules": [[x, y, "pump"], ...]}`
   Map<String, Object?> toJson() => {
     'hull': hull.id,
+    if (hull.stage != HullSpec.maxStage) 'stage': hull.stage,
+    if (hull.level != 1) 'hullLevel': hull.level,
     'cells': [
       for (final c in cells) [c.x, c.y, c.material.name],
     ],

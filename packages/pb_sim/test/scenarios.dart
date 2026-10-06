@@ -46,7 +46,7 @@ Controller shooter(
 
 /// 오른쪽 배: 용골 + 뱃머리 쪽(x = 11) 벽 + (4, 1..2) 기둥 위 (2..6, 3) 판.
 Blueprint towerBlueprint() => Blueprint(
-  HullSpec.sloop,
+  boxSloop,
   [
     for (var x = 0; x < 12; x++) BlockCell(x, 0, BlockMaterial.oak),
     for (var y = 1; y <= 2; y++) BlockCell(4, y, BlockMaterial.pine),

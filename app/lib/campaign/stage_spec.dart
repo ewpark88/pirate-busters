@@ -1,5 +1,6 @@
 import 'package:pb_ai/pb_ai.dart';
 import 'package:pb_data/pb_data.dart';
+import 'package:pb_sim/pb_sim.dart';
 
 /// 스테이지 종류 (설계서 §6.1, §13.1).
 enum StageKind {
@@ -76,6 +77,8 @@ class StageSpec {
     required this.rewardPirate,
     required this.tutorialStep,
     this.gimmick,
+    this.enemyStage = HullSpec.maxStage,
+    this.enemyMastLevel = 1,
   });
 
   factory StageSpec.fromJson(JsonReader r, {required int sea}) {
@@ -114,6 +117,8 @@ class StageSpec {
       rewardPirate: reward.stringOrNull('pirate'),
       tutorialStep: r.integerOr('tutorialStep', 0),
       gimmick: r.stringOrNull('gimmick'),
+      enemyStage: r.integerOr('enemyStage', HullSpec.maxStage),
+      enemyMastLevel: r.integerOr('enemyMastLevel', 1),
     );
   }
 
@@ -131,6 +136,10 @@ class StageSpec {
 
   /// 적 설계도(추천 설계도 id)와 덱.
   final String enemyPreset;
+
+  /// 적 배 확장 단계(설계서 §3.1, BALANCE.md A3.1)와 돛대 레벨(A3.2).
+  final int enemyStage;
+  final int enemyMastLevel;
   final List<String> enemyDeck;
   final AiLevel aiLevel;
   final Personality personality;
@@ -175,6 +184,8 @@ class StageSpec {
     kind: kind,
     enemyPreset: enemyPreset,
     enemyDeck: enemyDeck,
+    enemyStage: enemyStage,
+    enemyMastLevel: enemyMastLevel,
     aiLevel: aiLevel ?? this.aiLevel,
     personality: personality,
     waveLevel: waveLevel ?? this.waveLevel,
@@ -235,15 +246,19 @@ class SeaSpec {
   /// 데이터가 게임 데이터와 맞는지 검사한다. 문제가 없으면 빈 목록(개발자용 메시지).
   List<String> problems({
     required bool Function(String pirateId) hasPirate,
-    required bool Function(String presetId) hasPreset,
+    required bool Function(String presetId, int stage) hasPreset,
   }) => [
     for (final s in stages) ...[
-      if (!hasPreset(s.enemyPreset)) '${s.id}: unknown preset ${s.enemyPreset}',
+      if (!hasPreset(s.enemyPreset, s.enemyStage))
+        '${s.id}: unknown preset ${s.enemyPreset} stage ${s.enemyStage}',
       for (final p in s.enemyDeck)
         if (!hasPirate(p)) '${s.id}: unknown enemy pirate $p',
       if (s.rewardPirate != null && !hasPirate(s.rewardPirate!))
         '${s.id}: unknown reward pirate ${s.rewardPirate}',
       if (s.enemyDeck.isEmpty) '${s.id}: empty enemy deck',
+      if (s.enemyDeck.length >
+          HullSpec.byId('sloop', stage: s.enemyStage).cabinSlots)
+        '${s.id}: enemy deck larger than stage ${s.enemyStage} cabins',
       if (s.kind == StageKind.tutorial &&
           (s.tutorialStep < 1 || s.tutorialStep > 3))
         '${s.id}: tutorial step ${s.tutorialStep} out of range',

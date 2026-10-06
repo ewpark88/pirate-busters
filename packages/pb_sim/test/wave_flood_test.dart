@@ -103,9 +103,9 @@ void main() {
       const rules = MatchRules();
       // 둘째 줄까지 물에 잠기게 1칸 내려앉힌다.
       final side = newSampleMatch(1).state.sides[0]..flood = 500;
-      side.grid.damage(10, 0, 100);
+      side.grid.damage(9, 0, 100);
       expect(floodTilt(side, rules), -1000);
-      side.grid.damage(1, 0, 100);
+      side.grid.damage(2, 0, 100);
       expect(floodTilt(side, rules), 0);
       for (var x = 6; x < 12; x++) {
         side.grid.damage(x, 0, 100);
@@ -155,7 +155,7 @@ void main() {
 
     test('맨 아래 줄 선실은 처음부터 잠겨 있어, 낮은 각도로 쏴도 멈추지 않고 무시된다', () {
       final keelCabins = Blueprint(
-        HullSpec.sloop,
+        boxSloop,
         [for (var x = 0; x < 12; x++) BlockCell(x, 0, BlockMaterial.oak)],
         cabins: const [
           CabinCell(3, 0),

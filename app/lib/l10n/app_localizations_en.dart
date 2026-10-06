@@ -774,7 +774,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get moduleWorkshop => 'Workshop';
 
   @override
-  String get moduleMast => 'Mast';
+  String get moduleMast => 'Pine mast';
+
+  @override
+  String get moduleMastBamboo => 'Bamboo mast';
+
+  @override
+  String get moduleMastOak => 'Oak mast';
+
+  @override
+  String get moduleMastIron => 'Iron mast';
+
+  @override
+  String get moduleMastCrow => 'Crow mast';
 
   @override
   String get moduleLookout => 'Lookout';
@@ -1392,4 +1404,73 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get musicOn => 'Music';
+
+  @override
+  String get shipUpgrades => 'Ship upgrades';
+
+  @override
+  String get shipStage1 => 'Dinghy';
+
+  @override
+  String get shipStage2 => 'Small sloop';
+
+  @override
+  String get shipStage3 => 'Sloop';
+
+  @override
+  String get shipStage4 => 'Large sloop';
+
+  @override
+  String get shipGrowRow => 'Grow ship';
+
+  @override
+  String shipGrowNeed(Object stage) {
+    return 'Clear $stage to unlock';
+  }
+
+  @override
+  String get shipMaxed => 'Max';
+
+  @override
+  String hullLevelRow(Object level) {
+    return 'Hull Lv $level';
+  }
+
+  @override
+  String mastLevelRow(Object name, Object level) {
+    return '$name Lv $level';
+  }
+
+  @override
+  String goldCost(Object gold) {
+    return '$gold gold';
+  }
+
+  @override
+  String buyAsk(Object name, Object gold) {
+    return 'Spend $gold gold on $name?';
+  }
+
+  @override
+  String get notEnoughGold => 'Not enough gold';
+
+  @override
+  String get buy => 'Buy';
+
+  @override
+  String get shipGrown => 'Your ship grew!';
+
+  @override
+  String shipGrownBody(Object width, Object height, Object cabins) {
+    return '$width×$height cells · $cabins cabins';
+  }
+
+  @override
+  String get shipGrowReady => 'You can grow your ship! Visit the shipyard';
+
+  @override
+  String get devStagePick => 'Pick stage (dev)';
+
+  @override
+  String get ok => 'OK';
 }

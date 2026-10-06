@@ -5,7 +5,7 @@ import 'fixtures.dart';
 
 /// 용골 한 줄(참나무 12칸, 내구도 960)에 선실 4개인 작은 배.
 Blueprint _keelOnly() => Blueprint(
-  HullSpec.sloop,
+  boxSloop,
   [for (var x = 0; x < 12; x++) BlockCell(x, 0, BlockMaterial.oak)],
   cabins: const [
     CabinCell(3, 0),

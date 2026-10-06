@@ -37,8 +37,8 @@ class _CrewScreenState extends ConsumerState<CrewScreen> {
   void initState() {
     super.initState();
     final fleet = ref.read(fleetStoreProvider);
-    final hull = fleet.blueprint(fleet.activeSlot)?.hull;
-    _hull = hull ?? HullSpec.sloop;
+    // 선실 수는 지은 확장 단계를 따른다 (설계서 §3.1).
+    _hull = ref.read(progressProvider).ship.hull;
     final size = _hull.cabinSlots;
     final deck = fleet.deck ?? BattleSetup.starterDeck;
     _slots = [for (var i = 0; i < size; i++) i < deck.length ? deck[i] : null];

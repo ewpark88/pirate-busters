@@ -42,7 +42,7 @@ void main() {
     const rules = MatchRules(waveLevel: 0);
     final m = newSampleMatch(5, rules: rules);
     // 뱃머리 소나무(40)는 일반 해적 한 발(60)에 부서진다.
-    final shot = aimAt(m.state, slot: 0, tx: 11, ty: 1, t: 10);
+    final shot = aimAt(m.state, slot: 0, tx: 10, ty: 1, t: 10);
     m.apply(shot);
     final events = m.state.events;
     final impact = events.firstWhere((e) => e.kind == SimEventKind.impact);

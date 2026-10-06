@@ -47,7 +47,7 @@ class SideState {
     required List<PirateSpec> lineup,
     required this.rules,
   }) : grid = ShipGrid.fromBlueprint(blueprint),
-       cabins = blueprint.cabins,
+       cabins = List.of(blueprint.cabins),
        crew = Crew(lineup),
        modules = ShipModules(blueprint),
        fuel = _startTank(blueprint),
@@ -68,7 +68,11 @@ class SideState {
   /// 설계도의 흘수선 높이(1/1000칸, 용골 바닥 기준): (총무게 − 부력재) ÷ (선형 폭 ×
   /// [MatchRules.waterlineDivisor]) (설계서 §3.4). 무게는 ×1000 이라 그대로 1/1000칸이다.
   static int waterlineOf(Blueprint blueprint, MatchRules rules) =>
-      waterlineOfWeight(blueprint.hull, totalWeight(blueprint.cells), rules);
+      waterlineOfWeight(
+        blueprint.hull,
+        shipWeight(blueprint.cells, blueprint.modules),
+        rules,
+      );
 
   final int side;
   final ShipGrid grid;
@@ -124,8 +128,25 @@ class SideState {
   /// 칸마다 나무 추가 피해(%) (화염탄 사다리, BALANCE.md A2.5).
   late final List<int> fireExtra = List.filled(grid.cellCount, 0);
 
-  /// 선실 슬롯 순서의 선실 칸. 출전 해적은 앞에서부터 탄다.
+  /// 선실 슬롯 순서의 선실 칸. 출전 해적은 앞에서부터 탄다. 돛대가 부러진 돛 자리는
+  /// 돛대 밑동 위 칸으로 옮긴다([moveFallenSeats]).
   final List<CabinCell> cabins;
+
+  /// 돛대가 부러진 돛 자리 선실을 돛대 밑동 바로 위 칸(드러난 갑판)으로 옮긴다
+  /// (설계서 §3.3 돛 자리). 바다에 빠진 해적이 돌아오기 전, 내 턴 시작에 부른다.
+  void moveFallenSeats() {
+    for (final m in modules.list) {
+      if (!m.kind.isMast || m.intact) continue;
+      final rig = m.cell.rigCells(grid.height);
+      if (rig.isEmpty) continue;
+      final (sx, sy) = rig.last;
+      for (var slot = 0; slot < cabins.length; slot++) {
+        if (cabins[slot].x == sx && cabins[slot].y == sy) {
+          cabins[slot] = CabinCell(m.x, m.y + 1);
+        }
+      }
+    }
+  }
 
   final Crew crew;
 
@@ -139,13 +160,13 @@ class SideState {
               ModuleNumbers.fuelTankBonus) *
       fuelUnit;
 
-  /// 돛대가 부러졌다: 1칸당 연료 2배, 속도 절반 (BALANCE.md A2.6).
-  bool get mastBroken => modules.anyLost(ModuleKind.mast);
+  /// 돛대가 부러졌다: 1칸당 연료 증가, 속도 절반 (BALANCE.md A2.6·A3.3).
+  bool get mastBroken => modules.anyMastLost;
 
   /// 1칸당 연료(×[fuelUnit]): 선형 소모 × 무게 배율 × 돛대 (설계서 §2.7).
   int get fuelPerCell {
     final base = grid.hull.fuelPerCell * fuelUnit * modules.weightPermille;
-    return base ~/ 1000 * (mastBroken ? ModuleNumbers.mastFuelFactor : 1);
+    return base ~/ 1000 * modules.brokenMastFuelPermille ~/ 1000;
   }
 
   /// [slot] 해적의 모듈 피해 보너스(%): 그 선실 포문 +10, 화약고가 남아 있으면 +10.
@@ -158,6 +179,9 @@ class SideState {
     if (modules.intactCount(ModuleKind.magazine) > 0) {
       bonus += ModuleNumbers.magazinePercent;
     }
+    // 돛 자리: 돛대가 서 있는 동안 종류별 보너스 (설계서 §3.3, BALANCE.md A3.2).
+    final seat = modules.mastWithSeat(c.x, c.y, grid.height);
+    if (seat != null) bonus += seat.kind.seatPercent;
     return bonus;
   }
 

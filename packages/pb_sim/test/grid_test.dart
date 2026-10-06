@@ -5,7 +5,7 @@ import 'fixtures.dart';
 
 /// 용골 줄 + (5, 1..3) 기둥 + (3..7, 4) 판 + (0, 1) 옆 블록. 선실은 용골 위.
 Blueprint _pillarBlueprint() => Blueprint(
-  HullSpec.sloop,
+  boxSloop,
   [
     for (var x = 0; x < 12; x++) BlockCell(x, 0, BlockMaterial.oak),
     const BlockCell(0, 1, BlockMaterial.pine),
@@ -59,30 +59,30 @@ void main() {
 
   group('블록 피해', () {
     test('구멍 단계 블록만 고치고, 부서진 칸·멀쩡한 칸은 못 고친다 (설계서 §2.5)', () {
-      final g = ShipGrid.fromBlueprint(sampleBlueprint()); // (0,0) 참나무 80
-      expect(g.repair(0, 0, 10), isFalse, reason: '멀쩡함');
-      g.damage(0, 0, 60);
-      expect(g.stageAt(0, 0), DamageStage.holed);
-      expect(g.repair(0, 0, 500), isTrue);
-      expect(g.hpAt(0, 0), 80, reason: '최대 내구도까지만');
-      g.damage(0, 0, 80);
-      expect(g.isBroken(0, 0), isTrue);
-      expect(g.repair(0, 0, 80), isFalse);
-      expect(g.hasBlock(0, 0), isFalse);
+      final g = ShipGrid.fromBlueprint(sampleBlueprint()); // (2,0) 참나무 80
+      expect(g.repair(2, 0, 10), isFalse, reason: '멀쩡함');
+      g.damage(2, 0, 60);
+      expect(g.stageAt(2, 0), DamageStage.holed);
+      expect(g.repair(2, 0, 500), isTrue);
+      expect(g.hpAt(2, 0), 80, reason: '최대 내구도까지만');
+      g.damage(2, 0, 80);
+      expect(g.isBroken(2, 0), isTrue);
+      expect(g.repair(2, 0, 80), isFalse);
+      expect(g.hasBlock(2, 0), isFalse);
     });
 
     test('손상 단계는 내구도 2/3·1/3 경계로 나뉜다 (설계서 §10.2)', () {
-      final g = ShipGrid.fromBlueprint(sampleBlueprint()); // (0,0) 참나무 80
-      expect(g.stageAt(0, 0), DamageStage.intact);
-      g.damage(0, 0, 27); // 53 → 53×3 = 159 ≤ 160
-      expect(g.stageAt(0, 0), DamageStage.cracked);
-      g.damage(0, 0, 26); // 27 → 81 > 80
-      expect(g.stageAt(0, 0), DamageStage.cracked);
-      g.damage(0, 0, 1); // 26 → 78 ≤ 80
-      expect(g.stageAt(0, 0), DamageStage.holed);
-      expect(g.damage(0, 0, 26), isTrue);
-      expect(g.stageAt(0, 0), DamageStage.destroyed);
-      expect(g.damage(0, 0, 10), isFalse);
+      final g = ShipGrid.fromBlueprint(sampleBlueprint()); // (2,0) 참나무 80
+      expect(g.stageAt(2, 0), DamageStage.intact);
+      g.damage(2, 0, 27); // 53 → 53×3 = 159 ≤ 160
+      expect(g.stageAt(2, 0), DamageStage.cracked);
+      g.damage(2, 0, 26); // 27 → 81 > 80
+      expect(g.stageAt(2, 0), DamageStage.cracked);
+      g.damage(2, 0, 1); // 26 → 78 ≤ 80
+      expect(g.stageAt(2, 0), DamageStage.holed);
+      expect(g.damage(2, 0, 26), isTrue);
+      expect(g.stageAt(2, 0), DamageStage.destroyed);
+      expect(g.damage(2, 0, 10), isFalse);
     });
 
     test('폭발은 착탄 칸 100% 와 균열 조각 4개(각 50%)로 나뉘고 총피해가 보존된다 (§4.8)', () {
