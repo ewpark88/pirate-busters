@@ -1484,4 +1484,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get goalAllClear => '이 해역을 모두 깼다!';
+
+  @override
+  String get emphasisMast => '돛대 부러짐!';
 }

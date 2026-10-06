@@ -1558,4 +1558,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get goalAllClear => 'Every stage here is cleared!';
+
+  @override
+  String get emphasisMast => 'Mast down!';
 }

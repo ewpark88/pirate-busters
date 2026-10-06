@@ -768,5 +768,6 @@
   },
   "goalShipNeed": "Grow ship: clear {stage}",
   "goalShipDone": "Ship fully grown",
-  "goalAllClear": "Every stage here is cleared!"
+  "goalAllClear": "Every stage here is cleared!",
+  "emphasisMast": "Mast down!"
 }

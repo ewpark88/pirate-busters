@@ -445,5 +445,6 @@
   "goalStars": "별 {have} / {total}",
   "goalShipNeed": "배 확장: {stage} 클리어",
   "goalShipDone": "배를 다 키웠다",
-  "goalAllClear": "이 해역을 모두 깼다!"
+  "goalAllClear": "이 해역을 모두 깼다!",
+  "emphasisMast": "돛대 부러짐!"
 }
