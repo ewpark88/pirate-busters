@@ -55,22 +55,25 @@ class EmotionTracker {
 
 /// 감정 연출 (설계서 §10.4): 선실 직격 슬로모션과 강조 문구.
 extension EmotionCues on BattleCues {
-  /// 슬로모션 길이(초). 저사양은 절반.
+  /// 슬로모션 길이(초). 저사양은 절반 (§10.4 저사양).
   static const double slowSec = 0.6;
+  static double slowFor({required bool lowEnd}) =>
+      lowEnd ? slowSec / 2 : slowSec;
 
-  /// [cues] 한 묶음의 감정 연출. [weight] 는 그 묶음의 한 방 크기.
-  void emote(List<SimEvent> cues, HitWeight weight) {
+  /// [cues] 한 묶음의 감정 연출. [weight] 는 그 묶음의 한 방 크기, [quiet] 는 지원탄·
+  /// 설치탄처럼 조용히 내려앉는 탄이라 명중으로 치지 않는다.
+  void emote(List<SimEvent> cues, HitWeight weight, {bool quiet = false}) {
     SimEvent? hit;
     for (final e in cues) {
       if (e.kind == SimEventKind.turnStart) emotion.turnStart(e.value);
       if (e.kind == SimEventKind.impact && hit == null) hit = e;
     }
-    if (hit == null) return;
+    if (hit == null || quiet) return;
     final side = session.state.sides[hit.side];
     final w = side.grid.width;
     final cabinHit = side.cabins.any((c) => c.y * w + c.x == hit!.cell);
     final fewer = fx.few(2) == 1;
-    if (cabinHit) stop.slow(fewer ? slowSec / 2 : slowSec);
+    if (cabinHit) stop.slow(slowFor(lowEnd: fewer));
     final pick = emotion.onBatch(weight, cabinHit: cabinHit);
     if (pick == null) return;
     fx.emphasis(

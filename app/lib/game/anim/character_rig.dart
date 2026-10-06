@@ -134,7 +134,7 @@ class CharacterRig extends PositionComponent {
     final f = clip.events.where((e) => e.type == 'flash').firstOrNull;
     if (f != null) {
       flash = 1;
-      _flashSec = (f.raw['dur'] as num).toDouble();
+      _flashSec = (f.raw['dur'] as num?)?.toDouble() ?? _flashSec;
     }
   }
 
