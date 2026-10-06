@@ -79,24 +79,25 @@ class ShipUpgrades {
     4: ['1-12'],
   };
 
-  /// 금액 (BALANCE.md A13.6·A3.2, 임시값).
-  static const Map<int, int> stageGold = {2: 300, 3: 600, 4: 1200};
+  /// 금액 (BALANCE.md A13.6·A3.2·B11 무과금 경제, 임시값).
+  static const Map<int, int> stageGold = {2: 150, 3: 300, 4: 500};
+  // 해금 층: 1층(해역 1)·2층(해역 2)·3층(해역 3) 금액 (BALANCE.md A13.6, ADR-086).
   static const Map<BlockMaterial, int> materialGold = {
-    BlockMaterial.net: 150,
+    BlockMaterial.net: 100,
     BlockMaterial.cork: 300,
-    BlockMaterial.iron: 500,
+    BlockMaterial.iron: 600,
   };
   static const Map<ModuleKind, int> moduleGold = {
-    ModuleKind.workshop: 200,
-    ModuleKind.gunPort: 250,
-    ModuleKind.lookout: 250,
+    ModuleKind.workshop: 150,
+    ModuleKind.gunPort: 150,
+    ModuleKind.mastOak: 150,
+    ModuleKind.lookout: 300,
     ModuleKind.fuelTank: 300,
-    ModuleKind.magazine: 400,
-    ModuleKind.mastOak: 300,
-    ModuleKind.mastCrow: 500,
-    ModuleKind.mastIron: 600,
+    ModuleKind.mastCrow: 400,
+    ModuleKind.magazine: 600,
+    ModuleKind.mastIron: 700,
   };
-  static const Map<int, int> mastLevelGold = {2: 150, 3: 300, 4: 600, 5: 1200};
+  static const Map<int, int> mastLevelGold = {2: 100, 3: 200, 4: 400, 5: 800};
 
   /// 선형 레벨 [to] 로 올리는 골드 (A13.7 레벨업 골드 표와 같은 구간 값).
   static int hullLevelGold(int to) {

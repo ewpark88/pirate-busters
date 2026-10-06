@@ -60,12 +60,12 @@ void main() {
     test('확장 단계는 열린 뒤에만, 골드가 있어야 짓는다', () {
       expect(ShipShop.buildStage(rich, opened: 1), isNull, reason: '안 열림');
       expect(
-        ShipShop.buildStage(const PlayerProgress(gold: 299), opened: 2),
+        ShipShop.buildStage(const PlayerProgress(gold: 149), opened: 2),
         isNull,
         reason: '골드 모자람',
       );
       final next = ShipShop.buildStage(rich, opened: 2)!;
-      expect([next.ship.stage, next.gold], [2, 4700]);
+      expect([next.ship.stage, next.gold], [2, 4850]);
       final dev = ShipShop.buildStage(
         const PlayerProgress(),
         opened: 1,
@@ -89,7 +89,7 @@ void main() {
       expect(
         [iron.gold, iron.ship.hasMaterial(BlockMaterial.iron)],
         [
-          4500,
+          4400,
           true,
         ],
       );
@@ -109,8 +109,8 @@ void main() {
       expect(
         [oak.gold, lv2.gold, lv2.ship.mastLevel(ModuleKind.mastOak)],
         [
-          4700,
-          4550,
+          4850,
+          4750,
           2,
         ],
       );
@@ -169,5 +169,17 @@ void main() {
         3,
       );
     });
+  });
+
+  test('무과금 기준: 확장 단계와 1층 해금이 지금 해역 1 첫 클리어 골드 안에 든다 (B11)', () {
+    final stages = ShipUpgrades.stageGold.values.fold(0, (a, b) => a + b);
+    final tier1 =
+        ShipUpgrades.materialGold[BlockMaterial.net]! +
+        ShipUpgrades.moduleGold[ModuleKind.workshop]! +
+        ShipUpgrades.moduleGold[ModuleKind.gunPort]! +
+        ShipUpgrades.moduleGold[ModuleKind.mastOak]!;
+    expect([stages, tier1], [950, 550]);
+    const sea1FirstClears = 50 * 3 + 100 + 120 + 150 + 200 + 300 + 500;
+    expect(stages + tier1, lessThanOrEqualTo(sea1FirstClears));
   });
 }
