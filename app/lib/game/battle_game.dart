@@ -13,6 +13,7 @@ import 'package:pirate_busters/game/battle_cues.dart';
 import 'package:pirate_busters/game/battle_texts.dart';
 import 'package:pirate_busters/game/camera_director.dart';
 import 'package:pirate_busters/game/coords.dart';
+import 'package:pirate_busters/game/impact_sound.dart';
 import 'package:pirate_busters/game/pirate_pick.dart';
 import 'package:pirate_busters/game/sprites.dart';
 import 'package:pirate_busters/game/view/backdrop_view.dart';
@@ -177,9 +178,15 @@ class BattleGame extends FlameGame with BattleTexts {
   /// 흔들림 떨림의 시계(초).
   double _shakeT = 0;
 
+  /// 한 프레임 효과음 묶음과 내려오는 탄의 휘파람 (설계서 §10.3, A32).
+  final SfxMixer _mixer = SfxMixer();
+  final WhistleCue _whistle = WhistleCue();
+
   @override
   void update(double dt) {
+    _mixer.beginFrame();
     session.update((dt * 1000).round().clamp(0, 100));
+    if (_whistle.update(_shot.projectile?.y)) playSfx(Sfx.whistle);
     final cues = session.takeCues();
     for (final e in cues) {
       stats.record(e);
@@ -262,8 +269,11 @@ class BattleGame extends FlameGame with BattleTexts {
   }
 
   /// 효과음. 설정의 효과음을 끄면 내지 않는다 (설계서 §13.8). HUD 버튼 소리도 쓴다.
+  /// 같은 프레임의 같은 소리는 하나만 내고 크기 합에 상한을 둔다 (§10.3, A32).
   void playSfx(Sfx sfx, {double volume = 1}) {
-    if (soundOn.value) sound.play(sfx, volume: volume);
+    if (!soundOn.value) return;
+    final v = _mixer.admit(sfx, volume);
+    if (v != null) sound.play(sfx, volume: v);
   }
 
   /// 핀치 줌 시작·진행 (설계서 §2.1). 화면이 제스처를 넘긴다.

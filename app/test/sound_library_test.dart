@@ -52,8 +52,12 @@ void main() {
         expect(File(a).existsSync(), isTrue, reason: a);
         expect(credits, contains(a.split('/').last), reason: a);
       }
-      // 같은 소리는 2~3개 변형을 돌려 쓴다.
+      // 같은 소리는 2~3개 변형을 돌려 쓴다. 맞는 음원이 없는 소리만 합성음이다.
       for (final s in Sfx.values) {
+        if (AudioAssets.synthOnly.contains(s)) {
+          expect(AudioAssets.sfx(s), isEmpty, reason: '$s');
+          continue;
+        }
         expect(AudioAssets.sfx(s).length, inInclusiveRange(2, 3), reason: '$s');
       }
     });

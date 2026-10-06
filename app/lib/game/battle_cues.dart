@@ -10,6 +10,7 @@ import 'package:pirate_busters/game/camera_director.dart';
 import 'package:pirate_busters/game/coords.dart';
 import 'package:pirate_busters/game/cues_unique.dart';
 import 'package:pirate_busters/game/hit_tag.dart';
+import 'package:pirate_busters/game/impact_sound.dart';
 import 'package:pirate_busters/game/view/breakage_fx.dart';
 import 'package:pirate_busters/game/view/fx_layer.dart';
 import 'package:pirate_busters/game/view/fx_text.dart';
@@ -160,10 +161,12 @@ class BattleCues {
           director.impact(at, punch: weight.punch);
           ships[e.side].rock(push);
           joltOnce(FxLayer.familyJolt(spec?.family) * tier.shake);
-          playSfx(
-            ships[e.side].isIron(e.cell) ? Sfx.clang : Sfx.cannon,
-            volume: 0.8,
-          );
+          for (final (sfx, volume) in impactLayers(
+            weight,
+            iron: ships[e.side].isIron(e.cell),
+          )) {
+            playSfx(sfx, volume: volume);
+          }
         case SimEventKind.splash:
           final at = Coords.point(e.x, 0);
           fx
@@ -203,6 +206,7 @@ class BattleCues {
           playSfx(Sfx.splash, volume: 0.6);
         case SimEventKind.pirateHit:
           ships[e.side].playHit(e.slot);
+          playSfx(Sfx.pirateHit);
           final rig = e.slot >= 0 && e.slot < ships[e.side].rigs.length
               ? ships[e.side].rigs[e.slot]
               : null;
@@ -224,9 +228,7 @@ class BattleCues {
           repairTagged = true;
         case SimEventKind.turnStart ||
             SimEventKind.turnEnd ||
-            SimEventKind.pirateFell ||
             SimEventKind.pirateReturned ||
-            SimEventKind.pirateDown ||
             SimEventKind.stormStart ||
             // 터진 턴 효과는 뒤따르는 착탄 이벤트가 그린다.
             SimEventKind.divide ||
@@ -262,6 +264,12 @@ class BattleCues {
           ships[e.side].rock(facingOf(1 - e.side));
           joltOnce(1);
           playSfx(Sfx.boom);
+          playSfx(Sfx.rumble);
+        // 해적이 바다로 떨어지면 첨벙, 쓰러지면 띵 (§10.3, A32).
+        case SimEventKind.pirateFell:
+          playSfx(Sfx.plunge);
+        case SimEventKind.pirateDown:
+          playSfx(Sfx.ko);
       }
     }
     for (final MapEntry(key: side, value: cells) in collapsed.entries) {
@@ -272,8 +280,7 @@ class BattleCues {
         tileOf: ships[side].builtTile,
         shipX: ships[side].position.x,
       );
-      if (!woodPlayed) playSfx(Sfx.wood);
-      woodPlayed = true;
+      playSfx(Sfx.creak);
     }
   }
 

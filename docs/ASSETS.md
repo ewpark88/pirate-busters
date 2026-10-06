@@ -129,13 +129,15 @@ dart run tool/import_assets.dart --merge art/pb_v0.24_main
 
 ## 음원 (A19, CC0)
 
-설계서 §10.3(ADR-071): CC0 녹음·샘플 음원을 먼저 쓰고, 불러오지 못한 소리만 아래 「소리」 절의 코드 합성음으로 대신한다. 파일은 `app/assets/audio/` 한 폴더에 있다(`sfx_<소리>_<번호>.ogg`, `music_<곡>.ogg`). 목록은 `app/lib/audio/sound_library.dart` `AudioAssets`, 재생은 `SoloudSoundService`(변형을 돌아가며 쓰고 재생 속도를 ±6% 흔든다, 승리·패배 악구는 흔들지 않음). 모두 CC0 이라 표기 의무는 없지만 출처를 남긴다(절대 규칙 8). Kenney 팩의 라이선스 원문은 `app/assets/audio/LICENSE_kenney_*.txt`.
+설계서 §10.3(ADR-071): CC0 녹음·샘플 음원을 먼저 쓰고, 불러오지 못한 소리만 아래 「소리」 절의 코드 합성음으로 대신한다. 파일은 `app/assets/audio/` 한 폴더에 있다(`sfx_<소리>_<번호>.ogg`, `music_<곡>.ogg`). 목록은 `app/lib/audio/sound_library.dart` `AudioAssets`, 재생은 `SoloudSoundService`(변형을 돌아가며 쓰고 재생 속도를 ±6% 흔든다, 승리·패배 악구는 흔들지 않음). 모두 CC0 이라 표기 의무는 없지만 출처를 남긴다(절대 규칙 8). Kenney 팩의 라이선스 원문은 `app/assets/audio/LICENSE_kenney_*.txt`. A32 에서 착탄 겹침·붕괴·해적 소리를 더했다(설계서 §10.3, ADR-086).
 
 | 출처 (모두 CC0 1.0) | 원작자 | 받은 곳 |
 | --- | --- | --- |
 | Impact Sounds 1.0 | Kenney (kenney.nl) | https://kenney.nl/assets/impact-sounds |
 | Interface Sounds 1.0 | Kenney | https://kenney.nl/assets/interface-sounds |
 | Music Jingles | Kenney | https://kenney.nl/assets/music-jingles |
+| RPG Audio (A32) | Kenney | https://kenney.nl/assets/rpg-audio |
+| Sci-fi Sounds (A32) | Kenney | https://kenney.nl/assets/sci-fi-sounds |
 | 25 CC0 bang / firework SFX | rubberduck | https://opengameart.org/content/25-cc0-bang-firework-sfx |
 | 40 CC0 water / splash / slime SFX | rubberduck | https://opengameart.org/content/40-cc0-water-splash-slime-sfx |
 | Pirate Game Tune (`pirate1uf.ogg`, 2015) | Tozan | https://opengameart.org/content/pirate-game-tune |
@@ -152,6 +154,14 @@ dart run tool/import_assets.dart --merge art/pb_v0.24_main
 | 승리 악구 `win` | `sfx_win_1.ogg` `sfx_win_2.ogg` `sfx_win_3.ogg` | Jingles: `jingles_STEEL02` `STEEL15` `STEEL10` (음이 올라가는 스틸드럼) |
 | 패배 악구 `lose` | `sfx_lose_1.ogg` `sfx_lose_2.ogg` `sfx_lose_3.ogg` | Jingles: `jingles_STEEL14` `STEEL07` `STEEL16` (음이 내려가는 스틸드럼) |
 | 버튼 누름 `click` | `sfx_click_1.ogg` `sfx_click_2.ogg` `sfx_click_3.ogg` | Interface: `click_001` `select_001` `select_002` |
+| 착탄 쾅 작은 `hit` (A32) | `sfx_hit_1.ogg` `sfx_hit_2.ogg` `sfx_hit_3.ogg` | Sci-fi: `explosionCrunch_000`, 25 bang: `bang_07` `bang_08` |
+| 착탄 쾅 큰 `hitBig` (A32) | `sfx_hitBig_1.ogg` `sfx_hitBig_2.ogg` `sfx_hitBig_3.ogg` | Sci-fi: `explosionCrunch_001` `explosionCrunch_002`, 25 bang: `bang_10` |
+| 잔향 `rumble` (A32) | `sfx_rumble_1.ogg` `sfx_rumble_2.ogg` | Sci-fi: `lowFrequency_explosion_000` `001` |
+| 붕괴 우지끈 `creak` (A32) | `sfx_creak_1.ogg` `sfx_creak_2.ogg` | RPG Audio: `creak1` `creak2` |
+| 해적 피격 `pirateHit` (A32) | `sfx_pirateHit_1.ogg` `sfx_pirateHit_2.ogg` `sfx_pirateHit_3.ogg` | Impact: `impactPunch_heavy_000` `001` `003` |
+| 바다 추락 첨벙 `plunge` (A32) | `sfx_plunge_1.ogg` `sfx_plunge_2.ogg` `sfx_plunge_3.ogg` | water: `splash_04` `splash_05` `splash_11` |
+| 쓰러짐 `ko` (A32) | `sfx_ko_1.ogg` `sfx_ko_2.ogg` | Impact: `impactBell_heavy_002` `003` |
+| 휘파람 `whistle` (A32) | 없음(코드 합성음만) | 맞는 CC0 음원이 없어 `sfx_bank.dart` 로 만든다 |
 
 | 곡 (`Music`) | 앱 파일 | 원본 |
 | --- | --- | --- |
