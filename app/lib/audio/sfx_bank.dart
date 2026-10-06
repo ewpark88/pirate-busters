@@ -72,6 +72,53 @@ abstract final class SfxBank {
             ..tone(1400, 900, .05, wave: Wave.triangle, vol: .14)
             ..noise(.02, 4000, 2500, vol: .05, seed: 15))
           .toWav(gain: masterGain),
+    // 착탄 쾅(작은): 짧은 쿵 + 파열음.
+    Sfx.hit =>
+      (PcmSynth(durationSec: .5)
+            ..tone(120, 40, .4, vol: .4)
+            ..noise(.35, 900, 120, vol: .3, q: .7, seed: 16))
+          .toWav(gain: masterGain),
+    // 착탄 쾅(큰): 깊은 쿵 + 긴 파열음.
+    Sfx.hitBig =>
+      (PcmSynth(durationSec: .9)
+            ..tone(85, 28, .8, vol: .5)
+            ..noise(.8, 600, 60, vol: .36, q: .6, seed: 17)
+            ..noise(.12, 2600, 900, vol: .16, seed: 18))
+          .toWav(gain: masterGain),
+    // 잔향: 낮게 길게 우르릉.
+    Sfx.rumble =>
+      (PcmSynth(durationSec: 1.4)
+            ..tone(48, 30, 1.3, wave: Wave.triangle, vol: .3)
+            ..noise(1.3, 220, 40, vol: .26, q: .6, seed: 19))
+          .toWav(gain: masterGain),
+    // 붕괴 우지끈: 삐걱이다 쩍 갈라짐.
+    Sfx.creak =>
+      (PcmSynth(durationSec: .7)
+            ..tone(180, 140, .35, wave: Wave.square, vol: .05)
+            ..noise(.2, 1500, 400, vol: .24, q: 2, seed: 20, delay: .3))
+          .toWav(gain: masterGain),
+    // 해적 피격: 둔탁한 퍽.
+    Sfx.pirateHit =>
+      (PcmSynth(durationSec: .3)
+            ..tone(160, 70, .2, vol: .3)
+            ..noise(.08, 1200, 400, vol: .14, seed: 21))
+          .toWav(gain: masterGain),
+    // 바다 추락: 풍덩.
+    Sfx.plunge =>
+      (PcmSynth(durationSec: .8)
+            ..tone(300, 90, .25, vol: .14)
+            ..noise(.7, 1100, 200, vol: .26, q: .8, seed: 22, delay: .05))
+          .toWav(gain: masterGain),
+    // 쓰러짐: 띵 하고 울리는 종.
+    Sfx.ko =>
+      (PcmSynth(durationSec: .8)
+            ..tone(660, 640, .7, vol: .12)
+            ..tone(990, 960, .5, vol: .06))
+          .toWav(gain: masterGain),
+    // 내려오는 탄의 휘파람: 높은 음에서 미끄러져 내려온다.
+    Sfx.whistle => (PcmSynth(
+      durationSec: .9,
+    )..tone(1700, 650, .85, vol: .07)).toWav(gain: masterGain),
   };
 
   /// 음 [hz] 를 [step] 초 간격으로 이어 부는 짧은 악구. 마지막 음은 길게 끈다.

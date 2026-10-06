@@ -13,6 +13,9 @@ import 'package:pirate_busters/game/battle_cues.dart';
 import 'package:pirate_busters/game/battle_texts.dart';
 import 'package:pirate_busters/game/camera_director.dart';
 import 'package:pirate_busters/game/coords.dart';
+import 'package:pirate_busters/game/emotion_cues.dart';
+import 'package:pirate_busters/game/impact_sound.dart';
+import 'package:pirate_busters/game/pirate_pick.dart';
 import 'package:pirate_busters/game/sprites.dart';
 import 'package:pirate_busters/game/view/backdrop_view.dart';
 import 'package:pirate_busters/game/view/effect_badges.dart';
@@ -55,9 +58,10 @@ class BattleGame extends FlameGame with BattleTexts {
   /// 저사양 모드: 바다 굴절 셰이더를 끈다 (설계서 §10.2).
   final ValueNotifier<bool> lowEnd = ValueNotifier(false);
 
-  /// 설정의 효과음·진동 (설계서 §13.8). 화면이 설정 값을 넣는다.
+  /// 설정의 효과음·진동·화면 흔들림 줄이기 (설계서 §13.8). 화면이 설정 값을 넣는다.
   final ValueNotifier<bool> soundOn = ValueNotifier(true);
   final ValueNotifier<bool> vibrationOn = ValueNotifier(true);
+  final ValueNotifier<bool> calmShake = ValueNotifier(false);
 
   static const String seaShaderAsset = 'shaders/sea_refraction.frag';
 
@@ -117,6 +121,7 @@ class BattleGame extends FlameGame with BattleTexts {
       sprites: sprites,
       lowEnd: lowEnd,
       vibration: vibrationOn,
+      calmShake: calmShake,
       priority: 30,
     );
     await world.addAll([
@@ -155,7 +160,7 @@ class BattleGame extends FlameGame with BattleTexts {
       playSfx: playSfx,
       damageText: (amount) => damageText(amount),
       tagText: (tag) => tagText(tag),
-    );
+    )..emphasisText = ((e) => emphasisText(e));
     overview.addListener(() => director.overview = overview.value);
     // 저사양 모드에서는 등급 고리의 입자와 외곽 빛을 줄인다 (설계서 §12).
     void applyLowEnd() {
@@ -171,12 +176,16 @@ class BattleGame extends FlameGame with BattleTexts {
     applyLowEnd();
   }
 
-  /// 흔들림 떨림의 시계(초).
+  /// 흔들림 떨림의 시계(초), 한 프레임 효과음 묶음과 휘파람 (설계서 §10.3, A32).
   double _shakeT = 0;
+  final SfxMixer _mixer = SfxMixer();
+  final WhistleCue _whistle = WhistleCue();
 
   @override
   void update(double dt) {
+    _mixer.beginFrame();
     session.update((dt * 1000).round().clamp(0, 100));
+    if (_whistle.update(_shot.projectile?.y)) playSfx(Sfx.whistle);
     final cues = session.takeCues();
     for (final e in cues) {
       stats.record(e);
@@ -184,8 +193,11 @@ class BattleGame extends FlameGame with BattleTexts {
     }
     _cues.dispatch(cues);
     _watchEnd();
-    // 명중 순간 0.07초는 연출만 멈춘다. 시뮬레이션은 위에서 이미 진행했다 (§10.4).
+    // 명중 순간(한 방 크기에 비례해 0.05~0.16초)은 연출만 멈춘다. 시뮬레이션은 위에서
+    // 이미 진행했다. 묵직한 한 방은 멈춘 동안에도 화면이 떨린다 (§10.4, A32).
+    final trembling = _cues.stop.trembling;
     final visual = _cues.stop.visualDt(dt);
+    _shakeT += trembling ? dt : visual;
     _updateCamera(visual);
     super.update(visual);
   }
@@ -201,6 +213,7 @@ class BattleGame extends FlameGame with BattleTexts {
           session.state.sides[ship.side].grid.width * Coords.cell,
         );
         playSfx(Sfx.sink);
+        _cues.stop.slow(EmotionCues.slowFor(lowEnd: lowEnd.value)); // §10.4
       }
     }
     if (session.playback != null || !_ships.every((s) => s.motion.settled)) {
@@ -248,16 +261,19 @@ class BattleGame extends FlameGame with BattleTexts {
       aspect: size.x > 0 ? size.y / size.x : 0.46,
     );
     director.update(dt, goal);
-    // 흔들림은 매끄러운 떨림으로 잦아든다 (설계서 §10.4, A20).
-    _shakeT += dt;
+    // 흔들림은 쌓이는 충격량의 매끄러운 떨림과 작은 기울기다 (설계서 §10.4, A32).
     camera.viewfinder
       ..position = director.center + Shake.offset(_fx.shake, _shakeT)
+      ..angle = _fx.shakeAngle(_shakeT)
       ..zoom = size.x / (director.width * director.punchScale);
   }
 
   /// 효과음. 설정의 효과음을 끄면 내지 않는다 (설계서 §13.8). HUD 버튼 소리도 쓴다.
+  /// 같은 프레임의 같은 소리는 하나만 내고 크기 합에 상한을 둔다 (§10.3, A32).
   void playSfx(Sfx sfx, {double volume = 1}) {
-    if (soundOn.value) sound.play(sfx, volume: volume);
+    if (!soundOn.value) return;
+    final v = _mixer.admit(sfx, volume);
+    if (v != null) sound.play(sfx, volume: v);
   }
 
   /// 핀치 줌 시작·진행 (설계서 §2.1). 화면이 제스처를 넘긴다.
@@ -277,22 +293,6 @@ class BattleGame extends FlameGame with BattleTexts {
 
   /// 화면 좌표 [screen] 에 있는 사람 쪽 해적 슬롯. 배 위 캐릭터를 끌어 조준한다
   /// (설계서 §2.2 “배 위 캐릭터”). 없으면 null.
-  int? pirateAt(Vector2 screen) {
-    final world = camera.globalToLocal(screen);
-    final ship = _ships[viewSide];
-    int? best;
-    var bestDist = 30.0 * 30.0;
-    for (var slot = 0; slot < ship.rigs.length; slot++) {
-      // 발 위치에서 몸 가운데(키의 절반 위)를 잡는다.
-      final body =
-          ship.rigs[slot].absolutePosition -
-          Vector2(0, Coords.pirateHeight / 2);
-      final d = body.distanceToSquared(world);
-      if (d < bestDist) {
-        bestDist = d;
-        best = slot;
-      }
-    }
-    return best;
-  }
+  int? pirateAt(Vector2 screen) =>
+      nearestPirate(_ships[viewSide], camera.globalToLocal(screen));
 }

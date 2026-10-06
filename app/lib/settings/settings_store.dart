@@ -27,6 +27,11 @@ abstract interface class SettingsStore {
 
   Future<void> setVibration({required bool on});
 
+  /// 화면 흔들림 줄이기 (설계서 §13.8, §10.4). 기본 끔.
+  bool get calmShake;
+
+  Future<void> setCalmShake({required bool on});
+
   /// 배경음악 (설계서 §10.3 ‘설정의 음악 끄기’). 기본 켬.
   bool get music;
 
@@ -89,6 +94,13 @@ class HiveSettingsStore implements SettingsStore {
       _box.put(_vibrationKey, on ? 'on' : 'off');
 
   @override
+  bool get calmShake => _box.get(_calmShakeKey) == 'on';
+
+  @override
+  Future<void> setCalmShake({required bool on}) =>
+      _box.put(_calmShakeKey, on ? 'on' : 'off');
+
+  @override
   bool get music => _box.get(_musicKey) != 'off';
 
   @override
@@ -106,6 +118,7 @@ class HiveSettingsStore implements SettingsStore {
   static const String _musicKey = 'music';
   static const String _soundKey = 'sound';
   static const String _vibrationKey = 'vibration';
+  static const String _calmShakeKey = 'calm_shake';
 }
 
 /// 메모리에만 두는 저장소. 테스트용.
@@ -141,6 +154,12 @@ class MemorySettingsStore implements SettingsStore {
 
   @override
   Future<void> setVibration({required bool on}) async => vibration = on;
+
+  @override
+  bool calmShake = false;
+
+  @override
+  Future<void> setCalmShake({required bool on}) async => calmShake = on;
 
   @override
   bool music = true;

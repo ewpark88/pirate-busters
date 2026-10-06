@@ -183,6 +183,15 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get emphasisBoom => 'KABOOM!';
+
+  @override
+  String get emphasisDoubleHit => 'Double hit!';
+
+  @override
+  String get emphasisCabin => 'Cabin hit!';
+
+  @override
   String get sunkBanner => 'Sunk!';
 
   @override
@@ -1020,6 +1029,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get vibrationOn => 'Vibration';
+
+  @override
+  String get calmShakeOn => 'Reduce screen shake';
 
   @override
   String get campaignTitle => 'Campaign';

@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flame/components.dart';
 import 'package:pb_sim/pb_sim.dart';
 import 'package:pirate_busters/audio/sound_service.dart';
@@ -6,40 +8,22 @@ import 'package:pirate_busters/battle/playback.dart';
 import 'package:pirate_busters/game/anim/rarity_fx.dart';
 import 'package:pirate_busters/game/camera_director.dart';
 import 'package:pirate_busters/game/coords.dart';
+import 'package:pirate_busters/game/cues_crew.dart';
 import 'package:pirate_busters/game/cues_unique.dart';
+import 'package:pirate_busters/game/emotion_cues.dart';
+import 'package:pirate_busters/game/hit_stop.dart';
 import 'package:pirate_busters/game/hit_tag.dart';
+import 'package:pirate_busters/game/impact_sound.dart';
+import 'package:pirate_busters/game/view/breakage_fx.dart';
 import 'package:pirate_busters/game/view/fx_layer.dart';
 import 'package:pirate_busters/game/view/fx_text.dart';
-import 'package:pirate_busters/game/view/impact_accent.dart';
+import 'package:pirate_busters/game/view/hit_weight.dart';
+import 'package:pirate_busters/game/view/ship_crew.dart';
 import 'package:pirate_busters/game/view/ship_view.dart';
+import 'package:pirate_busters/game/view/shot_fx.dart';
 import 'package:pirate_busters/game/view/shot_view.dart';
 import 'package:pirate_busters/game/view/water_fx.dart';
 import 'package:pirate_busters/game/weapon_styles.dart';
-
-/// 히트스톱 (설계서 §10.4): 맞는 순간 연출만 0.07초 멈춘다. 렌더만 멈추고 시뮬레이션
-/// 진행·턴 타이머는 그대로 흐른다.
-class HitStop {
-  /// 히트스톱 사이 최소 간격(초): 연사탄이 화면을 계속 멈추지 않게 한다.
-  static const double gap = 0.3;
-
-  double _left = 0;
-  double _since = gap;
-
-  /// 명중했다. 직전 히트스톱에서 [gap] 이 지나지 않았으면 다시 멈추지 않는다.
-  void trigger() {
-    if (_since < gap) return;
-    _left = ImpactAccent.hitStop;
-    _since = 0;
-  }
-
-  /// 히트스톱을 뺀 연출용 dt. 멈춘 동안에는 0 이다.
-  double visualDt(double dt) {
-    _since += dt;
-    if (_left <= 0) return dt;
-    _left -= dt;
-    return 0;
-  }
-}
 
 /// 시뮬레이션 이벤트를 화면 연출로 바꾼다 (설계서 §10.4, §10.5). 판정은 이미 끝났고
 /// 여기서는 효과·소리·카메라만 고른다 (CLAUDE.md 절대 규칙 3).
@@ -72,6 +56,10 @@ class BattleCues {
 
   final HitStop stop = HitStop();
 
+  /// 감정 연출 (설계서 §10.4): 한 턴 강조 문구 하나. 글자는 화면이 l10n 으로 넣는다.
+  final EmotionTracker emotion = EmotionTracker();
+  String Function(Emphasis e) emphasisText = (e) => e.name;
+
   /// 지금 탄을 쏜 해적의 정의. 턴 효과로 터진 것이면 null.
   PirateSpec? get _shooter {
     final p = session.playback;
@@ -103,22 +91,37 @@ class BattleCues {
     final tier = spec == null ? RarityFx.common : rarity.of(spec.rarity);
     final tag = spec == null ? null : HitTag.ofAmmo(spec.ammo);
     final shown = <HitTag>{};
+    // 한 방 크기: 이 묶음 전체로 매겨 멈춤·흔들림·줌·숫자·진동을 맞춘다 (§10.4, A32).
+    final weight = HitWeight.of(cues, critHit: tag == HitTag.crit);
+    emote(cues, weight, quiet: landsQuietly(spec));
+    var jolted = false;
+    Vector2? hitAt;
+    final collapsed = <int, List<int>>{};
+    void joltOnce(double scale) {
+      if (jolted) return;
+      jolted = true;
+      fx.jolt(weight, scale: scale);
+      stop.trigger(weight.hitStopSec, heavy: weight.isHeavy);
+    }
+
     for (final e in cues) {
       switch (e.kind) {
         case SimEventKind.fire:
           ships[e.side].playAttack(e.slot);
           // 쏜 배는 쏜 쪽 반대로 살짝 밀린다 (A20).
           ships[e.side].recoil(-facingOf(e.side));
+          fx.muzzle(Coords.point(e.x, e.y), facingOf(e.side));
           playSfx(Sfx.cannon);
         case SimEventKind.impact when landsQuietly(spec):
           // 수리·설치 연출은 뒤따르는 repaired·mineAttached 이벤트가 그린다.
           director.impact(Coords.point(e.x, e.y));
         case SimEventKind.impact:
           final at = Coords.point(e.x, e.y);
+          hitAt = at;
           // 맞은 배는 쏜 쪽 반대로 밀린다.
           final push = facingOf(1 - e.side);
           if (spec == null) {
-            fx.explosion(at);
+            fx.explosion(at, radius: weight.isHeavy ? 2 : 1);
           } else {
             final style = spec.family == Family.pierce
                 ? weapons?.of(session.speciesOf(spec.id))
@@ -129,33 +132,40 @@ class BattleCues {
               tier: tier,
               facing: push,
               stuck: style == null ? null : weapons?.sprite(style),
+              radius: math.max(1, cappedBlastRadius(spec.blastRadius)),
+              heavy: weight.isHeavy,
             );
           }
-          director.impact(at, punch: true);
+          director.impact(at, punch: weight.punch);
           ships[e.side].rock(push);
-          stop.trigger();
-          playSfx(
-            ships[e.side].isIron(e.cell) ? Sfx.clang : Sfx.cannon,
-            volume: 0.8,
-          );
+          flashCell(e);
+          joltOnce(FxLayer.familyJolt(spec?.family) * tier.shake);
+          for (final (sfx, volume) in impactLayers(
+            weight,
+            iron: ships[e.side].isIron(e.cell),
+          )) {
+            playSfx(sfx, volume: volume);
+          }
         case SimEventKind.splash:
           final at = Coords.point(e.x, 0);
-          fx.splash(at);
+          fx
+            ..splash(at)
+            ..waterHit(at);
           director.impact(at);
           playSfx(Sfx.splash);
         case SimEventKind.blockDestroyed:
-          fx.blockBroken(cellWorld(e.side, e.cell));
+          fx.shatter(
+            cellWorld(e.side, e.cell),
+            tile: ships[e.side].builtTile(e.cell),
+            iron: ships[e.side].isIron(e.cell),
+            seed: e.side * 100000 + e.cell,
+            from: hitAt,
+          );
           if (!woodPlayed) playSfx(Sfx.wood);
           woodPlayed = true;
         case SimEventKind.blockCollapsed:
-          // 끊긴 덩어리는 배 가운데에서 먼 쪽으로 기울며 떨어진다.
-          final at = cellWorld(e.side, e.cell);
-          final outward = (at.x - ships[e.side].position.x).sign;
-          fx.collapsed(
-            at,
-            tile: ships[e.side].builtTile(e.cell),
-            lean: outward * 2.2,
-          );
+          // 끊긴 칸은 묶음이 끝난 뒤 덩어리로 묶어 떨어뜨린다 (§10.4, A32).
+          (collapsed[e.side] ??= []).add(e.cell);
         case SimEventKind.move:
           // 한계선에 닿으면 물살이 튄다 (설계서 §2.6).
           final side = session.state.sides[e.side];
@@ -174,7 +184,8 @@ class BattleCues {
           fx.splash(Coords.point(e.x, 0));
           playSfx(Sfx.splash, volume: 0.6);
         case SimEventKind.pirateHit:
-          ships[e.side].playHit(e.slot);
+          ships[e.side].playHit(e.slot, facingOf(1 - e.side));
+          playSfx(Sfx.pirateHit);
           final rig = e.slot >= 0 && e.slot < ships[e.side].rigs.length
               ? ships[e.side].rigs[e.slot]
               : null;
@@ -183,6 +194,7 @@ class BattleCues {
               rig.absolutePosition - Vector2(0, Coords.pirateHeight * 0.8),
               damageText(e.value),
               tag: tag == null ? null : tagText(tag),
+              style: DamageStyle.of(weight, crit: tag == HitTag.crit),
             );
           }
         case SimEventKind.mineAttached:
@@ -195,9 +207,7 @@ class BattleCues {
           repairTagged = true;
         case SimEventKind.turnStart ||
             SimEventKind.turnEnd ||
-            SimEventKind.pirateFell ||
             SimEventKind.pirateReturned ||
-            SimEventKind.pirateDown ||
             SimEventKind.stormStart ||
             // 터진 턴 효과는 뒤따르는 착탄 이벤트가 그린다.
             SimEventKind.divide ||
@@ -229,10 +239,28 @@ class BattleCues {
           if (radius == 0) break;
           final at = cellWorld(e.side, e.cell);
           fx.explosion(at, radius: radius, heavy: true);
-          director.impact(at, punch: true);
+          director.impact(at, punch: weight.punch);
           ships[e.side].rock(facingOf(1 - e.side));
+          joltOnce(1);
           playSfx(Sfx.boom);
+          playSfx(Sfx.rumble);
+        // 해적이 바다로 떨어지면 첨벙, 쓰러지면 띵 (§10.3, A32).
+        case SimEventKind.pirateFell:
+          pirateFell(e);
+        case SimEventKind.pirateDown:
+          pirateDown(e);
+          playSfx(Sfx.ko);
       }
+    }
+    for (final MapEntry(key: side, value: cells) in collapsed.entries) {
+      fx.collapseCells(
+        cells,
+        session.state.sides[side].grid.width,
+        cellAt: (cell) => cellWorld(side, cell),
+        tileOf: ships[side].builtTile,
+        shipX: ships[side].position.x,
+      );
+      playSfx(Sfx.creak);
     }
   }
 

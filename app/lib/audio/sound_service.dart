@@ -9,8 +9,27 @@ import 'package:flutter_soloud/flutter_soloud.dart';
 import 'package:pirate_busters/audio/sound_library.dart';
 
 /// 효과음 (설계서 §10.3): 포성, 나무 부서짐, 물보라, 철판 튕김, 유폭, 격침, 승리·패배
-/// 악구, 버튼 누름.
-enum Sfx { cannon, wood, splash, clang, boom, sink, win, lose, click }
+/// 악구, 버튼 누름. A32: 착탄 쾅(작은·큰)과 잔향, 붕괴 우지끈, 해적 피격·바다 추락
+/// 첨벙·쓰러짐, 내려오는 탄의 휘파람.
+enum Sfx {
+  cannon,
+  wood,
+  splash,
+  clang,
+  boom,
+  sink,
+  win,
+  lose,
+  click,
+  hit,
+  hitBig,
+  rumble,
+  creak,
+  pirateHit,
+  plunge,
+  ko,
+  whistle,
+}
 
 /// 배경음악 (설계서 §10.3): 항구 한 곡, 전투 한 곡.
 enum Music { port, battle }

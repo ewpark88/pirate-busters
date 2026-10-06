@@ -31,9 +31,6 @@ class ImpactAccent extends Component {
   /// 저사양 모드: 별 조각을 절반으로 (설계서 §12).
   final bool fewer;
 
-  /// 히트스톱 길이(초, 설계서 §10.4). 그동안 연출 dt 가 0 이라 고리는 멈춰 있다가
-  /// 풀리면 퍼지기 시작한다.
-  static const double hitStop = 0.07;
   static const double life = 0.9;
 
   double _t = 0;

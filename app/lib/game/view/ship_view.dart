@@ -10,6 +10,7 @@ import 'package:pirate_busters/game/anim/character_rig.dart';
 import 'package:pirate_busters/game/coords.dart';
 import 'package:pirate_busters/game/sprites.dart';
 import 'package:pirate_busters/game/view/cabin_painter.dart';
+import 'package:pirate_busters/game/view/crew_reactions.dart';
 import 'package:pirate_busters/game/view/damage_layer.dart';
 import 'package:pirate_busters/game/view/fire_view.dart';
 import 'package:pirate_busters/game/view/gimmick_marks.dart';
@@ -89,24 +90,14 @@ class ShipView extends PositionComponent with HasGameReference {
     super.onRemove();
   }
 
-  /// 해적 [slot] 의 공격 동작.
-  void playAttack(int slot) {
-    final id = session.speciesOf(_state.crew.pirates[slot].spec.id);
-    final clip = anims.attacks[id];
-    if (clip != null && slot < rigs.length) rigs[slot].play(clip, glint: true);
-  }
+  /// 해적 반응: 밀림·바다 추락 포물선 (설계서 §10.4, A32).
+  final CrewReactions reactions = CrewReactions();
 
   /// 판 시작 때 [cell] 칸이 철판이었는가 (착탄 소리).
   bool isIron(int cell) =>
       cell >= 0 &&
       cell < _built.materials.length &&
       _built.materials[cell] == BlockMaterial.iron.index;
-
-  void playHit(int slot) {
-    if (slot >= 0 && slot < rigs.length) {
-      rigs[slot].play(anims.hit, expr: 'hit');
-    }
-  }
 
   /// 판 시작 때 [cell] 칸의 타일 그림(무너지는 덩어리용). 빈 칸이면 null.
   Sprite? builtTile(int cell) {
@@ -204,7 +195,7 @@ class ShipView extends PositionComponent with HasGameReference {
         // 강습탄은 해적 자신이 날아간다: 나는 동안 선실은 비어 보인다 (§10.4).
         rig.alpha = 0;
       }
-      rig.home.add((_targets[slot] - rig.home) * k);
+      reactions.move(slot, rig.home, _targets[slot], k, dt);
       // 상태 동작과 표정 (설계서 §10.1): 떨어지는 중, 헤엄, 판이 끝나면 승리·패배.
       rig
         ..lean = leanOf(session, side, slot)

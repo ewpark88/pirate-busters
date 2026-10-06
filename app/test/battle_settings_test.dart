@@ -17,6 +17,7 @@ import 'package:pirate_busters/campaign/star_rules.dart';
 import 'package:pirate_busters/game/battle_game.dart';
 import 'package:pirate_busters/game/sprites.dart';
 import 'package:pirate_busters/game/view/fx_layer.dart';
+import 'package:pirate_busters/game/view/hit_weight.dart';
 import 'package:pirate_busters/game/view/sea_theme.dart';
 import 'package:pirate_busters/game/view/sea_view.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
@@ -48,7 +49,7 @@ void main() {
       session.dispose();
     });
 
-    testWidgets('진동을 끄면 착탄·물보라 햅틱을 부르지 않는다', (tester) async {
+    testWidgets('진동을 끄면 착탄 햅틱을 부르지 않고, 켜면 한 착탄에 한 번만 운다', (tester) async {
       var vibrations = 0;
       tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
         SystemChannels.platform,
@@ -59,15 +60,20 @@ void main() {
       );
       final sprites = await _FakeSprites.make();
       final vibration = ValueNotifier(false);
+      const weight = HitWeight(500);
       FxLayer(sprites: sprites, vibration: vibration)
         ..splash(Vector2.zero())
-        ..explosion(Vector2.zero());
+        ..explosion(Vector2.zero())
+        ..jolt(weight);
       await tester.pump();
       expect(vibrations, 0);
       vibration.value = true;
-      FxLayer(sprites: sprites, vibration: vibration).splash(Vector2.zero());
+      FxLayer(sprites: sprites, vibration: vibration)
+        ..explosion(Vector2.zero())
+        ..splash(Vector2.zero())
+        ..jolt(weight);
       await tester.pump();
-      expect(vibrations, 1);
+      expect(vibrations, 1, reason: '폭발·물보라 그림은 진동을 따로 내지 않는다');
     });
   });
 

@@ -11,57 +11,72 @@ import 'package:pirate_busters/game/battle_cues.dart';
 import 'package:pirate_busters/game/battle_game.dart';
 import 'package:pirate_busters/game/camera_director.dart';
 import 'package:pirate_busters/game/coords.dart';
+import 'package:pirate_busters/game/hit_stop.dart';
 import 'package:pirate_busters/game/hit_tag.dart';
 import 'package:pirate_busters/game/view/collapse_fx.dart';
 import 'package:pirate_busters/game/view/effect_badges.dart';
 import 'package:pirate_busters/game/view/fx_layer.dart';
-import 'package:pirate_busters/game/view/impact_accent.dart';
 import 'package:pirate_busters/game/view/ship_view.dart';
 
 import 'test_catalog.dart';
 
 void main() {
   group('명중 연출 (설계서 §10.4)', () {
-    test('히트스톱: 명중 뒤 0.07초는 연출 dt 가 0 이고 그 뒤에는 그대로 흐른다', () {
+    test('히트스톱: 명중 뒤 정한 시간만 연출 dt 가 0 이고 그 뒤에는 그대로 흐른다', () {
       final stop = HitStop();
       expect(stop.visualDt(0.016), 0.016, reason: '명중 전에는 멈추지 않는다');
-      stop.trigger();
+      stop.trigger(0.1);
       var frozen = 0.0;
       var dt = stop.visualDt(0.016);
       while (dt == 0) {
         frozen += 0.016;
         dt = stop.visualDt(0.016);
       }
-      expect(frozen, closeTo(ImpactAccent.hitStop, 0.02));
+      expect(frozen, closeTo(0.1, 0.02));
       expect(dt, 0.016);
     });
 
-    test('연사탄처럼 잇달아 맞아도 0.3초 안에는 다시 멈추지 않는다', () {
-      final stop = HitStop()..trigger();
+    test('연사탄처럼 잇달아 맞아도 0.3초 안에는 더 큰 한 방이 아니면 다시 멈추지 않는다', () {
+      final stop = HitStop()..trigger(0.05);
       for (var i = 0; i < 6; i++) {
         stop.visualDt(0.016);
       }
-      stop.trigger();
+      stop.trigger(0.05);
       expect(stop.visualDt(0.016), 0.016);
+      stop.trigger(0.12, heavy: true);
+      expect(stop.trembling, isTrue, reason: '묵직한 한 방은 멈춘 동안 떨린다');
+      expect(stop.visualDt(0.016), 0, reason: '더 큰 한 방은 간격 안이어도 멈춘다');
       for (var i = 0; i < 20; i++) {
         stop.visualDt(0.016);
       }
-      stop.trigger();
+      expect(stop.trembling, isFalse);
+      stop.trigger(0.05);
       expect(stop.visualDt(0.016), 0);
     });
 
-    test('명중 때 카메라가 살짝 당겼다가 돌아온다', () {
+    test('명중 때 카메라가 빠르게 당겼다가 부드럽게 돌아온다', () {
       final c = CameraDirector();
       expect(c.punchScale, 1);
-      c.impact(Vector2(300, -40), punch: true);
-      expect(c.punchScale, closeTo(1 - CameraDirector.punchZoom, 1e-9));
-      c.update(CameraDirector.punchSec / 2, (Vector2.zero(), 900));
-      expect(c.punchScale, inExclusiveRange(1 - CameraDirector.punchZoom, 1));
-      c.update(CameraDirector.punchSec, (Vector2.zero(), 900));
+      c
+        ..impact(Vector2(300, -40), punch: 0.1)
+        ..update(CameraDirector.punchIn, (Vector2.zero(), 900));
+      expect(c.punchScale, closeTo(0.9, 1e-9), reason: '가장 많이 당긴 순간');
+      c.update(CameraDirector.punchOut / 2, (Vector2.zero(), 900));
+      expect(c.punchScale, inExclusiveRange(0.9, 1));
+      expect(c.punchScale, greaterThan(1 - 0.1 / 2), reason: '풀림은 처음에 빠르다');
+      c.update(CameraDirector.punchOut, (Vector2.zero(), 900));
       expect(c.punchScale, 1);
       // 물에 떨어진 탄은 줌을 당기지 않는다.
       c.impact(Vector2(300, 0));
       expect(c.punchScale, 1);
+    });
+
+    test('약한 한 방은 이미 당긴 큰 줌을 덮어쓰지 않는다', () {
+      final c = CameraDirector()
+        ..impact(Vector2.zero(), punch: 0.12)
+        ..update(CameraDirector.punchIn, (Vector2.zero(), 900))
+        ..impact(Vector2.zero(), punch: 0.04);
+      expect(c.punchScale, closeTo(0.88, 1e-9));
     });
 
     test('지원탄·설치탄은 선체에 닿아도 명중 연출 없이 조용히 내려앉는다', () {
@@ -86,27 +101,84 @@ void main() {
     });
   });
 
-  testWidgets('붕괴 (§10.4): 끊긴 덩어리는 기울며 떨어지고 수면에서 물보라를 낸다', (tester) async {
+  testWidgets('붕괴 (§10.4): 끊긴 덩어리는 삐걱인 뒤 기울며 떨어지고 수면에서 물보라를 낸다', (
+    tester,
+  ) async {
     await tester.runAsync(() async {
       final recorder = ui.PictureRecorder();
       ui.Canvas(recorder).drawPaint(ui.Paint());
       final image = await recorder.endRecording().toImage(8, 8);
       Vector2? splashAt;
-      final chunk = FallingChunk(
-        sprite: Sprite(image),
+      final piece = FallingPiece(
+        parts: [
+          PiecePart(Sprite(image), Vector2(-16, 0), Vector2.all(32)),
+          PiecePart(Sprite(image), Vector2(16, 0), Vector2.all(32)),
+        ],
         at: Vector2(100, -96),
-        lean: 2.2,
+        velocity: Vector2(30, 0),
+        spin: collapseSpin(2),
+        delay: collapseStagger,
         onSplash: (at) => splashAt = at,
       );
+      expect(piece.size, Vector2(64, 32), reason: '두 칸 덩어리 크기');
+      piece.update(collapseStagger / 2);
+      expect(piece.position, Vector2(100, -96), reason: '늦게 떨어지는 덩어리는 제자리');
       var steps = 0;
       while (splashAt == null && steps < 200) {
-        chunk.update(1 / 60);
+        piece.update(1 / 60);
         steps++;
       }
       expect(splashAt, isNotNull);
       expect(splashAt!.y, 0, reason: '해수면');
       expect(splashAt!.x, greaterThan(100), reason: '기운 쪽으로 밀려 떨어진다');
-      expect(chunk.angle, greaterThan(0));
+      expect(piece.angle, greaterThan(0));
+    });
+  });
+
+  group('파괴 조각·덩어리 묶기 (설계서 §10.4, A32)', () {
+    test('나무는 가로 판자 세 장, 철판은 네 조각, 저사양은 절반이다', () {
+      expect(shardPlan(7, iron: false), hasLength(3));
+      expect(shardPlan(7, iron: true), hasLength(4));
+      expect(shardPlan(7, iron: false, fewer: true), hasLength(2));
+      expect(shardPlan(7, iron: true, fewer: true), hasLength(2));
+      for (final s in shardPlan(7, iron: false)) {
+        expect(s.src.width, 1, reason: '판자는 결을 따라 가로로 갈라진다');
+        expect(s.velocity.y, lessThan(0), reason: '위로 튄다');
+      }
+    });
+
+    test('같은 칸이면 같은 조각이고, 착탄 반대쪽으로 더 튄다', () {
+      final a = shardPlan(1203, iron: false, away: 1);
+      final b = shardPlan(1203, iron: false, away: 1);
+      for (var i = 0; i < a.length; i++) {
+        expect(a[i].velocity, b[i].velocity);
+        expect(a[i].spin, b[i].spin);
+      }
+      double meanX(List<ShardSpec> p) =>
+          p.map((s) => s.velocity.x).reduce((x, y) => x + y) / p.length;
+      expect(
+        meanX(shardPlan(5, iron: true, away: 1)),
+        greaterThan(meanX(shardPlan(5, iron: true, away: -1))),
+      );
+    });
+
+    test('끊긴 칸은 이웃끼리 한 덩어리로 묶이고 아래 덩어리가 먼저다', () {
+      // 폭 5 격자: 0·1 이 붙어 있고, 3 과 8(= 3 의 위)이 붙어 있다. 4 와 5 는 줄이
+      // 달라 이웃이 아니다.
+      expect(groupCells([8, 1, 3, 0], 5), [
+        [0, 1],
+        [3, 8],
+      ]);
+      expect(groupCells([4, 5], 5), [
+        [4],
+        [5],
+      ]);
+      expect(groupCells(const [], 5), isEmpty);
+      expect(
+        collapseSpin(4),
+        lessThan(collapseSpin(1)),
+        reason: '큰 덩어리는 천천히 기운다',
+      );
     });
   });
 
@@ -148,8 +220,7 @@ void main() {
         final width = session.state.sides[0].grid.width;
         expect(ship.builtTile(cabin.y * width + cabin.x), isNotNull);
         expect(ship.builtTile(-1), isNull);
-        // 계열 8개의 명중 모양과 등급 연출을 한 번씩 띄운다. 흔들림 배율은 이번
-        // 명중에만 곱해져 쌓이지 않는다 (§10.5).
+        // 계열 8개의 명중 모양과 등급 연출을 한 번씩 띄운다 (§10.4, §10.5).
         final fx = game.world.children.whereType<FxLayer>().single;
         const legend = RarityTier(
           color: Color(0xFFFFC83A),
@@ -164,7 +235,7 @@ void main() {
             ..hit(Vector2(0, -40), family, tier: legend)
             ..hit(Vector2(0, -40), family, tier: legend, facing: -1);
         }
-        expect(fx.shake, lessThanOrEqualTo(9 * 1.15 + 1e-9));
+        expect(fx.shake, 0, reason: '흔들림은 명중 모양이 아니라 한 방 크기가 정한다');
         fx.repair(Vector2(0, -40), tier: legend);
         final rest = ship.angle;
         ship.rock(1);

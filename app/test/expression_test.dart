@@ -8,6 +8,7 @@ import 'package:pirate_busters/battle/battle_session.dart';
 import 'package:pirate_busters/game/anim/anim_data.dart';
 import 'package:pirate_busters/game/anim/rig_expressions.dart';
 import 'package:pirate_busters/game/battle_game.dart';
+import 'package:pirate_busters/game/view/ship_crew.dart';
 import 'package:pirate_busters/game/view/ship_view.dart';
 
 import 'test_catalog.dart';
@@ -60,7 +61,7 @@ void main() {
         expect(rig.expression, RigExpressions.normal);
 
         // 피격: 맞는 동작 동안 피격 표정, 끝나면 기본.
-        ship.playHit(0);
+        ship.playHit(0, 1);
         rig.update(0.05);
         expect(rig.expression, 'hit');
         expect(head.sprite!.image, isNot(normalHead), reason: '머리 부위가 바뀐다');

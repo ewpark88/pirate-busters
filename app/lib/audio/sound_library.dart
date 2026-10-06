@@ -26,7 +26,17 @@ abstract final class AudioAssets {
     Sfx.win: 3,
     Sfx.lose: 3,
     Sfx.click: 3,
+    Sfx.hit: 3,
+    Sfx.hitBig: 3,
+    Sfx.rumble: 2,
+    Sfx.creak: 2,
+    Sfx.pirateHit: 3,
+    Sfx.plunge: 3,
+    Sfx.ko: 2,
   };
+
+  /// 맞는 CC0 음원이 없어 코드 합성음만 쓰는 소리 (설계서 §10.3).
+  static const Set<Sfx> synthOnly = {Sfx.whistle};
 
   static List<String> sfx(Sfx s) => [
     for (var i = 1; i <= (variants[s] ?? 0); i++) '$dir/sfx_${s.name}_$i.ogg',

@@ -6,6 +6,7 @@ import 'package:flame/particles.dart';
 import 'package:pb_sim/pb_sim.dart';
 import 'package:pirate_busters/battle/battle_session.dart';
 import 'package:pirate_busters/game/view/fx_layer.dart';
+import 'package:pirate_busters/game/view/hit_weight.dart';
 
 /// 물 연출 (설계서 §10.4 침수·격침): 거품, 물방울, 큰 물보라와 물안개. 그리기만 한다.
 abstract final class WaterFx {
@@ -115,7 +116,8 @@ extension WaterEffects on FxLayer {
       bubbleUp(at + Vector2((rnd.nextDouble() - .5) * width, 40), at.y);
     }
     droplets(at, count: 14);
-    shake = math.max(shake, 10);
+    // 격침은 가장 큰 한 방이다 (설계서 §10.4, A32).
+    jolt(const HitWeight(HitWeight.max));
   }
 }
 

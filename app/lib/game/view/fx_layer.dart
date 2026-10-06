@@ -10,8 +10,8 @@ import 'package:flutter/services.dart';
 import 'package:pb_sim/pb_sim.dart';
 import 'package:pirate_busters/game/anim/rarity_fx.dart';
 import 'package:pirate_busters/game/sprites.dart';
-import 'package:pirate_busters/game/view/collapse_fx.dart';
 import 'package:pirate_busters/game/view/explosion_fx.dart';
+import 'package:pirate_busters/game/view/hit_weight.dart';
 import 'package:pirate_busters/game/view/impact_accent.dart';
 import 'package:pirate_busters/game/view/shake.dart';
 
@@ -21,6 +21,7 @@ class FxLayer extends Component {
     required this.sprites,
     this.lowEnd,
     this.vibration,
+    this.calmShake,
     super.priority,
   });
 
@@ -32,6 +33,9 @@ class FxLayer extends Component {
   /// 설정의 진동 (설계서 §13.8). 끄면 햅틱을 내지 않는다.
   final ValueListenable<bool>? vibration;
 
+  /// 설정 '화면 흔들림 줄이기' (설계서 §13.8).
+  final ValueListenable<bool>? calmShake;
+
   void _haptic(Future<void> Function() impact) {
     if (vibration?.value ?? true) unawaited(impact());
   }
@@ -42,8 +46,38 @@ class FxLayer extends Component {
   /// 연출 난수(판정과 무관, ADR-003 은 pb_sim 만).
   final math.Random rnd = math.Random(7);
 
-  /// 화면 흔들림 세기(월드 px). 카메라가 읽고 줄여 간다.
-  double shake = 0;
+  /// 쌓이는 흔들림 (설계서 §10.4, A32). 착탄 묶음마다 [jolt] 로 더한다.
+  final ScreenTrauma trauma = ScreenTrauma();
+
+  bool get _calm => calmShake?.value ?? false;
+
+  /// 지금 화면 흔들림 세기(월드 px).
+  double get shake => trauma.amp(calm: _calm);
+
+  /// 지금 카메라 기울기(rad). [t] 는 흔들림 시계.
+  double shakeAngle(double t) => trauma.angle(t, calm: _calm);
+
+  /// 계열마다 흔들림 비율 (설계서 §10.4): 작은 불꽃·구멍인 직사가 가장 작다.
+  static double familyJolt(Family? family) => switch (family) {
+    Family.direct => 0.8,
+    Family.pierce => 0.85,
+    Family.assault || Family.underwater => 0.9,
+    _ => 1,
+  };
+
+  /// 한 착탄 묶음의 흔들림과 진동 (설계서 §10.4, A32). 진동은 한 묶음에 한 번, 한 방
+  /// 크기에 따라 가벼움·중간·묵직이다. [scale] 은 계열·등급 비율.
+  void jolt(HitWeight weight, {double scale = 1}) {
+    trauma.add(weight.trauma * scale);
+    _haptic(switch (weight.level) {
+      HitLevel.light => HapticFeedback.lightImpact,
+      HitLevel.medium => HapticFeedback.mediumImpact,
+      HitLevel.heavy => HapticFeedback.heavyImpact,
+    });
+  }
+
+  /// 착탄 없이 흔들림만(물 착탄·착수 등). 진동은 없다.
+  void nudge(double amount) => trauma.atLeast(amount);
 
   /// 효과 하나를 띄운다.
   void spawn(Component c) {
@@ -75,34 +109,32 @@ class FxLayer extends Component {
         ExplosionFx.flicker(sprites, at + Vector2(dx, 6), 14, .27 + i * .05),
       );
     }
-    shake = math.max(shake, heavy ? 12 : 6);
-    _haptic(heavy ? HapticFeedback.heavyImpact : HapticFeedback.mediumImpact);
   }
 
-  /// 계열별 명중 모양 (설계서 §10.4)과 등급 연출(§10.5). 흔들림은 등급 배율을 곱한다.
-  /// [facing] 은 쏜 배가 보는 방향(강습 베기 방향). [stuck] 은 관통탄이 박혀 남는
-  /// 무기 그림.
+  /// 계열별 명중 모양 (설계서 §10.4)과 등급 연출(§10.5). 흔들림·진동은 [jolt] 가
+  /// 맡는다. [facing] 은 쏜 배가 보는 방향(강습 베기 방향). [stuck] 은 관통탄이 박혀
+  /// 남는 무기 그림. [radius] 는 탄의 폭발 반경(칸), [heavy] 는 묵직한 한 방이라
+  /// 충격파 고리를 더한다 (A32).
   void hit(
     Vector2 at,
     Family family, {
     RarityTier tier = RarityFx.common,
     int facing = 1,
     Sprite? stuck,
+    int radius = 1,
+    bool heavy = false,
   }) {
     var kind = AccentKind.impact;
-    // 이번 명중의 흔들림에만 등급 배율을 곱한다(남아 있던 흔들림에는 곱하지 않는다).
-    final before = shake;
-    shake = 0;
     switch (family) {
       case Family.lob || Family.air || Family.support:
-        explosion(at);
+        explosion(at, radius: radius);
       case Family.direct:
         // 작은 불꽃과 구멍.
-        _pop('fx/impact/spark.png', at, 40, 0.22, shakeTo: 3);
+        _pop('fx/impact/spark.png', at, 40, 0.22);
         spawn(popSprite('fx/impact/hole_burnt.png', at, 20, 0.9));
       case Family.pierce:
         // 꿰뚫린 칸: 금과 구멍, 나무 조각.
-        _pop('fx/impact/cracks.png', at, 34, 0.7, shakeTo: 4);
+        _pop('fx/impact/cracks.png', at, 34, 0.7);
         spawn(popSprite('fx/impact/hole_burnt.png', at, 16, 0.9));
         spawn(ExplosionFx.debris(sprites, rnd, at, count: few(3), plank: true));
         if (stuck != null) {
@@ -125,7 +157,7 @@ class FxLayer extends Component {
         }
       case Family.skip:
         // 쿵 하는 둥근 충격.
-        _pop('fx/impact/shockwave.png', at, 72, 0.3, shakeTo: 7);
+        _pop('fx/impact/shockwave.png', at, 72, 0.3);
         spawn(ExplosionFx.puffs(sprites, rnd, at, count: few(2)));
       case Family.underwater:
         // 물기둥과 침수 구멍.
@@ -133,29 +165,22 @@ class FxLayer extends Component {
         _pop('fx/collapse/water_spike.png', sea - Vector2(0, 34), 70, 0.5);
         spawn(popSprite('fx/collapse/foam_ring.png', sea, 64, 0.6));
         spawn(popSprite('fx/impact/hole_burnt.png', at, 20, 0.9));
-        shake = math.max(shake, 5);
       case Family.assault:
-        _pop('fx/impact/burst.png', at, 44, 0.25, shakeTo: 5);
+        _pop('fx/impact/burst.png', at, 44, 0.25);
         kind = AccentKind.slash;
     }
-    shake = math.max(before, shake * tier.shake);
-    _haptic(HapticFeedback.mediumImpact);
+    if (heavy && family != Family.skip) {
+      spawn(popSprite('fx/impact/shockwave.png', at, 60.0 + radius * 30, 0.35));
+    }
     spawn(
       ImpactAccent(at, tier, kind: kind, facing: facing, fewer: few(2) == 1),
     );
   }
 
   /// 흰 섬광과 함께 [file] 을 띄운다. 맞는 순간의 히트스톱 동안 섬광이 멈춰 보인다.
-  void _pop(
-    String file,
-    Vector2 at,
-    double size,
-    double life, {
-    double shakeTo = 0,
-  }) {
+  void _pop(String file, Vector2 at, double size, double life) {
     spawn(popSprite('fx/impact/flash.png', at, size * 0.9, 0.14));
     spawn(popSprite(file, at, size, life));
-    shake = math.max(shake, shakeTo);
   }
 
   /// 지원탄 착지점: 초록 수리 반짝임과 등급 고리 (설계서 §10.4, §10.5).
@@ -168,33 +193,6 @@ class FxLayer extends Component {
   void blockBroken(Vector2 at) =>
       spawn(ExplosionFx.debris(sprites, rnd, at, count: few(4), plank: true));
 
-  /// 무너진 블록 (설계서 §10.4): [tile] 그림이 [lean] 쪽으로 기울며 떨어지고 수면에
-  /// 물보라를 낸다. 그림이 없으면 나무 조각만 떨어진다.
-  void collapsed(Vector2 at, {Sprite? tile, double lean = 0}) {
-    spawn(ExplosionFx.debris(sprites, rnd, at, count: few(2), plank: true));
-    if (tile == null) return;
-    spawn(
-      FallingChunk(
-        sprite: tile,
-        at: at,
-        lean: lean,
-        onSplash: (sea) {
-          spawn(
-            popSprite(
-              'fx/collapse/splash_big.png',
-              sea - Vector2(0, 22),
-              64,
-              .5,
-            ),
-          );
-          if (few(2) == 2) {
-            spawn(popSprite('fx/collapse/foam_ring.png', sea, 56, 0.6));
-          }
-        },
-      ),
-    );
-  }
-
   /// 물보라.
   /// [limit] 이면 한계선에 닿아 멈출 때의 물살이다 (설계서 §2.6, 그림 80×70).
   void splash(Vector2 at, {bool limit = false}) {
@@ -204,7 +202,6 @@ class FxLayer extends Component {
               ..size.y = 70)
           : popSprite('fx/splash.png', at - Vector2(0, 30), 90, 0.6),
     );
-    _haptic(HapticFeedback.lightImpact);
   }
 
   /// [file] 을 [size] 크기로 띄워 [life] 초 동안 커지며 사라지게 한다.
@@ -230,6 +227,6 @@ class FxLayer extends Component {
   @override
   void update(double dt) {
     super.update(dt);
-    shake = Shake.decay(shake, dt);
+    trauma.update(dt);
   }
 }
