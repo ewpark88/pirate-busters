@@ -270,33 +270,34 @@ void main() {
       expect(s.grid.hpAt(7, 1), 10, reason: '공방 1개는 1칸만');
     });
 
-    test('돛대가 부러지면 위 블록이 무너지고 1칸당 연료 2배·속도 절반', () {
-      final s = _side(_ship(const [ModuleCell(1, 1, ModuleKind.mast)]));
+    test('돛대 칸 하나가 부서지면 돛대가 부러져 위가 무너지고 1칸당 연료 2배·속도 절반', () {
+      final s = _side(_ship(const [ModuleCell(7, 1, ModuleKind.mast)]));
+      expect(s.grid.materialAt(7, 2), BlockMaterial.rigPine);
+      expect(s.grid.hpAt(7, 4), 30);
       final fuel = s.fuelPerCell;
       final speed = moveSpeedOf(s);
-      final events = _smash(s, 1, 1);
-      expect(s.grid.hasBlock(1, 2), isFalse);
-      expect(s.grid.hasBlock(1, 3), isFalse);
+      final events = _smash(s, 7, 3);
+      for (var y = 2; y <= 4; y++) {
+        expect(s.grid.hasBlock(7, y), isFalse, reason: '돛대 칸 (7, $y)');
+      }
+      expect(s.grid.hasBlock(7, 1), isTrue, reason: '붙인 칸은 남는다');
       expect(
         events.where((e) => e.kind == SimEventKind.blockCollapsed),
         hasLength(2),
       );
+      expect(s.mastBroken, isTrue);
       expect(s.fuelPerCell, fuel * 2);
       expect(moveSpeedOf(s), speed ~/ 2);
     });
 
-    test('돛대가 부러져 무너진 블록 위의 모듈도 그 자리에서 부서진다', () {
-      final s = _side(
-        _ship(const [
-          ModuleCell(1, 1, ModuleKind.mast),
-          ModuleCell(1, 3, ModuleKind.pump),
-        ]),
-      );
-      final events = _smash(s, 1, 1);
-      expect(s.modules.intactCount(ModuleKind.pump), 0);
+    test('돛대를 붙인 칸이 부서져도 돛대가 부러지고 돛대 칸이 무너진다', () {
+      final s = _side(_ship(const [ModuleCell(7, 1, ModuleKind.mast)]));
+      final events = _smash(s, 7, 1);
+      expect(s.mastBroken, isTrue);
+      expect(s.grid.hasBlock(7, 2), isFalse);
       expect(
         events.where((e) => e.kind == SimEventKind.moduleDestroyed),
-        hasLength(2),
+        hasLength(1),
       );
     });
 

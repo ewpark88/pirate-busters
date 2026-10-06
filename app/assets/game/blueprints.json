@@ -207,20 +207,20 @@
             2
           ],
           [
-            8,
-            2
+            9,
+            5
           ]
         ],
         "modules": [
           [
-            6,
-            1,
-            "captain"
-          ],
-          [
             1,
             1,
             "pump"
+          ],
+          [
+            6,
+            1,
+            "captain"
           ],
           [
             10,
@@ -233,9 +233,9 @@
             "gunPort"
           ],
           [
-            8,
+            9,
             2,
-            "lookout"
+            "mast"
           ]
         ]
       }
@@ -398,11 +398,6 @@
             "oak"
           ],
           [
-            0,
-            3,
-            "pine"
-          ],
-          [
             2,
             3,
             "iron"
@@ -411,11 +406,6 @@
             8,
             3,
             "iron"
-          ],
-          [
-            11,
-            3,
-            "pine"
           ]
         ],
         "cabins": [
@@ -438,14 +428,19 @@
         ],
         "modules": [
           [
+            1,
+            1,
+            "magazine"
+          ],
+          [
             5,
             2,
             "captain"
           ],
           [
-            1,
-            1,
-            "magazine"
+            10,
+            2,
+            "mastOak"
           ]
         ]
       }
@@ -658,9 +653,9 @@
         ],
         "modules": [
           [
-            10,
             1,
-            "captain"
+            1,
+            "pump"
           ],
           [
             2,
@@ -668,19 +663,24 @@
             "fuelTank"
           ],
           [
+            5,
+            1,
+            "gunPort"
+          ],
+          [
             9,
             1,
             "fuelTank"
           ],
           [
+            10,
             1,
-            1,
-            "pump"
+            "captain"
           ],
           [
-            5,
-            1,
-            "gunPort"
+            2,
+            2,
+            "mastBamboo"
           ]
         ]
       }

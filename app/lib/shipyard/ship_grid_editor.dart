@@ -68,6 +68,7 @@ class ShipGridPainter extends CustomPainter {
     ..color = const Color(0xFFE0402F)
     ..style = PaintingStyle.stroke
     ..strokeWidth = 3;
+  static final Paint _pole = Paint()..color = const Color(0xFF8B5A2B);
   static final Paint _water = Paint()
     ..color = const Color(0xCC3FA9F5)
     ..strokeWidth = 2;
@@ -95,6 +96,27 @@ class ShipGridPainter extends CustomPainter {
       }
     }
     if (!overlay) return;
+    // 돛대 칸 (설계서 §3.3): 기둥으로 보이고, 블록과 겹치면 빨간 칸, 꼭대기는 돛 자리.
+    final seats = model.seatCells;
+    for (final (x, y) in model.rigCells) {
+      final r = Rect.fromLTWH(x * cell, (h - 1 - y) * cell, cell, cell);
+      canvas.drawRect(
+        Rect.fromCenter(center: r.center, width: cell * 0.22, height: cell),
+        _pole,
+      );
+      if (model.materialAt(x, y) != null) canvas.drawRect(r.deflate(2), _red);
+      if (seats.contains(y * model.width + x)) {
+        canvas.drawRect(
+          Rect.fromLTRB(
+            r.left + 3,
+            r.bottom - cell * 0.2,
+            r.right - 3,
+            r.bottom,
+          ),
+          _pole,
+        );
+      }
+    }
     // 흘수선: 무게로 정해지는 잠긴 깊이 (설계서 §3.4).
     final wl = model.stats.waterline / 1000 * cell;
     canvas.drawLine(

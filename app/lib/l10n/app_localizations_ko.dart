@@ -720,7 +720,19 @@ class AppLocalizationsKo extends AppLocalizations {
   String get moduleWorkshop => '목수 공방';
 
   @override
-  String get moduleMast => '돛대';
+  String get moduleMast => '소나무 돛대';
+
+  @override
+  String get moduleMastBamboo => '대나무 돛대';
+
+  @override
+  String get moduleMastOak => '참나무 돛대';
+
+  @override
+  String get moduleMastIron => '철 돛대';
+
+  @override
+  String get moduleMastCrow => '망대 돛대';
 
   @override
   String get moduleLookout => '망루';

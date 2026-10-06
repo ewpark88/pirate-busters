@@ -179,9 +179,22 @@ class ShipyardModel extends ChangeNotifier {
     return true;
   }
 
-  /// 블록 위에서만. 선실 슬롯이 다 차면 더 놓지 않는다. 선실을 빼면 선실 옵션도 뺀다.
+  /// 돛대 칸 (설계서 §3.3): 돛대 모듈 칸 위로 종류만큼, 격자 위끝까지.
+  List<(int, int)> get rigCells => [
+    for (var i = 0; i < _modules.length; i++)
+      if (_modules[i] case final k? when k.isMast)
+        ...ModuleCell(i % width, i ~/ width, k).rigCells(height),
+  ];
+
+  /// 돛 자리 칸 인덱스: 돛대마다 꼭대기 칸.
+  Set<int> get seatCells => {
+    for (final (x, y) in mastSeats(hull, modules)) y * width + x,
+  };
+
+  /// 블록 위나 돛 자리에서만. 선실 슬롯이 다 차면 더 놓지 않는다. 선실을 빼면
+  /// 선실 옵션도 뺀다.
   bool _toggleCabin(int i) {
-    if (_materials[i] == null) return false;
+    if (_materials[i] == null && !seatCells.contains(i)) return false;
     if (_cabins.remove(i)) {
       if (_modules[i]?.cabinOption ?? false) _modules[i] = null;
       return true;
@@ -197,7 +210,9 @@ class ShipyardModel extends ChangeNotifier {
   bool _toggleModule(int i, ModuleKind kind) {
     if (_materials[i] == null) return false;
     if (_modules[i] == kind) {
+      final seats = seatCells;
       _modules[i] = null;
+      _cabins.removeWhere((c) => seats.contains(c) && !seatCells.contains(c));
       return true;
     }
     if (kind.cabinOption != _cabins.contains(i)) return false;

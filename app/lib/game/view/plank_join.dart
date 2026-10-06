@@ -80,7 +80,8 @@ abstract final class PlankJoin {
         x < width &&
         y >= 0 &&
         y < height &&
-        materials[y * width + x] != ShipGrid.emptyCell;
+        materials[y * width + x] != ShipGrid.emptyCell &&
+        !BlockMaterial.values[materials[y * width + x]].rig;
     final path = Path();
     for (var y = 0; y < height; y++) {
       for (var x = 0; x < width; x++) {

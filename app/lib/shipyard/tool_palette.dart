@@ -24,7 +24,7 @@ class ToolPalette extends StatelessWidget {
           spacing: 4,
           runSpacing: 4,
           children: [
-            for (final m in BlockMaterial.values)
+            for (final m in BlockMaterial.blocks)
               _chip(
                 MaterialTool(m),
                 Labels.material(l10n, m),

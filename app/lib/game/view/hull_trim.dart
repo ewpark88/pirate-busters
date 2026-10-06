@@ -79,7 +79,8 @@ abstract final class HullTrim {
         x < width &&
         y >= 0 &&
         y < hull.height &&
-        materials[y * width + x] != ShipGrid.emptyCell;
+        materials[y * width + x] != ShipGrid.emptyCell &&
+        !BlockMaterial.values[materials[y * width + x]].rig;
     final found = steps(hull, filled);
     final hidden = <(int, int, int)>{};
     for (final s in found) {

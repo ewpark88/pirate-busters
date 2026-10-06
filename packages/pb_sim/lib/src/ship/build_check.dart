@@ -21,6 +21,7 @@ String? buildProblem(
       return '격자 밖 블록: (${c.x}, ${c.y})';
     }
     if (!hull.inFrame(c.x, c.y)) return '선체 틀 밖 블록: (${c.x}, ${c.y})';
+    if (c.material.rig) return '돛대 칸 재질은 블록으로 쓰지 않는다: (${c.x}, ${c.y})';
     if (i > 0 && cells[i - 1].x == c.x && cells[i - 1].y == c.y) {
       return '같은 칸에 블록이 둘: (${c.x}, ${c.y})';
     }
@@ -34,7 +35,12 @@ String? buildProblem(
     return '용골과 이어지지 않은 블록: (${c.x}, ${c.y})';
   }
   bool hasBlock(int x, int y) => cells.any((b) => b.x == x && b.y == y);
-  final cabinProblem = _cabinProblem(hull, cabins, hasBlock);
+  final seats = mastSeats(hull, modules);
+  final cabinProblem = _cabinProblem(
+    hull,
+    cabins,
+    (x, y) => hasBlock(x, y) || seats.contains((x, y)),
+  );
   if (cabinProblem != null) return cabinProblem;
   final moduleProblemText = moduleProblem(
     hull,
@@ -99,7 +105,9 @@ String? _cabinProblem(
   }
   for (var i = 0; i < cabins.length; i++) {
     final c = cabins[i];
-    if (!hasBlock(c.x, c.y)) return '선실은 블록 위에 있어야 한다: (${c.x}, ${c.y})';
+    if (!hasBlock(c.x, c.y)) {
+      return '선실은 블록 위나 돛 자리에 있어야 한다: (${c.x}, ${c.y})';
+    }
     for (var j = 0; j < i; j++) {
       if (cabins[j].x == c.x && cabins[j].y == c.y) {
         return '같은 칸에 선실이 둘: (${c.x}, ${c.y})';

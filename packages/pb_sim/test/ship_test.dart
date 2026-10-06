@@ -10,7 +10,7 @@ Map<String, Object?> _parse(String s) => jsonDecode(s) as Map<String, Object?>;
 void main() {
   test('재질 5종의 수치는 설계서 §3.2 표와 같다', () {
     final table = {
-      for (final m in BlockMaterial.values)
+      for (final m in BlockMaterial.blocks)
         m.name: [m.durability, m.weight, m.cost],
     };
     expect(table, {

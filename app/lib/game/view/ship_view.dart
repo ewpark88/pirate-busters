@@ -13,6 +13,7 @@ import 'package:pirate_busters/game/view/cabin_painter.dart';
 import 'package:pirate_busters/game/view/damage_layer.dart';
 import 'package:pirate_busters/game/view/fire_view.dart';
 import 'package:pirate_busters/game/view/hull_trim.dart';
+import 'package:pirate_busters/game/view/mast_painter.dart';
 import 'package:pirate_busters/game/view/module_painter.dart';
 import 'package:pirate_busters/game/view/plank_join.dart';
 import 'package:pirate_busters/game/view/ship_motion.dart';
@@ -224,29 +225,21 @@ class ShipView extends PositionComponent with HasGameReference {
         : null;
     final materials = snap?.materials ?? grid.rawMaterials;
     final hp = snap?.hp ?? grid.rawHp;
-    ModulePainter.rigs(
-      canvas,
-      sprites,
-      materials,
-      _width,
-      _moduleAt,
-      cellRect,
-      blue: side == 0,
-    );
+    MastPainter.paint(canvas, sprites, _state, materials, cellRect);
     for (var y = 0; y < grid.height; y++) {
       for (var x = 0; x < grid.width; x++) {
         final i = y * grid.width + x;
         final rect = cellRect(x, y);
         final m = materials[i];
         _mats[i] = m == ShipGrid.emptyCell ? _built.materials[i] : m;
-        if (m == ShipGrid.emptyCell) {
-          _codes[i] = _built.materials[i] == ShipGrid.emptyCell
-              ? DamageLayer.none
-              : DamageLayer.broken;
-          continue;
-        }
-        final mat = BlockMaterial.values[m];
-        _codes[i] = ShipGrid.stageFor(hp[i], mat.durability).index;
+        // 돛대 칸은 타일·손상 대신 MastPainter 가 기둥으로 그린다 (§3.3).
+        _codes[i] = DamageLayer.codeOf(
+          m,
+          _built.materials[i],
+          hp[i],
+          grid.maxHpAt(i),
+        );
+        if (m == ShipGrid.emptyCell || BlockMaterial.values[m].rig) continue;
         final join = PlankJoin.mask(materials, _width, x, y);
         final tile = sprites.tileOf(m, x, y, _state.draft);
         PlankJoin.drawTile(canvas, tile, rect, join);

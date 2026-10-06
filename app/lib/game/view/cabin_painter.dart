@@ -1,9 +1,6 @@
 import 'dart:ui';
 
 import 'package:flame/components.dart';
-import 'package:pb_sim/pb_sim.dart';
-import 'package:pirate_busters/game/coords.dart';
-import 'package:pirate_busters/game/sprites.dart';
 
 /// 선실 칸 안쪽과 돛대 그리기. 선실 칸은 블록 재질 타일을 테두리로 남기고 그 안에
 /// 안쪽 벽 타일과 바닥 널을 그려, 해적이 칸 안에 서 있는 방으로 보이게 한다
@@ -33,50 +30,5 @@ abstract final class CabinPainter {
     canvas
       ..drawRect(Rect.fromLTRB(r.left, r.bottom - 2, r.right, r.bottom), _floor)
       ..drawRect(r, _edge);
-  }
-
-  /// 돛대·돛·깃발 (장식, 판정 없음). [foot] 이 있으면 그 자리(돛대 모듈)에서
-  /// 세우고, 없으면 가장 높은 블록 위 가운데에 세운다. 돛·깃발 높이는 가장 높은
-  /// 블록 위로 같다. [materials] 는 칸별 재질(가로 [width] 칸), 좌표는 배
-  /// 로컬(가운데 용골 바닥이 원점)이다.
-  static void rig(
-    Canvas canvas,
-    BattleSprites sprites,
-    List<int> materials,
-    int width, {
-    required bool blue,
-    Offset? foot,
-  }) {
-    var top = 0;
-    for (var i = 0; i < materials.length; i++) {
-      if (materials[i] != ShipGrid.emptyCell) top = i ~/ width + 1;
-    }
-    final team = blue ? 'blue' : 'red';
-    final mast = sprites.get('ship/rig/mast.png');
-    final mastSize = mast.srcSize / 3.2;
-    final x = foot?.dx ?? 0;
-    final mastPos = Vector2(
-      x - mastSize.x / 2,
-      -top * Coords.cell - mastSize.y,
-    );
-    final bottom = foot?.dy ?? mastPos.y + mastSize.y;
-    mast.render(
-      canvas,
-      position: mastPos,
-      size: Vector2(mastSize.x, bottom - mastPos.y),
-    );
-    final sail = sprites.get('ship/rig/sail_$team.png');
-    final sailSize = sail.srcSize / 4.2;
-    sail.render(
-      canvas,
-      position: Vector2(x - sailSize.x / 2, mastPos.y + 16),
-      size: sailSize,
-    );
-    final flag = sprites.get('ship/rig/flag_$team.png');
-    flag.render(
-      canvas,
-      position: Vector2(x + 4, mastPos.y - 10),
-      size: flag.srcSize / 3.6,
-    );
   }
 }

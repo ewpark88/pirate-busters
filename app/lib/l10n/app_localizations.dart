@@ -1397,8 +1397,32 @@ abstract class AppLocalizations {
   /// No description provided for @moduleMast.
   ///
   /// In en, this message translates to:
-  /// **'Mast'**
+  /// **'Pine mast'**
   String get moduleMast;
+
+  /// No description provided for @moduleMastBamboo.
+  ///
+  /// In en, this message translates to:
+  /// **'Bamboo mast'**
+  String get moduleMastBamboo;
+
+  /// No description provided for @moduleMastOak.
+  ///
+  /// In en, this message translates to:
+  /// **'Oak mast'**
+  String get moduleMastOak;
+
+  /// No description provided for @moduleMastIron.
+  ///
+  /// In en, this message translates to:
+  /// **'Iron mast'**
+  String get moduleMastIron;
+
+  /// No description provided for @moduleMastCrow.
+  ///
+  /// In en, this message translates to:
+  /// **'Crow mast'**
+  String get moduleMastCrow;
 
   /// No description provided for @moduleLookout.
   ///

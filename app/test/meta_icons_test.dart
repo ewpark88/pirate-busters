@@ -1,10 +1,10 @@
 import 'dart:io';
-import 'dart:ui';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pb_ai/pb_ai.dart';
 import 'package:pb_sim/pb_sim.dart';
 import 'package:pirate_busters/game/sprites.dart';
+import 'package:pirate_busters/game/view/mast_painter.dart';
 import 'package:pirate_busters/game/view/module_painter.dart';
 import 'package:pirate_busters/shipyard/ship_grid_view.dart';
 import 'package:pirate_busters/ui/meta_icons.dart';
@@ -65,31 +65,22 @@ void main() {
       final (nestAt, nestSize) = ModulePainter.art[ModuleKind.lookout]!;
       expect(nestAt.dy, -32);
       expect(nestAt.dy + nestSize.height, 32);
-      // 돛대 밑동은 돛대 모듈 칸 가운데, 칸 위에서 6px 아래.
-      final foot = ModulePainter.mastFoot(const Rect.fromLTWH(64, -96, 32, 32));
-      expect((foot.dx, foot.dy), (80, -90));
     });
 
-    test('돛대는 돛대 모듈마다 서고, 모듈 칸이 부서지면 없고, 모듈이 없으면 가운데에 선다', () {
-      // 가로 4칸 × 2줄. 칸 번호 = y × 4 + x.
+    test('돛대는 아래부터 이어서 남은 돛대 칸 높이까지만 선다 (설계서 §3.3)', () {
+      // 가로 4칸 × 5줄. 칸 번호 = y × 4 + x. (1, 0) 에 돛대, 돛대 칸 (1, 1..3).
       const e = ShipGrid.emptyCell;
-      Rect cell(int x, int y) =>
-          Rect.fromLTWH(x * 32.0, -(y + 1) * 32.0, 32, 32);
-      final materials = [0, 0, 0, 0, 0, 0, 0, 0];
-      final masts = {
-        1: ModuleKind.mast,
-        6: ModuleKind.mast,
-        2: ModuleKind.pump,
-      };
-      final feet = ModulePainter.mastFeet(materials, 4, masts, cell)!;
-      expect(feet.map((f) => (f.dx, f.dy)), [(48, -26), (80, -58)]);
-      // 6번 칸(돛대 모듈)이 부서지면 그 돛대는 없다.
-      final broken = [...materials]..[6] = e;
-      expect(ModulePainter.mastFeet(broken, 4, masts, cell), hasLength(1));
-      // 돛대 모듈이 없는 배는 null(가장 높은 블록 위 가운데).
+      final rig = BlockMaterial.rigPine.index;
+      final materials = [0, 0, 0, 0, e, rig, e, e, e, rig, e, e, e, rig, e, e];
+      const mast = ModuleCell(1, 0, ModuleKind.mast);
+      expect(MastPainter.standing(mast, materials, 4, 4), 3);
+      final broken = [...materials]..[9] = e;
+      expect(MastPainter.standing(mast, broken, 4, 4), 1);
       expect(
-        ModulePainter.mastFeet(materials, 4, {2: ModuleKind.pump}, cell),
-        isNull,
+        MastPainter.look(ModuleKind.mastIron).$2,
+        greaterThan(
+          MastPainter.look(ModuleKind.mastBamboo).$2,
+        ),
       );
     });
   });

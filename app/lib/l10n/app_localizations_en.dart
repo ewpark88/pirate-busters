@@ -765,7 +765,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get moduleWorkshop => 'Workshop';
 
   @override
-  String get moduleMast => 'Mast';
+  String get moduleMast => 'Pine mast';
+
+  @override
+  String get moduleMastBamboo => 'Bamboo mast';
+
+  @override
+  String get moduleMastOak => 'Oak mast';
+
+  @override
+  String get moduleMastIron => 'Iron mast';
+
+  @override
+  String get moduleMastCrow => 'Crow mast';
 
   @override
   String get moduleLookout => 'Lookout';
