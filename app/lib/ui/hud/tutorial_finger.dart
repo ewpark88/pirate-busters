@@ -95,7 +95,8 @@ class _FingerPainter extends CustomPainter {
       case FingerCue.tapCard:
         _tap(canvas, _at(size, const Alignment(-0.1, 0.78)));
       case FingerCue.move:
-        _tap(canvas, _at(size, const Alignment(-0.7, 0.82)));
+        // 꾹 누르기: 손가락 둘레에 채워지는 원호 (A25 점검: 누르기로만 보였다).
+        _hold(canvas, _at(size, const Alignment(-0.7, 0.82)));
       case FingerCue.flood:
         _tap(canvas, _at(size, const Alignment(-0.82, -0.78)));
       case FingerCue.pullBack:
@@ -115,6 +116,24 @@ class _FingerPainter extends CustomPainter {
           ..drawCircle(p, 13, _dot)
           ..drawCircle(p, 13, _edge);
     }
+  }
+
+  /// 꾹 누르기: 가운데 점 둘레에 원호가 차오른다.
+  void _hold(Canvas canvas, Offset c) {
+    canvas
+      ..drawArc(
+        Rect.fromCircle(center: c, radius: 22),
+        -math.pi / 2,
+        2 * math.pi * t,
+        false,
+        Paint()
+          ..color = const Color(0xFFFFC24A)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 5
+          ..strokeCap = StrokeCap.round,
+      )
+      ..drawCircle(c, 12, _dot)
+      ..drawCircle(c, 12, _edge);
   }
 
   /// 누르기: 커졌다 사라지는 고리와 가운데 점.

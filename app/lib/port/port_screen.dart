@@ -138,7 +138,11 @@ class _PortScreenState extends ConsumerState<PortScreen> {
                           child: PortGoalCard(
                             progress: progress,
                             campaign: ref.watch(campaignProvider),
-                            onStage: (s) => _open(BattlePrepScreen(stage: s)),
+                            onStage: (s) async {
+                              await CampaignMapScreen.seaIntro(context, ref);
+                              if (!mounted) return;
+                              await _open(BattlePrepScreen(stage: s));
+                            },
                           ),
                         )
                       : const SizedBox.shrink(),

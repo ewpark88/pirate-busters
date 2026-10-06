@@ -217,7 +217,7 @@ class PortTabs extends StatelessWidget {
                 Positioned(
                   right: -4,
                   top: -4,
-                  child: Image.asset(MetaIcons.redDot, width: 18, height: 18),
+                  child: Image.asset(MetaIcons.redDot, width: 26, height: 26),
                 ),
             ],
           ),

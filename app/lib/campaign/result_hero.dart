@@ -54,7 +54,7 @@ class ResultHero extends ConsumerWidget {
               height: box.maxHeight * 0.4,
               child: Transform.rotate(
                 angle: -0.2,
-                child: BlueprintPreview(blueprint: ship),
+                child: BlueprintPreview(blueprint: ship, bare: true),
               ),
             ),
             Positioned(
@@ -67,7 +67,13 @@ class ResultHero extends ConsumerWidget {
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
-                    colors: [Color(0xCC2A8FA8), Color(0xF0145A70)],
+                    // 위 끝은 투명하게 풀어 각진 물 사각형으로 보이지 않게 한다.
+                    colors: [
+                      Color(0x002A8FA8),
+                      Color(0xCC2A8FA8),
+                      Color(0xF0145A70),
+                    ],
+                    stops: [0, 0.3, 1],
                   ),
                 ),
               ),
