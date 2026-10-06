@@ -105,6 +105,9 @@
   },
   "lowEndMode": "Low-end mode",
   "damagePopup": "-{amount}",
+  "emphasisBoom": "KABOOM!",
+  "emphasisDoubleHit": "Double hit!",
+  "emphasisCabin": "Cabin hit!",
   "@damagePopup": {
     "placeholders": {
       "amount": {

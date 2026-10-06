@@ -9,6 +9,8 @@ import 'package:pirate_busters/game/anim/rarity_fx.dart';
 import 'package:pirate_busters/game/camera_director.dart';
 import 'package:pirate_busters/game/coords.dart';
 import 'package:pirate_busters/game/cues_unique.dart';
+import 'package:pirate_busters/game/emotion_cues.dart';
+import 'package:pirate_busters/game/hit_stop.dart';
 import 'package:pirate_busters/game/hit_tag.dart';
 import 'package:pirate_busters/game/impact_sound.dart';
 import 'package:pirate_busters/game/view/breakage_fx.dart';
@@ -19,39 +21,6 @@ import 'package:pirate_busters/game/view/ship_view.dart';
 import 'package:pirate_busters/game/view/shot_view.dart';
 import 'package:pirate_busters/game/view/water_fx.dart';
 import 'package:pirate_busters/game/weapon_styles.dart';
-
-/// 히트스톱 (설계서 §10.4): 맞는 순간 연출만 한 방 크기에 비례해 0.05~0.16초 멈춘다
-/// (A32). 렌더만 멈추고 시뮬레이션 진행·턴 타이머는 그대로 흐른다.
-class HitStop {
-  /// 히트스톱 사이 최소 간격(초): 연사탄이 화면을 계속 멈추지 않게 한다. 더 큰 한
-  /// 방이면 간격 안이어도 다시 멈춘다.
-  static const double gap = 0.3;
-
-  double _left = 0;
-  double _since = gap;
-  double _last = 0;
-  bool _heavy = false;
-
-  /// 명중했다. [sec] 동안 멈춘다. [heavy] 면 멈춘 동안 화면이 떨린다.
-  void trigger(double sec, {bool heavy = false}) {
-    if (_since < gap && sec <= _last) return;
-    _left = sec > _left ? sec : _left;
-    _last = sec;
-    _heavy = heavy;
-    _since = 0;
-  }
-
-  /// 묵직한 한 방으로 멈춰 있는 중인가: 이때는 흔들림 시계만 흐른다.
-  bool get trembling => _left > 0 && _heavy;
-
-  /// 히트스톱을 뺀 연출용 dt. 멈춘 동안에는 0 이다.
-  double visualDt(double dt) {
-    _since += dt;
-    if (_left <= 0) return dt;
-    _left -= dt;
-    return 0;
-  }
-}
 
 /// 시뮬레이션 이벤트를 화면 연출로 바꾼다 (설계서 §10.4, §10.5). 판정은 이미 끝났고
 /// 여기서는 효과·소리·카메라만 고른다 (CLAUDE.md 절대 규칙 3).
@@ -83,6 +52,10 @@ class BattleCues {
   final String Function(HitTag tag) tagText;
 
   final HitStop stop = HitStop();
+
+  /// 감정 연출 (설계서 §10.4): 한 턴 강조 문구 하나. 글자는 화면이 l10n 으로 넣는다.
+  final EmotionTracker emotion = EmotionTracker();
+  String Function(Emphasis e) emphasisText = (e) => e.name;
 
   /// 지금 탄을 쏜 해적의 정의. 턴 효과로 터진 것이면 null.
   PirateSpec? get _shooter {
@@ -117,6 +90,7 @@ class BattleCues {
     final shown = <HitTag>{};
     // 한 방 크기: 이 묶음 전체로 매겨 멈춤·흔들림·줌·숫자·진동을 맞춘다 (§10.4, A32).
     final weight = HitWeight.of(cues, critHit: tag == HitTag.crit);
+    emote(cues, weight);
     var jolted = false;
     Vector2? hitAt;
     final collapsed = <int, List<int>>{};

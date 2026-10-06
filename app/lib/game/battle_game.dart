@@ -159,7 +159,7 @@ class BattleGame extends FlameGame with BattleTexts {
       playSfx: playSfx,
       damageText: (amount) => damageText(amount),
       tagText: (tag) => tagText(tag),
-    );
+    )..emphasisText = ((e) => emphasisText(e));
     overview.addListener(() => director.overview = overview.value);
     // 저사양 모드에서는 등급 고리의 입자와 외곽 빛을 줄인다 (설계서 §12).
     void applyLowEnd() {
@@ -214,6 +214,7 @@ class BattleGame extends FlameGame with BattleTexts {
           session.state.sides[ship.side].grid.width * Coords.cell,
         );
         playSfx(Sfx.sink);
+        _cues.stop.slow(lowEnd.value ? 0.3 : 0.6); // 격침 슬로모션 (§10.4)
       }
     }
     if (session.playback != null || !_ships.every((s) => s.motion.settled)) {

@@ -16,6 +16,7 @@ import 'package:pirate_busters/campaign/stage_spec.dart';
 import 'package:pirate_busters/dev/practice_bar.dart';
 import 'package:pirate_busters/dev/test_battle.dart';
 import 'package:pirate_busters/game/battle_game.dart';
+import 'package:pirate_busters/game/emotion_cues.dart';
 import 'package:pirate_busters/game/hit_tag.dart';
 import 'package:pirate_busters/input/field_gestures.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
@@ -216,6 +217,12 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
       ..turnsText = number.format
       ..aimAngleText = ((d) => l10n.aimAngle(number.format(d)))
       ..aimPowerText = ((p) => l10n.aimPower(number.format(p)))
+      // 감정 연출 강조 문구 (설계서 §10.4).
+      ..emphasisText = ((e) => switch (e) {
+        Emphasis.boom => l10n.emphasisBoom,
+        Emphasis.doubleHit => l10n.emphasisDoubleHit,
+        Emphasis.cabin => l10n.emphasisCabin,
+      })
       // 명중 이름표 (설계서 §10.4).
       ..tagText = (tag) => switch (tag) {
         HitTag.crit => l10n.hitTagCrit,

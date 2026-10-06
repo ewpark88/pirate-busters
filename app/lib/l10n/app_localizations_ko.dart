@@ -165,6 +165,15 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
+  String get emphasisBoom => '콰광!';
+
+  @override
+  String get emphasisDoubleHit => '연속 명중!';
+
+  @override
+  String get emphasisCabin => '선실 직격!';
+
+  @override
   String get sunkBanner => '격침!';
 
   @override

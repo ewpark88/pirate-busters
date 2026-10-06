@@ -374,6 +374,24 @@ abstract class AppLocalizations {
   /// **'-{amount}'**
   String damagePopup(String amount);
 
+  /// No description provided for @emphasisBoom.
+  ///
+  /// In en, this message translates to:
+  /// **'KABOOM!'**
+  String get emphasisBoom;
+
+  /// No description provided for @emphasisDoubleHit.
+  ///
+  /// In en, this message translates to:
+  /// **'Double hit!'**
+  String get emphasisDoubleHit;
+
+  /// No description provided for @emphasisCabin.
+  ///
+  /// In en, this message translates to:
+  /// **'Cabin hit!'**
+  String get emphasisCabin;
+
   /// No description provided for @sunkBanner.
   ///
   /// In en, this message translates to:

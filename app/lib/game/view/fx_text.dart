@@ -106,4 +106,51 @@ extension FxText on FxLayer {
 
   /// 이름표만 띄운다(피해 숫자가 없는 특별한 결과: 설치·수리).
   void tag(Vector2 at, String label) => damageNumber(at, label);
+
+  /// 큰 강조 문구 (설계서 §10.4 감정 연출): 튕기며 커졌다가 잠깐 머문 뒤 작아지며
+  /// 사라진다. 저사양 [fewer] 면 작게 띄운다.
+  void emphasis(Vector2 at, String label, {bool fewer = false}) {
+    final size = fewer ? 30.0 : 40.0;
+    spawn(
+      TextComponent(
+        children: [
+          ScaleEffect.to(
+            Vector2.all(1),
+            EffectController(duration: 0.28, curve: Curves.elasticOut),
+          ),
+          RotateEffect.to(-0.06, EffectController(duration: 0.28)),
+          MoveByEffect(Vector2(0, -16), EffectController(duration: 1.1)),
+          ScaleEffect.to(
+            Vector2.zero(),
+            EffectController(
+              duration: 0.25,
+              startDelay: 0.95,
+              curve: Curves.easeIn,
+            ),
+          ),
+          RemoveEffect(delay: 1.2),
+        ],
+        text: label,
+        position: at.clone(),
+        scale: Vector2.all(0.2),
+        anchor: Anchor.center,
+        priority: 12,
+        textRenderer: TextPaint(
+          style: TextStyle(
+            fontFamily: AppFonts.display,
+            fontSize: size,
+            color: const Color(0xFFFFE14A),
+            shadows: [
+              for (final o in const [(-2.5, 0.0), (2.5, 0.0), (0.0, -2.5)])
+                Shadow(
+                  color: const Color(0xFF5A1A00),
+                  offset: Offset(o.$1, o.$2),
+                ),
+              const Shadow(color: Color(0xFF5A1A00), offset: Offset(0, 4)),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }
