@@ -239,8 +239,8 @@ void main() {
       ),
       (
         'p05_volke',
-        '층을 뚫고 터진다',
-        (s) => count(s, SimEventKind.impact) >= 2,
+        '한 층을 뚫고 터진다',
+        (s) => enemy(s, SimEventKind.impact),
         null,
       ),
       (

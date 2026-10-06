@@ -100,7 +100,7 @@ class _Recorder implements Controller {
 }
 
 /// R1a-2 섞인 판(시드 777, 스크립트 33·34)의 기대 해시. 의도한 규칙 변경일 때만 갱신한다.
-const int _mixedHash = 2292984687;
+const int _mixedHash = 1559574767;
 
 List<SimEvent> _of(Match m, SimEventKind kind) =>
     m.state.events.where((e) => e.kind == kind).toList();

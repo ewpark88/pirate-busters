@@ -481,8 +481,8 @@ void main() {
       expect(events.any((e) => e.kind == SimEventKind.impact), isTrue);
     });
 
-    test('관통탄은 두 번째 칸부터 피해 50% (§4.8)', () {
-      expect(pierceFalloffPercent, 50);
+    test('관통탄은 두 번째 칸부터 피해 40% (§4.8, R1d 2차)', () {
+      expect(pierceFalloffPercent, 40);
       final m = _duel(_ammoPirate(AmmoType.pierce, value: 3));
       final grid = m.state.sides[1].grid;
       final before = grid.totalHp;
@@ -499,7 +499,7 @@ void main() {
       // 소나무 두 칸을 차례로: 첫 칸 40(부서짐), 둘째 칸 20.
       onHullHit(m.state, p, m.state.sides[1], cx: 3, cy: 1, x: 0, y: 0);
       onHullHit(m.state, p, m.state.sides[1], cx: 4, cy: 1, x: 0, y: 0);
-      expect(before - grid.totalHp, 60);
+      expect(before - grid.totalHp, 56);
     });
 
     test('다중투하는 합계를 폭탄 수로 나눈다 (§4.8)', () {
