@@ -10,6 +10,7 @@ import 'package:pirate_busters/game/camera_director.dart';
 import 'package:pirate_busters/game/coords.dart';
 import 'package:pirate_busters/game/cues_unique.dart';
 import 'package:pirate_busters/game/hit_tag.dart';
+import 'package:pirate_busters/game/view/breakage_fx.dart';
 import 'package:pirate_busters/game/view/fx_layer.dart';
 import 'package:pirate_busters/game/view/fx_text.dart';
 import 'package:pirate_busters/game/view/hit_weight.dart';
@@ -116,6 +117,8 @@ class BattleCues {
     // 한 방 크기: 이 묶음 전체로 매겨 멈춤·흔들림·줌·숫자·진동을 맞춘다 (§10.4, A32).
     final weight = HitWeight.of(cues, critHit: tag == HitTag.crit);
     var jolted = false;
+    Vector2? hitAt;
+    final collapsed = <int, List<int>>{};
     void joltOnce(double scale) {
       if (jolted) return;
       jolted = true;
@@ -135,6 +138,7 @@ class BattleCues {
           director.impact(Coords.point(e.x, e.y));
         case SimEventKind.impact:
           final at = Coords.point(e.x, e.y);
+          hitAt = at;
           // 맞은 배는 쏜 쪽 반대로 밀린다.
           final push = facingOf(1 - e.side);
           if (spec == null) {
@@ -168,18 +172,18 @@ class BattleCues {
           director.impact(at);
           playSfx(Sfx.splash);
         case SimEventKind.blockDestroyed:
-          fx.blockBroken(cellWorld(e.side, e.cell));
+          fx.shatter(
+            cellWorld(e.side, e.cell),
+            tile: ships[e.side].builtTile(e.cell),
+            iron: ships[e.side].isIron(e.cell),
+            seed: e.side * 100000 + e.cell,
+            from: hitAt,
+          );
           if (!woodPlayed) playSfx(Sfx.wood);
           woodPlayed = true;
         case SimEventKind.blockCollapsed:
-          // 끊긴 덩어리는 배 가운데에서 먼 쪽으로 기울며 떨어진다.
-          final at = cellWorld(e.side, e.cell);
-          final outward = (at.x - ships[e.side].position.x).sign;
-          fx.collapsed(
-            at,
-            tile: ships[e.side].builtTile(e.cell),
-            lean: outward * 2.2,
-          );
+          // 끊긴 칸은 묶음이 끝난 뒤 덩어리로 묶어 떨어뜨린다 (§10.4, A32).
+          (collapsed[e.side] ??= []).add(e.cell);
         case SimEventKind.move:
           // 한계선에 닿으면 물살이 튄다 (설계서 §2.6).
           final side = session.state.sides[e.side];
@@ -259,6 +263,17 @@ class BattleCues {
           joltOnce(1);
           playSfx(Sfx.boom);
       }
+    }
+    for (final MapEntry(key: side, value: cells) in collapsed.entries) {
+      fx.collapseCells(
+        cells,
+        session.state.sides[side].grid.width,
+        cellAt: (cell) => cellWorld(side, cell),
+        tileOf: ships[side].builtTile,
+        shipX: ships[side].position.x,
+      );
+      if (!woodPlayed) playSfx(Sfx.wood);
+      woodPlayed = true;
     }
   }
 

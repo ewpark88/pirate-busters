@@ -10,7 +10,6 @@ import 'package:flutter/services.dart';
 import 'package:pb_sim/pb_sim.dart';
 import 'package:pirate_busters/game/anim/rarity_fx.dart';
 import 'package:pirate_busters/game/sprites.dart';
-import 'package:pirate_busters/game/view/collapse_fx.dart';
 import 'package:pirate_busters/game/view/explosion_fx.dart';
 import 'package:pirate_busters/game/view/hit_weight.dart';
 import 'package:pirate_busters/game/view/impact_accent.dart';
@@ -193,33 +192,6 @@ class FxLayer extends Component {
   /// 블록 하나가 부서짐: 나무 조각.
   void blockBroken(Vector2 at) =>
       spawn(ExplosionFx.debris(sprites, rnd, at, count: few(4), plank: true));
-
-  /// 무너진 블록 (설계서 §10.4): [tile] 그림이 [lean] 쪽으로 기울며 떨어지고 수면에
-  /// 물보라를 낸다. 그림이 없으면 나무 조각만 떨어진다.
-  void collapsed(Vector2 at, {Sprite? tile, double lean = 0}) {
-    spawn(ExplosionFx.debris(sprites, rnd, at, count: few(2), plank: true));
-    if (tile == null) return;
-    spawn(
-      FallingChunk(
-        sprite: tile,
-        at: at,
-        lean: lean,
-        onSplash: (sea) {
-          spawn(
-            popSprite(
-              'fx/collapse/splash_big.png',
-              sea - Vector2(0, 22),
-              64,
-              .5,
-            ),
-          );
-          if (few(2) == 2) {
-            spawn(popSprite('fx/collapse/foam_ring.png', sea, 56, 0.6));
-          }
-        },
-      ),
-    );
-  }
 
   /// 물보라.
   /// [limit] 이면 한계선에 닿아 멈출 때의 물살이다 (설계서 §2.6, 그림 80×70).

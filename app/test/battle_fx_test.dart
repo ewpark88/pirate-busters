@@ -100,27 +100,84 @@ void main() {
     });
   });
 
-  testWidgets('붕괴 (§10.4): 끊긴 덩어리는 기울며 떨어지고 수면에서 물보라를 낸다', (tester) async {
+  testWidgets('붕괴 (§10.4): 끊긴 덩어리는 삐걱인 뒤 기울며 떨어지고 수면에서 물보라를 낸다', (
+    tester,
+  ) async {
     await tester.runAsync(() async {
       final recorder = ui.PictureRecorder();
       ui.Canvas(recorder).drawPaint(ui.Paint());
       final image = await recorder.endRecording().toImage(8, 8);
       Vector2? splashAt;
-      final chunk = FallingChunk(
-        sprite: Sprite(image),
+      final piece = FallingPiece(
+        parts: [
+          PiecePart(Sprite(image), Vector2(-16, 0), Vector2.all(32)),
+          PiecePart(Sprite(image), Vector2(16, 0), Vector2.all(32)),
+        ],
         at: Vector2(100, -96),
-        lean: 2.2,
+        velocity: Vector2(30, 0),
+        spin: collapseSpin(2),
+        delay: collapseStagger,
         onSplash: (at) => splashAt = at,
       );
+      expect(piece.size, Vector2(64, 32), reason: '두 칸 덩어리 크기');
+      piece.update(collapseStagger / 2);
+      expect(piece.position, Vector2(100, -96), reason: '늦게 떨어지는 덩어리는 제자리');
       var steps = 0;
       while (splashAt == null && steps < 200) {
-        chunk.update(1 / 60);
+        piece.update(1 / 60);
         steps++;
       }
       expect(splashAt, isNotNull);
       expect(splashAt!.y, 0, reason: '해수면');
       expect(splashAt!.x, greaterThan(100), reason: '기운 쪽으로 밀려 떨어진다');
-      expect(chunk.angle, greaterThan(0));
+      expect(piece.angle, greaterThan(0));
+    });
+  });
+
+  group('파괴 조각·덩어리 묶기 (설계서 §10.4, A32)', () {
+    test('나무는 가로 판자 세 장, 철판은 네 조각, 저사양은 절반이다', () {
+      expect(shardPlan(7, iron: false), hasLength(3));
+      expect(shardPlan(7, iron: true), hasLength(4));
+      expect(shardPlan(7, iron: false, fewer: true), hasLength(2));
+      expect(shardPlan(7, iron: true, fewer: true), hasLength(2));
+      for (final s in shardPlan(7, iron: false)) {
+        expect(s.src.width, 1, reason: '판자는 결을 따라 가로로 갈라진다');
+        expect(s.velocity.y, lessThan(0), reason: '위로 튄다');
+      }
+    });
+
+    test('같은 칸이면 같은 조각이고, 착탄 반대쪽으로 더 튄다', () {
+      final a = shardPlan(1203, iron: false, away: 1);
+      final b = shardPlan(1203, iron: false, away: 1);
+      for (var i = 0; i < a.length; i++) {
+        expect(a[i].velocity, b[i].velocity);
+        expect(a[i].spin, b[i].spin);
+      }
+      double meanX(List<ShardSpec> p) =>
+          p.map((s) => s.velocity.x).reduce((x, y) => x + y) / p.length;
+      expect(
+        meanX(shardPlan(5, iron: true, away: 1)),
+        greaterThan(meanX(shardPlan(5, iron: true, away: -1))),
+      );
+    });
+
+    test('끊긴 칸은 이웃끼리 한 덩어리로 묶이고 아래 덩어리가 먼저다', () {
+      // 폭 5 격자: 0·1 이 붙어 있고, 3 과 8(= 3 의 위)이 붙어 있다. 4 와 5 는 줄이
+      // 달라 이웃이 아니다.
+      expect(groupCells([8, 1, 3, 0], 5), [
+        [0, 1],
+        [3, 8],
+      ]);
+      expect(groupCells([4, 5], 5), [
+        [4],
+        [5],
+      ]);
+      expect(groupCells(const [], 5), isEmpty);
+      expect(
+        collapseSpin(4),
+        lessThan(collapseSpin(1)),
+        reason: '큰 덩어리는 천천히 기운다',
+      );
     });
   });
 
