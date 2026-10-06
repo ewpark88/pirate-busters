@@ -8,6 +8,7 @@ import 'package:pirate_busters/audio/music_director.dart';
 import 'package:pirate_busters/audio/sound_service.dart';
 import 'package:pirate_busters/battle/battle_session.dart';
 import 'package:pirate_busters/battle/battle_setup.dart';
+import 'package:pirate_busters/campaign/battle_prep_screen.dart';
 import 'package:pirate_busters/campaign/campaign_map_screen.dart';
 import 'package:pirate_busters/crew/crew_screen.dart';
 import 'package:pirate_busters/dev/dev_flags.dart';
@@ -16,6 +17,7 @@ import 'package:pirate_busters/l10n/app_localizations.dart';
 import 'package:pirate_busters/meta/my_ship.dart';
 import 'package:pirate_busters/meta/progress.dart';
 import 'package:pirate_busters/port/port_game.dart';
+import 'package:pirate_busters/port/port_goal_card.dart';
 import 'package:pirate_busters/port/port_widgets.dart';
 import 'package:pirate_busters/port/settings_screen.dart';
 import 'package:pirate_busters/shipyard/shipyard_screen.dart';
@@ -128,7 +130,19 @@ class _PortScreenState extends ConsumerState<PortScreen> {
                       ? () => _open(const TestBattleScreen())
                       : null,
                 ),
-                const Spacer(),
+                // 다음 할 일 (설계서 §13.2): 튜토리얼이 끝나면 보인다.
+                Expanded(
+                  child: progress.tutorialFinished
+                      ? Align(
+                          alignment: const Alignment(-0.95, 0),
+                          child: PortGoalCard(
+                            progress: progress,
+                            campaign: ref.watch(campaignProvider),
+                            onStage: (s) => _open(BattlePrepScreen(stage: s)),
+                          ),
+                        )
+                      : const SizedBox.shrink(),
+                ),
                 PortTabs(
                   shipyardLocked: !progress.shipyardUnlocked,
                   shipyardDot: hasShipUpgradeReady(

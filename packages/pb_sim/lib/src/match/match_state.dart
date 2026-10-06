@@ -1,4 +1,5 @@
 import 'package:pb_sim/src/match/barrier.dart';
+import 'package:pb_sim/src/match/boss_gimmick.dart';
 import 'package:pb_sim/src/match/rules.dart';
 import 'package:pb_sim/src/match/side_status.dart';
 import 'package:pb_sim/src/match/sim_event.dart';
@@ -51,7 +52,19 @@ class SideState {
        crew = Crew(lineup),
        modules = ShipModules(blueprint),
        fuel = _startTank(blueprint),
-       waterline = waterlineOf(blueprint, rules);
+       waterline = waterlineOf(blueprint, rules),
+       shieldCells = gimmickOf(rules, side) == BossGimmick.bowIronShield
+           ? bowShieldCells(ShipGrid.fromBlueprint(blueprint))
+           : const [];
+
+  /// 뱃머리 방패 칸 (1-5 보스 기믹, 설계서 §5.4). 기믹이 없으면 비었다.
+  final List<int> shieldCells;
+
+  /// 다가오는 전진 한계 (1-12 보스 기믹): 턴 시작 때 정한다(`updatePatrol`).
+  int forwardBonus = 0;
+
+  /// 초계선이 지금까지 시작한 자기 턴 수.
+  int patrolTurns = 0;
 
   static int _startTank(Blueprint blueprint) {
     var tanks = 0;
@@ -129,24 +142,8 @@ class SideState {
   late final List<int> fireExtra = List.filled(grid.cellCount, 0);
 
   /// 선실 슬롯 순서의 선실 칸. 출전 해적은 앞에서부터 탄다. 돛대가 부러진 돛 자리는
-  /// 돛대 밑동 위 칸으로 옮긴다([moveFallenSeats]).
+  /// 돛대 밑동 위 칸으로 옮긴다(`moveFallenSeats`).
   final List<CabinCell> cabins;
-
-  /// 돛대가 부러진 돛 자리 선실을 돛대 밑동 바로 위 칸(드러난 갑판)으로 옮긴다
-  /// (설계서 §3.3 돛 자리). 바다에 빠진 해적이 돌아오기 전, 내 턴 시작에 부른다.
-  void moveFallenSeats() {
-    for (final m in modules.list) {
-      if (!m.kind.isMast || m.intact) continue;
-      final rig = m.cell.rigCells(grid.height);
-      if (rig.isEmpty) continue;
-      final (sx, sy) = rig.last;
-      for (var slot = 0; slot < cabins.length; slot++) {
-        if (cabins[slot].x == sx && cabins[slot].y == sy) {
-          cabins[slot] = CabinCell(m.x, m.y + 1);
-        }
-      }
-    }
-  }
 
   final Crew crew;
 

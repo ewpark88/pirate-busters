@@ -1,5 +1,6 @@
 import 'package:pb_sim/src/combat/crack_spread.dart';
 import 'package:pb_sim/src/combat/module_effects.dart';
+import 'package:pb_sim/src/match/boss_gimmick.dart';
 import 'package:pb_sim/src/match/match_state.dart';
 import 'package:pb_sim/src/match/sim_event.dart';
 import 'package:pb_sim/src/math/fx.dart';
@@ -57,7 +58,13 @@ void resolveImpact(
     }
   }
 
-  final damage = spec.blockDamage * blockPercent ~/ 100;
+  // 뱃머리 방패(1-5 보스 기믹): 서 있는 동안 직사 블록 피해 50% (설계서 §5.4).
+  final damage =
+      spec.blockDamage *
+      blockPercent ~/
+      100 *
+      shieldPercent(target, spec) ~/
+      100;
   hitBlock(cx, cy, damage);
   if (r > 0) {
     final shard = crackShardDamage(damage, edge);

@@ -115,11 +115,12 @@ class Crew {
     }
   }
 
-  /// 내 턴 끝: 쿨다운을 1 줄인다 (턴 끝 처리 4번째, 설계서 §2.3).
-  void endOwnTurn() {
+  /// 내 턴 끝: 쿨다운을 [step](보통 1, 초계선 보스 2) 줄인다 (턴 끝 처리 4번째,
+  /// 설계서 §2.3, §5.4).
+  void endOwnTurn([int step = 1]) {
     for (var slot = 0; slot < pirates.length; slot++) {
       final p = pirates[slot];
-      if (p.cooldown > 0) p.cooldown--;
+      p.cooldown = p.cooldown > step ? p.cooldown - step : 0;
       firedThisTurn[slot] = false;
     }
   }

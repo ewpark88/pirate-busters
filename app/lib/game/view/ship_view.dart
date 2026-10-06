@@ -12,6 +12,7 @@ import 'package:pirate_busters/game/sprites.dart';
 import 'package:pirate_busters/game/view/cabin_painter.dart';
 import 'package:pirate_busters/game/view/damage_layer.dart';
 import 'package:pirate_busters/game/view/fire_view.dart';
+import 'package:pirate_busters/game/view/gimmick_marks.dart';
 import 'package:pirate_busters/game/view/hull_trim.dart';
 import 'package:pirate_busters/game/view/mast_painter.dart';
 import 'package:pirate_busters/game/view/module_painter.dart';
@@ -258,6 +259,8 @@ class ShipView extends PositionComponent with HasGameReference {
       tileAt: (m, x, y) => sprites.tileOf(m, x, y, _state.draft),
       cellRect: cellRect,
     );
+    final t = session.turnMs / 1000;
+    GimmickMarks.shield(canvas, _state, materials, cellRect, t);
     // 배 속·그을음·금·구멍·찢긴 변·파편은 타일을 모두 그린 뒤 한 장으로 얹는다.
     var wetRows = 0;
     while (wetRows < grid.height &&

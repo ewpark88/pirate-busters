@@ -24,6 +24,9 @@ import 'package:pirate_busters/meta/my_ship.dart';
 import 'package:pirate_busters/platform/analytics.dart';
 import 'package:pirate_busters/platform/remote_values.dart';
 import 'package:pirate_busters/ui/hud/battle_hud.dart';
+import 'package:pirate_busters/ui/hud/boss_banner.dart';
+import 'package:pirate_busters/ui/hud/speech_bubbles.dart';
+import 'package:pirate_busters/ui/hud/tutorial_finger.dart';
 
 /// 전투 화면: 전장(Flame) 위에 HUD(Flutter 위젯)를 겹친다 (설계서 §13.4).
 /// 전장의 게임 루프가 매 프레임 [BattleSession] 을 진행한다.
@@ -275,6 +278,19 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
             ),
           ),
         ),
+        Positioned.fill(
+          child: SpeechBubbles(
+            session: _session,
+            sea: widget.stage?.sea,
+            nameKeyOf: (id) => ref.read(gameCatalogProvider).def(id).nameKey,
+          ),
+        ),
+        if (widget.stage?.tutorialStep case final step? when step > 0)
+          Positioned.fill(
+            child: TutorialFinger(session: _session, step: step),
+          ),
+        if (widget.stage?.gimmick case final gimmick?)
+          Positioned.fill(child: BossBanner(gimmick: gimmick)),
         if (_test case TestBattle(dummy: true, :final deck))
           PracticeBar(deck: deck, onPick: _practice),
       ],
