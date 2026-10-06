@@ -74,7 +74,8 @@ extension EmotionCues on BattleCues {
     final pick = emotion.onBatch(weight, cabinHit: cabinHit);
     if (pick == null) return;
     fx.emphasis(
-      Coords.point(hit.x, hit.y) - Vector2(0, 70),
+      // 맞은 곳 바로 위: 카메라가 물러나도 위쪽 HUD 와 겹치지 않을 만큼만 띄운다.
+      Coords.point(hit.x, hit.y) - Vector2(0, 40),
       emphasisText(pick),
       fewer: fewer,
     );

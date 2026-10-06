@@ -9,8 +9,9 @@ extension ShotFx on FxLayer {
   /// 배가 보는 방향으로, 불꽃이 그쪽으로 조금 치우친다.
   void muzzle(Vector2 at, int facing) {
     final mouth = at + Vector2(facing * 10, -4);
-    spawn(popSprite('fx/impact/flash.png', mouth, 46, 0.12));
-    spawn(popSprite('fx/impact/spark.png', mouth, 30, 0.16));
+    // 섬광은 작고 짧게: 크게 띄우면 노란 원반으로 보인다.
+    spawn(popSprite('fx/impact/flash.png', mouth, 22, 0.07));
+    spawn(popSprite('fx/impact/spark.png', mouth, 28, 0.16));
     spawn(ExplosionFx.puffs(sprites, rnd, mouth, count: few(2)));
   }
 

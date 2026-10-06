@@ -107,8 +107,8 @@ extension FxText on FxLayer {
   /// 이름표만 띄운다(피해 숫자가 없는 특별한 결과: 설치·수리).
   void tag(Vector2 at, String label) => damageNumber(at, label);
 
-  /// 큰 강조 문구 (설계서 §10.4 감정 연출): 튕기며 커졌다가 잠깐 머문 뒤 작아지며
-  /// 사라진다. 저사양 [fewer] 면 작게 띄운다.
+  /// 큰 강조 문구 (설계서 §10.4 감정 연출): 튕기며 커졌다가 착탄 머묾 동안만 있다가
+  /// 작아지며 사라진다(카메라가 물러나면 위쪽 HUD 와 겹치므로). 저사양 [fewer] 면 작게 띄운다.
   void emphasis(Vector2 at, String label, {bool fewer = false}) {
     final size = fewer ? 30.0 : 40.0;
     spawn(
@@ -119,16 +119,16 @@ extension FxText on FxLayer {
             EffectController(duration: 0.28, curve: Curves.elasticOut),
           ),
           RotateEffect.to(-0.06, EffectController(duration: 0.28)),
-          MoveByEffect(Vector2(0, -16), EffectController(duration: 1.1)),
+          MoveByEffect(Vector2(0, -8), EffectController(duration: 0.85)),
           ScaleEffect.to(
             Vector2.zero(),
             EffectController(
-              duration: 0.25,
-              startDelay: 0.95,
+              duration: 0.2,
+              startDelay: 0.65,
               curve: Curves.easeIn,
             ),
           ),
-          RemoveEffect(delay: 1.2),
+          RemoveEffect(delay: 0.85),
         ],
         text: label,
         position: at.clone(),
