@@ -338,9 +338,18 @@ void main() {
       jsonDecode(File('$_gameDir/blueprints.json').readAsStringSync()),
     );
 
-    test('밸런스·철갑·고속 3종이 건조 규칙(포인트·용골·선실·선장실·모듈 한도)을 지킨다', () {
+    test('확장 단계마다 밸런스·철갑·고속 3종이 있고 건조 규칙을 지킨다 (§3.1)', () {
       final presets = load();
-      expect([for (final p in presets) p.id], ['balanced', 'armored', 'fast']);
+      for (var stage = 1; stage <= HullSpec.maxStage; stage++) {
+        expect(
+          [
+            for (final p in presets)
+              if (p.stage == stage) p.id,
+          ],
+          ['balanced', 'armored', 'fast'],
+          reason: '단계 $stage',
+        );
+      }
       for (final p in presets) {
         final b = p.blueprint;
         expect(b.cost, lessThanOrEqualTo(b.hull.buildPoints), reason: p.id);
@@ -352,7 +361,10 @@ void main() {
     });
 
     test('철갑은 가장 무겁고, 고속은 가장 가볍고 연료통으로 탱크가 크다', () {
-      final byId = {for (final p in load()) p.id: p.blueprint};
+      final byId = {
+        for (final p in load())
+          if (p.stage == HullSpec.maxStage) p.id: p.blueprint,
+      };
       int weight(Blueprint b) =>
           b.cells.fold(0, (s, c) => s + c.material.weight);
       expect(weight(byId['armored']!), greaterThan(weight(byId['balanced']!)));

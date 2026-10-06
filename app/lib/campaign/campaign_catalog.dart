@@ -20,7 +20,8 @@ class CampaignCatalog {
       for (final sea in seas)
         ...sea.problems(
           hasPirate: game.pirates.has,
-          hasPreset: (id) => game.presets.any((p) => p.id == id),
+          hasPreset: (id, stage) =>
+              game.presets.any((p) => p.id == id && p.stage == stage),
         ),
     ];
     if (problems.isNotEmpty) {
@@ -70,4 +71,8 @@ class CampaignCatalog {
     }
     throw ArgumentError('스테이지 없음: $id');
   }
+
+  /// 캠페인에 [id] 스테이지가 있는가.
+  bool hasStage(String id) =>
+      seas.any((s) => s.stages.any((st) => st.id == id));
 }

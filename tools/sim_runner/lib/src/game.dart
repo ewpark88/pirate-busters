@@ -54,10 +54,14 @@ class GameFactory {
     List<BlueprintPreset> presets, {
     List<String>? pirates,
     List<String>? blueprints,
+    int stage = HullSpec.maxStage,
   }) : catalog = data.catalog,
+       hull = HullSpec.byId('sloop', stage: stage),
        presets = [
          for (final p in presets)
-           if (blueprints == null || blueprints.contains(p.id)) p,
+           if (p.stage == stage &&
+               (blueprints == null || blueprints.contains(p.id)))
+             p,
        ],
        pirateIds = [
          for (final p in data.pirates)
@@ -68,6 +72,9 @@ class GameFactory {
   }
 
   final GameData data;
+
+  /// 이 공장의 선형(확장 단계, 설계서 §3.1). 덱 크기는 선실 수다.
+  final HullSpec hull;
 
   /// 설계도 풀.
   final List<BlueprintPreset> presets;
@@ -83,7 +90,8 @@ class GameFactory {
     List<String> deck() {
       final ids = pirateIds;
       // 선실 4칸을 코스트 한도 안에서 채운다(덱 크기가 승률을 흐리지 않게).
-      final size = ids.length < 4 ? ids.length : 4;
+      final slots = hull.cabinSlots;
+      final size = ids.length < slots ? ids.length : slots;
       final out = <String>[];
       var guard = 0;
       while (out.length < size && guard++ < 200) {
@@ -94,8 +102,7 @@ class GameFactory {
         final cost = next.fold(0, (sum, n) => sum + catalog.byId(n).cost);
         final rest = (size - next.length) * Rarity.common.cost;
         if (cost + rest <= costLimitForLevel(1) &&
-            deckProblem(HullSpec.sloop, catalog, next, costLimitForLevel(1)) ==
-                null) {
+            deckProblem(hull, catalog, next, costLimitForLevel(1)) == null) {
           out.add(id);
         }
       }

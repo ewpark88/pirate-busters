@@ -37,17 +37,23 @@ class BlueprintPreset {
   final String descKey;
   final Blueprint blueprint;
 
+  /// 확장 단계 (설계서 §3.1). 같은 [id] 가 단계마다 하나씩 있다.
+  int get stage => blueprint.hull.stage;
+
   List<String> get textKeys => [nameKey, descKey];
 }
 
-/// `blueprints.json` 의 `presets` 목록을 읽는다. id 가 겹치면 [DataFormatError].
+/// `blueprints.json` 의 `presets` 목록을 읽는다. 같은 id·단계가 겹치면 [DataFormatError].
 List<BlueprintPreset> parsePresets(Object? json) {
   final root = JsonReader(json, path: 'blueprints.json');
   final out = <BlueprintPreset>[];
   for (final (i, raw) in root.list('presets').indexed) {
     final p = BlueprintPreset.fromJson(raw, path: 'presets[$i]');
-    if (out.any((o) => o.id == p.id)) {
-      throw DataFormatError('presets[$i].id', '설계도 id 가 겹친다: ${p.id}');
+    if (out.any((o) => o.id == p.id && o.stage == p.stage)) {
+      throw DataFormatError(
+        'presets[$i].id',
+        '설계도 id·단계가 겹친다: ${p.id} ${p.stage}',
+      );
     }
     out.add(p);
   }

@@ -20,6 +20,7 @@ import 'package:pirate_busters/game/hit_tag.dart';
 import 'package:pirate_busters/input/field_gestures.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
 import 'package:pirate_busters/l10n/data_text.dart';
+import 'package:pirate_busters/meta/my_ship.dart';
 import 'package:pirate_busters/platform/analytics.dart';
 import 'package:pirate_busters/platform/remote_values.dart';
 import 'package:pirate_busters/ui/hud/battle_hud.dart';
@@ -81,7 +82,11 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
     final fleet = ref.read(fleetStoreProvider);
     final stage = widget.stage;
     final setup = BattleSetup(catalog);
-    final blueprint = fleet.blueprint(fleet.activeSlot);
+    // 캠페인은 지은 확장 단계·레벨의 내 배(설계서 §3.1·§13.6), 둘이서·테스트 대전은
+    // 저장한 설계도 그대로.
+    final blueprint = stage == null
+        ? fleet.blueprint(fleet.activeSlot)
+        : myBlueprint(fleet, catalog, ref.read(progressProvider).ship);
     final remote = ref.read(remoteValuesProvider);
     _prepared = stage == null
         ? null

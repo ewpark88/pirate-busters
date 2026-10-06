@@ -689,5 +689,46 @@
   "musicOn": "Music",
   "@musicOn": {
     "description": "설정: 배경음악 켜기 (설계서 §10.3)"
-  }
+  },
+  "shipUpgrades": "Ship upgrades",
+  "shipStage1": "Dinghy",
+  "shipStage2": "Small sloop",
+  "shipStage3": "Sloop",
+  "shipStage4": "Large sloop",
+  "shipGrowRow": "Grow ship",
+  "shipGrowNeed": "Clear {stage} to unlock",
+  "shipMaxed": "Max",
+  "hullLevelRow": "Hull Lv {level}",
+  "mastLevelRow": "{name} Lv {level}",
+  "@mastLevelRow": {
+    "description": "조선소 배 업그레이드 (설계서 §3.1·§13.6, A28)",
+    "placeholders": {
+      "name": {},
+      "level": {}
+    }
+  },
+  "goldCost": "{gold} gold",
+  "buyAsk": "Spend {gold} gold on {name}?",
+  "@buyAsk": {
+    "description": "조선소 배 업그레이드 (설계서 §3.1·§13.6, A28)",
+    "placeholders": {
+      "name": {},
+      "gold": {}
+    }
+  },
+  "notEnoughGold": "Not enough gold",
+  "buy": "Buy",
+  "shipGrown": "Your ship grew!",
+  "shipGrownBody": "{width}×{height} cells · {cabins} cabins",
+  "@shipGrownBody": {
+    "description": "조선소 배 업그레이드 (설계서 §3.1·§13.6, A28)",
+    "placeholders": {
+      "width": {},
+      "height": {},
+      "cabins": {}
+    }
+  },
+  "shipGrowReady": "You can grow your ship! Visit the shipyard",
+  "devStagePick": "Pick stage (dev)",
+  "ok": "OK"
 }

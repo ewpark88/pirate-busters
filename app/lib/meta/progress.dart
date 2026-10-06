@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:pb_sim/pb_sim.dart';
+import 'package:pirate_busters/meta/ship_upgrades.dart';
 
 /// 플레이어 진행 상태 (개발 계획서 M7, 설계서 §4.5 플레이어 레벨, §6.1 별, §4.6 해적 획득,
 /// §13.1 프롤로그·튜토리얼). 불변 값이고 바꾸면 새 객체를 돌려준다. 저장은 `ProgressStore`.
@@ -15,6 +16,7 @@ class PlayerProgress {
     this.tutorialDone = 0,
     this.matchesPlayed = 0,
     this.seenStories = const [],
+    this.ship = const ShipUpgrades(),
   });
 
   /// JSON 에서 읽는다. 모르는 값·깨진 값은 기본값으로 본다.
@@ -47,6 +49,15 @@ class PlayerProgress {
       seenStories: seen is List
           ? seen.whereType<String>().toList(growable: false)
           : const [],
+      // 배 업그레이드 전 저장: 깬 스테이지만큼 확장 단계를 골드 없이 준다 (A28).
+      ship: json['ship'] == null
+          ? ShipUpgrades(
+              stage: ShipUpgrades.openedStage(
+                (id) => starsRaw is Map && starsRaw.containsKey(id),
+                (id) => id != '1-8',
+              ),
+            )
+          : ShipUpgrades.fromJson(json['ship']),
     );
   }
 
@@ -95,6 +106,9 @@ class PlayerProgress {
 
   /// 본 컷신 id (설계서 §15.4). 캠페인 지도에서 다시 볼 수 있다.
   final List<String> seenStories;
+
+  /// 배 업그레이드 (설계서 §3.1·§3.3·§13.6).
+  final ShipUpgrades ship;
 
   /// 다음 레벨까지 필요한 경험치 (수치: BALANCE.md A4.5).
   int get xpToNext => xpToNextFor(level);
@@ -162,6 +176,7 @@ class PlayerProgress {
     int? tutorialDone,
     int? matchesPlayed,
     List<String>? seenStories,
+    ShipUpgrades? ship,
   }) => PlayerProgress(
     level: level ?? this.level,
     xp: xp ?? this.xp,
@@ -172,6 +187,7 @@ class PlayerProgress {
     tutorialDone: tutorialDone ?? this.tutorialDone,
     matchesPlayed: matchesPlayed ?? this.matchesPlayed,
     seenStories: seenStories ?? this.seenStories,
+    ship: ship ?? this.ship,
   );
 
   Map<String, Object?> toJson() => {
@@ -184,6 +200,7 @@ class PlayerProgress {
     'tutorialDone': tutorialDone,
     'matchesPlayed': matchesPlayed,
     'seenStories': seenStories,
+    'ship': ship.toJson(),
   };
 
   String encode() => jsonEncode(toJson());

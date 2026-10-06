@@ -7,7 +7,9 @@ import 'package:pirate_busters/crew/crew_screen.dart';
 import 'package:pirate_busters/data/fleet_store.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
 import 'package:pirate_busters/l10n/data_text.dart';
+import 'package:pirate_busters/meta/progress.dart';
 import 'package:pirate_busters/meta/progress_store.dart';
+import 'package:pirate_busters/meta/ship_upgrades.dart';
 import 'package:pirate_busters/port/settings_screen.dart';
 import 'package:pirate_busters/settings/language.dart';
 import 'package:pirate_busters/settings/settings_store.dart';
@@ -20,6 +22,7 @@ Future<MemoryFleetStore> _pump(
   Widget screen,
   Locale locale, {
   MemoryFleetStore? fleet,
+  PlayerProgress progress = const PlayerProgress(),
 }) async {
   // 작은 가로 폰(논리 640×360).
   tester.view.physicalSize = const Size(1280, 720);
@@ -33,7 +36,7 @@ Future<MemoryFleetStore> _pump(
         gameCatalogProvider.overrideWithValue(testCatalog),
         fleetStoreProvider.overrideWithValue(store),
         progressStoreProvider.overrideWithValue(
-          MemoryProgressStore(),
+          MemoryProgressStore(progress),
         ),
       ],
       child: MaterialApp(
@@ -93,7 +96,13 @@ void main() {
   });
 
   testWidgets('선원: 해적을 빈 선실로 끌어다 놓으면 덱에 들고 저장된다', (tester) async {
-    final store = await _pump(tester, const CrewScreen(), const Locale('ko'));
+    // 큰 슬루프(선실 4칸)를 지은 진행 (설계서 §3.1).
+    final store = await _pump(
+      tester,
+      const CrewScreen(),
+      const Locale('ko'),
+      progress: const PlayerProgress(ship: ShipUpgrades(stage: 4)),
+    );
     final name = dataText(
       AppLocalizations.of(tester.element(find.byType(CrewScreen))),
       'pirate_p06_name',

@@ -1317,4 +1317,73 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get musicOn => '배경음악';
+
+  @override
+  String get shipUpgrades => '배 업그레이드';
+
+  @override
+  String get shipStage1 => '돛단배';
+
+  @override
+  String get shipStage2 => '작은 슬루프';
+
+  @override
+  String get shipStage3 => '슬루프';
+
+  @override
+  String get shipStage4 => '큰 슬루프';
+
+  @override
+  String get shipGrowRow => '배 키우기';
+
+  @override
+  String shipGrowNeed(Object stage) {
+    return '$stage 클리어하면 열린다';
+  }
+
+  @override
+  String get shipMaxed => '최고 단계';
+
+  @override
+  String hullLevelRow(Object level) {
+    return '선형 Lv $level';
+  }
+
+  @override
+  String mastLevelRow(Object name, Object level) {
+    return '$name Lv $level';
+  }
+
+  @override
+  String goldCost(Object gold) {
+    return '골드 $gold';
+  }
+
+  @override
+  String buyAsk(Object name, Object gold) {
+    return '$name: 골드 $gold를 쓸까요?';
+  }
+
+  @override
+  String get notEnoughGold => '골드가 모자라다';
+
+  @override
+  String get buy => '사기';
+
+  @override
+  String get shipGrown => '배가 커졌다!';
+
+  @override
+  String shipGrownBody(Object width, Object height, Object cabins) {
+    return '$width×$height칸 · 선실 $cabins칸';
+  }
+
+  @override
+  String get shipGrowReady => '배를 키울 수 있다! 조선소로 가자';
+
+  @override
+  String get devStagePick => '단계 고르기(개발)';
+
+  @override
+  String get ok => '확인';
 }

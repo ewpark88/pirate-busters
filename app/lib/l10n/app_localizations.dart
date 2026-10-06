@@ -2473,6 +2473,120 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Music'**
   String get musicOn;
+
+  /// No description provided for @shipUpgrades.
+  ///
+  /// In en, this message translates to:
+  /// **'Ship upgrades'**
+  String get shipUpgrades;
+
+  /// No description provided for @shipStage1.
+  ///
+  /// In en, this message translates to:
+  /// **'Dinghy'**
+  String get shipStage1;
+
+  /// No description provided for @shipStage2.
+  ///
+  /// In en, this message translates to:
+  /// **'Small sloop'**
+  String get shipStage2;
+
+  /// No description provided for @shipStage3.
+  ///
+  /// In en, this message translates to:
+  /// **'Sloop'**
+  String get shipStage3;
+
+  /// No description provided for @shipStage4.
+  ///
+  /// In en, this message translates to:
+  /// **'Large sloop'**
+  String get shipStage4;
+
+  /// No description provided for @shipGrowRow.
+  ///
+  /// In en, this message translates to:
+  /// **'Grow ship'**
+  String get shipGrowRow;
+
+  /// No description provided for @shipGrowNeed.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear {stage} to unlock'**
+  String shipGrowNeed(Object stage);
+
+  /// No description provided for @shipMaxed.
+  ///
+  /// In en, this message translates to:
+  /// **'Max'**
+  String get shipMaxed;
+
+  /// No description provided for @hullLevelRow.
+  ///
+  /// In en, this message translates to:
+  /// **'Hull Lv {level}'**
+  String hullLevelRow(Object level);
+
+  /// 조선소 배 업그레이드 (설계서 §3.1·§13.6, A28)
+  ///
+  /// In en, this message translates to:
+  /// **'{name} Lv {level}'**
+  String mastLevelRow(Object name, Object level);
+
+  /// No description provided for @goldCost.
+  ///
+  /// In en, this message translates to:
+  /// **'{gold} gold'**
+  String goldCost(Object gold);
+
+  /// 조선소 배 업그레이드 (설계서 §3.1·§13.6, A28)
+  ///
+  /// In en, this message translates to:
+  /// **'Spend {gold} gold on {name}?'**
+  String buyAsk(Object name, Object gold);
+
+  /// No description provided for @notEnoughGold.
+  ///
+  /// In en, this message translates to:
+  /// **'Not enough gold'**
+  String get notEnoughGold;
+
+  /// No description provided for @buy.
+  ///
+  /// In en, this message translates to:
+  /// **'Buy'**
+  String get buy;
+
+  /// No description provided for @shipGrown.
+  ///
+  /// In en, this message translates to:
+  /// **'Your ship grew!'**
+  String get shipGrown;
+
+  /// 조선소 배 업그레이드 (설계서 §3.1·§13.6, A28)
+  ///
+  /// In en, this message translates to:
+  /// **'{width}×{height} cells · {cabins} cabins'**
+  String shipGrownBody(Object width, Object height, Object cabins);
+
+  /// No description provided for @shipGrowReady.
+  ///
+  /// In en, this message translates to:
+  /// **'You can grow your ship! Visit the shipyard'**
+  String get shipGrowReady;
+
+  /// No description provided for @devStagePick.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick stage (dev)'**
+  String get devStagePick;
+
+  /// No description provided for @ok.
+  ///
+  /// In en, this message translates to:
+  /// **'OK'**
+  String get ok;
 }
 
 class _AppLocalizationsDelegate

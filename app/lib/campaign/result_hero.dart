@@ -5,9 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pirate_busters/app/app_theme.dart';
 import 'package:pirate_busters/app/providers.dart';
-import 'package:pirate_busters/battle/battle_setup.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
 import 'package:pirate_busters/l10n/data_text.dart';
+import 'package:pirate_busters/meta/my_ship.dart';
 import 'package:pirate_busters/shipyard/blueprint_preview.dart';
 import 'package:pirate_busters/story/rig_portrait.dart';
 import 'package:pirate_busters/ui/kit/kit_art.dart';
@@ -37,9 +37,11 @@ class ResultHero extends ConsumerWidget {
     final name = dataText(l10n, catalog.def(pirate).nameKey);
     if (!won && !draw) {
       final fleet = ref.watch(fleetStoreProvider);
-      final ship =
-          fleet.blueprint(fleet.activeSlot) ??
-          BattleSetup(catalog).defaultBlueprint;
+      final ship = myBlueprint(
+        fleet,
+        catalog,
+        ref.watch(progressProvider).ship,
+      );
       return LayoutBuilder(
         builder: (context, box) => Stack(
           alignment: Alignment.bottomCenter,

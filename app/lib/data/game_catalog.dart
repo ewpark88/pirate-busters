@@ -51,9 +51,16 @@ class GameCatalog {
   /// 해적 id → 그림 종족 id (`assets/images/characters/<종족>`).
   String speciesOf(String pirateId) => _species[pirateId] ?? pirateId;
 
-  /// id 로 추천 설계도를 찾는다.
-  BlueprintPreset preset(String id) => presets.firstWhere(
-    (p) => p.id == id,
-    orElse: () => throw ArgumentError('알 수 없는 추천 설계도: $id'),
-  );
+  /// id·확장 단계(설계서 §3.1)로 추천 설계도를 찾는다.
+  BlueprintPreset preset(String id, {int stage = HullSpec.maxStage}) =>
+      presets.firstWhere(
+        (p) => p.id == id && p.stage == stage,
+        orElse: () => throw ArgumentError('알 수 없는 추천 설계도: $id $stage'),
+      );
+
+  /// 확장 단계 [stage] 의 추천 설계도들(밸런스·철갑·고속).
+  List<BlueprintPreset> presetsAt(int stage) => [
+    for (final p in presets)
+      if (p.stage == stage) p,
+  ];
 }

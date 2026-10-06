@@ -180,10 +180,14 @@ class PortTabs extends StatelessWidget {
     required this.onCrew,
     required this.onSail,
     required this.labels,
+    this.shipyardDot = false,
     super.key,
   });
 
   final bool shipyardLocked;
+
+  /// 조선소에 지금 할 수 있는 배 업그레이드가 있다: 빨간 점 (설계서 §13.2).
+  final bool shipyardDot;
   final VoidCallback onShipyard;
   final VoidCallback onCrew;
   final VoidCallback onSail;
@@ -198,13 +202,24 @@ class PortTabs extends StatelessWidget {
       children: [
         PopIn(
           order: 1,
-          child: PbButton(
-            label: labels.shipyard,
-            icon: shipyardLocked ? PortIcons.lock : PortIcons.ship,
-            kind: PbButtonKind.secondary,
-            height: 54,
-            minWidth: 150,
-            onPressed: onShipyard,
+          child: Stack(
+            clipBehavior: Clip.none,
+            children: [
+              PbButton(
+                label: labels.shipyard,
+                icon: shipyardLocked ? PortIcons.lock : PortIcons.ship,
+                kind: PbButtonKind.secondary,
+                height: 54,
+                minWidth: 150,
+                onPressed: onShipyard,
+              ),
+              if (shipyardDot && !shipyardLocked)
+                Positioned(
+                  right: -4,
+                  top: -4,
+                  child: Image.asset(MetaIcons.redDot, width: 18, height: 18),
+                ),
+            ],
           ),
         ),
         const SizedBox(width: 14),

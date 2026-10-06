@@ -13,8 +13,9 @@ class ShipGridEditor extends StatelessWidget {
   @override
   Widget build(BuildContext context) => LayoutBuilder(
     builder: (context, box) {
+      // 패널 테두리 그림이 아래 줄을 덮지 않게 높이에 여유를 둔다.
       final cell = (box.maxWidth / model.width)
-          .clamp(0, box.maxHeight / model.height)
+          .clamp(0, box.maxHeight * 0.9 / model.height)
           .toDouble();
       (int, int) at(Offset p) =>
           (p.dx ~/ cell, model.height - 1 - (p.dy ~/ cell));

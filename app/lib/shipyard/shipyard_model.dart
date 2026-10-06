@@ -101,21 +101,62 @@ class ShipyardModel extends ChangeNotifier {
       canSave ? Blueprint(hull, cells, cabins: cabins, modules: modules) : null;
 
   /// [b] 로 바꾼다(되돌리기 가능).
-  void load(Blueprint b) {
+  void load(Blueprint b) => loadParts(b.cells, b.cabins, b.modules);
+
+  /// 규칙에 아직 맞지 않는 설계도(키운 초안 등)도 칸 그대로 불러온다. 격자 밖은 버린다.
+  void loadParts(
+    Iterable<BlockCell> cells,
+    Iterable<CabinCell> cabins,
+    Iterable<ModuleCell> modules,
+  ) {
     _remember();
     _materials.fillRange(0, _materials.length, null);
     _modules.fillRange(0, _modules.length, null);
     _cabins.clear();
-    for (final c in b.cells) {
-      _materials[c.y * width + c.x] = c.material;
+    bool inside(int x, int y) => x >= 0 && y >= 0 && x < width && y < height;
+    for (final c in cells) {
+      if (inside(c.x, c.y)) _materials[c.y * width + c.x] = c.material;
     }
-    for (final c in b.cabins) {
-      _cabins.add(c.y * width + c.x);
+    for (final c in cabins) {
+      if (inside(c.x, c.y) && _cabins.length < hull.cabinSlots) {
+        _cabins.add(c.y * width + c.x);
+      }
     }
-    for (final m in b.modules) {
-      _modules[m.y * width + m.x] = m.kind;
+    for (final m in modules) {
+      if (inside(m.x, m.y)) _modules[m.y * width + m.x] = m.kind;
     }
     notifyListeners();
+  }
+
+  /// 초안 JSON 을 불러온다(형식이 깨진 칸은 건너뛴다). 읽을 칸이 없으면 false.
+  bool loadJson(Map<String, Object?> json) {
+    List<T> each<T>(Object? list, T Function(List<Object?> raw) read) => [
+      if (list is List<Object?>)
+        for (final raw in list)
+          if (raw is List<Object?>) ...?_tryRead(() => read(raw)),
+    ];
+    final cells = each(json['cells'], (r) {
+      return BlockCell(
+        r[0]! as int,
+        r[1]! as int,
+        BlockMaterial.byName(r[2]! as String),
+      );
+    });
+    if (cells.isEmpty) return false;
+    loadParts(
+      cells,
+      each(json['cabins'], (r) => CabinCell(r[0]! as int, r[1]! as int)),
+      each(json['modules'], ModuleCell.fromJson),
+    );
+    return true;
+  }
+
+  static List<T>? _tryRead<T>(T Function() read) {
+    try {
+      return [read()];
+    } on Object {
+      return null;
+    }
   }
 
   /// 한 획 시작(누르기·끌기 시작). 끝은 [endStroke].

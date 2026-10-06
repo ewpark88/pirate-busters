@@ -60,7 +60,9 @@ void main() {
       expect(
         sea1.problems(
           hasPirate: testCatalog.pirates.has,
-          hasPreset: (id) => testCatalog.presets.any((p) => p.id == id),
+          hasPreset: (id, stage) => testCatalog.presets.any(
+            (p) => p.id == id && p.stage == stage,
+          ),
         ),
         isEmpty,
       );
