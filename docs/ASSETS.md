@@ -129,7 +129,7 @@ dart run tool/import_assets.dart --merge art/pb_v0.24_main
 
 ## 음원 (A19, CC0)
 
-설계서 §10.3(ADR-071): CC0 녹음·샘플 음원을 먼저 쓰고, 불러오지 못한 소리만 아래 「소리」 절의 코드 합성음으로 대신한다. 파일은 `app/assets/audio/` 한 폴더에 있다(`sfx_<소리>_<번호>.ogg`, `music_<곡>.ogg`). 목록은 `app/lib/audio/sound_library.dart` `AudioAssets`, 재생은 `SoloudSoundService`(변형을 돌아가며 쓰고 재생 속도를 ±6% 흔든다, 승리·패배 악구는 흔들지 않음). 모두 CC0 이라 표기 의무는 없지만 출처를 남긴다(절대 규칙 8). Kenney 팩의 라이선스 원문은 `app/assets/audio/LICENSE_kenney_*.txt`. A32 에서 착탄 겹침·붕괴·해적 소리를 더했다(설계서 §10.3, ADR-086).
+설계서 §10.3(ADR-071): CC0 녹음·샘플 음원을 먼저 쓰고, 불러오지 못한 소리만 아래 「소리」 절의 코드 합성음으로 대신한다. 파일은 `app/assets/audio/` 한 폴더에 있다(`sfx_<소리>_<번호>.ogg`, `music_<곡>.ogg`). 목록은 `app/lib/audio/sound_library.dart` `AudioAssets`, 재생은 `SoloudSoundService`(변형을 돌아가며 쓰고 재생 속도를 ±6% 흔든다, 승리·패배 악구는 흔들지 않음). 모두 CC0 이라 표기 의무는 없지만 출처를 남긴다(절대 규칙 8). Kenney 팩의 라이선스 원문은 `app/assets/audio/LICENSE_kenney_*.txt`. A32 에서 착탄 겹침·붕괴·해적 소리를 더했다(설계서 §10.3, ADR-087).
 
 | 출처 (모두 CC0 1.0) | 원작자 | 받은 곳 |
 | --- | --- | --- |
