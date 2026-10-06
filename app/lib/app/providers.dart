@@ -128,6 +128,21 @@ class VibrationOnNotifier extends Notifier<bool> {
   }
 }
 
+/// 화면 흔들림 줄이기 (설계서 §13.8, §10.4).
+final calmShakeProvider = NotifierProvider<CalmShakeNotifier, bool>(
+  CalmShakeNotifier.new,
+);
+
+class CalmShakeNotifier extends Notifier<bool> {
+  @override
+  bool build() => ref.read(settingsStoreProvider).calmShake;
+
+  Future<void> set({required bool on}) async {
+    state = on;
+    await ref.read(settingsStoreProvider).setCalmShake(on: on);
+  }
+}
+
 /// 분석·광고·결제·원격 설정 (개발 계획서 M7). 기본은 아무것도 안 하는 구현. 실제 SDK 는
 /// 설정 파일(google-services.json 등)이 들어온 뒤 부트스트랩에서 덮어쓴다.
 final analyticsProvider = Provider<Analytics>((ref) => const NoopAnalytics());

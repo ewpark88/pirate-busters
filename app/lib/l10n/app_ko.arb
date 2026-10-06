@@ -287,6 +287,7 @@
   "portShipyardLocked": "조선소는 4판째부터 열려요",
   "soundOn": "효과음",
   "vibrationOn": "진동",
+  "calmShakeOn": "화면 흔들림 줄이기",
   "campaignTitle": "캠페인",
   "stageLocked": "앞 스테이지를 먼저 깨세요",
   "stageTutorialName": "튜토리얼 {n}",

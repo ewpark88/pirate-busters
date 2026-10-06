@@ -1010,6 +1010,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get vibrationOn => 'Vibration';
 
   @override
+  String get calmShakeOn => 'Reduce screen shake';
+
+  @override
   String get campaignTitle => 'Campaign';
 
   @override

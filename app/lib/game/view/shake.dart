@@ -24,3 +24,40 @@ abstract final class Shake {
     return next < rest ? 0 : next;
   }
 }
+
+/// 쌓이는 흔들림 (설계서 §10.4, A32): 명중마다 충격량(0~1)을 더하고 일정하게 줄인다.
+/// 화면 이동은 충격량의 제곱에 비례해, 작은 한 방과 큰 한 방이 확실히 갈린다
+/// (Eiserloh, GDC 2016 "Math for Game Programmers: Juicing Your Cameras").
+class ScreenTrauma {
+  /// 충격량 1 일 때 흔들림(월드 px)과 기울기(rad, 약 1.5°).
+  static const double maxPx = 24;
+  static const double maxAngle = 0.026;
+
+  /// 1초에 줄어드는 충격량.
+  static const double fallPerSec = 1.8;
+
+  /// 설정 '화면 흔들림 줄이기'(§13.8)를 켰을 때 곱하는 비율.
+  static const double calmScale = 0.35;
+
+  double value = 0;
+
+  /// 충격량 [amount] 를 더한다(최대 1).
+  void add(double amount) => value = math.min(1, value + amount);
+
+  /// 충격량이 적어도 [amount] 가 되게 한다(겹쳐 쌓지 않는 효과).
+  void atLeast(double amount) => value = math.max(value, math.min(1, amount));
+
+  void update(double dt) => value = math.max(0, value - fallPerSec * dt);
+
+  /// 지금 흔들림 세기(월드 px). [calm] 이면 줄인다.
+  double amp({bool calm = false}) =>
+      maxPx * value * value * (calm ? calmScale : 1);
+
+  /// [t] 초의 카메라 기울기(rad). 떨림과 다른 주파수라 위치와 따로 논다.
+  double angle(double t, {bool calm = false}) =>
+      maxAngle *
+      value *
+      value *
+      (calm ? calmScale : 1) *
+      (0.6 * math.sin(t * 37 + 0.4) + 0.4 * math.sin(t * 71 + 1.9));
+}

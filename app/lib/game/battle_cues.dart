@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flame/components.dart';
 import 'package:pb_sim/pb_sim.dart';
 import 'package:pirate_busters/audio/sound_service.dart';
@@ -10,27 +12,35 @@ import 'package:pirate_busters/game/cues_unique.dart';
 import 'package:pirate_busters/game/hit_tag.dart';
 import 'package:pirate_busters/game/view/fx_layer.dart';
 import 'package:pirate_busters/game/view/fx_text.dart';
-import 'package:pirate_busters/game/view/impact_accent.dart';
+import 'package:pirate_busters/game/view/hit_weight.dart';
 import 'package:pirate_busters/game/view/ship_view.dart';
 import 'package:pirate_busters/game/view/shot_view.dart';
 import 'package:pirate_busters/game/view/water_fx.dart';
 import 'package:pirate_busters/game/weapon_styles.dart';
 
-/// 히트스톱 (설계서 §10.4): 맞는 순간 연출만 0.07초 멈춘다. 렌더만 멈추고 시뮬레이션
-/// 진행·턴 타이머는 그대로 흐른다.
+/// 히트스톱 (설계서 §10.4): 맞는 순간 연출만 한 방 크기에 비례해 0.05~0.16초 멈춘다
+/// (A32). 렌더만 멈추고 시뮬레이션 진행·턴 타이머는 그대로 흐른다.
 class HitStop {
-  /// 히트스톱 사이 최소 간격(초): 연사탄이 화면을 계속 멈추지 않게 한다.
+  /// 히트스톱 사이 최소 간격(초): 연사탄이 화면을 계속 멈추지 않게 한다. 더 큰 한
+  /// 방이면 간격 안이어도 다시 멈춘다.
   static const double gap = 0.3;
 
   double _left = 0;
   double _since = gap;
+  double _last = 0;
+  bool _heavy = false;
 
-  /// 명중했다. 직전 히트스톱에서 [gap] 이 지나지 않았으면 다시 멈추지 않는다.
-  void trigger() {
-    if (_since < gap) return;
-    _left = ImpactAccent.hitStop;
+  /// 명중했다. [sec] 동안 멈춘다. [heavy] 면 멈춘 동안 화면이 떨린다.
+  void trigger(double sec, {bool heavy = false}) {
+    if (_since < gap && sec <= _last) return;
+    _left = sec > _left ? sec : _left;
+    _last = sec;
+    _heavy = heavy;
     _since = 0;
   }
+
+  /// 묵직한 한 방으로 멈춰 있는 중인가: 이때는 흔들림 시계만 흐른다.
+  bool get trembling => _left > 0 && _heavy;
 
   /// 히트스톱을 뺀 연출용 dt. 멈춘 동안에는 0 이다.
   double visualDt(double dt) {
@@ -103,6 +113,16 @@ class BattleCues {
     final tier = spec == null ? RarityFx.common : rarity.of(spec.rarity);
     final tag = spec == null ? null : HitTag.ofAmmo(spec.ammo);
     final shown = <HitTag>{};
+    // 한 방 크기: 이 묶음 전체로 매겨 멈춤·흔들림·줌·숫자·진동을 맞춘다 (§10.4, A32).
+    final weight = HitWeight.of(cues, critHit: tag == HitTag.crit);
+    var jolted = false;
+    void joltOnce(double scale) {
+      if (jolted) return;
+      jolted = true;
+      fx.jolt(weight, scale: scale);
+      stop.trigger(weight.hitStopSec, heavy: weight.isHeavy);
+    }
+
     for (final e in cues) {
       switch (e.kind) {
         case SimEventKind.fire:
@@ -118,7 +138,7 @@ class BattleCues {
           // 맞은 배는 쏜 쪽 반대로 밀린다.
           final push = facingOf(1 - e.side);
           if (spec == null) {
-            fx.explosion(at);
+            fx.explosion(at, radius: weight.isHeavy ? 2 : 1);
           } else {
             final style = spec.family == Family.pierce
                 ? weapons?.of(session.speciesOf(spec.id))
@@ -129,18 +149,22 @@ class BattleCues {
               tier: tier,
               facing: push,
               stuck: style == null ? null : weapons?.sprite(style),
+              radius: math.max(1, cappedBlastRadius(spec.blastRadius)),
+              heavy: weight.isHeavy,
             );
           }
-          director.impact(at, punch: true);
+          director.impact(at, punch: weight.punch);
           ships[e.side].rock(push);
-          stop.trigger();
+          joltOnce(FxLayer.familyJolt(spec?.family) * tier.shake);
           playSfx(
             ships[e.side].isIron(e.cell) ? Sfx.clang : Sfx.cannon,
             volume: 0.8,
           );
         case SimEventKind.splash:
           final at = Coords.point(e.x, 0);
-          fx.splash(at);
+          fx
+            ..splash(at)
+            ..nudge(0.3);
           director.impact(at);
           playSfx(Sfx.splash);
         case SimEventKind.blockDestroyed:
@@ -183,6 +207,7 @@ class BattleCues {
               rig.absolutePosition - Vector2(0, Coords.pirateHeight * 0.8),
               damageText(e.value),
               tag: tag == null ? null : tagText(tag),
+              style: DamageStyle.of(weight, crit: tag == HitTag.crit),
             );
           }
         case SimEventKind.mineAttached:
@@ -229,8 +254,9 @@ class BattleCues {
           if (radius == 0) break;
           final at = cellWorld(e.side, e.cell);
           fx.explosion(at, radius: radius, heavy: true);
-          director.impact(at, punch: true);
+          director.impact(at, punch: weight.punch);
           ships[e.side].rock(facingOf(1 - e.side));
+          joltOnce(1);
           playSfx(Sfx.boom);
       }
     }

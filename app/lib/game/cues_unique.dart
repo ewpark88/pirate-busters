@@ -54,7 +54,9 @@ extension UniqueCues on BattleCues {
         }
       case SimEventKind.intercepted:
         final at = Coords.point(e.x, flockDropHeight);
-        fx.explosion(at);
+        fx
+          ..explosion(at)
+          ..nudge(0.5);
         tagOnce(HitTag.intercept, at);
         playSfx(Sfx.boom, volume: 0.6);
       case SimEventKind.barrierPlaced:
@@ -64,7 +66,7 @@ extension UniqueCues on BattleCues {
       case SimEventKind.barrierHit:
         final at = Coords.point(e.x, cellUnit * 2);
         fx.blockBroken(at);
-        director.impact(at, punch: true);
+        director.impact(at, punch: 0.04);
         playSfx(Sfx.wood);
       case SimEventKind.revived:
         final at = cabinWorld(e.side, e.slot);

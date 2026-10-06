@@ -1820,6 +1820,12 @@ abstract class AppLocalizations {
   /// **'Vibration'**
   String get vibrationOn;
 
+  /// No description provided for @calmShakeOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Reduce screen shake'**
+  String get calmShakeOn;
+
   /// No description provided for @campaignTitle.
   ///
   /// In en, this message translates to:

@@ -947,6 +947,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get vibrationOn => '진동';
 
   @override
+  String get calmShakeOn => '화면 흔들림 줄이기';
+
+  @override
   String get campaignTitle => '캠페인';
 
   @override

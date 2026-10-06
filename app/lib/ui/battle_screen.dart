@@ -205,6 +205,7 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
     _game.lowEnd.value = ref.watch(lowEndProvider);
     _game.soundOn.value = ref.watch(soundOnProvider);
     _game.vibrationOn.value = ref.watch(vibrationOnProvider);
+    _game.calmShake.value = ref.watch(calmShakeProvider);
     _session.autoEnd.enabled = ref.watch(autoEndTurnProvider);
     final l10n = AppLocalizations.of(context);
     final number = NumberFormat.decimalPattern(

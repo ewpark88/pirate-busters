@@ -91,6 +91,13 @@ class SettingsScreen extends ConsumerWidget {
                             ref.read(vibrationOnProvider.notifier).set(on: on),
                       ),
                       toggle(
+                        MetaIcons.fullView,
+                        l10n.calmShakeOn,
+                        value: ref.watch(calmShakeProvider),
+                        set: (on) =>
+                            ref.read(calmShakeProvider.notifier).set(on: on),
+                      ),
+                      toggle(
                         MetaIcons.lowSpec,
                         l10n.lowEndMode,
                         value: ref.watch(lowEndProvider),

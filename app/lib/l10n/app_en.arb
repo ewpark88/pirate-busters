@@ -532,6 +532,7 @@
   "portShipyardLocked": "The shipyard opens from your 4th battle",
   "soundOn": "Sound effects",
   "vibrationOn": "Vibration",
+  "calmShakeOn": "Reduce screen shake",
   "campaignTitle": "Campaign",
   "stageLocked": "Clear the previous stage first",
   "stageTutorialName": "Tutorial {n}",

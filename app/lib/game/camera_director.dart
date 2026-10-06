@@ -67,19 +67,32 @@ class CameraDirector {
   Vector2? _impact;
   double _impactLeft = 0;
 
-  /// 명중 때 살짝 당기는 줌 (설계서 §10.4): 화면 폭을 이 비율만큼 좁혔다가 푼다.
-  static const double punchZoom = 0.06;
-  static const double punchSec = 0.25;
-  double _punch = 0;
+  /// 명중 때 당기는 줌 (설계서 §10.4, A32): 화면 폭을 한 방 크기에 비례하는 비율
+  /// (4~12%, `HitWeight.punch`)만큼 [punchIn] 초에 빠르게 좁혔다가 [punchOut] 초에
+  /// 걸쳐 부드럽게 푼다.
+  static const double punchIn = 0.05;
+  static const double punchOut = 0.3;
+  double _punchZoom = 0;
+  double _punchT = punchIn + punchOut;
 
-  /// 지금 화면 폭에 곱할 배율(1 이하). 명중 직후 가장 작고 [punchSec] 뒤 1 로 돌아온다.
-  double get punchScale => 1 - punchZoom * _punch;
+  /// 지금 화면 폭에 곱할 배율(1 이하).
+  double get punchScale {
+    if (_punchT >= punchIn + punchOut) return 1;
+    final k = _punchT < punchIn
+        ? _punchT / punchIn
+        : math.pow(1 - (_punchT - punchIn) / punchOut, 2).toDouble();
+    return 1 - _punchZoom * k;
+  }
 
-  /// 착탄 지점을 잠깐 보여준다. [punch] 면 살짝 당기는 줌도 건다.
-  void impact(Vector2 at, {bool punch = false}) {
+  /// 착탄 지점을 잠깐 보여준다. [punch] 가 0 보다 크면 그 비율로 당기는 줌도 건다.
+  /// 이미 당긴 줌보다 약하면 덮어쓰지 않는다.
+  void impact(Vector2 at, {double punch = 0}) {
     _impact = at.clone();
     _impactLeft = impactHoldSec;
-    if (punch) _punch = 1;
+    if (punch > 0 && punch >= 1 - punchScale) {
+      _punchZoom = punch;
+      _punchT = 0;
+    }
   }
 
   /// 핀치 배율을 범위 안으로 맞춘다.
@@ -167,7 +180,7 @@ class CameraDirector {
     // 착탄 지점은 다음 착탄까지 남겨 둔다: 부서지는 연출이 길면 계속 머문다.
     _impactLeft = math.max(0, _impactLeft - dt);
     _returnLeft = math.max(0, _returnLeft - dt);
-    _punch = math.max(0, _punch - dt / punchSec);
+    _punchT += dt;
     final k = 1 - math.exp(-_rate * dt);
     center.add((goal.$1 - center) * k);
     width += (goal.$2 - width) * k;
