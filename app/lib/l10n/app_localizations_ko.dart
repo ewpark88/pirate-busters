@@ -1390,4 +1390,64 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get bossBanner => '보스 등장!';
+
+  @override
+  String get barkFire1 => '받아라!';
+
+  @override
+  String get barkFire2 => '정확히 노렸다!';
+
+  @override
+  String get barkFire3 => '한 방 더 간다!';
+
+  @override
+  String get barkFire4 => '포탄 배달이요!';
+
+  @override
+  String get barkHurt1 => '으악, 따끔해!';
+
+  @override
+  String get barkHurt2 => '이 정도는 끄떡없어!';
+
+  @override
+  String get barkHurt3 => '배가 흔들린다!';
+
+  @override
+  String get barkHurt4 => '갚아 주마!';
+
+  @override
+  String get barkAllyDown1 => '동료가 쓰러졌다! 버텨!';
+
+  @override
+  String get barkAllyDown2 => '너의 몫까지 싸운다!';
+
+  @override
+  String get barkAllyDown3 => '정신 차려, 금방 끝낼게!';
+
+  @override
+  String get barkAllyDown4 => '가만두지 않겠다!';
+
+  @override
+  String get barkTauntStart1 => '해적 단속이다! 항복해라!';
+
+  @override
+  String get barkTauntStart2 => '그 조각배로 덤빈다고?';
+
+  @override
+  String get barkTauntStart3 => '초계대 앞에선 다 소용없다!';
+
+  @override
+  String get barkTauntStart4 => '집게 맛 좀 봐라!';
+
+  @override
+  String get barkTauntLow1 => '이, 이럴 리가 없어!';
+
+  @override
+  String get barkTauntLow2 => '물이 샌다! 펌프를 돌려!';
+
+  @override
+  String get barkTauntLow3 => '제법이군… 하지만 아직이다!';
+
+  @override
+  String get barkTauntLow4 => '후퇴는 없다, 버텨라!';
 }

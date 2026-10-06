@@ -2593,6 +2593,126 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Boss!'**
   String get bossBanner;
+
+  /// No description provided for @barkFire1.
+  ///
+  /// In en, this message translates to:
+  /// **'Take that!'**
+  String get barkFire1;
+
+  /// No description provided for @barkFire2.
+  ///
+  /// In en, this message translates to:
+  /// **'Right on target!'**
+  String get barkFire2;
+
+  /// No description provided for @barkFire3.
+  ///
+  /// In en, this message translates to:
+  /// **'One more coming!'**
+  String get barkFire3;
+
+  /// No description provided for @barkFire4.
+  ///
+  /// In en, this message translates to:
+  /// **'Cannonball delivery!'**
+  String get barkFire4;
+
+  /// No description provided for @barkHurt1.
+  ///
+  /// In en, this message translates to:
+  /// **'Ouch, that stings!'**
+  String get barkHurt1;
+
+  /// No description provided for @barkHurt2.
+  ///
+  /// In en, this message translates to:
+  /// **'Barely a scratch!'**
+  String get barkHurt2;
+
+  /// No description provided for @barkHurt3.
+  ///
+  /// In en, this message translates to:
+  /// **'The ship\'s rocking!'**
+  String get barkHurt3;
+
+  /// No description provided for @barkHurt4.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ll pay for that!'**
+  String get barkHurt4;
+
+  /// No description provided for @barkAllyDown1.
+  ///
+  /// In en, this message translates to:
+  /// **'Crew down! Hold on!'**
+  String get barkAllyDown1;
+
+  /// No description provided for @barkAllyDown2.
+  ///
+  /// In en, this message translates to:
+  /// **'I\'ll fight for both of us!'**
+  String get barkAllyDown2;
+
+  /// No description provided for @barkAllyDown3.
+  ///
+  /// In en, this message translates to:
+  /// **'Hang in there, we\'ll finish fast!'**
+  String get barkAllyDown3;
+
+  /// No description provided for @barkAllyDown4.
+  ///
+  /// In en, this message translates to:
+  /// **'Now I\'m angry!'**
+  String get barkAllyDown4;
+
+  /// No description provided for @barkTauntStart1.
+  ///
+  /// In en, this message translates to:
+  /// **'Pirate patrol! Surrender!'**
+  String get barkTauntStart1;
+
+  /// No description provided for @barkTauntStart2.
+  ///
+  /// In en, this message translates to:
+  /// **'You call that a ship?'**
+  String get barkTauntStart2;
+
+  /// No description provided for @barkTauntStart3.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing gets past the patrol!'**
+  String get barkTauntStart3;
+
+  /// No description provided for @barkTauntStart4.
+  ///
+  /// In en, this message translates to:
+  /// **'Taste the claw!'**
+  String get barkTauntStart4;
+
+  /// No description provided for @barkTauntLow1.
+  ///
+  /// In en, this message translates to:
+  /// **'Th-this can\'t be!'**
+  String get barkTauntLow1;
+
+  /// No description provided for @barkTauntLow2.
+  ///
+  /// In en, this message translates to:
+  /// **'We\'re leaking! Man the pumps!'**
+  String get barkTauntLow2;
+
+  /// No description provided for @barkTauntLow3.
+  ///
+  /// In en, this message translates to:
+  /// **'Not bad… but not done yet!'**
+  String get barkTauntLow3;
+
+  /// No description provided for @barkTauntLow4.
+  ///
+  /// In en, this message translates to:
+  /// **'No retreat, hold the line!'**
+  String get barkTauntLow4;
 }
 
 class _AppLocalizationsDelegate
