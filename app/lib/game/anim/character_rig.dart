@@ -8,67 +8,13 @@ import 'package:flame/cache.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:pirate_busters/game/anim/anim_data.dart';
+import 'package:pirate_busters/game/anim/part_component.dart';
 import 'package:pirate_busters/game/anim/rarity_fx.dart';
 import 'package:pirate_busters/game/anim/rig_expressions.dart';
 import 'package:pirate_busters/game/coords.dart';
 import 'package:pirate_busters/game/view/rarity_painter.dart';
 
-/// 부위 하나. anchor = pivot / size 라서 position 이 곧 회전 중심이다.
-class PartComponent extends SpriteComponent {
-  PartComponent({
-    required this.partId,
-    required this.anim,
-    required Sprite sprite,
-    required Vector2 offset,
-    required Vector2 pivot,
-    required int z,
-  }) : base = offset + pivot,
-       super(
-         sprite: sprite,
-         size: sprite.srcSize.clone(),
-         anchor: Anchor(pivot.x / sprite.srcSize.x, pivot.y / sprite.srcSize.y),
-         position: offset + pivot,
-         priority: z,
-       );
-
-  final String partId;
-
-  /// shadow fx back body head eyes arm held …
-  final String anim;
-  final Vector2 base;
-
-  late final Sprite _homeSprite = sprite!;
-  late final Vector2 _homeBase = base.clone();
-  late final Anchor _homeAnchor = anchor;
-
-  /// 표정 부위 [part] 로 바꿔 끼운다. null 이면 원래 그림으로 돌아간다 (설계서 §10.1).
-  void swap(ExprPart? part) {
-    // 처음 바꾸기 전에 원래 값을 잡아 둔다.
-    final (homeSprite, homeBase, homeAnchor) = (
-      _homeSprite,
-      _homeBase,
-      _homeAnchor,
-    );
-    final next = part?.sprite ?? homeSprite;
-    sprite = next;
-    size.setFrom(next.srcSize);
-    if (part == null) {
-      anchor = homeAnchor;
-      base.setFrom(homeBase);
-    } else {
-      anchor = Anchor(part.pivot.x / size.x, part.pivot.y / size.y);
-      base.setFrom(part.offset + part.pivot);
-    }
-  }
-
-  /// [unit] = 캔버스 1px 이 이 스프라이트에서 몇 px 인지. [alpha] 는 캐릭터 전체 투명도.
-  void applyPose(PartPose p, double unit, {double alpha = 1}) {
-    position.setValues(base.x + p.dx * unit, base.y + p.dy * unit);
-    angle = p.rot * math.pi / 180;
-    scale.setValues(p.sx, p.sy);
-    opacity = (p.op * alpha).clamp(0.0, 1.0);
-  }
-}
+export 'package:pirate_busters/game/anim/part_component.dart';
 
 /// 캐릭터 한 명을 부위별로 움직인다 (설계서 §10.1). position = 발(기준점).
 class CharacterRig extends PositionComponent {
@@ -171,19 +117,30 @@ class CharacterRig extends PositionComponent {
   /// 지금 짓고 있는 표정.
   String get expression => _shown;
 
-  /// [glint] 이면 발사 순간 손끝 반짝도 함께 시작한다. [expr] 는 동작 동안의 표정.
+  /// [glint] 이면 발사 순간 손끝 반짝도 함께 시작한다. [expr] 는 동작 동안의 표정,
+  /// [from] 은 시작 시각(초). 동작의 `flash` 이벤트는 몸을 하얗게 번쩍인다 (A32).
   void play(
     AnimClip clip, {
     bool loop = false,
     bool glint = false,
     String expr = 'attack',
+    double from = 0,
   }) {
     _clip = clip;
     _loop = loop;
-    _t = 0;
+    _t = from;
     _clipExpr = expr;
     if (glint) _glintT = 0;
+    final f = clip.events.where((e) => e.type == 'flash').firstOrNull;
+    if (f != null) {
+      flash = 1;
+      _flashSec = (f.raw['dur'] as num).toDouble();
+    }
   }
+
+  /// 흰 번쩍임 세기(0~1)와 사라지는 시간(초).
+  double flash = 0;
+  double _flashSec = .12;
 
   /// 머리·눈 부위를 표정 [name] 으로 바꾼다. 표정 에셋이 없으면 그대로 둔다.
   void _show(String name) {
@@ -240,6 +197,7 @@ class CharacterRig extends PositionComponent {
     super.update(dt);
     _idleT += dt;
     _glintT += dt;
+    flash = math.max(0, flash - dt / _flashSec);
     final clip = _clip;
     if (clip != null) {
       _t += dt;
@@ -280,7 +238,7 @@ class CharacterRig extends PositionComponent {
         case 'back':
           s.rot += 1.5 * math.sin((_idleT / 3 + _phase + .3) * 2 * math.pi);
       }
-      p.applyPose(s, _n.toDouble(), alpha: alpha);
+      p.applyPose(s, _n.toDouble(), alpha: alpha, flash: flash);
     }
   }
 }

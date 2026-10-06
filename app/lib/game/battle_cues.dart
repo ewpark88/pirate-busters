@@ -8,6 +8,7 @@ import 'package:pirate_busters/battle/playback.dart';
 import 'package:pirate_busters/game/anim/rarity_fx.dart';
 import 'package:pirate_busters/game/camera_director.dart';
 import 'package:pirate_busters/game/coords.dart';
+import 'package:pirate_busters/game/cues_crew.dart';
 import 'package:pirate_busters/game/cues_unique.dart';
 import 'package:pirate_busters/game/emotion_cues.dart';
 import 'package:pirate_busters/game/hit_stop.dart';
@@ -17,6 +18,7 @@ import 'package:pirate_busters/game/view/breakage_fx.dart';
 import 'package:pirate_busters/game/view/fx_layer.dart';
 import 'package:pirate_busters/game/view/fx_text.dart';
 import 'package:pirate_busters/game/view/hit_weight.dart';
+import 'package:pirate_busters/game/view/ship_crew.dart';
 import 'package:pirate_busters/game/view/ship_view.dart';
 import 'package:pirate_busters/game/view/shot_fx.dart';
 import 'package:pirate_busters/game/view/shot_view.dart';
@@ -136,6 +138,7 @@ class BattleCues {
           }
           director.impact(at, punch: weight.punch);
           ships[e.side].rock(push);
+          flashCell(e);
           joltOnce(FxLayer.familyJolt(spec?.family) * tier.shake);
           for (final (sfx, volume) in impactLayers(
             weight,
@@ -181,7 +184,7 @@ class BattleCues {
           fx.splash(Coords.point(e.x, 0));
           playSfx(Sfx.splash, volume: 0.6);
         case SimEventKind.pirateHit:
-          ships[e.side].playHit(e.slot);
+          ships[e.side].playHit(e.slot, facingOf(1 - e.side));
           playSfx(Sfx.pirateHit);
           final rig = e.slot >= 0 && e.slot < ships[e.side].rigs.length
               ? ships[e.side].rigs[e.slot]
@@ -243,8 +246,9 @@ class BattleCues {
           playSfx(Sfx.rumble);
         // 해적이 바다로 떨어지면 첨벙, 쓰러지면 띵 (§10.3, A32).
         case SimEventKind.pirateFell:
-          playSfx(Sfx.plunge);
+          pirateFell(e);
         case SimEventKind.pirateDown:
+          pirateDown(e);
           playSfx(Sfx.ko);
       }
     }
