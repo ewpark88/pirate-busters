@@ -1,3 +1,4 @@
+import 'package:pb_sim/src/combat/block_damage.dart';
 import 'package:pb_sim/src/combat/module_effects.dart';
 import 'package:pb_sim/src/match/match_state.dart';
 import 'package:pb_sim/src/match/sim_event.dart';
@@ -91,11 +92,7 @@ void burnAtTurnEnd(SideState ship, XorShift32 rng, List<SimEvent> events) {
     final dmg = roundDiv(fireBlockDamage * (100 + ship.fireExtra[i]), 100);
     hit.add(i);
     events.add(SimEvent(SimEventKind.burned, side: ship.side, cell: i));
-    if (grid.damage(x, y, dmg)) {
-      events.add(
-        SimEvent(SimEventKind.blockDestroyed, side: ship.side, cell: i),
-      );
-    }
+    damageBlock(grid, ship.side, x, y, dmg, events);
     for (var slot = 0; slot < ship.crew.size; slot++) {
       final c = ship.cabins[slot];
       if (c.x != x || c.y != y) continue;

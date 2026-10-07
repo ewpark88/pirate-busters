@@ -17,6 +17,7 @@ import 'package:pirate_busters/game/emotion_cues.dart';
 import 'package:pirate_busters/game/impact_sound.dart';
 import 'package:pirate_busters/game/pirate_pick.dart';
 import 'package:pirate_busters/game/sprites.dart';
+import 'package:pirate_busters/game/start_gate.dart';
 import 'package:pirate_busters/game/view/backdrop_view.dart';
 import 'package:pirate_busters/game/view/effect_badges.dart';
 import 'package:pirate_busters/game/view/fx_layer.dart';
@@ -55,10 +56,9 @@ class BattleGame extends FlameGame with BattleTexts {
   final Set<int> _sinkShown = {};
   bool _endPlayed = false;
 
-  /// 저사양 모드: 바다 굴절 셰이더를 끈다 (설계서 §10.2).
+  /// 저사양 모드(바다 셰이더 끔, §10.2)와 설정의 효과음·진동·흔들림 줄이기(§13.8).
+  /// 화면이 설정 값을 넣는다.
   final ValueNotifier<bool> lowEnd = ValueNotifier(false);
-
-  /// 설정의 효과음·진동·화면 흔들림 줄이기 (설계서 §13.8). 화면이 설정 값을 넣는다.
   final ValueNotifier<bool> soundOn = ValueNotifier(true);
   final ValueNotifier<bool> vibrationOn = ValueNotifier(true);
   final ValueNotifier<bool> calmShake = ValueNotifier(false);
@@ -176,15 +176,16 @@ class BattleGame extends FlameGame with BattleTexts {
     applyLowEnd();
   }
 
-  /// 흔들림 떨림의 시계(초), 한 프레임 효과음 묶음과 휘파람 (설계서 §10.3, A32).
+  /// 흔들림 시계, 효과음 묶음·휘파람(§10.3, A32), 그리기 전 타이머 멈춤(A33).
   double _shakeT = 0;
   final SfxMixer _mixer = SfxMixer();
   final WhistleCue _whistle = WhistleCue();
+  final StartGate _gate = StartGate();
 
   @override
   void update(double dt) {
     _mixer.beginFrame();
-    session.update((dt * 1000).round().clamp(0, 100));
+    if (_gate.tick(dt)) session.update((dt * 1000).round().clamp(0, 100));
     if (_whistle.update(_shot.projectile?.y)) playSfx(Sfx.whistle);
     final cues = session.takeCues();
     for (final e in cues) {

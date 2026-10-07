@@ -77,6 +77,12 @@ class BattleCues {
     return Coords.point(x, y);
   }
 
+  /// [side] 배의 가운데 x 와 폭(월드 px). 착탄 카메라가 배 전체를 담는다 (A33).
+  (double, double) shipSpan(int side) => (
+    ships[side].position.x,
+    session.state.sides[side].grid.width * Coords.cell,
+  );
+
   /// 조용히 내려앉는 탄인가: 설치탄은 붙어서 턴을 기다린다. 선체에 닿아도 명중
   /// 연출(폭발·흔들림·히트스톱)을 내지 않는다 (설계서 §10.4 탄종별 전달). 보급탄은
   /// 상대에 맞는 공격이라 명중 연출을 낸다(ADR-090).
@@ -95,6 +101,8 @@ class BattleCues {
     emote(cues, weight, quiet: landsQuietly(spec));
     var jolted = false;
     Vector2? hitAt;
+    // 착탄마다 블록 피해를 모아 숫자 하나로 띄운다 (§10.4, A33).
+    var hull = 0;
     final collapsed = <int, List<int>>{};
     void joltOnce(double scale) {
       if (jolted) return;
@@ -116,6 +124,11 @@ class BattleCues {
           director.impact(Coords.point(e.x, e.y));
         case SimEventKind.impact:
           final at = Coords.point(e.x, e.y);
+          // 첫 착탄 전 피해(그물·돛 통과)는 이 착탄 숫자에 합친다.
+          if (hitAt != null) {
+            hullNumber(hitAt, hull, weight);
+            hull = 0;
+          }
           hitAt = at;
           // 맞은 배는 쏜 쪽 반대로 밀린다.
           final push = facingOf(1 - e.side);
@@ -135,9 +148,8 @@ class BattleCues {
               heavy: weight.isHeavy,
             );
           }
-          director.impact(at, punch: weight.punch);
+          director.impact(at, punch: weight.punch, ship: shipSpan(e.side));
           ships[e.side].rock(push);
-          flashCell(e);
           joltOnce(FxLayer.familyJolt(spec?.family) * tier.shake);
           for (final (sfx, volume) in impactLayers(
             weight,
@@ -162,9 +174,14 @@ class BattleCues {
           );
           if (!woodPlayed) playSfx(Sfx.wood);
           woodPlayed = true;
+        case SimEventKind.blockHit:
+          // 턴 끝 화재처럼 착탄 없이 깎인 칸은 번쩍이지 않는다(불 연출이 따로 있다).
+          if (hitAt != null || spec != null) flashCell(e);
+          hull += e.value;
         case SimEventKind.blockCollapsed:
           // 끊긴 칸은 묶음이 끝난 뒤 덩어리로 묶어 떨어뜨린다 (§10.4, A32).
           (collapsed[e.side] ??= []).add(e.cell);
+          ships[e.side].gone.add(e.cell);
         case SimEventKind.move:
           // 한계선에 닿으면 물살이 튄다 (설계서 §2.6).
           final side = session.state.sides[e.side];
@@ -238,7 +255,7 @@ class BattleCues {
           if (radius == 0) break;
           final at = cellWorld(e.side, e.cell);
           fx.explosion(at, radius: radius, heavy: true);
-          director.impact(at, punch: weight.punch);
+          director.impact(at, punch: weight.punch, ship: shipSpan(e.side));
           ships[e.side].rock(facingOf(1 - e.side));
           joltOnce(1);
           playSfx(Sfx.boom);
@@ -251,6 +268,7 @@ class BattleCues {
           playSfx(Sfx.ko);
       }
     }
+    hullNumber(hitAt, hull, weight);
     for (final MapEntry(key: side, value: cells) in collapsed.entries) {
       fx.collapseCells(
         cells,

@@ -421,6 +421,8 @@
   "shipGrowReady": "배를 키울 수 있다! 조선소로 가자",
   "devStagePick": "단계 고르기(개발)",
   "ok": "확인",
+  "hullPercent": "선체 {percent}%",
+  "fuelPercent": "{percent}%",
   "bossBanner": "보스 등장!",
   "barkFire1": "받아라!",
   "barkFire2": "정확히 노렸다!",

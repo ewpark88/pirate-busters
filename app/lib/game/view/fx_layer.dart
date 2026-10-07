@@ -49,6 +49,13 @@ class FxLayer extends Component {
   /// 쌓이는 흔들림 (설계서 §10.4, A32). 착탄 묶음마다 [jolt] 로 더한다.
   final ScreenTrauma trauma = ScreenTrauma();
 
+  /// 방금 띄운(아직 붙지 않았을 수 있는) 피해 숫자 자리와 띄운 시각. 숫자끼리
+  /// 겹치지 않게 한다.
+  final List<(Vector2, double)> pendingNumbers = [];
+
+  /// 흐른 시간(초). [pendingNumbers] 를 비우는 데 쓴다.
+  double clock = 0;
+
   bool get _calm => calmShake?.value ?? false;
 
   /// 지금 화면 흔들림 세기(월드 px).
@@ -228,5 +235,7 @@ class FxLayer extends Component {
   void update(double dt) {
     super.update(dt);
     trauma.update(dt);
+    clock += dt;
+    pendingNumbers.removeWhere((e) => clock - e.$2 > 0.1);
   }
 }

@@ -1,3 +1,4 @@
+import 'package:pb_sim/src/combat/block_damage.dart';
 import 'package:pb_sim/src/combat/crack_spread.dart';
 import 'package:pb_sim/src/combat/module_effects.dart';
 import 'package:pb_sim/src/match/boss_gimmick.dart';
@@ -53,9 +54,7 @@ void resolveImpact(
     if (dmg <= 0 || !grid.inBounds(bx, by)) return;
     final i = grid.indexOf(bx, by);
     if (grid.hasBlock(bx, by) && !hitCells.contains(i)) hitCells.add(i);
-    if (grid.damage(bx, by, dmg)) {
-      events.add(SimEvent(SimEventKind.blockDestroyed, side: side, cell: i));
-    }
+    damageBlock(grid, side, bx, by, dmg, events);
   }
 
   // 뱃머리 방패(1-5 보스 기믹): 서 있는 동안 직사 블록 피해 50% (설계서 §5.4).

@@ -27,10 +27,11 @@ abstract final class AimPainter {
   static Paint _fill(Color c, double op) =>
       Paint()..color = c.withValues(alpha: op.clamp(0, 1));
 
-  /// 궤적 점 [i](0 ~ [last])의 불투명도: 앞 1 에서 끝 0.45 로 흐려진다. 점이 호 길이로
-  /// 고르게 찍히므로 번호 비율이 거리 비율이다.
+  /// 궤적 점 [i](0 ~ [last])의 불투명도: 앞 1 에서 끝 0.55 로 흐려진다. 점이 호 길이로
+  /// 고르게 찍히므로 번호 비율이 거리 비율이다. 끝도 바다 위에서 보이게 0.45 에서
+  /// 올렸다 (A33).
   static double dotAlpha(int i, int last) =>
-      last <= 0 ? 1 : 1 - .55 * (i / last).clamp(0, 1);
+      last <= 0 ? 1 : 1 - .45 * (i / last).clamp(0, 1);
 
   /// 폴리라인 [path] 위에서 호 길이 `skip + phase + k·step` 자리의 점을 찍는다.
   /// [phase] 는 흐름 값(0 ≤ phase < step).
@@ -56,28 +57,61 @@ abstract final class AimPainter {
     return out;
   }
 
-  /// 궤적 점 반지름과 테 두께(월드 px). 점은 모두 같은 크기라 간격과 휘는 정도를
-  /// 그대로 읽을 수 있다.
-  static const double dotRadius = 1.9;
-  static const double dotRim = .8;
+  /// 궤적 점 반지름과 테 두께(월드 px, 고른 해적 줌 기준). 점은 모두 같은 크기라
+  /// 간격과 휘는 정도를 그대로 읽을 수 있다. 흰 점이 바다에 묻혀 1.9·0.8 에서
+  /// 키웠다 (A33).
+  static const double dotRadius = 2.4;
+  static const double dotRim = 1;
 
   /// 궤적 점선. [pts] 는 발사 쪽부터 순서대로. 같은 크기의 작은 점에 얇은 외곽선을
   /// 둘러 바다·하늘 어디서나 또렷하고, 앞에서 끝으로 흐려진다. 맨 앞 점은
-  /// [fadeIn](0~1)만큼만 보여 흐를 때 깜빡이지 않는다.
+  /// [fadeIn](0~1)만큼만 보여 흐를 때 깜빡이지 않는다. [scale] 은 줌아웃해도 화면
+  /// 크기가 같도록 곱하는 배율.
   static void trajectory(
     Canvas c,
     List<Offset> pts,
     Color color, {
     double fadeIn = 1,
+    double scale = 1,
   }) {
     final last = pts.length - 1;
+    final r = dotRadius * scale;
+    final rim = (dotRadius + dotRim) * scale;
     for (var i = 0; i <= last; i++) {
       final a = dotAlpha(i, last) * (i == 0 ? fadeIn.clamp(0, 1) : 1);
       c
-        ..drawCircle(pts[i], dotRadius + dotRim, _fill(outline, a * .9))
-        ..drawCircle(pts[i], dotRadius, _fill(color, a));
+        ..drawCircle(pts[i], rim, _fill(outline, a * .9))
+        ..drawCircle(pts[i], r, _fill(color, a));
     }
   }
+
+  /// 흐르는 궤적 점선 (설계서 §10.4, §10.5): 폴리라인 [pts] 를 호 길이로 고르게,
+  /// 힘 링 바깥부터 찍고 [flowSec] 초만큼 발사 방향으로 흘린다(null 이면 멈춤, 저사양).
+  /// 간격·크기에 [scale] 을 곱해 화면에서 같은 크기로 보인다.
+  static void flowing(
+    Canvas c,
+    List<Offset> pts,
+    Color color, {
+    double scale = 1,
+    double? flowSec,
+  }) {
+    final step = dotStep * scale;
+    final phase = flowSec == null ? 0.0 : (flowSec * flowSpeed * scale) % step;
+    final dots = resample(pts, step, skip: dotSkip * scale, phase: phase);
+    trajectory(
+      c,
+      dots,
+      color,
+      fadeIn: flowSec == null ? 1 : phase / step,
+      scale: scale,
+    );
+  }
+
+  /// 조준 표시(새총·숫자·점선)에 곱할 배율. 지금 줌 [zoom] 이 설계 줌 [refZoom] 보다
+  /// 멀면 그만큼 키워 화면에서 같은 크기로 보인다. 더 다가간 화면에서는 줄이지
+  /// 않는다 (A33).
+  static double screenScale(double zoom, double refZoom) =>
+      zoom <= 0 ? 1 : (refZoom / zoom).clamp(1, 3).toDouble();
 
   /// 조준 방향 단위 벡터(화면 좌표, 위가 −y). [angleMdeg] 는 상대 쪽 수평이 0.
   static Offset direction(int facing, int angleMdeg) {

@@ -2,6 +2,7 @@
 library;
 
 import 'package:pb_sim/src/combat/ability_effects.dart';
+import 'package:pb_sim/src/combat/block_damage.dart';
 import 'package:pb_sim/src/combat/impact.dart';
 import 'package:pb_sim/src/combat/module_effects.dart';
 import 'package:pb_sim/src/match/match_state.dart';
@@ -38,11 +39,14 @@ void damageCells(
   for (final i in cells) {
     if (!grid.hasBlockAt(i)) continue;
     hit.add(i);
-    if (grid.damage(i % grid.width, i ~/ grid.width, amount)) {
-      events.add(
-        SimEvent(SimEventKind.blockDestroyed, side: target.side, cell: i),
-      );
-    }
+    damageBlock(
+      grid,
+      target.side,
+      i % grid.width,
+      i ~/ grid.width,
+      amount,
+      events,
+    );
   }
   for (final i in collapseUnsupported(grid)) {
     events.add(

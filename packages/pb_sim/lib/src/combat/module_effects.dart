@@ -188,7 +188,14 @@ void runRepairAndPumps(
       continue;
     }
     grid.repair(x, y, grid.materialAt(x, y)!.durability);
-    events.add(SimEvent(SimEventKind.repaired, side: ship.side, cell: i));
+    events.add(
+      SimEvent(
+        SimEventKind.repaired,
+        side: ship.side,
+        cell: i,
+        y: grid.hpAt(x, y),
+      ),
+    );
     left--;
   }
 }

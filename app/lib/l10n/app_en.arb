@@ -739,6 +739,22 @@
   "shipGrowReady": "You can grow your ship! Visit the shipyard",
   "devStagePick": "Pick stage (dev)",
   "ok": "OK",
+  "hullPercent": "Hull {percent}%",
+  "@hullPercent": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "fuelPercent": "{percent}%",
+  "@fuelPercent": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
   "bossBanner": "Boss!",
   "barkFire1": "Take that!",
   "barkFire2": "Right on target!",
