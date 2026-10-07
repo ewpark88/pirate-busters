@@ -981,8 +981,8 @@
       "projectile": {},
       "onHit": {
         "radiusCells": 0,
-        "blockDmg": 20,
-        "pirateDmg": 40
+        "blockDmg": 30,
+        "pirateDmg": 60
       },
       "growth": {},
       "render": {
@@ -1086,7 +1086,7 @@
       "family": "support",
       "rarity": "legend",
       "hp": 260,
-      "cooldownTurns": 2,
+      "cooldownTurns": 1,
       "ammo": {
         "type": "support",
         "repairCells": 2
@@ -1094,8 +1094,8 @@
       "projectile": {},
       "onHit": {
         "radiusCells": 0,
-        "blockDmg": 20,
-        "pirateDmg": 40
+        "blockDmg": 30,
+        "pirateDmg": 60
       },
       "ability": {
         "type": "lantern",

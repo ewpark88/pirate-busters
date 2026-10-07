@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:pb_sim/pb_sim.dart';
 import 'package:pirate_busters/input/pull_aim.dart';
 
 /// 판정에 들어가지 않는 화면 쪽 상태: 조준 중인 값, 이동 버튼, 고른 해적.
@@ -15,6 +16,14 @@ mixin SessionUiState on ChangeNotifier {
 
   /// [slot] 해적을 지금 쏠 수 있는가.
   bool canFire(int slot);
+
+  /// 지금 판 상태.
+  MatchState get state;
+
+  /// 이번 턴 진영의 [slot] 해적이 배 위에 있는가(바다에 빠졌거나 KO 면 false).
+  bool isAboard(int slot) =>
+      state.sides[activeSide].crew.pirateAt(slot)?.status ==
+      PirateStatus.aboard;
 
   /// 조준 중인 해적 슬롯과 값. 궤적 미리보기·자동 줌아웃에 쓴다.
   /// `cancelling` 이면 당겼다가 되돌린 상태라 놓아도 쏘지 않는다.
@@ -67,9 +76,11 @@ mixin SessionUiState on ChangeNotifier {
     notifyListeners();
   }
 
-  /// 지금 줌인해야 할 해적: 내 턴이고 고른 해적이 이번 턴 진영이면 그 슬롯.
-  int? get focusSlot =>
-      isHumanTurn && selected != null && selectedSide == activeSide
-      ? selected
-      : null;
+  /// 지금 줌인해야 할 해적: 내 턴이고 고른 해적이 이번 턴 진영의 배 위에 있으면 그
+  /// 슬롯. 바다에 빠진 해적은 쏠 수 없으니 줌인하지 않는다 (A39 점검, ADR-092).
+  int? get focusSlot {
+    final slot = selected;
+    if (!isHumanTurn || slot == null || selectedSide != activeSide) return null;
+    return isAboard(slot) ? slot : null;
+  }
 }

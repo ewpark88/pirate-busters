@@ -27,6 +27,9 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
+  String get timeVerdictByHull => '침수 비슷: 선체 비교';
+
+  @override
   String get yourTurn => '내 턴';
 
   @override
@@ -71,6 +74,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String cooldown(int count) {
     return '쉬는 턴 $count';
   }
+
+  @override
+  String get firedDone => '발사 완료';
 
   @override
   String get cabinFlooded => '잠김';
@@ -1191,7 +1197,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String statDamage(Object damage, Object blocks) {
-    return '준 피해 $damage · 부순 블록 $blocks';
+    return '해적에게 준 피해 $damage · 부순 블록 $blocks';
   }
 
   @override
@@ -1285,6 +1291,9 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get hitTagRepair => '수리';
+
+  @override
+  String get hitTagNoRepair => '고칠 곳 없음';
 
   @override
   String get hitTagSeal => '봉쇄';

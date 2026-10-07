@@ -163,7 +163,6 @@ void main() {
         'p25_kraki',
         'p30_manta',
         'p35_davy',
-        'p40_lamp',
       };
       const zeroTurns = {
         'p01_octo',

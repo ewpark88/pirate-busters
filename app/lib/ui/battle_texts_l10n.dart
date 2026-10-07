@@ -30,6 +30,7 @@ void applyBattleTexts(BattleGame game, AppLocalizations l10n, Locale locale) {
       HitTag.mine => l10n.hitTagMine,
       HitTag.bite => l10n.hitTagBite,
       HitTag.repair => l10n.hitTagRepair,
+      HitTag.noRepair => l10n.hitTagNoRepair,
       HitTag.seal => l10n.hitTagSeal,
       HitTag.pull => l10n.hitTagPull,
       HitTag.wind => l10n.hitTagWind,

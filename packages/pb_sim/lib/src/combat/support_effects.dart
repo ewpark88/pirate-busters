@@ -63,8 +63,8 @@ void onSupportHit(
   );
 }
 
-/// 쿡 치유량(지원 배율 100% 기준, BALANCE.md A4.2, 임시값 ADR-078).
-const int cookHeal = 40;
+/// 쿡 치유량(보급 배율 100% 기준, BALANCE.md A4.2, 임시값 ADR-078·092).
+const int cookHeal = 25;
 
 /// 배 위 아군 해적 모두를 [amount] 만큼(최대 체력까지) 치유한다 (보급탄은 상대에 쏘므로
 /// 범위 대신 아군 전체, ADR-090).

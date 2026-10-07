@@ -269,6 +269,7 @@ class BattleCues {
       }
     }
     hullNumber(hitAt, hull, weight);
+    supplyTag(spec, hitAt, cues);
     for (final MapEntry(key: side, value: cells) in collapsed.entries) {
       fx.collapseCells(
         cells,

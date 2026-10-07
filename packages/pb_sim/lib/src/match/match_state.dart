@@ -55,7 +55,9 @@ class SideState {
        waterline = waterlineOf(blueprint, rules),
        shieldCells = gimmickOf(rules, side) == BossGimmick.bowIronShield
            ? bowShieldCells(ShipGrid.fromBlueprint(blueprint))
-           : const [];
+           : const [] {
+    if (gimmickOf(rules, side) == BossGimmick.woundedStart) woundAtStart(grid);
+  }
 
   /// 뱃머리 방패 칸 (1-5 보스 기믹, 설계서 §5.4). 기믹이 없으면 비었다.
   final List<int> shieldCells;

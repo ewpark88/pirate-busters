@@ -143,4 +143,38 @@ void main() {
       expect(m.state.sides[first].flood, fullFlood);
     });
   });
+
+  group('지금 시간 판정 선두 (설계서 §2.4, ADR-092)', () {
+    Match start() => Match.start(
+      seed: 17,
+      blueprints: [sampleBlueprint(), sampleBlueprint()],
+      decks: const [
+        ['p01', 'p06'],
+        ['p26', 'p31'],
+      ],
+      costLimits: sampleCostLimits,
+      pirates: sampleCatalog,
+    );
+
+    test('침수 차이가 1%p 를 넘으면 침수량으로 정하고, 상태는 바꾸지 않는다', () {
+      final m = start();
+      m.state.sides[0].flood = 120;
+      m.state.sides[1].flood = 100;
+      final before = hashMatchState(m.state);
+      expect(timeLeader(m.state), (winner: 1, byHull: false));
+      expect(hashMatchState(m.state), before);
+    });
+
+    test('침수 차이가 1%p 이내면 선체 비율로 정한다(판정과 같은 기준)', () {
+      final m = start();
+      m.state.sides[0].flood = 105;
+      m.state.sides[1].flood = 100;
+      final grid = m.state.sides[1].grid;
+      final x = grid.width ~/ 2;
+      grid.damage(x, 1, grid.materialAt(x, 1)!.durability ~/ 2);
+      expect(timeLeader(m.state), (winner: 0, byHull: true));
+      judgeTime(m.state);
+      expect(m.state.winner, 0);
+    });
+  });
 }

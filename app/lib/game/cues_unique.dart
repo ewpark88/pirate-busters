@@ -10,6 +10,16 @@ import 'package:pirate_busters/game/view/water_fx.dart';
 /// 고유 효과 이벤트의 연출 (설계서 §4.8, §10.4, ADR-075·078). 판정은 끝났고 여기서는
 /// 이름표·불티·번개·물보라만 고른다(절대 규칙 3).
 extension UniqueCues on BattleCues {
+  /// 수리 보급탄(톡·램프)이 상대 배를 맞히면 착탄 자리에 결과를 띄운다: 내 배를
+  /// 고쳤으면 ‘수리’, 고칠 구멍이 없었으면 ‘고칠 곳 없음’. 카메라가 상대 배를 보고
+  /// 있어 내 배의 수리 반짝임은 안 보이기 때문이다 (A39 점검, ADR-092).
+  void supplyTag(PirateSpec? spec, Vector2? hitAt, List<SimEvent> cues) {
+    final tag = spec == null || hitAt == null
+        ? null
+        : HitTag.ofSupply(spec, cues);
+    if (tag != null) fx.tag(hitAt!, tagText(tag));
+  }
+
   /// 한 묶음 안에서 같은 이름표는 [shown] 에 모아 한 번만 띄운다.
   void dispatchUnique(SimEvent e, Set<HitTag> shown) {
     void tagOnce(HitTag tag, Vector2 at) {

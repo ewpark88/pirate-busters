@@ -34,6 +34,7 @@ class BattleSession extends ChangeNotifier with SessionUiState {
   /// 해적 id → 그림 종족 id (게임 데이터 `render.species`).
   final String Function(String pirateId) speciesOf;
 
+  @override
   MatchState get state => match.state;
 
   @override

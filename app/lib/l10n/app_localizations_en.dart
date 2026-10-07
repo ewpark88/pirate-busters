@@ -39,6 +39,9 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get timeVerdictByHull => 'Flooding close: hull decides';
+
+  @override
   String get yourTurn => 'Your turn';
 
   @override
@@ -95,6 +98,9 @@ class AppLocalizationsEn extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get firedDone => 'Fired';
 
   @override
   String get cabinFlooded => 'Flooded';
@@ -1274,7 +1280,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String statDamage(Object damage, Object blocks) {
-    return 'Damage dealt $damage · blocks broken $blocks';
+    return 'Damage to pirates $damage · blocks broken $blocks';
   }
 
   @override
@@ -1368,6 +1374,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get hitTagRepair => 'REPAIR';
+
+  @override
+  String get hitTagNoRepair => 'NOTHING TO FIX';
 
   @override
   String get hitTagSeal => 'SEALED';

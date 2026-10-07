@@ -41,11 +41,17 @@ class TimeVerdictBar extends StatelessWidget {
     if (me >= 0) {
       final mine = state.sides[me].flood;
       final theirs = state.sides[1 - me].flood;
-      final color = mine < theirs
+      // 색은 시뮬의 시간 판정과 같은 기준(침수 1%p 이내면 선체 비율)으로 정한다.
+      final lead = timeLeader(state);
+      final color = lead.winner == me
           ? HudColors.good
-          : (mine > theirs ? HudColors.danger : HudColors.text);
+          : (lead.winner < 0 ? HudColors.text : HudColors.danger);
+      final flood = l10n.timeVerdictFlood(
+        fmt.format(mine / 10),
+        fmt.format(theirs / 10),
+      );
       compare = Text(
-        l10n.timeVerdictFlood(fmt.format(mine / 10), fmt.format(theirs / 10)),
+        lead.byHull ? '$flood · ${l10n.timeVerdictByHull}' : flood,
         style: TextStyle(color: color, fontSize: 13),
       );
     }

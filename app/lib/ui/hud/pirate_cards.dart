@@ -82,6 +82,12 @@ class _PirateCardState extends State<_PirateCard> {
         l10n.cabinFlooded,
       // 킹에게 봉쇄된 선실 (설계서 §4.8, ADR-075).
       PirateStatus.aboard when side.isSealed(widget.slot) => l10n.cabinSealed,
+      // 이번 턴에 쏜 해적: 쉬는 턴과 헷갈리지 않게 ‘발사 완료’, 다음 턴도 쉬면 남은
+      // 쉬는 턴을 적는다 (A39 점검, ADR-092).
+      PirateStatus.aboard when side.crew.firedThisTurn[widget.slot] =>
+        pirate.cooldown > 1
+            ? l10n.cooldown(pirate.cooldown - 1)
+            : l10n.firedDone,
       PirateStatus.aboard when pirate.cooldown > 0 => l10n.cooldown(
         pirate.cooldown,
       ),

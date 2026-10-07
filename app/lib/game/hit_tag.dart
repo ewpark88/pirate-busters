@@ -22,7 +22,10 @@ enum HitTag {
   heal,
   wall,
   revive,
-  intercept;
+  intercept,
+
+  /// 보급탄(수리)이 맞았지만 내 배에 고칠 ‘구멍’이 없었다 (ADR-092).
+  noRepair;
 
   /// 상대 배에 건 고유 능력 [ability] 의 이름표. 없으면 null.
   static HitTag? ofAbility(Ability ability) => switch (ability) {
@@ -35,6 +38,14 @@ enum HitTag {
     Ability.cooldownCut => heal,
     _ => null,
   };
+
+  /// 수리 보급탄(톡·램프)이 맞은 묶음 [cues] 의 결과 이름표: 고쳤으면 [repair], 고칠
+  /// 구멍이 없었으면 [noRepair]. 수리하지 않는 해적이면 null (ADR-092).
+  static HitTag? ofSupply(PirateSpec spec, List<SimEvent> cues) {
+    if (spec.ammo != AmmoType.support || spec.ammoParam <= 0) return null;
+    final fixed = cues.any((e) => e.kind == SimEventKind.repaired);
+    return fixed ? repair : noRepair;
+  }
 
   /// 탄종 [ammo] 로 맞혔을 때 붙는 이름표. 없으면 null.
   static HitTag? ofAmmo(AmmoType ammo) => switch (ammo) {
