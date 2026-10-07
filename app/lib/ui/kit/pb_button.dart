@@ -65,8 +65,10 @@ class PbButton extends StatelessWidget {
             constraints: BoxConstraints(minWidth: minWidth),
             height: height,
             padding: EdgeInsets.fromLTRB(16, 0, 16, height * 0.08),
-            decoration: BoxDecoration(
-              image: KitArt.nine(_art, KitArt.buttonSlice, KitArt.buttonScale),
+            decoration: KitArt.nine(
+              _art,
+              KitArt.buttonSlice,
+              KitArt.buttonScale,
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
@@ -116,12 +118,10 @@ class PbIconButton extends StatelessWidget {
           width: size,
           height: size,
           padding: EdgeInsets.all(size * 0.2),
-          decoration: BoxDecoration(
-            image: KitArt.nine(
-              KitArt.buttonSecondary,
-              KitArt.buttonSlice,
-              KitArt.buttonScale * 1.6,
-            ),
+          decoration: KitArt.nine(
+            KitArt.buttonSecondary,
+            KitArt.buttonSlice,
+            KitArt.buttonScale * 1.6,
           ),
           child: Image.asset(icon),
         ),

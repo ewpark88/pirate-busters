@@ -17,9 +17,22 @@ class KitMotion extends InheritedWidget {
   bool updateShouldNotify(KitMotion old) => old.reduced != reduced;
 }
 
-/// 화면 전환: 짧게 밀며 나타난다 (설계서 §13 공통).
+/// 화면 전환: 이전 화면이 먼저 사라지고 새 화면이 짧게 밀며 나타난다 (설계서 §13 공통).
+///
+/// 새 화면만 투명에서 나타나게 하면 그동안 아래 화면이 비쳐 두 화면이 겹친 잔상이
+/// 생긴다(A42). 이전 화면은 앞 절반에 사라지고, 새 화면은 뒤쪽에 나타난다.
 class KitPageTransitions extends PageTransitionsBuilder {
   const KitPageTransitions();
+
+  /// 새 화면이 나타나기 시작하는 지점과 이전 화면이 다 사라지는 지점(전환 진행 0~1).
+  static const double inFrom = 0.35;
+  static const double outUntil = 0.4;
+
+  /// 전환 진행 [t] 에서 새 화면·이전 화면의 진하기.
+  static double incoming(double t) =>
+      Curves.easeOut.transform(((t - inFrom) / (1 - inFrom)).clamp(0, 1));
+  static double outgoing(double t) =>
+      1 - Curves.easeIn.transform((t / outUntil).clamp(0, 1));
 
   @override
   Widget buildTransitions<T>(
@@ -30,18 +43,19 @@ class KitPageTransitions extends PageTransitionsBuilder {
     Widget child,
   ) {
     if (KitMotion.reducedOf(context)) return child;
-    final curved = CurvedAnimation(
+    final slide = CurvedAnimation(
       parent: animation,
       curve: Curves.easeOutCubic,
     );
-    return FadeTransition(
-      opacity: curved,
-      child: SlideTransition(
-        position: Tween(
-          begin: const Offset(0.06, 0),
-          end: Offset.zero,
-        ).animate(curved),
-        child: child,
+    return AnimatedBuilder(
+      animation: Listenable.merge([animation, secondaryAnimation]),
+      child: child,
+      builder: (context, child) => Opacity(
+        opacity: incoming(animation.value) * outgoing(secondaryAnimation.value),
+        child: FractionalTranslation(
+          translation: Offset(0.06 * (1 - slide.value), 0),
+          child: child,
+        ),
       ),
     );
   }

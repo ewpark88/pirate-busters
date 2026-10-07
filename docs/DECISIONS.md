@@ -889,3 +889,12 @@
   - 사용자 승인(2026-10-07)으로 설계서·BALANCE 를 고친다: 1-5 와 1-12 는 쉬움 AI + 기믹(1-3·1-4 보통 유지. 1-12 어려움은 해역 1 클리어 검사에서 40판 0승·보통 2승·쉬움 28승이라 사용자가 쉬움을 골랐다), 톡·램프 보급탄 피해 20/40 → 30/60, 쿡 치유 40 → 25, 램프 쿨다운 2 → 1(시뮬 3000판 톡 47.4%·쿡 49.5%·램프 45.2%), 튜토리얼 3 은 내 배 맨 아래 줄 2칸이 ‘구멍’ 난 채 시작한다. 시작 구멍은 기믹 코드(`woundedStart`, 진영 0)를 다시 써서 판 규칙 형식을 늘리지 않는다. 선장실 페널티는 그대로 둔다.
 - **영향:** pb_sim `judge.dart`(`timeLeader`, 판정 결과 같음)·`boss_gimmick`(`woundedStart`)·`cookHeal`, 해적 데이터 2명, `sea1.json`, `battle_setup`, 앱 `time_verdict_bar`·`pirate_cards`·`ui_state`·`hit_tag`·`cues_unique`·`result_hero`, 글자 `timeVerdictByHull`·`firedDone`·`hitTagNoRepair`·`statDamage`. 설계서 §6.1·§13.1·§13.4, BALANCE.md A4.2·A4.3·A5.4·B부.
 
+## ADR-093 기기 화면 맞춤: 9조각을 직접 그리고, 화면 전환은 fade-through (2026-10-07)
+- **배경:** 실기기(갤럭시 S24) 캡처에서 버튼·패널이 상자보다 크게 그려져 오른쪽 끝이 잘리고 글자가 치우쳤다. 화면 전환 때 잔상이 생겼다. 작은 배의 선실이 아래 HUD 에 가렸다. 골든(화면 배율 2, 다른 렌더러)에서는 재현되지 않았다.
+- **결정 (사용자 요청 '배치 조정·잔상 처리'):**
+  - `DecorationImage` 의 9조각 대신 `NineSliceDecoration` 으로 9장을 `drawImageRect` 로 직접 그린다. 렌더러·화면 배율과 무관하게 같은 크기다. 배율은 승인된 골든 모양에 맞춘다(버튼 1.45, 패널·탭 1.1).
+  - 화면 전환은 이전 화면이 먼저 사라지고 새 화면이 뒤에 나타나는 fade-through 로 한다.
+  - 전투 기본 화면과 항구 카메라는 배 높이에 맞춰, 작은 배를 아래 HUD 위로 올린다. 큰 배는 돛대 끝을 보이는 예전 결정(ADR-072)을 지킨다.
+- **대안:** 골든에 기기 크기(832×384, 배율 2.81)를 더하는 안은 테스트 렌더러가 기기와 달라 같은 문제를 못 잡아서 고르지 않았다. 해상도별 에셋(2.0x·3.0x)을 두는 안은 렌더러별 배율 처리를 피하지 못해 고르지 않았다.
+- **영향:** `ui/kit`(kit_art·nine_slice·pb_button·pb_panel·pb_dialog·kit_motion), `story/cutscene_screen`, `game/camera_director`·`battle_game`, `port/port_game`, 화면·HUD 골든 36장. 렌더 전용이라 판정·리플레이 해시는 그대로다.
+

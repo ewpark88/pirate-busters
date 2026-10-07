@@ -22,6 +22,25 @@ class CameraDirector {
   /// 기본 화면 가운데 높이(월드 px): 돛대 끝이 폭 900 때와 같은 높이까지 보인다 (ADR-072).
   static const double idleY = -150;
 
+  /// 내 배 위 끝(월드 px, 위가 −). 있으면 작은 배는 기본 화면에서 더 위로 올려
+  /// 아래쪽 이동 패널·카드에 선실이 가리지 않게 한다. 큰 배는 [idleY] 그대로 돛대
+  /// 끝을 보인다 (설계서 §2.1, A42).
+  double? shipTop;
+
+  /// 작은 배일 때 수면이 오는 화면 높이(위에서 비율)와 배 위 여백(월드 px).
+  static const double idleWaterline = 0.7;
+  static const double idleTopMargin = 40;
+
+  /// 화면 폭 [w]·세로 비율 [aspect] 에서 기본 화면 가운데 높이.
+  double idleYFor(double w, double aspect) {
+    final top = shipTop;
+    if (top == null) return idleY;
+    final halfH = w * aspect / 2;
+    final low = (0.5 - idleWaterline) * 2 * halfH;
+    final fit = top - idleTopMargin + halfH;
+    return math.max(idleY, math.min(low, fit));
+  }
+
   /// 가장 멀리 본 화면 폭: 간격 42칸 + 배 두 척 + 여백 (ADR-048).
   static const double maxWidth = 2528;
   static const double minWidth = baseWidth / 1.5;
@@ -199,7 +218,7 @@ class CameraDirector {
     final t = ((w - baseWidth) / (maxWidth - baseWidth)).clamp(0.0, 1.0);
     final near = myX + facing * ahead;
     final mid = (myX + enemyX) / 2;
-    return (Vector2(near + (mid - near) * t, idleY), w);
+    return (Vector2(near + (mid - near) * t, idleYFor(w, aspect)), w);
   }
 
   /// 목표로 부드럽게 다가간다.

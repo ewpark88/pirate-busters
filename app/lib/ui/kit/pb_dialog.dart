@@ -133,12 +133,10 @@ void showPbToast(BuildContext context, String message) {
                   horizontal: 20,
                   vertical: 10,
                 ),
-                decoration: BoxDecoration(
-                  image: KitArt.nine(
-                    KitArt.buttonSecondary,
-                    KitArt.buttonSlice,
-                    KitArt.buttonScale,
-                  ),
+                decoration: KitArt.nine(
+                  KitArt.buttonSecondary,
+                  KitArt.buttonSlice,
+                  KitArt.buttonScale,
                 ),
                 child: OutlinedText(message, maxLines: 2),
               ),

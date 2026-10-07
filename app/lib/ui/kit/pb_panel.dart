@@ -21,9 +21,7 @@ class PbPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Container(
     padding: padding,
-    decoration: BoxDecoration(
-      image: KitArt.nine(KitArt.panel, KitArt.panelSlice, KitArt.panelScale),
-    ),
+    decoration: KitArt.nine(KitArt.panel, KitArt.panelSlice, KitArt.panelScale),
     child: title == null
         ? child
         : Column(
@@ -75,12 +73,10 @@ class PbTabs extends StatelessWidget {
                 constraints: const BoxConstraints(minWidth: 84),
                 padding: const EdgeInsets.symmetric(horizontal: 14),
                 alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  image: KitArt.nine(
-                    i == selected ? KitArt.tabActive : KitArt.tabIdle,
-                    KitArt.tabSlice,
-                    KitArt.tabScale,
-                  ),
+                decoration: KitArt.nine(
+                  i == selected ? KitArt.tabActive : KitArt.tabIdle,
+                  KitArt.tabSlice,
+                  KitArt.tabScale,
                 ),
                 child: OutlinedText(
                   label,

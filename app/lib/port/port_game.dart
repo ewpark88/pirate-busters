@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flame/game.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
@@ -60,9 +62,31 @@ class PortGame extends FlameGame {
     session.turnMs += (dt * 1000).round().clamp(0, 100);
     super.update(dt);
     if (size.x > 0) {
+      final (y, w) = frame(
+        aspect: size.y / size.x,
+        shipTop: -session.state.sides[0].grid.height * Coords.cell,
+      );
       camera.viewfinder
-        ..position = Vector2(_shipCenterX, -110)
-        ..zoom = size.x / viewWidth;
+        ..position = Vector2(_shipCenterX, y)
+        ..zoom = size.x / w;
     }
+  }
+
+  /// 수면이 오는 화면 높이(위에서 비율): 아래쪽 버튼 줄(위에서 약 83%)보다 위에 둬
+  /// 선실과 해적이 가리지 않게 한다 (설계서 §13.2, A42).
+  static const double waterline = 0.72;
+
+  /// 배 위 끝 위로 남길 여백(월드 px, 깃발 포함).
+  static const double topMargin = 56;
+
+  /// 세로 비율 [aspect] 화면에서 위 끝이 [shipTop](월드 px, 위가 −)인 배를 보일 때
+  /// 카메라 가운데 높이와 화면 폭. 배가 높으면 [viewWidth] 보다 넓혀 다 보이게 한다.
+  static (double, double) frame({
+    required double aspect,
+    required double shipTop,
+  }) {
+    final need = (topMargin - shipTop) / waterline;
+    final h = math.max(viewWidth * aspect, need);
+    return ((0.5 - waterline) * h, h / aspect);
   }
 }
