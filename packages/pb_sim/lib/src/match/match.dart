@@ -198,9 +198,6 @@ class Match {
     if (state.firesThisTurn >= state.rules.firesPerTurn) return;
     if (!side.canFire(c.slot)) return;
     if (c.angle < 0 || c.angle >= fullTurnMdeg) return;
-    // 지원 해적은 0~180° 로 제 배 쪽까지 쏜다 (설계서 §7.2).
-    final spec = side.crew.pirates[c.slot].spec;
-    if (spec.ammo == AmmoType.support && c.angle > fullTurnMdeg ~/ 2) return;
     if (c.power < 0 || c.power > maxFirePower) return;
     final ms = realMs(state, at);
     final shots = launchVolley(

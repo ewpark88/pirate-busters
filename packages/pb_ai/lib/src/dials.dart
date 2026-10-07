@@ -34,7 +34,7 @@ class AiDials {
       thinkMs: 2500,
       pickTopPercent: 50,
       waveTiming: false,
-      support: SupportUse.never,
+      support: SupportUse.timely,
       positions: 0,
       combo: false,
       windCorrectionPercent: 50,

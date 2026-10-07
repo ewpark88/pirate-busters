@@ -168,7 +168,6 @@ class TurnChooser {
     for (var slot = 0; slot < _me.crew.size; slot++) {
       final spec = _me.crew.pirates[slot].spec;
       if (_me.crew.pirates[slot].status == PirateStatus.down) continue;
-      if (spec.ammo == AmmoType.support) continue;
       if (spec.range.hitGap < gap) {
         // 사거리 밖 해적이 있으면 다가갈수록 좋다: 여러 턴에 걸쳐 사거리 안으로 (§5.5).
         score -= (gap - spec.range.hitGap) ~/ cellUnit * approachPerCell;

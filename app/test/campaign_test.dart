@@ -66,15 +66,24 @@ void main() {
         ),
         isEmpty,
       );
-      expect(campaign.stage('1-3').aiLevel, AiLevel.easy);
+      expect(campaign.stage('1-3').aiLevel, AiLevel.normal);
       expect(campaign.stage('1-3').personality, Personality.hunter);
     });
 
-    test('일반 모드 해역 1 은 보스까지 모두 쉬움 AI 다 (설계서 §6.1)', () {
-      for (final stage in sea1.stages) {
-        expect(stage.aiLevel, AiLevel.easy, reason: stage.id);
-      }
-    });
+    test(
+      '일반 모드 해역 1 은 앞쪽 쉬움, 1-3~1-5 보통, 1-12 보스 어려움이다 (설계서 §6.1, ADR-090)',
+      () {
+        const later = {'1-3', '1-4', '1-5'};
+        for (final stage in sea1.stages) {
+          final want = stage.id == '1-12'
+              ? AiLevel.hard
+              : later.contains(stage.id)
+              ? AiLevel.normal
+              : AiLevel.easy;
+          expect(stage.aiLevel, want, reason: stage.id);
+        }
+      },
+    );
 
     test('대사·미션 글자 키가 한국어·영어 ARB 에 모두 있다 (§14.3, §15.4)', () {
       final ko =

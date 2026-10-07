@@ -11,6 +11,7 @@ abstract final class HudColors {
   static const Color red = Color(0xFFB3302B);
   static const Color warn = Color(0xFFFFC24A);
   static const Color danger = Color(0xFFE06A5A);
+  static const Color good = Color(0xFF7FD36B);
 
   static Color team(int side) => side == 0 ? blue : red;
 }

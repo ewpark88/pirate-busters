@@ -52,14 +52,13 @@ ShotValue scoreLandings(
 ) {
   final v = ShotValue();
   for (final l in landings) {
-    if (l.spec.ammo == AmmoType.support) {
-      if (l.side == shooter && l.hitShip) {
-        _repairValue(state.sides[shooter], l, v);
-        v.flat += _supportValue(state.sides[shooter], l.spec);
-      } else if (l.spec.ability == Ability.coral) {
-        v.flat += Scores.ability;
-      }
-      continue;
+    final supply = l.spec.ammo == AmmoType.support;
+    // 보급탄: 상대 배를 맞히면 효과가 내 배에 난다(ADR-090). 코리 방벽은 물에서도 선다.
+    if (supply && l.hitShip && l.side != shooter) {
+      _repairValue(state.sides[shooter], l, v);
+      v.flat += _supportValue(state.sides[shooter], l.spec);
+    } else if (supply && !l.hitShip && l.spec.ability == Ability.coral) {
+      v.flat += Scores.ability;
     }
     if (!l.hitShip) {
       final swim = state.sides[1 - shooter].swimmerPosition.$1;

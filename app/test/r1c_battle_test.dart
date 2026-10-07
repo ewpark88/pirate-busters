@@ -135,10 +135,10 @@ void main() {
   });
 
   group('조준 (설계서 §2.2, §4.8)', () {
-    test('보통은 0~85°, 지원 해적은 뒤쪽 175° 까지, 어뢰는 아래쪽까지 당길 수 있다', () {
+    test('보통은 0~85°, 보급 해적도 같고, 어뢰는 아래쪽까지 당길 수 있다 (ADR-090)', () {
       final c = testCatalog.pirates;
       expect(aimRangeFor(c.byId('p01_octo')), (0, 85000));
-      expect(aimRangeFor(c.byId('p36_tok')), (0, 175000));
+      expect(aimRangeFor(c.byId('p36_tok')), (0, 85000));
       expect(aimRangeFor(c.byId('p23_bara')), (-85000, 85000));
       // 위로 끌면(손가락 아래로 당기는 반대) 아래쪽으로 쏜다: 어뢰는 360° 에서 뺀 값.
       final torpedo = PullAim(facing: 1, minAngle: -85000)

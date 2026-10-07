@@ -79,9 +79,9 @@ void main() {
       expect(c.punchScale, closeTo(0.88, 1e-9));
     });
 
-    test('지원탄·설치탄은 선체에 닿아도 명중 연출 없이 조용히 내려앉는다', () {
+    test('설치탄은 선체에 닿아도 명중 연출 없이 조용히 내려앉고, 보급탄은 명중 연출을 낸다', () {
       PirateSpec spec(String id) => testCatalog.pirates.byId(id);
-      expect(BattleCues.landsQuietly(spec('p36_tok')), isTrue, reason: '지원');
+      expect(BattleCues.landsQuietly(spec('p36_tok')), isFalse, reason: '보급');
       expect(BattleCues.landsQuietly(spec('p21_puffy')), isTrue, reason: '설치');
       expect(BattleCues.landsQuietly(spec('p01_octo')), isFalse);
       expect(BattleCues.landsQuietly(spec('p31_sharky')), isFalse);
@@ -95,7 +95,7 @@ void main() {
       expect(HitTag.ofAmmo(AmmoType.chain), HitTag.chain);
       expect(HitTag.ofAmmo(AmmoType.mine), HitTag.mine);
       expect(HitTag.ofAmmo(AmmoType.assault), HitTag.bite);
-      expect(HitTag.ofAmmo(AmmoType.support), HitTag.repair);
+      expect(HitTag.ofAmmo(AmmoType.support), isNull, reason: '수리 이름표는 내 배에');
       expect(HitTag.ofAmmo(AmmoType.explosive), isNull);
       expect(HitTag.ofAmmo(AmmoType.split), isNull);
     });

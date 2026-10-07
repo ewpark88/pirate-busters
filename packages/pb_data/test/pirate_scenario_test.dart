@@ -189,11 +189,13 @@ void main() {
       );
     });
 
-    test('톡(지원탄): 내 배에 떨어져 구멍 난 블록을 고친다', () {
+    test('톡(보급탄): 상대 배를 맞히면 내 배의 구멍 난 블록을 고친다 (ADR-090)', () {
       expect(
         _someShot(
           'p36_tok',
-          (s) => _has(s, SimEventKind.repaired, side: 0),
+          (s) =>
+              _has(s, SimEventKind.repaired, side: 0) &&
+              _has(s, SimEventKind.impact, side: 1),
           setup: (s) {
             final grid = s.sides[0].grid;
             for (var x = 0; x < grid.width; x++) {
@@ -202,8 +204,6 @@ void main() {
               grid.damage(x, 1, max - max ~/ 4);
             }
           },
-          fromDeg: 80,
-          toDeg: 89,
         ),
         isTrue,
       );

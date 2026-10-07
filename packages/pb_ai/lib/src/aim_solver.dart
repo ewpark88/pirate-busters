@@ -26,14 +26,11 @@ class ShotPlan {
   final List<ShotLanding> landings;
 }
 
-/// 후보 샷 격자: 각도 12 × 힘 8 = 96개 (BALANCE.md A5.1). 지원탄은 제 배에
-/// 떨어지도록 거의 수직 각도를, 어뢰(바라)는 물속으로 들어가도록 아래 각도를 쓴다.
+/// 후보 샷 격자: 각도 12 × 힘 8 = 96개 (BALANCE.md A5.1). 어뢰(바라)는 물속으로
+/// 들어가도록 아래 각도를 쓴다.
 List<(int angle, int power)> candidateGrid(PirateSpec spec) {
-  final support = spec.ammo == AmmoType.support;
   final torpedo = spec.ability == Ability.torpedo;
-  int angle(int a) => support
-      ? 78000 + a * 1000
-      : (torpedo ? 336000 + a * 2000 : 10000 + a * 6000);
+  int angle(int a) => torpedo ? 336000 + a * 2000 : 10000 + a * 6000;
   return [
     for (var a = 0; a < 12; a++)
       for (var p = 0; p < 8; p++) (angle(a), 3000 + p * 1000),
