@@ -15,7 +15,12 @@ enum BossGimmick {
 
   /// 1-12 해군 초계선: 전진 한계가 턴마다 1칸씩 다가오고(최대 6칸), 보스 쪽 해적
   /// 쿨다운은 턴 끝마다 2씩 준다.
-  patrolClosingIn;
+  patrolClosingIn,
+
+  /// 튜토리얼 3(침수·수리, 설계서 §15.2): 이 진영 배가 맨 아래 줄 가운데 블록
+  /// [GimmickNumbers.startHoles] 칸이 ‘구멍’ 단계인 채로 시작한다(보스 기믹이 아니라
+  /// 시작 상태라 배너를 띄우지 않는다, ADR-092).
+  woundedStart;
 
   /// 스테이지 데이터 id (`bow_iron_shield` 등).
   static BossGimmick byId(String? id) => switch (id) {
@@ -31,6 +36,10 @@ abstract final class GimmickNumbers {
   static const int patrolStep = cellUnit;
   static const int patrolMax = 6 * cellUnit;
   static const int patrolCooldownStep = 2;
+
+  /// 튜토리얼 3 시작 구멍 칸 수와 남는 내구도(%) (BALANCE.md A5.4).
+  static const int startHoles = 2;
+  static const int startHolePercent = 25;
 
   /// 두 배 뱃머리 사이 최소 간격. 다가오는 한계가 상대 배를 넘지 않게 한다.
   static const int minBowGap = 2 * cellUnit;
@@ -53,6 +62,24 @@ List<int> bowShieldCells(ShipGrid grid) {
     if (cells.isNotEmpty) return cells;
   }
   return const [];
+}
+
+/// 튜토리얼 3 시작 구멍: 맨 아래 줄(흘수선 아래)에서 가운데에 가까운 블록부터
+/// [GimmickNumbers.startHoles] 칸을 최대 내구도의 25% 만 남겨 ‘구멍’ 단계로 만든다.
+void woundAtStart(ShipGrid grid) {
+  final mid = grid.width - 1;
+  final xs =
+      [
+        for (var x = 0; x < grid.width; x++)
+          if (grid.hasBlock(x, 0) && !grid.materialAt(x, 0)!.rig) x,
+      ]..sort((a, b) {
+        final d = (2 * a - mid).abs() - (2 * b - mid).abs();
+        return d != 0 ? d : a - b;
+      });
+  for (final x in xs.take(GimmickNumbers.startHoles)) {
+    final max = grid.maxHpAt(grid.indexOf(x, 0));
+    grid.damage(x, 0, max - max * GimmickNumbers.startHolePercent ~/ 100);
+  }
 }
 
 /// [target] 이 [spec] 탄에 받는 블록 피해 배율(%). 방패가 하나라도 남아 있으면 직사는 50%.

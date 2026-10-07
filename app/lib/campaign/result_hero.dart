@@ -62,18 +62,31 @@ class ResultHero extends ConsumerWidget {
               right: 0,
               bottom: 0,
               height: box.maxHeight * 0.22,
-              child: const DecoratedBox(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    // 위 끝은 투명하게 풀어 각진 물 사각형으로 보이지 않게 한다.
-                    colors: [
-                      Color(0x002A8FA8),
-                      Color(0xCC2A8FA8),
-                      Color(0xF0145A70),
-                    ],
-                    stops: [0, 0.3, 1],
+              // 양옆도 풀어 둔다: 각진 물 사각형으로 보이지 않게 (A39 점검).
+              child: ShaderMask(
+                blendMode: BlendMode.dstIn,
+                shaderCallback: (rect) => const LinearGradient(
+                  colors: [
+                    Color(0x00FFFFFF),
+                    Color(0xFFFFFFFF),
+                    Color(0xFFFFFFFF),
+                    Color(0x00FFFFFF),
+                  ],
+                  stops: [0, 0.2, 0.8, 1],
+                ).createShader(rect),
+                child: const DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      // 위 끝은 투명하게 풀어 각진 물 사각형으로 보이지 않게 한다.
+                      colors: [
+                        Color(0x002A8FA8),
+                        Color(0xCC2A8FA8),
+                        Color(0xF0145A70),
+                      ],
+                      stops: [0, 0.3, 1],
+                    ),
                   ),
                 ),
               ),

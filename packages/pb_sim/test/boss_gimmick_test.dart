@@ -115,6 +115,38 @@ void main() {
     });
   });
 
+  group('튜토리얼 3 구멍 난 채 시작 (설계서 §15.2, ADR-092)', () {
+    SideState side(int gimmickSide) => SideState(
+      side: 0,
+      blueprint: sampleBlueprint(),
+      lineup: [testPirate('a'), testPirate('b')],
+      rules: MatchRules(
+        gimmick: BossGimmick.woundedStart.index,
+        gimmickSide: gimmickSide,
+        waveLevel: 0,
+      ),
+    );
+
+    test('걸린 진영 배는 맨 아래 줄 가운데 2칸이 ‘구멍’ 단계로 시작한다', () {
+      final g = side(0).grid;
+      final holed = [
+        for (var x = 0; x < g.width; x++)
+          if (g.hasBlock(x, 0) && g.stageAt(x, 0) == DamageStage.holed) x,
+      ];
+      expect(holed, hasLength(GimmickNumbers.startHoles));
+      for (final x in holed) {
+        // 가운데(2배 좌표 width − 1)에서 1.5칸 안.
+        expect((2 * x - (g.width - 1)).abs(), lessThanOrEqualTo(3));
+      }
+      expect(g.totalHp, lessThan(g.initialTotalHp));
+    });
+
+    test('다른 진영에는 걸리지 않는다', () {
+      final g = side(1).grid;
+      expect(g.totalHp, g.initialTotalHp);
+    });
+  });
+
   test('보스 기믹 판은 고정 해시로 끝나고, 기믹이 판을 바꾸며, 재생해도 같다', () {
     // 왼쪽은 직사 해적이 매 턴 보스 뱃머리를 쏘고, 보스는 매 턴 끝까지 전진하며 쏜다.
     final pirates = PirateCatalog([

@@ -29,24 +29,25 @@ void judgeInstant(MatchState state) {
 /// 보조 판정의 침수량 차 기준: 1%p (0.1%p 단위).
 const int floodTieMargin = 10;
 
-/// 시간 판정 (설계서 §2.4): 침수량이 적은 쪽이 이긴다. 차이가 1%p 이내면 선체
-/// 내구도 비율이 높은 쪽, 그마저 같으면 무승부.
-void judgeTime(MatchState state) {
+/// 지금 판이 끝나면 시간 판정으로 누가 이기는가 (설계서 §2.4). `winner` 는 0·1, 무승부는
+/// −1. `byHull` 은 침수량 차이가 1%p 이내라 선체 내구도 비율로 갈렸는지다. 상태는
+/// 바꾸지 않는다(HUD 안내도 이 값을 쓴다, ADR-092).
+({int winner, bool byHull}) timeLeader(MatchState state) {
   final a = state.sides[0];
   final b = state.sides[1];
   final diff = a.flood - b.flood;
-  int winner;
-  if (diff > floodTieMargin) {
-    winner = 1;
-  } else if (diff < -floodTieMargin) {
-    winner = 0;
-  } else {
-    // 비율 비교: a.hp / a.init vs b.hp / b.init → 교차 곱.
-    final ra = a.grid.totalHp * b.grid.initialTotalHp;
-    final rb = b.grid.totalHp * a.grid.initialTotalHp;
-    winner = ra == rb ? -1 : (ra > rb ? 0 : 1);
-  }
+  if (diff > floodTieMargin) return (winner: 1, byHull: false);
+  if (diff < -floodTieMargin) return (winner: 0, byHull: false);
+  // 비율 비교: a.hp / a.init vs b.hp / b.init → 교차 곱.
+  final ra = a.grid.totalHp * b.grid.initialTotalHp;
+  final rb = b.grid.totalHp * a.grid.initialTotalHp;
+  return (winner: ra == rb ? -1 : (ra > rb ? 0 : 1), byHull: true);
+}
+
+/// 시간 판정 (설계서 §2.4): 침수량이 적은 쪽이 이긴다. 차이가 1%p 이내면 선체
+/// 내구도 비율이 높은 쪽, 그마저 같으면 무승부.
+void judgeTime(MatchState state) {
   state
     ..outcome = MatchOutcome.timeDecision
-    ..winner = winner;
+    ..winner = timeLeader(state).winner;
 }

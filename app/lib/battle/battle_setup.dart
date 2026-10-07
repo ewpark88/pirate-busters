@@ -108,11 +108,16 @@ class BattleSetup {
     final mine = blueprint ?? defaultBlueprint;
     final limit = costLimit ?? BattleSetup.costLimit;
     final ok = deckProblem(mine.hull, catalog.pirates, chosen, limit) == null;
-    // 보스 기믹은 상대(진영 1)에 건다 (설계서 §5.4, BALANCE.md A5.4).
+    // 보스 기믹은 상대(진영 1)에 건다 (설계서 §5.4, BALANCE.md A5.4). 튜토리얼 3 은
+    // 수리를 보여 주려고 내 배(진영 0)가 구멍 난 채 시작한다 (§15.2, ADR-092).
+    final wounded = stage.tutorialStep == 3;
     final base = MatchRules(
       waveLevel: stage.waveLevel,
       maxWind: stage.maxWind,
-      gimmick: BossGimmick.byId(stage.gimmick).index,
+      gimmick: wounded
+          ? BossGimmick.woundedStart.index
+          : BossGimmick.byId(stage.gimmick).index,
+      gimmickSide: wounded ? 0 : 1,
     );
     // 적 배: 스테이지의 확장 단계·돛대 레벨 (설계서 §3.1·§3.3, BALANCE.md A3.1·A3.2).
     final enemy = enemyBlueprintOf(stage);

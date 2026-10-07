@@ -6,6 +6,7 @@
   "@timeVerdict": {"placeholders": {"count": {"type": "int"}}},
   "timeVerdictFlood": "You {mine}% : Foe {theirs}%",
   "@timeVerdictFlood": {"placeholders": {"mine": {"type": "String"}, "theirs": {"type": "String"}}},
+  "timeVerdictByHull": "Flooding close: hull decides",
   "@turnsLeft": {
     "placeholders": {
       "count": {
@@ -63,6 +64,7 @@
       }
     }
   },
+  "firedDone": "Fired",
   "cabinFlooded": "Flooded",
   "pirateDown": "Down",
   "pirateSwimming": "Swimming",
@@ -625,7 +627,7 @@
   "resultDoubleDone": "Reward doubled",
   "replaySave": "Save replay",
   "replaySaved": "Replay saved",
-  "statDamage": "Damage dealt {damage} · blocks broken {blocks}",
+  "statDamage": "Damage to pirates {damage} · blocks broken {blocks}",
   "@statDamage": {
     "placeholders": {
       "damage": {},
@@ -662,6 +664,7 @@
   "hitTagMine": "MINE",
   "hitTagBite": "BITE",
   "hitTagRepair": "REPAIR",
+  "hitTagNoRepair": "NOTHING TO FIX",
   "hitTagSeal": "SEALED",
   "hitTagPull": "PULLED",
   "hitTagWind": "WIND FLIP",

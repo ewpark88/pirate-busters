@@ -122,6 +122,12 @@ abstract class AppLocalizations {
   /// **'You {mine}% : Foe {theirs}%'**
   String timeVerdictFlood(String mine, String theirs);
 
+  /// No description provided for @timeVerdictByHull.
+  ///
+  /// In en, this message translates to:
+  /// **'Flooding close: hull decides'**
+  String get timeVerdictByHull;
+
   /// No description provided for @yourTurn.
   ///
   /// In en, this message translates to:
@@ -193,6 +199,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count, plural, =1{Rest 1 turn} other{Rest {count} turns}}'**
   String cooldown(int count);
+
+  /// No description provided for @firedDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Fired'**
+  String get firedDone;
 
   /// No description provided for @cabinFlooded.
   ///
@@ -2225,7 +2237,7 @@ abstract class AppLocalizations {
   /// No description provided for @statDamage.
   ///
   /// In en, this message translates to:
-  /// **'Damage dealt {damage} · blocks broken {blocks}'**
+  /// **'Damage to pirates {damage} · blocks broken {blocks}'**
   String statDamage(Object damage, Object blocks);
 
   /// No description provided for @statAccuracy.
@@ -2407,6 +2419,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'REPAIR'**
   String get hitTagRepair;
+
+  /// No description provided for @hitTagNoRepair.
+  ///
+  /// In en, this message translates to:
+  /// **'NOTHING TO FIX'**
+  String get hitTagNoRepair;
 
   /// No description provided for @hitTagSeal.
   ///
