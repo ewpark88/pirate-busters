@@ -2624,6 +2624,18 @@ abstract class AppLocalizations {
   /// **'OK'**
   String get ok;
 
+  /// No description provided for @hullPercent.
+  ///
+  /// In en, this message translates to:
+  /// **'Hull {percent}%'**
+  String hullPercent(int percent);
+
+  /// No description provided for @fuelPercent.
+  ///
+  /// In en, this message translates to:
+  /// **'{percent}%'**
+  String fuelPercent(int percent);
+
   /// No description provided for @bossBanner.
   ///
   /// In en, this message translates to:

@@ -18,12 +18,15 @@ class ShotPath {
     required int ms,
   }) {
     final p = launchShot(state, slot: slot, angle: angle, power: power, ms: ms);
-    armUnique(p);
+    // 실제 발사와 같은 탄종 준비(유도탄은 중력 없이 휘어 난다, A33).
+    armShot(p, reachOf(state));
+    final homing = p.spec.ammo == AmmoType.homing;
     final wind = state.wind * state.rules.windAccel;
     final xs = <int>[p.x];
     final ys = <int>[p.y];
     final floor = p.submerged ? -torpedoDepthLimit : 0;
-    while (!p.isExpired && p.y >= floor) {
+    for (var tick = 1; !p.isExpired && p.y >= floor; tick++) {
+      if (homing) steerHoming(state, p, msAfterTicks(ms, tick));
       p.advance(wind);
       xs.add(p.x);
       ys.add(p.y);

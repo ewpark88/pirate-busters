@@ -1,33 +1,64 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:pb_sim/pb_sim.dart';
 import 'package:pirate_busters/battle/battle_session.dart';
 import 'package:pirate_busters/battle/session_views.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
+import 'package:pirate_busters/ui/hud/hit_clear.dart';
 import 'package:pirate_busters/ui/hud/hud_style.dart';
+import 'package:pirate_busters/ui/hud/side_status.dart';
 import 'package:pirate_busters/ui/meta_icons.dart';
 
 /// 위 가운데: 남은 턴, 누구 턴, 턴 타이머, 바람 / 위 양쪽: 선체·침수·선원 (설계서 §13.4).
 class TopBar extends StatelessWidget {
-  const TopBar({required this.session, super.key});
+  const TopBar({
+    required this.session,
+    this.calm = false,
+    this.opacity = 1,
+    super.key,
+  });
 
   final BattleSession session;
+
+  /// 연출 중 진하기 (§13.4). 선체 패널은 피해 순간 잠깐 1 로 돌아온다.
+  final double opacity;
+
+  /// 화면 흔들림 줄이기 (설계서 §13.8).
+  final bool calm;
+
+  Widget _side(int side) {
+    final hull = session.visibleHull(side);
+    return HitClear(
+      value: hull,
+      opacity: opacity,
+      child: ShipStatusPanel(
+        side: session.state.sides[side],
+        hull: hull,
+        sunkPercent: session.state.rules.sunkHullPercent,
+        calm: calm,
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) => Row(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      SideStatus(side: session.state.sides[0]),
+      _side(0),
       Expanded(
         child: Center(
           // 영어가 길어도 줄어들 뿐 넘치지 않는다 (설계서 §14.4).
-          child: FittedBox(
-            fit: BoxFit.scaleDown,
-            child: _TurnInfo(session: session),
+          child: AnimatedOpacity(
+            key: const ValueKey('hud-top'),
+            opacity: opacity,
+            duration: const Duration(milliseconds: 220),
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: _TurnInfo(session: session),
+            ),
           ),
         ),
       ),
-      SideStatus(side: session.state.sides[1]),
+      _side(1),
     ],
   );
 }
@@ -116,76 +147,6 @@ class _Wind extends StatelessWidget {
         const SizedBox(width: 4),
         Text(note!, style: const TextStyle(color: HudColors.warn)),
       ],
-    ],
-  );
-}
-
-/// 한 배의 선체 내구도·침수량·생존 선원 (설계서 §13.4).
-class SideStatus extends StatelessWidget {
-  const SideStatus({required this.side, super.key});
-
-  final SideState side;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
-    final grid = side.grid;
-    final hull = grid.initialTotalHp == 0
-        ? 0.0
-        : grid.totalHp / grid.initialTotalHp;
-    final flood = NumberFormat(
-      '0.0',
-      Localizations.localeOf(context).toLanguageTag(),
-    ).format(side.flood / 10);
-    final alive = side.crew.pirates
-        .where((p) => p.status != PirateStatus.down)
-        .length;
-    return SizedBox(
-      width: 160,
-      child: HudPanel(
-        borderColor: HudColors.team(side.side),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                MetaIcons.image(MetaIcons.hull, size: 16),
-                const SizedBox(width: 2),
-                Text(l10n.hull),
-                const SizedBox(width: 6),
-                Expanded(
-                  child: LinearProgressIndicator(
-                    value: hull,
-                    minHeight: 8,
-                    color: HudColors.team(side.side),
-                    backgroundColor: HudColors.panelHi,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 4),
-            _IconText(MetaIcons.flood, l10n.flood(flood)),
-            _IconText(MetaIcons.crew, l10n.crewAlive(alive, side.crew.size)),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-/// 아이콘과 글자 한 줄 (설계서 §13.4).
-class _IconText extends StatelessWidget {
-  const _IconText(this.icon, this.text);
-
-  final String icon;
-  final String text;
-
-  @override
-  Widget build(BuildContext context) => Row(
-    children: [
-      MetaIcons.image(icon, size: 16),
-      const SizedBox(width: 2),
-      Flexible(child: Text(text, overflow: TextOverflow.ellipsis)),
     ],
   );
 }

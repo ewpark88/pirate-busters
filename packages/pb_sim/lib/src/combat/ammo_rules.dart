@@ -64,7 +64,7 @@ List<Projectile> launchVolley(
       id: state.nextProjectileId++,
       spec: shotSpec,
     )..startTick = i * burstIntervalTicks;
-    _arm(p, reach);
+    armShot(p, reach);
     shots.add(p);
   }
   return shots;
@@ -98,8 +98,8 @@ PirateSpec _twin(PirateSpec spec, int percent) => spec.withDamage(
 int _fanOffset(int spread, int i, int count) =>
     count <= 1 ? 0 : -spread ~/ 2 + spread * i ~/ (count - 1);
 
-/// 탄종별 비행 상태를 준비한다.
-void _arm(Projectile p, Reach reach) {
+/// 탄종별 비행 상태를 준비한다. 궤적 미리보기도 같은 준비를 거친다 (A33).
+void armShot(Projectile p, Reach reach) {
   final spec = p.spec;
   switch (spec.ammo) {
     case AmmoType.pierce:

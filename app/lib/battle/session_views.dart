@@ -23,6 +23,16 @@ extension BattleSessionViews on BattleSession {
     realMs(state, effectiveMs(state, turnMs)),
   );
 
+  /// 화면에 보이는 [side] 배의 선체 내구도 비율(0~1, 설계서 §13.4). 탄 연출 중에는
+  /// 탄이 닿은 만큼만 줄어 있다 (A33).
+  double visibleHull(int side) {
+    final grid = state.sides[side].grid;
+    if (grid.initialTotalHp == 0) return 0;
+    final shot = playback;
+    final hp = shot is ShotPlayback ? shot.live[side].totalHp : grid.totalHp;
+    return hp / grid.initialTotalHp;
+  }
+
   /// 지금 [dx](1/10칸)를 누르면 실제로 갈 거리(1/1000칸). 시뮬레이션의 [moveReach].
   int reach(int dx) {
     final at = effectiveMs(state, turnMs);

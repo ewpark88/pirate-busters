@@ -76,6 +76,28 @@ class DamageLayer {
     return true;
   }
 
+  /// 상하좌우가 모두 빈 칸([none])인 부서진 칸은 공중에 뜬 판이 되므로 [none] 으로
+  /// 바꾼 사본 (A33, 플레이 점검). 배 안쪽 구멍 무리는 그대로 배 속을 보인다.
+  static List<int> floating(int width, List<int> codes) {
+    final height = codes.length ~/ width;
+    int at(int x, int y) => x < 0 || x >= width || y < 0 || y >= height
+        ? none
+        : codes[y * width + x];
+    return [
+      for (var i = 0; i < codes.length; i++)
+        if (codes[i] == broken &&
+            [
+              (1, 0),
+              (-1, 0),
+              (0, 1),
+              (0, -1),
+            ].every((d) => at(i % width + d.$1, i ~/ width + d.$2) == none))
+          none
+        else
+          codes[i],
+    ];
+  }
+
   /// 단위 공간(칸 = [DamageStyle.unit], 줄 r 은 위에서 아래로)에 그린다.
   static void draw(
     Canvas canvas,
@@ -85,9 +107,10 @@ class DamageLayer {
     int wetRows,
   ) {
     final height = codes.length ~/ width;
+    final shown = floating(width, codes);
     int at(int c, int r) => c < 0 || c >= width || r < 0 || r >= height
         ? none
-        : codes[(height - 1 - r) * width + c];
+        : shown[(height - 1 - r) * width + c];
     BlockMaterial mat(int c, int r) =>
         BlockMaterial.values[materials[(height - 1 - r) * width + c]];
     bool wet(int r) => height - 1 - r < wetRows;

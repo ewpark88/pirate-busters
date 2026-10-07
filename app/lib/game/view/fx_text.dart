@@ -95,14 +95,37 @@ extension FxText on FxLayer {
             ),
         ],
         text: label,
-        position: at.clone(),
+        position: freeSpot(at),
         scale: Vector2.all(style.wobbles ? 2.1 : 1.7),
         anchor: Anchor.center,
-        priority: 10,
+        priority: numberPriority,
         textRenderer: paint(style.fontSize, style.color, style.outline),
       ),
     );
   }
+
+  /// 숫자끼리 겹치지 않는 자리: [at] 근처에 떠 있는 숫자가 있으면 그 위로 올린다
+  /// (연사·같은 해적 여러 번 피격, A33).
+  Vector2 freeSpot(Vector2 at) {
+    final spot = at.clone();
+    final shown = [
+      for (final c in children)
+        if (c is TextComponent && c.priority == numberPriority) c.position,
+      for (final (p, _) in pendingNumbers) p,
+    ];
+    for (var tries = 0; tries < 6; tries++) {
+      final hit = shown.any(
+        (p) => (p.x - spot.x).abs() < 34 && (p.y - spot.y).abs() < 20,
+      );
+      if (!hit) break;
+      spot.y -= 22;
+    }
+    pendingNumbers.add((spot.clone(), clock));
+    return spot;
+  }
+
+  /// 피해 숫자의 그리기 순서. [freeSpot] 이 다른 숫자를 찾는 데도 쓴다.
+  static const int numberPriority = 10;
 
   /// 이름표만 띄운다(피해 숫자가 없는 특별한 결과: 설치·수리).
   void tag(Vector2 at, String label) => damageNumber(at, label);

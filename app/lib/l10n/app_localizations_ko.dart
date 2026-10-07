@@ -1411,6 +1411,16 @@ class AppLocalizationsKo extends AppLocalizations {
   String get ok => '확인';
 
   @override
+  String hullPercent(int percent) {
+    return '선체 $percent%';
+  }
+
+  @override
+  String fuelPercent(int percent) {
+    return '$percent%';
+  }
+
+  @override
   String get bossBanner => '보스 등장!';
 
   @override

@@ -6,6 +6,7 @@ import 'package:pirate_busters/battle/battle_session.dart';
 import 'package:pirate_busters/battle/playback.dart';
 import 'package:pirate_busters/battle/session_views.dart';
 import 'package:pirate_busters/game/anim/rarity_fx.dart';
+import 'package:pirate_busters/game/camera_director.dart';
 import 'package:pirate_busters/game/coords.dart';
 import 'package:pirate_busters/game/sprites.dart';
 import 'package:pirate_busters/game/view/aim_labels.dart';
@@ -209,63 +210,72 @@ class ShotView extends Component {
 
   void _renderAim(Canvas canvas) {
     final aim = session.aim;
-    if (aim == null || !session.isHumanTurn) return;
-    // 놓아도 쏘지 않을 만큼 약하면 궤적을 숨긴다(취소 표시는 HUD).
-    if (aim.shot.power < PullAim.minPower) return;
     // 상대 턴 재생에는 궤적을 그리지 않는다 (설계서 §13.4).
+    if (aim == null || !session.isHumanTurn) return;
+    final side = session.state.activeSide;
+    final spec = session.state.sides[side].crew.pirates[aim.slot].spec;
+    final color = rarity.of(spec.rarity).aim;
+    final k = AimPainter.screenScale(_zoom, _refZoom);
     final path = session
         .previewShot(aim.slot, aim.shot.angle, aim.shot.power)
         .head(
           trailPercentFor(
-            session.state.sides[session.state.activeSide],
+            session.state.sides[side],
             aim.slot,
             base: previewPercent,
           ),
         );
-    GuideMarks.rangeEnd(canvas, session, aim.slot, path.xs.first);
-    // 점선은 멀어질수록 흐려지고 색은 등급을 따른다 (설계서 §10.4, §10.5).
-    final side = session.state.activeSide;
-    final spec = session.state.sides[side].crew.pirates[aim.slot].spec;
-    final color = rarity.of(spec.rarity).aim;
-    final path2 = [
-      for (var i = 0; i <= path.lastTick; i++)
-        Coords.point(path.xs[i], path.ys[i]).toOffset(),
-    ];
-    // 점은 호 길이로 고르게, 힘 링 바깥부터 찍고 발사 방향으로 흐른다. 저사양은 멈춘다.
-    const step = AimPainter.dotStep;
-    final phase = fewer ? 0.0 : (_flow * AimPainter.flowSpeed) % step;
-    final dots = AimPainter.resample(
-      path2,
-      step,
-      skip: AimPainter.dotSkip,
-      phase: phase,
-    );
-    AimPainter.trajectory(
-      canvas,
-      dots,
-      color,
-      fadeIn: fewer ? 1 : phase / step,
-    );
-    final from = path2.first;
-    final facing = facingOf(side);
-    // 호·새총·각도 숫자는 실제 발사 방향(조준 각도 + 배 기울기)을 따라 점선과
-    // 한 줄로 맞는다 (설계서 §2.5).
+    final from = Coords.point(path.xs.first, path.ys.first).toOffset();
+    // 호·새총·숫자는 실제 발사 방향(조준 + 배 기울기)을 따른다 (설계서 §2.5).
     final launch = aim.shot.angle + session.launchTilt;
+    // 약하면 새총만 옅게(누르자마자 반응, A33). 취소 표시는 HUD 가 한다.
+    final weak = aim.shot.power < PullAim.minPower;
+    if (!weak) {
+      GuideMarks.rangeEnd(canvas, session, aim.slot, path.xs.first);
+      AimPainter.flowing(
+        canvas,
+        [
+          for (var i = 0; i <= path.lastTick; i++)
+            Coords.point(path.xs[i], path.ys[i]).toOffset(),
+        ],
+        color,
+        scale: k,
+        flowSec: fewer ? null : _flow,
+      );
+    }
+    canvas
+      ..save()
+      ..translate(from.dx, from.dy)
+      ..scale(k)
+      ..translate(-from.dx, -from.dy);
+    if (weak) canvas.saveLayer(null, Paint()..color = const Color(0x73FFFFFF));
     AimPainter.sling(
       canvas,
       from,
-      facing: facing,
+      facing: facingOf(side),
       angleMdeg: launch,
       stretch: aim.stretch,
       power: aim.shot.power / maxFirePower,
       color: color,
     );
-    AimLabels.draw(
-      canvas,
-      from,
-      angle: angleText(shownDegrees(launch)),
-      power: powerText((aim.shot.power * 100 / maxFirePower).round()),
-    );
+    if (weak) {
+      canvas.restore();
+    } else {
+      AimLabels.draw(
+        canvas,
+        from,
+        facing: facingOf(side),
+        angle: angleText(shownDegrees(launch)),
+        power: powerText((aim.shot.power * 100 / maxFirePower).round()),
+      );
+    }
+    canvas.restore();
+  }
+
+  /// 조준 표시가 설계된 줌: 고른 해적에 다가간 화면(폭 [CameraDirector.focusWidth]).
+  double get _refZoom {
+    final game = findGame();
+    return game == null ? 1 : game.size.x / CameraDirector.focusWidth;
   }
 
   /// 궤적 점선으로 보여 주는 앞부분 비율(%) (설계서 §2.2).

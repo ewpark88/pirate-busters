@@ -1,4 +1,5 @@
 import 'package:pb_sim/src/combat/barrier_effects.dart';
+import 'package:pb_sim/src/combat/block_damage.dart';
 import 'package:pb_sim/src/combat/hit_effects.dart';
 import 'package:pb_sim/src/combat/launch.dart';
 import 'package:pb_sim/src/combat/unique_effects.dart';
@@ -137,14 +138,8 @@ bool passNet(
   if (p.spec.ability == Ability.shred) {
     // 라이언은 망사(돛)를 늦춰지지 않고 찢어 없앤다(ADR-078).
     p.passedNet = grid.indexOf(cx, cy);
-    if (events != null && grid.damage(cx, cy, grid.hpAt(cx, cy))) {
-      events.add(
-        SimEvent(
-          SimEventKind.blockDestroyed,
-          side: target.side,
-          cell: grid.indexOf(cx, cy),
-        ),
-      );
+    if (events != null &&
+        damageBlock(grid, target.side, cx, cy, grid.hpAt(cx, cy), events)) {
       for (final i in collapseUnsupported(grid)) {
         events.add(
           SimEvent(SimEventKind.blockCollapsed, side: target.side, cell: i),
@@ -157,14 +152,8 @@ bool passNet(
     ..passedNet = grid.indexOf(cx, cy)
     ..vx = p.vx * netSlowPercent ~/ 100
     ..vy = p.vy * netSlowPercent ~/ 100;
-  if (events != null && grid.damage(cx, cy, p.spec.blockDamage)) {
-    events.add(
-      SimEvent(
-        SimEventKind.blockDestroyed,
-        side: target.side,
-        cell: grid.indexOf(cx, cy),
-      ),
-    );
+  if (events != null &&
+      damageBlock(grid, target.side, cx, cy, p.spec.blockDamage, events)) {
     for (final i in collapseUnsupported(grid)) {
       events.add(
         SimEvent(SimEventKind.blockCollapsed, side: target.side, cell: i),

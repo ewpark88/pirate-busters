@@ -134,6 +134,17 @@ void main() {
       );
     });
 
+    test('둘레에 남은 블록이 없는 부서진 칸은 공중에 배 속 판을 그리지 않는다 (A33)', () async {
+      // 세로 1칸 × 3줄: 가운데만 부서졌고 위·아래는 설계도에 없다.
+      const codes = [DamageLayer.none, DamageLayer.broken, DamageLayer.none];
+      final mats = List.filled(3, BlockMaterial.oak.index);
+      final recorder = ui.PictureRecorder();
+      DamageLayer.draw(Canvas(recorder), 1, codes, mats, 0);
+      final image = await recorder.endRecording().toImage(32, 96);
+      final px = (await image.toByteData())!;
+      expect(px.getUint8((48 * 32 + 16) * 4 + 3), 0);
+    });
+
     test('위 칸이 부서진 블록은 윗변이 찢기고 아래 칸이 부서진 블록은 그렇지 않다', () async {
       // 세로 1칸 × 3줄: 가운데(y=1)가 부서짐. 위 블록(y=2)은 아랫변, 아래 블록(y=0)은 윗변이 찢긴다.
       const codes = [0, DamageLayer.broken, 0];

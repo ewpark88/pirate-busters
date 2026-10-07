@@ -109,5 +109,20 @@ void main() {
         ..start();
       expect(aim.isCancelling, isFalse);
     });
+
+    test('짧게 당긴 동안은 손가락이 조금 흔들려도 각도가 천천히 따라간다 (A33)', () {
+      final aim = PullAim(facing: 1)
+        ..start()
+        ..drag(-14, 14);
+      expect(aim.shot.angle, 45000);
+      // 짧은 당김에서 2px 떨림이 각도를 크게 바꾸던 것을 줄인다.
+      aim.drag(-14, 10);
+      const raw = 35538; // atan2(10, 14)
+      expect(aim.shot.angle, greaterThan(raw));
+      expect(aim.shot.angle, lessThan(45000));
+      // 충분히 당기면 바로 따라간다.
+      aim.drag(-80, 40);
+      expect(aim.shot.angle, closeTo(26565, 1));
+    });
   });
 }

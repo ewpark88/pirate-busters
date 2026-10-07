@@ -114,7 +114,12 @@ void _repairAround(
     final amount = grid.materialAt(x, y)!.durability * percent ~/ 100;
     if (grid.repair(x, y, amount)) {
       state.events.add(
-        SimEvent(SimEventKind.repaired, side: ship.side, cell: i),
+        SimEvent(
+          SimEventKind.repaired,
+          side: ship.side,
+          cell: i,
+          y: grid.hpAt(x, y),
+        ),
       );
     }
   }

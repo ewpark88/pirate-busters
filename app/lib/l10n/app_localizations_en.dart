@@ -1494,6 +1494,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ok => 'OK';
 
   @override
+  String hullPercent(int percent) {
+    return 'Hull $percent%';
+  }
+
+  @override
+  String fuelPercent(int percent) {
+    return '$percent%';
+  }
+
+  @override
   String get bossBanner => 'Boss!';
 
   @override

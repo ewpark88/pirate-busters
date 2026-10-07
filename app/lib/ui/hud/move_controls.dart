@@ -7,6 +7,7 @@ import 'package:pirate_busters/battle/battle_session.dart';
 import 'package:pirate_busters/battle/playback.dart';
 import 'package:pirate_busters/battle/session_views.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
+import 'package:pirate_busters/ui/hud/hud_gauge.dart';
 import 'package:pirate_busters/ui/hud/hud_style.dart';
 import 'package:pirate_busters/ui/meta_icons.dart';
 
@@ -95,7 +96,17 @@ class _MoveControlsState extends State<MoveControls>
     // 상한은 연료통 모듈까지 더한 pb_sim 의 탱크다 (설계서 §2.7, 절대 규칙 3).
     final tank = _me.tank;
     final empty = _me.fuel <= 0;
+    final team = HudColors.team(widget.side);
+    final ratio = tank == 0 ? 0.0 : (_me.fuel / tank).clamp(0.0, 1.0);
+    // 누르고 있으면 갈 수 있는 끝까지 갔을 때 남을 연료를 미리 보인다 (A33).
+    final preview = _dir == 0 || tank == 0
+        ? null
+        : ((_me.fuel - fuelFor(_me, _s.reach(_dir * 1000))) / tank).clamp(
+            0.0,
+            1.0,
+          );
     return HudPanel(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -103,7 +114,9 @@ class _MoveControlsState extends State<MoveControls>
           _HoldButton(
             label: _facing > 0 ? l10n.retreat : l10n.advance,
             icon: MetaIcons.moveBack,
+            color: team,
             enabled: _enabled,
+            held: _dir == -_facing,
             onDown: () => _press(-_facing),
             onUp: _release,
           ),
@@ -119,16 +132,22 @@ class _MoveControlsState extends State<MoveControls>
                   color: _me.moveLocked ? HudColors.danger : null,
                 ),
               ),
-              const SizedBox(height: 2),
+              const SizedBox(height: 3),
               SizedBox(
-                width: 70,
+                width: 96,
                 child: _Blink(
                   on: empty,
-                  child: LinearProgressIndicator(
-                    value: tank == 0 ? 0 : (_me.fuel / tank).clamp(0.0, 1.0),
-                    minHeight: 8,
-                    color: HudColors.warn,
-                    backgroundColor: HudColors.panelHi,
+                  child: Opacity(
+                    opacity: _me.moveLocked ? .45 : 1,
+                    child: HudGauge(
+                      key: ValueKey('fuel-${widget.side}'),
+                      value: ratio,
+                      color: HudColors.warn,
+                      preview: preview,
+                      warnAt: lowFuel,
+                      jolts: false,
+                      label: l10n.fuelPercent((ratio * 100).round()),
+                    ),
                   ),
                 ),
               ),
@@ -138,7 +157,9 @@ class _MoveControlsState extends State<MoveControls>
           _HoldButton(
             label: _facing > 0 ? l10n.advance : l10n.retreat,
             icon: MetaIcons.moveForward,
+            color: team,
             enabled: _enabled,
+            held: _dir == _facing,
             onDown: () => _press(_facing),
             onUp: _release,
           ),
@@ -146,13 +167,20 @@ class _MoveControlsState extends State<MoveControls>
       ),
     );
   }
+
+  /// 이 비율 이하면 연료 게이지가 경고색이 된다 (A33).
+  static const double lowFuel = .2;
 }
 
+/// 누르고 있는 동안 움직이는 둥근 버튼 (A33): 진영색 테, 누르면 작아지며 안쪽이
+/// 밝게 빛난다. 잠기면 흐려진다.
 class _HoldButton extends StatelessWidget {
   const _HoldButton({
     required this.label,
     required this.icon,
+    required this.color,
     required this.enabled,
+    required this.held,
     required this.onDown,
     required this.onUp,
   });
@@ -161,9 +189,15 @@ class _HoldButton extends StatelessWidget {
 
   /// 화면 방향 화살표 그림 (`MetaIcons.moveBack` ← · `moveForward` →).
   final String icon;
+  final Color color;
   final bool enabled;
+
+  /// 지금 누르고 있다.
+  final bool held;
   final VoidCallback onDown;
   final VoidCallback onUp;
+
+  static const double size = 50;
 
   @override
   Widget build(BuildContext context) => Listener(
@@ -175,8 +209,41 @@ class _HoldButton extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          MetaIcons.image(icon, size: 30),
-          Text(label, style: const TextStyle(fontSize: 12)),
+          AnimatedScale(
+            scale: held ? .9 : 1,
+            duration: const Duration(milliseconds: 80),
+            child: Container(
+              width: size,
+              height: size,
+              padding: const EdgeInsets.all(9),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: RadialGradient(
+                  center: const Alignment(0, -.35),
+                  colors: held
+                      ? [Color.lerp(color, Colors.white, .45)!, color]
+                      : [HudColors.panelHi, const Color(0xFF101217)],
+                ),
+                border: Border.all(color: color, width: 2.5),
+                boxShadow: [
+                  if (held)
+                    BoxShadow(
+                      color: color.withValues(alpha: .7),
+                      blurRadius: 10,
+                    )
+                  else
+                    const BoxShadow(
+                      color: Color(0x99000000),
+                      offset: Offset(0, 2),
+                      blurRadius: 2,
+                    ),
+                ],
+              ),
+              child: MetaIcons.image(icon, size: 30),
+            ),
+          ),
+          const SizedBox(height: 2),
+          Text(label, style: const TextStyle(fontSize: 11)),
         ],
       ),
     ),

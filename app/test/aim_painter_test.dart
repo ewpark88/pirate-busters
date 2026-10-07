@@ -52,24 +52,39 @@ void main() {
       }
     });
 
-    test('앞 점은 진하고 끝 점은 0.45 까지 흐려지며 줄어들기만 한다', () {
+    test('앞 점은 진하고 끝 점은 0.55 까지 흐려지며 줄어들기만 한다', () {
       final alphas = [for (var i = 0; i <= 10; i++) AimPainter.dotAlpha(i, 10)];
       expect(alphas.first, 1);
-      expect(alphas.last, closeTo(.45, 1e-9));
+      expect(alphas.last, closeTo(.55, 1e-9));
       for (var i = 1; i < alphas.length; i++) {
         expect(alphas[i], lessThan(alphas[i - 1]));
       }
     });
 
-    test('각도·힘 알약은 발사 지점 아래 한 줄에 겹치지 않게 나란히 놓인다', () {
+    test('각도·힘 알약은 발사 지점 뒤쪽 위 한 줄에 겹치지 않게 나란히 놓인다 (A33)', () {
       const from = Offset(10, -40);
-      expect(AimLabels.powerAt(from), const Offset(10, -8));
+      // 오른쪽을 보는 배는 왼쪽 위, 왼쪽을 보는 배는 오른쪽 위: 당기는 엄지(뒤쪽
+      // 아래)와 점선(앞쪽 위)을 피한다.
+      expect(AimLabels.powerAt(from, 1), const Offset(-20, -74));
+      expect(AimLabels.powerAt(from, -1), const Offset(40, -74));
       final (a, p) = AimLabels.rowAt(from, 20, 30);
       expect(a.dy, p.dy);
-      expect(a.dy, -8);
+      expect(a.dy, -74);
       // 각도가 왼쪽, 둘 사이는 틈만큼 떨어지고 줄 가운데에 모인다.
       expect(p.dx - a.dx, closeTo(10 + AimLabels.gap + 15, 1e-9));
-      expect((a.dx - 10 + p.dx - 10) / 2, closeTo(-2.5, 1e-9));
+      expect((a.dx + 20 + p.dx + 20) / 2, closeTo(-2.5, 1e-9));
+      // 줄은 힘 링 바깥이다.
+      expect(
+        (AimLabels.powerAt(from, 1) - from).distance,
+        greaterThan(AimPainter.ringRadius + 10),
+      );
+    });
+
+    test('줌아웃할수록 조준 표시를 키워 화면 크기를 지키고, 다가가면 줄이지 않는다 (A33)', () {
+      expect(AimPainter.screenScale(2, 2), 1);
+      expect(AimPainter.screenScale(1, 2), 2);
+      expect(AimPainter.screenScale(4, 2), 1);
+      expect(AimPainter.screenScale(.1, 2), 3);
     });
 
     test('점선·숫자를 오류 없이 그린다', () {
