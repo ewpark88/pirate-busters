@@ -8,20 +8,26 @@ import 'package:pb_sim/src/projectile/projectile.dart';
 import 'package:pb_sim/src/ship/motion.dart';
 import 'package:pb_sim/src/ship/ship_grid.dart';
 
-/// 지원탄이 내 배 [ship] 의 칸 ([cx], [cy]) 에 닿았다 (설계서 §4.2 지원, §4.8).
-/// 수리(톡)를 한 뒤 고유 능력(배수·쿨다운·램프, ADR-075)을 낸다. 지원 배율
-/// `PirateSpec.ammoValue`(%) 는 수리량과 배수량에만 곱한다(쿨다운·연료는 정수 그대로,
-/// BALANCE.md A4.2).
+/// 보급탄이 상대 배를 맞혔다: 효과는 쏜 쪽 내 배 [ship] 에 난다 (설계서 §4.2 보급,
+/// §4.8, ADR-090). 수리(톡·램프)는 흘수선 아래 가운데에서 가까운 ‘구멍’부터, 그다음
+/// 고유 능력(배수·치유와 쿨다운·램프·방벽). 보급 배율 `PirateSpec.ammoValue`(%) 는
+/// 수리량·배수량·치유량에만 곱한다(쿨다운·연료는 정수 그대로, BALANCE.md A4.2).
+/// 코리 방벽은 월드 [x] 에 선다.
 void onSupportHit(
   MatchState state,
   Projectile p,
   SideState ship, {
-  required int cx,
-  required int cy,
   required int x,
 }) {
   final spec = p.spec;
-  _repairAround(state, ship, cx, cy, spec.ammoParam, spec.ammoValue);
+  _repairAround(
+    state,
+    ship,
+    ship.grid.width ~/ 2,
+    0,
+    spec.ammoParam,
+    spec.ammoValue,
+  );
   if (p.abilityDone) return;
   final value = spec.abilityValue;
   switch (spec.ability) {
@@ -30,7 +36,7 @@ void onSupportHit(
     case Ability.coral:
       placeCoral(state, p, x);
     case Ability.cooldownCut:
-      _heal(state, ship, cx, cy, cookHeal * spec.ammoValue ~/ 100);
+      _heal(state, ship, cookHeal * spec.ammoValue ~/ 100);
       // 아군 전체(쏜 쿡 포함, BALANCE.md A4.2).
       for (var slot = 0; slot < ship.crew.size; slot++) {
         final pirate = ship.crew.pirates[slot];
@@ -60,18 +66,12 @@ void onSupportHit(
 /// 쿡 치유량(지원 배율 100% 기준, BALANCE.md A4.2, 임시값 ADR-078).
 const int cookHeal = 40;
 
-/// 쿡 치유 범위: 착지 칸에서 가로·세로 2칸 안 선실 (ADR-078).
-const int cookHealRange = 2;
-
-/// 착지 칸 둘레 선실의 배 위 해적을 [amount] 만큼(최대 체력까지) 치유한다.
-void _heal(MatchState state, SideState ship, int cx, int cy, int amount) {
+/// 배 위 아군 해적 모두를 [amount] 만큼(최대 체력까지) 치유한다 (보급탄은 상대에 쏘므로
+/// 범위 대신 아군 전체, ADR-090).
+void _heal(MatchState state, SideState ship, int amount) {
   for (var slot = 0; slot < ship.crew.size; slot++) {
     final pirate = ship.crew.pirates[slot];
     if (pirate.status != PirateStatus.aboard) continue;
-    final c = ship.cabins[slot];
-    if ((c.x - cx).abs() > cookHealRange || (c.y - cy).abs() > cookHealRange) {
-      continue;
-    }
     final before = pirate.hp;
     final next = before + amount;
     pirate.hp = next > pirate.spec.hp ? pirate.spec.hp : next;
@@ -87,7 +87,7 @@ void _heal(MatchState state, SideState ship, int cx, int cy, int amount) {
   }
 }
 
-/// 지원탄 수리: 착지한 칸에서 가까운 ‘구멍’ 단계 블록 [count] 칸을 고친다. 고치는 양은
+/// 보급탄 수리: ([cx], [cy]) 에서 가까운 ‘구멍’ 단계 블록 [count] 칸을 고친다. 고치는 양은
 /// 최대 내구도 × [percent]% (설계서 §4.2 톡, §2.5 부서진 칸은 못 고침).
 void _repairAround(
   MatchState state,

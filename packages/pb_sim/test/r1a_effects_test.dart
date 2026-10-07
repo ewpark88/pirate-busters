@@ -365,7 +365,7 @@ void main() {
       final ship = m.state.sides[0];
       final now = m.state.turn;
       ship.status.trailBlockTurn = now;
-      onSupportHit(m.state, _shot(m, lamp), ship, cx: 5, cy: 2, x: 0);
+      onSupportHit(m.state, _shot(m, lamp), ship, x: 0);
       expect(ship.trailOverride, 0, reason: '지금 턴 봉쇄 유지');
       ship.turnNow = now + 2;
       expect(ship.trailOverride, 100, reason: '다음 내 턴 확대');
@@ -494,7 +494,7 @@ void main() {
       );
       final m = _duel(pump);
       final ship = m.state.sides[0]..flood = 300;
-      onSupportHit(m.state, _shot(m, pump), ship, cx: 5, cy: 2, x: 0);
+      onSupportHit(m.state, _shot(m, pump), ship, x: 0);
       expect(ship.flood, 300 - 165);
     });
 
@@ -510,7 +510,7 @@ void main() {
       final ship = m.state.sides[0];
       ship.crew.pirates[0].cooldown = 2;
       ship.crew.pirates[1].cooldown = 0;
-      onSupportHit(m.state, _shot(m, cook), ship, cx: 5, cy: 2, x: 0);
+      onSupportHit(m.state, _shot(m, cook), ship, x: 0);
       expect(ship.crew.pirates[0].cooldown, 1);
       expect(ship.crew.pirates[1].cooldown, 0);
     });
@@ -525,7 +525,7 @@ void main() {
       );
       final m = _duel(lamp);
       final ship = m.state.sides[0]..fuel = 0;
-      onSupportHit(m.state, _shot(m, lamp), ship, cx: 5, cy: 2, x: 0);
+      onSupportHit(m.state, _shot(m, lamp), ship, x: 0);
       expect(ship.fuel, 30 * SideState.fuelUnit);
       final mine = m.state.turn + 2;
       expect(ship.status.windIgnoreTurn, mine);

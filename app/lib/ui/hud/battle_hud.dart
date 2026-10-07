@@ -12,6 +12,7 @@ import 'package:pirate_busters/ui/hud/move_controls.dart';
 import 'package:pirate_busters/ui/hud/pause_menu.dart';
 import 'package:pirate_busters/ui/hud/pirate_cards.dart';
 import 'package:pirate_busters/ui/hud/result_overlay.dart';
+import 'package:pirate_busters/ui/hud/time_verdict_bar.dart';
 import 'package:pirate_busters/ui/hud/top_bar.dart';
 import 'package:pirate_busters/ui/kit/kit_art.dart';
 import 'package:pirate_busters/ui/kit/pb_button.dart';
@@ -121,9 +122,15 @@ class BattleHud extends StatelessWidget {
                         AnimatedOpacity(
                           opacity: _busy ? busyOpacity : 1,
                           duration: fade,
-                          child: GapBar(
-                            state: session.state,
-                            overview: overview,
+                          child: Column(
+                            children: [
+                              GapBar(
+                                state: session.state,
+                                overview: overview,
+                              ),
+                              const SizedBox(height: 4),
+                              TimeVerdictBar(session: session),
+                            ],
                           ),
                         ),
                       ],

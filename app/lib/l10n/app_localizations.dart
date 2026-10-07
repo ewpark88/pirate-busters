@@ -110,6 +110,18 @@ abstract class AppLocalizations {
   /// **'{count, plural, =1{1 turn left} other{{count} turns left}}'**
   String turnsLeft(int count);
 
+  /// No description provided for @timeVerdict.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 turn to time decision} other{{count} turns to time decision}} · less flooding wins'**
+  String timeVerdict(int count);
+
+  /// No description provided for @timeVerdictFlood.
+  ///
+  /// In en, this message translates to:
+  /// **'You {mine}% : Foe {theirs}%'**
+  String timeVerdictFlood(String mine, String theirs);
+
   /// No description provided for @yourTurn.
   ///
   /// In en, this message translates to:
@@ -611,7 +623,7 @@ abstract class AppLocalizations {
   /// No description provided for @pirate_p36_desc.
   ///
   /// In en, this message translates to:
-  /// **'Fire at your ship to patch 3 holed blocks'**
+  /// **'Hit the enemy to patch 3 holes on your ship'**
   String get pirate_p36_desc;
 
   /// No description provided for @pirate_p36_lore.
@@ -1061,7 +1073,7 @@ abstract class AppLocalizations {
   /// No description provided for @pirate_p37_desc.
   ///
   /// In en, this message translates to:
-  /// **'Spouts water out, cutting flooding at once'**
+  /// **'Hit the enemy to cut your flooding at once'**
   String get pirate_p37_desc;
 
   /// No description provided for @pirate_p37_lore.
@@ -1079,7 +1091,7 @@ abstract class AppLocalizations {
   /// No description provided for @pirate_p38_desc.
   ///
   /// In en, this message translates to:
-  /// **'Heals nearby crew and cuts cooldowns by 1'**
+  /// **'Hit the enemy to heal crew and cut cooldowns by 1'**
   String get pirate_p38_desc;
 
   /// No description provided for @pirate_p38_lore.
@@ -1097,7 +1109,7 @@ abstract class AppLocalizations {
   /// No description provided for @pirate_p39_desc.
   ///
   /// In en, this message translates to:
-  /// **'Raises a coral wall for 2 turns'**
+  /// **'Hit to raise a coral wall at your bow for 2 turns'**
   String get pirate_p39_desc;
 
   /// No description provided for @pirate_p39_lore.
@@ -1115,7 +1127,7 @@ abstract class AppLocalizations {
   /// No description provided for @pirate_p40_desc.
   ///
   /// In en, this message translates to:
-  /// **'Next turn: full aim line, no wind, +30 fuel'**
+  /// **'Hit for next turn: full aim line, no wind, +30 fuel'**
   String get pirate_p40_desc;
 
   /// No description provided for @pirate_p40_lore.
@@ -1595,7 +1607,7 @@ abstract class AppLocalizations {
   /// No description provided for @familySupport.
   ///
   /// In en, this message translates to:
-  /// **'Support'**
+  /// **'Supply'**
   String get familySupport;
 
   /// No description provided for @rarityCommon.
@@ -2189,7 +2201,7 @@ abstract class AppLocalizations {
   /// No description provided for @tutorial_hint_3.
   ///
   /// In en, this message translates to:
-  /// **'Holes below the waterline mean flooding! Fire Tok at your own ship to repair'**
+  /// **'Holes below the waterline mean flooding! Hit the enemy with Tok to patch your ship'**
   String get tutorial_hint_3;
 
   /// No description provided for @resultDoubleDone.

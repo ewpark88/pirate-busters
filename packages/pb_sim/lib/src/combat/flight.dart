@@ -20,9 +20,9 @@ import 'package:pb_sim/src/ship/support.dart';
 int resolveShot(MatchState state, Projectile p, int ms) =>
     runVolley(state, [p], ms);
 
-/// 탄이 맞는 배의 진영: 지원탄은 내 배, 나머지는 상대 배 (설계서 §4.1 지원).
-int targetSideOf(Projectile p) =>
-    p.spec.ammo == AmmoType.support ? p.side : 1 - p.side;
+/// 탄이 맞는 배의 진영: 모든 탄은 상대 배로 간다. 보급탄도 상대에 쏘고 효과는 내 쪽에
+/// 난다 (설계서 §4.1 보급, ADR-090).
+int targetSideOf(Projectile p) => 1 - p.side;
 
 /// 한 틱 진행한 결과: 맞은 칸(없으면 null), 해수면에 닿았는지, 끝 지점.
 typedef TraceStep = ({

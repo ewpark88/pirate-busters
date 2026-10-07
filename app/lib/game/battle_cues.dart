@@ -83,12 +83,11 @@ class BattleCues {
     session.state.sides[side].grid.width * Coords.cell,
   );
 
-  /// 조용히 내려앉는 탄인가: 지원탄은 우리 배에 닿아 고치고, 설치탄은 붙어서 턴을
-  /// 기다린다. 선체에 닿아도 명중 연출(폭발·흔들림·히트스톱)을 내지 않는다
-  /// (설계서 §10.4 탄종별 전달).
+  /// 조용히 내려앉는 탄인가: 설치탄은 붙어서 턴을 기다린다. 선체에 닿아도 명중
+  /// 연출(폭발·흔들림·히트스톱)을 내지 않는다 (설계서 §10.4 탄종별 전달). 보급탄은
+  /// 상대에 맞는 공격이라 명중 연출을 낸다(ADR-090).
   static bool landsQuietly(PirateSpec? spec) =>
-      spec != null &&
-      (spec.ammo == AmmoType.support || spec.ammo == AmmoType.mine);
+      spec != null && spec.ammo == AmmoType.mine;
 
   void dispatch(List<SimEvent> cues) {
     var woodPlayed = false;

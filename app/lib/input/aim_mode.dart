@@ -1,10 +1,9 @@
 import 'package:pb_sim/pb_sim.dart';
 
 /// 해적별 조준 각도 범위(밀리도, 위가 +, 아래쪽은 음수) (설계서 §2.2, §4.8).
-/// 보통은 0~85°, 지원 해적은 내 배로 쏘도록 뒤쪽 175° 까지(시뮬은 180° 까지 받는다),
-/// 어뢰(바라)는 물속으로 들어가도록 아래 85° 부터.
+/// 보통은 0~85°(보급탄도 상대에 쏜다, ADR-090), 어뢰(바라)는 물속으로 들어가도록
+/// 아래 85° 부터.
 (int min, int max) aimRangeFor(PirateSpec spec) {
-  if (spec.ammo == AmmoType.support) return (0, 175000);
   if (spec.ability == Ability.torpedo) return (-85000, 85000);
   return (0, 85000);
 }
