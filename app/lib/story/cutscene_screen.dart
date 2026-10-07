@@ -8,6 +8,7 @@ import 'package:pirate_busters/story/backdrop_picture.dart';
 import 'package:pirate_busters/story/rig_portrait.dart';
 import 'package:pirate_busters/story/story_data.dart';
 import 'package:pirate_busters/ui/hud/hud_style.dart';
+import 'package:pirate_busters/ui/kit/nine_slice.dart';
 import 'package:pirate_busters/ui/kit/pb_button.dart';
 
 /// 전체 화면 컷신 (설계서 §15.4): 해역 배경 위에 해적 파츠 그림과 말풍선·자막.
@@ -205,12 +206,16 @@ class _Bubble extends StatelessWidget {
       return Stack(
         children: [
           Positioned.fill(
-            child: Image.asset(
-              'assets/images/ui/story/bubble_${right ? 'right' : 'left'}.png',
-              // 그림은 @2x(960×260). 화면 폭에 맞춘 배율로 9칸 늘이기를 한다.
-              scale: 2 / k,
-              centerSlice: const Rect.fromLTRB(80, 60, 880, 150),
-              fit: BoxFit.fill,
+            child: DecoratedBox(
+              // 그림은 @2x(960×260). 화면 폭에 맞춘 배율로 9칸 늘이기를 한다
+              // (렌더러와 무관한 9장 그리기, A42).
+              decoration: NineSliceDecoration(
+                image: AssetImage(
+                  'assets/images/ui/story/bubble_${right ? 'right' : 'left'}.png',
+                ),
+                slice: const Rect.fromLTRB(80, 60, 880, 150),
+                scale: 2 / k,
+              ),
             ),
           ),
           Padding(

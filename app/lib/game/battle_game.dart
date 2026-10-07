@@ -251,6 +251,7 @@ class BattleGame extends FlameGame with BattleTexts {
     director.focusFeet = focus != null && focus < _ships[me].rigs.length
         ? _ships[me].rigs[focus].absolutePosition
         : null;
+    director.shipTop = -session.state.sides[me].grid.height * Coords.cell;
     final goal = director.target(
       myX: _shipCenterX(me),
       enemyX: _shipCenterX(1 - me),
@@ -269,8 +270,7 @@ class BattleGame extends FlameGame with BattleTexts {
       ..zoom = size.x / (director.width * director.punchScale);
   }
 
-  /// 효과음. 설정의 효과음을 끄면 내지 않는다 (설계서 §13.8). HUD 버튼 소리도 쓴다.
-  /// 같은 프레임의 같은 소리는 하나만 내고 크기 합에 상한을 둔다 (§10.3, A32).
+  /// 효과음(설정 끄기 §13.8, HUD 버튼 소리 포함). 같은 프레임 같은 소리 하나 (A32).
   void playSfx(Sfx sfx, {double volume = 1}) {
     if (!soundOn.value) return;
     final v = _mixer.admit(sfx, volume);

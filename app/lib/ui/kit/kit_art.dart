@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pirate_busters/app/app_theme.dart';
+import 'package:pirate_busters/ui/kit/nine_slice.dart';
 
 /// 게임 UI 키트 그림 (에셋 `ui/kit/`, 설계서 §13 공통 화면 규칙). 그림은 9조각으로
 /// 늘린다: 모서리는 그대로, 가운데만 늘어난다.
@@ -26,19 +27,16 @@ abstract final class KitArt {
   /// 탭 308×88 의 늘어나는 가운데.
   static const Rect tabSlice = Rect.fromLTRB(24, 24, 284, 70);
 
-  /// 그림 px 을 화면 크기로 줄이는 배율. 버튼 높이 200px → 모서리 약 14px.
-  static const double buttonScale = 4;
-  static const double panelScale = 3;
-  static const double tabScale = 3;
+  /// 그림 px 을 화면 크기로 줄이는 배율. 예전 `DecorationImage` 는 모서리를 기기
+  /// 화면 배율만큼 더 키워 그렸고, 승인된 모양(골든, 화면 배율 2)은 그 2배 모양이라
+  /// 그 모양을 기기와 무관하게 내도록 절반 값을 쓴다 (A42). 버튼 모서리 약 28px.
+  static const double buttonScale = 1.45;
+  static const double panelScale = 1.1;
+  static const double tabScale = 1.1;
 
-  /// [path] 그림을 [slice] 기준 9조각으로 늘린 바탕.
-  static DecorationImage nine(String path, Rect slice, double scale) =>
-      DecorationImage(
-        image: AssetImage(path),
-        centerSlice: slice,
-        scale: scale,
-        fit: BoxFit.fill,
-      );
+  /// [path] 그림을 [slice] 기준 9조각으로 늘린 바탕 (A41: 렌더러와 무관한 9장 그리기).
+  static Decoration nine(String path, Rect slice, double scale) =>
+      NineSliceDecoration(image: AssetImage(path), slice: slice, scale: scale);
 }
 
 /// 어두운 외곽선을 두른 글자. 그림 바탕 위에서도 읽히게 한다 (설계서 §13 공통).
