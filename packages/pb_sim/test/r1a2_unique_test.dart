@@ -420,7 +420,7 @@ void main() {
       final m = _duel(cook);
       final ship = m.state.sides[0];
       ship.crew.pirates[1].hp = 100;
-      onSupportHit(m.state, _shot(cook), ship, cx: 5, cy: 2, x: 0);
+      onSupportHit(m.state, _shot(cook), ship, x: 0);
       expect(ship.crew.pirates[1].hp, 100 + cookHeal);
     });
 

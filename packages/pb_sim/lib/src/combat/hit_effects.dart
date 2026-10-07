@@ -106,7 +106,11 @@ bool _ammoHit(
       }
       return true;
     case AmmoType.support:
-      onSupportHit(state, p, target, cx: cx, cy: cy, x: x);
+      // 보급탄: 상대 배에 약한 피해, 효과는 내 배에 (설계서 §4.8 보급탄, ADR-090).
+      impact();
+      final mine = state.sides[p.side];
+      // 코리 방벽은 내 뱃머리 앞에 선다.
+      onSupportHit(state, p, mine, x: mine.bowX);
       return true;
     case AmmoType.fire:
       // 착탄 피해 + 화상 지대(착탄 칸 둘레)에 불 (설계서 §2.5, §4.8).

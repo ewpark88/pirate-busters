@@ -153,7 +153,7 @@ void main() {
       2500,
       50,
       false,
-      SupportUse.never,
+      SupportUse.timely,
       0,
       false,
       50,

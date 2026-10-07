@@ -44,7 +44,7 @@ enum HitTag {
     AmmoType.fire => burn,
     AmmoType.mine => mine,
     AmmoType.assault => bite,
-    AmmoType.support => repair,
+    // 보급탄의 ‘수리’ 이름표는 내 배의 repaired 이벤트가 붙인다 (ADR-090).
     _ => null,
   };
 }

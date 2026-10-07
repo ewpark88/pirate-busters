@@ -9,7 +9,7 @@ enum Family {
   underwater('underwater', RangeGrade.medium),
   air('air', RangeGrade.veryLong),
   assault('assault', RangeGrade.short),
-  support('support', RangeGrade.short);
+  support('support', RangeGrade.long);
 
   const Family(this.jsonName, this.defaultRange);
 

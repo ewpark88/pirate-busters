@@ -294,24 +294,30 @@ void main() {
     expect(m.state.sides[1].crew.pirates[1].hp, lessThan(hp));
   });
 
-  test('지원탄: 내 배에 떨어져 가까운 구멍 난 블록을 고친다', () {
+  test('보급탄: 상대 배를 맞히면 약한 피해를 주고 내 배 흘수선 아래 구멍을 고친다 (ADR-090)', () {
     final tok = _ammoPirate(
       AmmoType.support,
       value: 100,
       param: 3,
       family: Family.support,
-      blockDamage: 0,
-      pirateDamage: 0,
+      blockDamage: 20,
+      pirateDamage: 40,
     );
     final m = _duel(tok);
     final grid = m.state.sides[0].grid;
-    // 참나무 용골 줄 한 칸을 구멍 단계로 만든다.
+    // 내 배 소나무 칸 하나를 구멍 단계로 만든다.
     final max = grid.materialAt(5, 1)!.durability;
     grid.damage(5, 1, max - max ~/ 4);
     expect(grid.stageAt(5, 1), DamageStage.holed);
-    m.apply(const FireCommand(t: 1000, slot: 0, angle: 88000, power: 5000));
-    expect(_of(m, SimEventKind.repaired), isNotEmpty);
-    expect(grid.hpAt(5, 1), max);
+    final enemy = m.state.sides[1].grid;
+    final before = enemy.totalHp;
+    m.apply(aimAt(m.state, slot: 0, tx: 6, ty: 1));
+    expect(enemy.totalHp, lessThan(before), reason: '상대 배에 피해');
+    expect(
+      _of(m, SimEventKind.repaired).every((e) => e.side == 0),
+      isTrue,
+    );
+    expect(grid.hpAt(5, 1), max, reason: '효과는 내 배에');
   });
 
   test('여러 탄종이 섞인 판을 끝까지 돌려도 재생 해시가 같다', () {
@@ -432,20 +438,13 @@ void main() {
     });
   });
 
-  test('지원 해적의 FIRE 는 0~180° 만 받는다 (설계서 §7.2)', () {
-    PirateSpec tok() => _ammoPirate(
-      AmmoType.support,
-      value: 100,
-      param: 3,
-      family: Family.support,
-      blockDamage: 0,
-      pirateDamage: 0,
-    );
-    final m = _duel(tok())
-      ..apply(const FireCommand(t: 1000, slot: 0, angle: 190000, power: 5000));
-    expect(m.state.sides[0].shotsFired, 0);
-    m.apply(const FireCommand(t: 1100, slot: 0, angle: 170000, power: 5000));
+  test('보급탄은 상대 배로 날아간다 (설계서 §4.1 보급, ADR-090)', () {
+    final m = _duel(
+      _ammoPirate(AmmoType.support, value: 100, family: Family.support),
+    )..apply(const FireCommand(t: 1000, slot: 0, angle: 45000, power: 9000));
     expect(m.state.sides[0].shotsFired, 1);
+    final hits = _of(m, SimEventKind.impact);
+    expect(hits.every((e) => e.side == 1), isTrue, reason: '내 배에는 떨어지지 않는다');
   });
 
   group('검토 반영 규칙 (ADR-050)', () {

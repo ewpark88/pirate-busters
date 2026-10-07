@@ -17,6 +17,16 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
+  String timeVerdict(int count) {
+    return '시간 판정까지 $count턴 · 침수 적은 쪽 승리';
+  }
+
+  @override
+  String timeVerdictFlood(String mine, String theirs) {
+    return '나 $mine% : 상대 $theirs%';
+  }
+
+  @override
   String get yourTurn => '내 턴';
 
   @override
@@ -282,7 +292,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get pirate_p36_name => '거북 목수 톡';
 
   @override
-  String get pirate_p36_desc => '아군 배에 쏘면 구멍 난 블록 3칸 수리';
+  String get pirate_p36_desc => '상대 배를 맞히면 내 배 구멍 3칸 수리';
 
   @override
   String get pirate_p36_lore => '느리지만 꼼꼼하다. 배는 그가 지킨다.';
@@ -507,7 +517,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get pirate_p37_name => '아기고래 뿜뿜';
 
   @override
-  String get pirate_p37_desc => '물을 뿜어 침수량 즉시 감소';
+  String get pirate_p37_desc => '상대 배를 맞히면 내 침수량 즉시 감소';
 
   @override
   String get pirate_p37_lore => '숨구멍으로 뿜는 물줄기가 자랑이다.';
@@ -516,7 +526,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get pirate_p38_name => '소라게 요리사 쿡';
 
   @override
-  String get pirate_p38_desc => '주변 아군 치유, 아군 쿨다운 −1';
+  String get pirate_p38_desc => '상대 배를 맞히면 아군 치유, 쿨다운 −1';
 
   @override
   String get pirate_p38_lore => '배고픈 선원은 싸우지 못한다는 게 신조다.';
@@ -525,7 +535,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get pirate_p39_name => '산호 골렘 코리';
 
   @override
-  String get pirate_p39_desc => '원하는 곳에 산호 방벽, 2턴';
+  String get pirate_p39_desc => '맞히면 내 뱃머리 앞에 산호 방벽, 2턴';
 
   @override
   String get pirate_p39_lore => '천천히 자라지만 무엇이든 막아선다.';
@@ -534,7 +544,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get pirate_p40_name => '아귀 항해사 램프';
 
   @override
-  String get pirate_p40_desc => '다음 내 턴 궤적 확대·바람 무시·연료 +30';
+  String get pirate_p40_desc => '맞히면 다음 턴 궤적 확대·바람 무시·연료 +30';
 
   @override
   String get pirate_p40_lore => '어두운 바다에서도 길을 잃은 적이 없다.';
@@ -823,7 +833,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get familyAssault => '강습';
 
   @override
-  String get familySupport => '지원';
+  String get familySupport => '보급';
 
   @override
   String get rarityCommon => '일반';
@@ -1168,7 +1178,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get tutorial_hint_2 => '◀ ▶ 버튼을 꾹 누르고 있으면 배가 움직입니다. 연료가 남은 만큼만 갑니다';
 
   @override
-  String get tutorial_hint_3 => '흘수선 아래 구멍은 침수! 톡을 내 배에 쏴서 수리하세요';
+  String get tutorial_hint_3 => '흘수선 아래 구멍은 침수! 톡으로 상대 배를 맞히면 내 배가 고쳐져요';
 
   @override
   String get resultDoubleDone => '2배로 받았어요';

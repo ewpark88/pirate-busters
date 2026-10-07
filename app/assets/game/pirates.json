@@ -981,8 +981,8 @@
       "projectile": {},
       "onHit": {
         "radiusCells": 0,
-        "blockDmg": 0,
-        "pirateDmg": 0
+        "blockDmg": 20,
+        "pirateDmg": 40
       },
       "growth": {},
       "render": {
@@ -1006,8 +1006,8 @@
       "projectile": {},
       "onHit": {
         "radiusCells": 0,
-        "blockDmg": 0,
-        "pirateDmg": 0
+        "blockDmg": 20,
+        "pirateDmg": 40
       },
       "ability": {
         "type": "bail",
@@ -1035,8 +1035,8 @@
       "projectile": {},
       "onHit": {
         "radiusCells": 0,
-        "blockDmg": 0,
-        "pirateDmg": 0
+        "blockDmg": 20,
+        "pirateDmg": 40
       },
       "ability": {
         "type": "cooldownCut",
@@ -1064,8 +1064,8 @@
       "projectile": {},
       "onHit": {
         "radiusCells": 0,
-        "blockDmg": 0,
-        "pirateDmg": 0
+        "blockDmg": 20,
+        "pirateDmg": 40
       },
       "ability": {
         "type": "coral",
@@ -1094,8 +1094,8 @@
       "projectile": {},
       "onHit": {
         "radiusCells": 0,
-        "blockDmg": 0,
-        "pirateDmg": 0
+        "blockDmg": 20,
+        "pirateDmg": 40
       },
       "ability": {
         "type": "lantern",

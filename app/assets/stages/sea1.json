@@ -47,7 +47,7 @@
     {
       "id": "1-3", "kind": "normal",
       "enemyPreset": "fast", "enemyDeck": ["p11_finn", "p26_polly"], "enemyStage": 1,
-      "aiLevel": "easy", "personality": "hunter", "waveLevel": 2, "maxWind": 3,
+      "aiLevel": "normal", "personality": "hunter", "waveLevel": 2, "maxWind": 3,
       "starTurns": 12, "mission": { "type": "flood_below", "percent": 30 },
       "dialogueKeys": ["story_s1_3_enemy", "story_s1_3_ally"],
       "reward": { "gold": 150 }
@@ -55,7 +55,7 @@
     {
       "id": "1-4", "kind": "normal",
       "enemyPreset": "balanced", "enemyDeck": ["p06_pang", "p07_hippo", "p26_polly"], "enemyStage": 2,
-      "aiLevel": "easy", "personality": "bombard", "waveLevel": 2, "maxWind": 3,
+      "aiLevel": "normal", "personality": "bombard", "waveLevel": 2, "maxWind": 3,
       "starTurns": 12, "mission": { "type": "win_by_sink" },
       "dialogueKeys": ["story_s1_4_enemy", "story_s1_4_ally"],
       "reward": { "gold": 200, "pirate": "p26_polly" }
@@ -63,7 +63,7 @@
     {
       "id": "1-5", "kind": "midBoss", "gimmick": "bow_iron_shield",
       "enemyPreset": "armored", "enemyDeck": ["p07_hippo", "p11_finn", "p31_sharky"], "enemyStage": 3, "enemyMastLevel": 2,
-      "aiLevel": "easy", "personality": "bombard", "waveLevel": 2, "maxWind": 3,
+      "aiLevel": "normal", "personality": "bombard", "waveLevel": 2, "maxWind": 3,
       "starTurns": 12, "mission": { "type": "no_pirate_down" },
       "dialogueKeys": ["story_s1_5_enemy", "story_s1_5_ally"],
       "reward": { "gold": 300, "pirate": "p06_pang" }
@@ -71,7 +71,7 @@
     {
       "id": "1-12", "kind": "boss", "gimmick": "patrol_closing_in",
       "enemyPreset": "armored", "enemyDeck": ["p06_pang", "p04_uni", "p11_finn", "p31_sharky"], "enemyStage": 4, "enemyMastLevel": 2,
-      "aiLevel": "easy", "personality": "bombard", "waveLevel": 3, "maxWind": 3,
+      "aiLevel": "hard", "personality": "bombard", "waveLevel": 3, "maxWind": 3,
       "starTurns": 12, "mission": { "type": "turns_within", "turns": 10 },
       "dialogueKeys": ["story_s1_12_enemy", "story_s1_12_ally"],
       "reward": { "gold": 500, "pirate": "p31_sharky" }

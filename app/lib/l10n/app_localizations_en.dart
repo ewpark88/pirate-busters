@@ -23,6 +23,22 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String timeVerdict(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count turns to time decision',
+      one: '1 turn to time decision',
+    );
+    return '$_temp0 · less flooding wins';
+  }
+
+  @override
+  String timeVerdictFlood(String mine, String theirs) {
+    return 'You $mine% : Foe $theirs%';
+  }
+
+  @override
   String get yourTurn => 'Your turn';
 
   @override
@@ -310,7 +326,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pirate_p36_name => 'Tok the Shipwright';
 
   @override
-  String get pirate_p36_desc => 'Fire at your ship to patch 3 holed blocks';
+  String get pirate_p36_desc => 'Hit the enemy to patch 3 holes on your ship';
 
   @override
   String get pirate_p36_lore => 'Slow but careful. He keeps the ship afloat.';
@@ -550,7 +566,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pirate_p37_name => 'Pumpum the Baby Whale';
 
   @override
-  String get pirate_p37_desc => 'Spouts water out, cutting flooding at once';
+  String get pirate_p37_desc => 'Hit the enemy to cut your flooding at once';
 
   @override
   String get pirate_p37_lore => 'Proud of the spout from its blowhole.';
@@ -559,7 +575,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pirate_p38_name => 'Cook the Hermit Crab';
 
   @override
-  String get pirate_p38_desc => 'Heals nearby crew and cuts cooldowns by 1';
+  String get pirate_p38_desc =>
+      'Hit the enemy to heal crew and cut cooldowns by 1';
 
   @override
   String get pirate_p38_lore => 'Believes a hungry crew cannot fight.';
@@ -568,7 +585,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pirate_p39_name => 'Corey the Coral Golem';
 
   @override
-  String get pirate_p39_desc => 'Raises a coral wall for 2 turns';
+  String get pirate_p39_desc =>
+      'Hit to raise a coral wall at your bow for 2 turns';
 
   @override
   String get pirate_p39_lore =>
@@ -578,7 +596,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pirate_p40_name => 'Lamp the Anglerfish';
 
   @override
-  String get pirate_p40_desc => 'Next turn: full aim line, no wind, +30 fuel';
+  String get pirate_p40_desc =>
+      'Hit for next turn: full aim line, no wind, +30 fuel';
 
   @override
   String get pirate_p40_lore =>
@@ -868,7 +887,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get familyAssault => 'Assault';
 
   @override
-  String get familySupport => 'Support';
+  String get familySupport => 'Supply';
 
   @override
   String get rarityCommon => 'Common';
@@ -1242,7 +1261,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tutorial_hint_3 =>
-      'Holes below the waterline mean flooding! Fire Tok at your own ship to repair';
+      'Holes below the waterline mean flooding! Hit the enemy with Tok to patch your ship';
 
   @override
   String get resultDoubleDone => 'Reward doubled';
