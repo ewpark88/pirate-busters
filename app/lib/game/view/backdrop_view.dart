@@ -87,6 +87,8 @@ class BackdropView extends Component with HasGameReference<FlameGame> {
       if (layer.id == 'glow') {
         paint.color = Color.fromRGBO(0, 0, 0, Backdrop.glowOpacity(mode));
       }
+      final haze = Backdrop.hazeOf(layer.id);
+      if (haze > 0) canvas.saveLayer(null, Paint());
       for (
         var x = data.tileStart(layer, cameraX, view.left);
         x < view.right;
@@ -98,6 +100,17 @@ class BackdropView extends Component with HasGameReference<FlameGame> {
           Rect.fromLTWH(x, top, data.width, data.height),
           paint,
         );
+      }
+      if (haze > 0) {
+        // 그린 겹 위에만 하늘 아래쪽 색을 얹는다(srcATop).
+        canvas
+          ..drawRect(
+            Rect.fromLTRB(view.left, top, view.right, top + data.height),
+            Paint()
+              ..color = tone.sky.last.withValues(alpha: haze)
+              ..blendMode = BlendMode.srcATop,
+          )
+          ..restore();
       }
     }
   }

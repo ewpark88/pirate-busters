@@ -27,6 +27,9 @@ class CameraDirector {
   static const double minWidth = baseWidth / 1.5;
   static const double impactWidth = 700;
   static const double impactHoldSec = 0.8;
+
+  /// 착탄에 머물 때 착탄 지점을 화면 가운데보다 위로 올리는 비율(반 높이 기준).
+  static const double impactLift = 0.2;
   static const double followRate = 4;
 
   /// 탄을 따라갈 때는 더 빨리 붙는다(탄이 화면 밖으로 나가지 않게).
@@ -137,16 +140,20 @@ class CameraDirector {
       return (Vector2((myX + enemyX) / 2, -150), w);
     }
     if (holding) {
-      final double y = math.min(-60, impactAt.y);
       final ship = _impactShip;
-      if (ship == null) return (Vector2(impactAt.x, y), impactWidth);
-      // 맞은 배가 화면 끝에 잘리지 않게: 배 전체 + 여백이 들어오는 폭으로 넓히고,
-      // 가운데는 착탄 지점에서 배가 다 보이는 범위로만 옮긴다.
-      final (sx, sw) = ship;
-      final w = math.max(impactWidth, sw + 2 * impactShipMargin);
-      final reach = (w - sw) / 2 - impactShipMargin;
-      final x = impactAt.x.clamp(sx - reach, sx + reach);
-      return (Vector2(x, y), w);
+      var w = impactWidth;
+      var x = impactAt.x;
+      if (ship != null) {
+        // 맞은 배가 화면 끝에 잘리지 않게: 배 전체 + 여백이 들어오는 폭으로 넓히고,
+        // 가운데는 착탄 지점에서 배가 다 보이는 범위로만 옮긴다.
+        final (sx, sw) = ship;
+        w = math.max(impactWidth, sw + 2 * impactShipMargin);
+        final reach = (w - sw) / 2 - impactShipMargin;
+        x = impactAt.x.clamp(sx - reach, sx + reach);
+      }
+      // 착탄 지점이 화면 위에서 40% 쯤에 오게 가운데를 아래로 둔다: 아래쪽 해적 카드에
+      // 가리지 않고, 위쪽 정보는 연출 중 흐려진다 (설계서 §10.4·§13.4, A40).
+      return (Vector2(x, impactAt.y + w * aspect / 2 * impactLift), w);
     }
     if (projectile != null) {
       // 탄을 가운데에 두고 같은 줌으로 따라간다. 맞을 배(없으면 상대 배)에 가까워지면

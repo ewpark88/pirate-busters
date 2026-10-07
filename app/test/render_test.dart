@@ -163,6 +163,18 @@ void main() {
       expect(held.x, 800, reason: '1.3초가 지나도 부서지는 연출 동안 착탄 지점');
     });
 
+    test('착탄에 머물 때 착탄 지점은 화면 가운데보다 위에 와서 아래쪽 카드에 가리지 않는다 (A40)', () {
+      for (final y in [0.0, -40.0, -300.0]) {
+        final c = CameraDirector()..impact(Vector2(800, y));
+        final (center, w) = c.target(myX: 0, enemyX: 900, facing: 1);
+        final halfH = w * 0.46 / 2;
+        // 화면 위에서부터 비율(0 = 위 끝, 1 = 아래 끝).
+        final fromTop = (y - (center.y - halfH)) / (2 * halfH);
+        expect(fromTop, closeTo(0.5 - CameraDirector.impactLift / 2, 1e-6));
+        expect(fromTop, lessThan(0.45), reason: '아래쪽 카드 줄(위에서 약 70% 아래)에서 멀다');
+      }
+    });
+
     test('핀치 줌은 1.5배 확대부터 간격 42칸이 다 보이는 배율까지만', () {
       final c = CameraDirector()..setUserZoom(10);
       final (_, wIn) = c.target(myX: 0, enemyX: 1000, facing: 1);

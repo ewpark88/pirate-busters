@@ -140,6 +140,10 @@ class Backdrop {
   ColorFilter modeFilter(SeaMode mode) => ColorFilter.matrix(_matrix[mode]!);
 
   /// 빛 겹(등대·등불) 불투명도: 어두운 모드일수록 진하다 (에셋 README v0.23).
+  /// 겹 [id] 에 얹는 하늘색 안개 세기(0~1). 가까운 섬 겹(등대)이 배와 같은 진하기면
+  /// 배 위 소품처럼 읽혀서, 원경(설계서 §10.2)으로 보이게 흐린다 (A40).
+  static double hazeOf(String id) => id == 'mid' ? 0.35 : 0;
+
   static double glowOpacity(SeaMode mode) => switch (mode) {
     SeaMode.normal => 0.35,
     SeaMode.hard => 0.75,

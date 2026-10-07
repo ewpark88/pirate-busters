@@ -175,4 +175,11 @@ void main() {
     });
     expect(tester.takeException(), isNull);
   });
+
+  test('가까운 섬 겹(등대)만 하늘색 안개로 흐려 원경으로 보인다 (설계서 §10.2, A40)', () {
+    expect(Backdrop.hazeOf('mid'), inExclusiveRange(0, 1));
+    for (final id in ['sky', 'clouds', 'far', 'haze', 'glow', 'sea']) {
+      expect(Backdrop.hazeOf(id), 0, reason: id);
+    }
+  });
 }
