@@ -174,7 +174,8 @@
       "cooldownTurns": 0,
       "ammo": {
         "type": "burst",
-        "spreadDeg": 4
+        "pattern": "focus",
+        "spreadDeg": 0
       },
       "projectile": {
         "range": "short"
@@ -232,6 +233,7 @@
       "cooldownTurns": 2,
       "ammo": {
         "type": "burst",
+        "pattern": "scatter",
         "spreadDeg": 12
       },
       "projectile": {},

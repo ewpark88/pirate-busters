@@ -15,6 +15,9 @@ import 'package:pb_sim/src/world/world.dart';
 /// 연사탄 뒤 발 사이 간격(틱). 임시값 (ADR-035).
 const int burstIntervalTicks = 3;
 
+/// 산발 연사의 세기 흔들림 절반 폭(‰). 임시값 (BALANCE.md A4.8, ADR-102).
+const int scatterPowerPermille = 80;
+
 /// 직사 계열이 멀 때 흔들리는 각도의 절반 폭(밀리도). 임시값 (ADR-035).
 const int directFarJitterMdeg = 2000;
 
@@ -23,7 +26,8 @@ const int flockDropHeight = 14 * cellUnit;
 
 /// 지금 턴 진영의 [slot] 해적이 쏜 한 번의 발사 (설계서 §4.8 탄종 행동 모듈).
 ///
-/// 연사탄은 [PirateSpec.ammoValue] 발을 [burstIntervalTicks] 간격으로 부채꼴로 쏜다.
+/// 연사탄은 [PirateSpec.ammoValue] 발을 [burstIntervalTicks] 간격으로 쏜다. 집중은
+/// 모든 발이 같은 각도·세기, 산발은 발마다 매치 난수로 흔들린다 ([_scatter], ADR-102).
 /// 직사 계열은 가까우면 피해 +20%, 멀면 −20% 에 각도가 흔들린다 (설계서 §2.6).
 /// 투사체 id 는 [MatchState.nextProjectileId] 에서 차례로 받는다.
 List<Projectile> launchVolley(
@@ -54,12 +58,16 @@ List<Projectile> launchVolley(
       ? _twin(spec, dmgPercent)
       : _scaled(spec, count, dmgPercent);
   final shots = <Projectile>[];
+  final burst = spec.ammo == AmmoType.burst;
   for (var i = 0; i < count; i++) {
+    final (a, pw) = burst
+        ? _scatter(state, spec, aim, power)
+        : (aim + _fanOffset(spec.spreadMdeg, i, count), power);
     final p = launchShot(
       state,
       slot: slot,
-      angle: aim + _fanOffset(spec.spreadMdeg, i, count),
-      power: power,
+      angle: a,
+      power: pw,
       ms: ms,
       id: state.nextProjectileId++,
       spec: shotSpec,
@@ -93,6 +101,21 @@ PirateSpec _twin(PirateSpec spec, int percent) => spec.withDamage(
   blockDamage: spec.blockDamage * twinTotalPercent ~/ 200 * percent ~/ 100,
   pirateDamage: spec.pirateDamage * twinTotalPercent ~/ 200 * percent ~/ 100,
 );
+
+/// 연사 한 발의 각도·세기 (설계서 §4.8 연사 패턴). 집중은 그대로, 산발은 각도
+/// ±spread/2·세기 ±[scatterPowerPermille]‰ 를 매치 난수로 흔든다(발 순서대로 뽑는다).
+(int, int) _scatter(MatchState state, PirateSpec spec, int aim, int power) {
+  if (spec.ammoParam != burstScatter || spec.spreadMdeg <= 0) {
+    return (aim, power);
+  }
+  final half = spec.spreadMdeg ~/ 2;
+  final angle = aim + state.rng.nextInt(2 * half + 1) - half;
+  final permille =
+      1000 +
+      state.rng.nextInt(2 * scatterPowerPermille + 1) -
+      scatterPowerPermille;
+  return (angle, power * permille ~/ 1000);
+}
 
 /// 부채꼴 [spread](밀리도) 안에서 [count] 발 중 [i] 번째의 각도 차이.
 int _fanOffset(int spread, int i, int count) =>

@@ -94,7 +94,8 @@ class PirateSpec {
   final int spreadMdeg;
 
   /// 탄종 고유 파라미터 하나 (설계서 §4.3 `ammo`): 지원탄은 수리 칸 수, 다중투하는
-  /// 1 이면 다음 내 턴 시작에 투하(펠리). 쓰지 않는 탄종은 0.
+  /// 1 이면 다음 내 턴 시작에 투하(펠리), 연사탄은 [burstFocus]·[burstScatter].
+  /// 쓰지 않는 탄종은 0.
   final int ammoParam;
 
   /// 고유 능력 (설계서 §4.3 `ability`, ADR-075). 없으면 [Ability.none].
@@ -129,6 +130,11 @@ class PirateSpec {
     abilityValue: abilityValue,
   );
 }
+
+/// 연사 패턴 (설계서 §4.8, ADR-102): 집중은 모든 발이 같은 각도·세기로 한 점을
+/// 연타하고, 산발은 발마다 매치 난수로 각도·세기가 흔들린다.
+const int burstFocus = 0;
+const int burstScatter = 1;
 
 /// 해적 쿨다운 상한(턴) (설계서 §2.3 “쿨다운 해적마다 0~2턴”).
 const int maxCooldownTurns = 2;

@@ -803,3 +803,15 @@
 
 **남은 것**
 - 실기기에서 배지 크기·위치, 안내 읽는 시간 확인
+
+## A52 — 연사 집중·산발 (2026-10-12, 브랜치 `feat/A52-burst-patterns`, 사람 확인 남음, ADR-102)
+
+**완료**
+- 해적 JSON `ammo.pattern`(focus·scatter) → `PirateSpec.ammoParam`. 연사 아닌 탄·산발인데 퍼짐 0 은 로드 오류
+- 집중: 모든 발 같은 각도·세기(퍼짐 무시). 산발: 발마다 매치 난수로 각도 ±spread/2·세기 ±8% (`scatterPowerPermille`)
+- 히포 집중(spreadDeg 0), 라이언 산발(12°). 해적 설명 ko·en, `weapons.json` 설명 맞춤
+- 조준 화면 산발 퍼짐 부채꼴 `AimPainter.spreadFan`
+- 테스트 `a52_burst_pattern_test` 4개(재현성 포함), `game_data_test` 2개
+
+**남은 것**
+- 손맛 확인, 라이언 승률은 A51 측정 때 같이 본다

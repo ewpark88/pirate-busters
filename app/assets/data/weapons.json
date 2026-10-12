@@ -70,7 +70,7 @@
    "stagger": 0.07,
    "spread": 0,
    "id": "hippo",
-   "desc": "황동 탄 3연사 Triple shot",
+   "desc": "황동 탄 집중 3연사 Focused triple shot",
    "ammo": "burst",
    "sprite": "weapons/hippo.svg"
   },
@@ -88,9 +88,9 @@
    "trail": "none",
    "count": 12,
    "stagger": 0.022,
-   "spread": 4,
+   "spread": 12,
    "id": "lion",
-   "desc": "독가시 부채꼴 5발 Spine fan",
+   "desc": "독가시 산발 12연사 Scattered spines",
    "ammo": "burst",
    "sprite": "weapons/lion.svg"
   },

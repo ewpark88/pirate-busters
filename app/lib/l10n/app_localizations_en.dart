@@ -259,7 +259,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pirate_p07_name => 'Hippo the Gunslinger';
 
   @override
-  String get pirate_p07_desc => 'Short-range triple shot';
+  String get pirate_p07_desc =>
+      'Short-range focused triple shot that hammers one spot';
 
   @override
   String get pirate_p07_lore =>
@@ -389,7 +390,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pirate_p09_name => 'Lion the Spinefish';
 
   @override
-  String get pirate_p09_desc => 'Fan of spines that shreds nets';
+  String get pirate_p09_desc =>
+      'Scattered spines that spray wide and shred nets';
 
   @override
   String get pirate_p09_lore => 'Every fin is a venomous spine cannon.';
