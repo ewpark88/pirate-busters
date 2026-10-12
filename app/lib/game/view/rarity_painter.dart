@@ -55,6 +55,40 @@ abstract final class RarityPainter {
       ..restore();
   }
 
+  /// 등급 별 수: 일반 1 ~ 신화 5. 카드 프레임 별 수와 같다 (설계서 §10.5).
+  static int starsOf(int rarityIndex) => rarityIndex + 1;
+
+  static final Paint _starFill = Paint()..color = const Color(0xFFFFD54A);
+  static final Paint _starEdge = Paint()
+    ..color = const Color(0xFF3A2A06)
+    ..style = PaintingStyle.stroke
+    ..strokeWidth = 1;
+
+  /// 별 [n] 개를 [center] 를 가운데로 한 줄로 그린다 (설계서 §10.5 ‘색 말고 모양’,
+  /// A37). 색을 구분하지 못해도 별 수로 등급을 읽는다. [r] 은 별 반지름.
+  static void starRow(Canvas c, Offset center, int n, double r) {
+    if (n <= 0) return;
+    final gap = r * 2.3;
+    final x0 = center.dx - gap * (n - 1) / 2;
+    for (var i = 0; i < n; i++) {
+      final path = _star(Offset(x0 + gap * i, center.dy), r);
+      c
+        ..drawPath(path, _starFill)
+        ..drawPath(path, _starEdge);
+    }
+  }
+
+  static Path _star(Offset p, double r) {
+    final path = Path();
+    for (var k = 0; k < 10; k++) {
+      final a = -math.pi / 2 + k * math.pi / 5;
+      final d = k.isEven ? r : r * .45;
+      final q = p + Offset(math.cos(a) * d, math.sin(a) * d);
+      k == 0 ? path.moveTo(q.dx, q.dy) : path.lineTo(q.dx, q.dy);
+    }
+    return path..close();
+  }
+
   /// 무지개 색 (신화 고리·프리즘 꼬리).
   static Color hue(double deg) =>
       HSLColor.fromAHSL(1, deg % 360, .9, .72).toColor();

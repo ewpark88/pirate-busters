@@ -4,6 +4,7 @@ import 'package:pirate_busters/battle/battle_session.dart';
 import 'package:pirate_busters/battle/rest_turns.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
 import 'package:pirate_busters/ui/cards/rarity_card.dart';
+import 'package:pirate_busters/ui/cards/rarity_stars.dart';
 import 'package:pirate_busters/ui/hud/ammo_label.dart';
 import 'package:pirate_busters/ui/hud/hud_style.dart';
 import 'package:pirate_busters/ui/meta_icons.dart';
@@ -144,6 +145,11 @@ class _PirateCardState extends State<_PirateCard> {
                   HudColors.warn,
                   icon: ammoIconPath(pirate.spec.ammo),
                 ),
+              ),
+              // 색을 못 구분해도 등급이 보이게 별 수 (설계서 §10.5, A37).
+              Positioned(
+                bottom: 16,
+                child: RarityStars(rarity: pirate.spec.rarity),
               ),
               _strip(
                 foot,
