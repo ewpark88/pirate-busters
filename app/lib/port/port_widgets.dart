@@ -34,15 +34,15 @@ class PortTopBar extends StatelessWidget {
     required this.progress,
     required this.onSettings,
     required this.onHotseat,
-    this.onTestBattle,
+    this.onOperator,
     super.key,
   });
 
   final PlayerProgress progress;
   final VoidCallback onSettings;
 
-  /// 개발용 테스트 대전 (ADR-053). 개발 도구가 꺼져 있으면 null 이고 버튼이 없다.
-  final VoidCallback? onTestBattle;
+  /// 운영자 화면 (ADR-099). 운영자 모드가 꺼져 있으면 null 이고 버튼이 없다.
+  final VoidCallback? onOperator;
 
   /// 개발용 둘이서 해전 (ADR-029). 출시 전에 뺀다.
   final VoidCallback onHotseat;
@@ -77,11 +77,12 @@ class PortTopBar extends StatelessWidget {
             ),
           ),
           const Spacer(),
-          if (onTestBattle != null) ...[
+          if (onOperator != null) ...[
             PbIconButton(
+              key: const ValueKey('port_operator'),
               icon: PortIcons.quest,
-              tooltip: l10n.devTestBattle,
-              onPressed: onTestBattle,
+              tooltip: l10n.operatorMode,
+              onPressed: onOperator,
             ),
             const SizedBox(width: 8),
           ],

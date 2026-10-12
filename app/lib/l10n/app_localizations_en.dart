@@ -1316,10 +1316,100 @@ class AppLocalizationsEn extends AppLocalizations {
   String get devPractice => 'Dummy practice';
 
   @override
-  String get devToolsOn => 'Developer tools on';
+  String get operatorMode => 'Operator mode';
 
   @override
-  String get devToolsOff => 'Developer tools off';
+  String get operatorEnter => 'Enter operator mode';
+
+  @override
+  String get operatorExit => 'Back to player mode';
+
+  @override
+  String get operatorPassword => 'Password';
+
+  @override
+  String get operatorWrongPassword => 'Wrong password';
+
+  @override
+  String get operatorOn => 'Operator mode on';
+
+  @override
+  String get operatorOff => 'Back in player mode';
+
+  @override
+  String get operatorRevealed => 'Operator button unlocked';
+
+  @override
+  String get operatorStages => 'Stages (all open)';
+
+  @override
+  String get operatorPirates => 'Pirates';
+
+  @override
+  String get operatorShip => 'Ship';
+
+  @override
+  String get operatorProgress => 'Progress (changes your save)';
+
+  @override
+  String get operatorMotions => 'Pirate motions';
+
+  @override
+  String get operatorShipUpgrades => 'Ship upgrades (free)';
+
+  @override
+  String get operatorShipMax => 'Max out ship';
+
+  @override
+  String operatorGold(String gold) {
+    return 'Gold +$gold';
+  }
+
+  @override
+  String get operatorLevelMax => 'Max player level';
+
+  @override
+  String get operatorAllPirates => 'Get all pirates';
+
+  @override
+  String get operatorReset => 'Reset progress';
+
+  @override
+  String get operatorResetAsk =>
+      'Erase all progress (stars, gold, pirates, ship)?';
+
+  @override
+  String get operatorDone => 'Done';
+
+  @override
+  String get motionIdle => 'Idle';
+
+  @override
+  String get motionAttack => 'Attack';
+
+  @override
+  String get motionHit => 'Hit';
+
+  @override
+  String get motionAim => 'Aim';
+
+  @override
+  String get motionFall => 'Fall';
+
+  @override
+  String get motionSwim => 'Swim';
+
+  @override
+  String get motionWin => 'Win';
+
+  @override
+  String get motionLose => 'Lose';
+
+  @override
+  String get motionTeamBlue => 'Blue';
+
+  @override
+  String get motionTeamRed => 'Red';
 
   @override
   String get storyReplay => 'Replay stories';

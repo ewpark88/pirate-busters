@@ -4,6 +4,7 @@ import 'package:pirate_busters/app/app_theme.dart';
 import 'package:pirate_busters/app/providers.dart';
 import 'package:pirate_busters/audio/music_director.dart';
 import 'package:pirate_busters/dev/dev_tools_switch.dart';
+import 'package:pirate_busters/dev/operator_entry.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
 import 'package:pirate_busters/settings/language.dart';
 import 'package:pirate_busters/ui/kit/kit_motion.dart';
@@ -45,7 +46,7 @@ class SettingsScreen extends ConsumerWidget {
           child: SingleChildScrollView(
             padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
             child: PopIn(
-              // '언어' 글자 7번 = 개발 도구 숨은 스위치 (ADR-073).
+              // '언어' 글자 7번 = 운영자 모드 버튼 숨은 스위치 (ADR-073, ADR-099).
               child: DevToolsSwitch(
                 child: PbPanel(
                   child: Column(
@@ -125,6 +126,8 @@ class SettingsScreen extends ConsumerWidget {
                                       .buy(),
                                 ),
                         ),
+                      // 운영자 모드 들어가기·나가기 (ADR-099).
+                      const OperatorEntry(),
                     ],
                   ),
                 ),

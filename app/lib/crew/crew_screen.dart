@@ -9,6 +9,7 @@ import 'package:pirate_busters/battle/battle_setup.dart';
 import 'package:pirate_busters/crew/crew_widgets.dart';
 import 'package:pirate_busters/crew/deck_eval.dart';
 import 'package:pirate_busters/dev/dev_flags.dart';
+import 'package:pirate_busters/dev/operator_limits.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
 import 'package:pirate_busters/ui/kit/kit_motion.dart';
 import 'package:pirate_busters/ui/kit/pb_panel.dart';
@@ -59,7 +60,7 @@ class _CrewScreenState extends ConsumerState<CrewScreen> {
     next[slot] = id;
     final deck = next.whereType<String>().toList();
     final catalog = ref.read(gameCatalogProvider).pirates;
-    final limit = ref.read(progressProvider).costLimit;
+    final limit = ref.read(costLimitProvider);
     return deckProblem(_hull, catalog, deck, limit) == null;
   }
 
@@ -124,7 +125,7 @@ class _CrewScreenState extends ConsumerState<CrewScreen> {
                         ],
                       ),
                       const SizedBox(height: 8),
-                      CostBar(used: used, limit: progress.costLimit),
+                      CostBar(used: used, limit: ref.watch(costLimitProvider)),
                       const SizedBox(height: 6),
                       Expanded(
                         child: SingleChildScrollView(

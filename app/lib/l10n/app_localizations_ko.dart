@@ -1233,10 +1233,99 @@ class AppLocalizationsKo extends AppLocalizations {
   String get devPractice => '더미배 연습';
 
   @override
-  String get devToolsOn => '개발 도구를 켰습니다';
+  String get operatorMode => '운영자 모드';
 
   @override
-  String get devToolsOff => '개발 도구를 껐습니다';
+  String get operatorEnter => '운영자 모드 들어가기';
+
+  @override
+  String get operatorExit => '사용자 모드로 나가기';
+
+  @override
+  String get operatorPassword => '비밀번호';
+
+  @override
+  String get operatorWrongPassword => '비밀번호가 틀렸습니다';
+
+  @override
+  String get operatorOn => '운영자 모드를 켰습니다';
+
+  @override
+  String get operatorOff => '사용자 모드로 돌아왔습니다';
+
+  @override
+  String get operatorRevealed => '운영자 버튼이 나타났습니다';
+
+  @override
+  String get operatorStages => '스테이지 (모두 열림)';
+
+  @override
+  String get operatorPirates => '해적';
+
+  @override
+  String get operatorShip => '배';
+
+  @override
+  String get operatorProgress => '진행 (저장이 바뀝니다)';
+
+  @override
+  String get operatorMotions => '해적 모션 보기';
+
+  @override
+  String get operatorShipUpgrades => '배 업그레이드 (0골드)';
+
+  @override
+  String get operatorShipMax => '배 전부 최대로';
+
+  @override
+  String operatorGold(String gold) {
+    return '골드 +$gold';
+  }
+
+  @override
+  String get operatorLevelMax => '플레이어 레벨 최대';
+
+  @override
+  String get operatorAllPirates => '해적 전원 받기';
+
+  @override
+  String get operatorReset => '진행 초기화';
+
+  @override
+  String get operatorResetAsk => '별·골드·해적·배 진행을 모두 지울까요?';
+
+  @override
+  String get operatorDone => '적용했습니다';
+
+  @override
+  String get motionIdle => '대기';
+
+  @override
+  String get motionAttack => '공격';
+
+  @override
+  String get motionHit => '피격';
+
+  @override
+  String get motionAim => '조준';
+
+  @override
+  String get motionFall => '넘어짐';
+
+  @override
+  String get motionSwim => '헤엄';
+
+  @override
+  String get motionWin => '승리';
+
+  @override
+  String get motionLose => '패배';
+
+  @override
+  String get motionTeamBlue => '파랑';
+
+  @override
+  String get motionTeamRed => '빨강';
 
   @override
   String get storyReplay => '이야기 다시 보기';

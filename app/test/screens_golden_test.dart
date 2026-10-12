@@ -124,7 +124,8 @@ void main() {
       },
     ),
     'shipyard': const ShipyardScreen(),
-    'crew': const CrewScreen(),
+    // 해적 전원 보기(운영자 모드와 같은 목록, ADR-099). 기준 그림이 이 목록으로 찍혔다.
+    'crew': const CrewScreen(showAll: true),
     'settings': const SettingsScreen(),
     'map': const CampaignMapScreen(),
     'prep': BattlePrepScreen(stage: stage),
