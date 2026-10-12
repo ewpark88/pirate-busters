@@ -17,6 +17,7 @@ class PlayerProgress {
     this.matchesPlayed = 0,
     this.seenStories = const [],
     this.ship = const ShipUpgrades(),
+    this.lossStreak = 0,
   });
 
   /// JSON 에서 읽는다. 모르는 값·깨진 값은 기본값으로 본다.
@@ -58,6 +59,7 @@ class PlayerProgress {
               ),
             )
           : ShipUpgrades.fromJson(json['ship']),
+      lossStreak: readInt('lossStreak', 0).clamp(0, 1 << 20),
     );
   }
 
@@ -110,6 +112,9 @@ class PlayerProgress {
   /// 배 업그레이드 (설계서 §3.1·§3.3·§13.6).
   final ShipUpgrades ship;
 
+  /// 캠페인 연패 수 (설계서 §5.2 연패 보정, BALANCE.md A5.2). 이기면 0.
+  final int lossStreak;
+
   /// 다음 레벨까지 필요한 경험치 (수치: BALANCE.md A4.5).
   int get xpToNext => xpToNextFor(level);
 
@@ -154,6 +159,10 @@ class PlayerProgress {
 
   PlayerProgress countMatch() => copyWith(matchesPlayed: matchesPlayed + 1);
 
+  /// 판 결과로 연패 수를 센다: 이기면 0, 지거나 비기면 +1 (설계서 §5.2).
+  PlayerProgress recordOutcome({required bool won}) =>
+      copyWith(lossStreak: won ? 0 : lossStreak + 1);
+
   PlayerProgress finishTutorial(int step) => step <= tutorialDone
       ? this
       : copyWith(tutorialDone: step.clamp(0, tutorialMatches));
@@ -177,6 +186,7 @@ class PlayerProgress {
     int? matchesPlayed,
     List<String>? seenStories,
     ShipUpgrades? ship,
+    int? lossStreak,
   }) => PlayerProgress(
     level: level ?? this.level,
     xp: xp ?? this.xp,
@@ -188,6 +198,7 @@ class PlayerProgress {
     matchesPlayed: matchesPlayed ?? this.matchesPlayed,
     seenStories: seenStories ?? this.seenStories,
     ship: ship ?? this.ship,
+    lossStreak: lossStreak ?? this.lossStreak,
   );
 
   Map<String, Object?> toJson() => {
@@ -201,6 +212,7 @@ class PlayerProgress {
     'matchesPlayed': matchesPlayed,
     'seenStories': seenStories,
     'ship': ship.toJson(),
+    'lossStreak': lossStreak,
   };
 
   String encode() => jsonEncode(toJson());

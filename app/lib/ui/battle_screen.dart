@@ -118,11 +118,14 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
                   personality:
                       stage?.personality ??
                       Personality.values[seed % Personality.values.length],
-                  // AI 다이얼 원격 덮어쓰기 (설계서 §7.4 `ai_*`).
+                  // 다이얼 원격 덮어쓰기(§7.4 `ai_*`), 캠페인만 연패 보정(§5.2).
                   dials: AiDials.withOverrides(
                     stage?.aiLevel ?? test?.level ?? widget.level,
                     ref.read(remoteValuesProvider).intOr,
                   ),
+                  losses: stage == null
+                      ? 0
+                      : ref.read(progressProvider).lossStreak,
                 ),
     );
     _reported = false;
