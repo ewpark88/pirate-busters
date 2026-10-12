@@ -15,6 +15,7 @@ import 'package:pirate_busters/campaign/stage_spec.dart';
 import 'package:pirate_busters/dev/practice_bar.dart';
 import 'package:pirate_busters/dev/test_battle.dart';
 import 'package:pirate_busters/game/battle_game.dart';
+import 'package:pirate_busters/game/view/boss_mark.dart';
 import 'package:pirate_busters/input/field_gestures.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
 import 'package:pirate_busters/l10n/data_text.dart';
@@ -24,6 +25,7 @@ import 'package:pirate_busters/platform/remote_values.dart';
 import 'package:pirate_busters/ui/battle_texts_l10n.dart';
 import 'package:pirate_busters/ui/hud/battle_hud.dart';
 import 'package:pirate_busters/ui/hud/boss_banner.dart';
+import 'package:pirate_busters/ui/hud/boss_vignette.dart';
 import 'package:pirate_busters/ui/hud/speech_bubbles.dart';
 import 'package:pirate_busters/ui/hud/tutorial_finger.dart';
 
@@ -123,6 +125,11 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
                 ),
     );
     _reported = false;
+    // 보스 판이면 상대 배에 왕관 표식 (설계서 §13.4, ADR-096).
+    _session.bossSide = BossMark.sideFor(
+      isBoss: stage?.isBoss ?? false,
+      humanSides: _session.humanSides,
+    );
     _session
       ..addListener(_checkOver)
       ..addListener(_updateMusic);
@@ -236,6 +243,10 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
             child: GameWidget(key: ObjectKey(_game), game: _game),
           ),
         ),
+        if (_session.bossSide != null)
+          Positioned.fill(
+            child: BossVignette(calm: _game.calmShake.value),
+          ),
         Positioned.fill(
           child: ValueListenableBuilder<bool>(
             valueListenable: _game.settled,
@@ -263,8 +274,8 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
           Positioned.fill(
             child: TutorialFinger(session: _session, step: step),
           ),
-        if (widget.stage?.gimmick case final gimmick?)
-          Positioned.fill(child: BossBanner(gimmick: gimmick)),
+        if (_session.bossSide != null)
+          Positioned.fill(child: BossBanner(gimmick: widget.stage?.gimmick)),
         if (_test case TestBattle(dummy: true, :final deck))
           PracticeBar(deck: deck, onPick: _practice),
       ],

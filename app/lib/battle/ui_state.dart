@@ -29,6 +29,9 @@ mixin SessionUiState on ChangeNotifier {
   /// `cancelling` 이면 당겼다가 되돌린 상태라 놓아도 쏘지 않는다.
   ({int slot, AimShot shot, double stretch, bool cancelling})? aim;
 
+  /// 보스 판이면 보스 배 진영(설계서 §13.4 보스전 표시). 아니면 null. 그리기만 쓴다.
+  int? bossSide;
+
   /// 이동 버튼을 누르고 있다. 그동안은 쏠 수 없다 (ADR-027).
   bool moveHeld = false;
 
