@@ -18,6 +18,7 @@ import 'package:pirate_busters/game/impact_sound.dart';
 import 'package:pirate_busters/game/pirate_pick.dart';
 import 'package:pirate_busters/game/sprites.dart';
 import 'package:pirate_busters/game/start_gate.dart';
+import 'package:pirate_busters/game/turn_tension.dart';
 import 'package:pirate_busters/game/view/backdrop_view.dart';
 import 'package:pirate_busters/game/view/effect_badges.dart';
 import 'package:pirate_busters/game/view/fx_layer.dart';
@@ -151,6 +152,7 @@ class BattleGame extends FlameGame with BattleTexts {
       WorldMarks(session: session, ships: _ships, priority: 25)
         ..turnsText = (turns) => turnsText(turns),
       RestBadges(session: session, ships: _ships, texts: this, priority: 26),
+      ...turnTension(session, _ships, playSfx, vibrationOn), // A34
       _fx,
     ]);
     _cues = BattleCues(
