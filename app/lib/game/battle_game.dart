@@ -257,6 +257,7 @@ class BattleGame extends FlameGame with BattleTexts {
       aimStretch: aim?.stretch ?? 0,
       holdImpact: shot is ShotPlayback && shot.landed && !shot.isDone,
       aspect: size.x > 0 ? size.y / size.x : 0.46,
+      anchor: me,
     );
     director.update(dt, goal);
     // 흔들림은 쌓이는 충격량의 매끄러운 떨림과 작은 기울기다 (설계서 §10.4, A32).
@@ -275,7 +276,6 @@ class BattleGame extends FlameGame with BattleTexts {
 
   /// 핀치 줌 시작·진행 (설계서 §2.1). 화면이 제스처를 넘긴다.
   void pinchStart() => _pinchStart = director.userZoom;
-
   void pinchUpdate(double scale) => director.setUserZoom(_pinchStart * scale);
 
   /// 비행 중 탭 → `TAP` (설계서 §2.2). [screen] 이 탄보다 위면 위(+1), 아래면

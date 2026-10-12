@@ -2,11 +2,13 @@ import 'dart:math' as math;
 
 import 'package:flame/components.dart';
 import 'package:pb_sim/pb_sim.dart' show MatchState;
+import 'package:pirate_busters/game/camera_motion.dart';
 import 'package:pirate_busters/game/coords.dart';
 
 /// 카메라 목표 계산 (설계서 §2.1, 렌더 전용). Flame 과 무관한 순수 계산이라 테스트한다.
 ///
-/// 수치는 에셋 tokens.json `camera` 를 따른다: 착탄 뒤 1.3초 머묾, 착탄 화면 폭 700.
+/// 착탄 화면 폭 700 은 에셋 tokens.json `camera` 값이고, 머묾(0.8초)·탄 추적 폭(760)은
+/// 손맛 조정으로 에셋 값과 다르다 (A14·A40). 움직임은 임계 감쇠 스프링이다 (A60).
 /// 기본 화면은 내 배와 앞바다, 조준할수록 줌아웃. 탄을 쏘면 탄을 화면 가운데 가까이
 /// 두고 거의 같은 줌으로 따라간다(높이 올라가면 해수면이 보일 만큼만 넓힌다). 탄이 목표
 /// 배에 가까워지면 목표 배가 들어오고, 착탄·파괴 연출이 끝날 때까지 착탄 지점에 머문 뒤
@@ -57,8 +59,20 @@ class CameraDirector {
   static const double impactLift = 0.2;
   static const double followRate = 4;
 
-  /// 탄을 따라갈 때는 더 빨리 붙는다(탄이 화면 밖으로 나가지 않게).
+  /// 탄을 따라갈 때는 더 빨리 붙는다(탄이 화면 밖으로 나가지 않게). 쏜 뒤
+  /// [shotRampSec] 초 동안 [followRate] 에서 이 값까지 부드럽게 올린다 (A60).
   static const double shotFollowRate = 12;
+  static const double shotRampSec = 0.35;
+
+  /// 탄 추적 중 세로는 가로보다 느슨하게 따라가 화면이 탄과 함께 출렁이지 않는다.
+  static const double shotYLoose = 0.5;
+
+  /// 탄이 나아가는 쪽으로 앞을 비워 두는 시간(초)과 그 상한(화면 폭 비율) (A60).
+  static const double shotLeadSec = 0.3;
+  static const double shotLeadMax = 0.12;
+
+  /// rate 를 스프링 세기로 바꾸는 배율: 1차 추종과 비슷한 시간에 도착한다.
+  static const double springBoost = 1.5;
 
   /// 탄을 따라가는 화면 폭(월드 px). 기본 화면과 같은 줌이다.
   static const double shotWidth = baseWidth;
@@ -77,6 +91,17 @@ class CameraDirector {
   static const double shotMarginBottom = 110;
 
   double _rate = followRate;
+  double _rateY = followRate;
+  final CameraSpring _sx = CameraSpring();
+  final CameraSpring _sy = CameraSpring();
+  final CameraSpring _sw = CameraSpring();
+
+  final ShotTrack _track = ShotTrack();
+
+  /// 빈 바다 끌기(설계서 §2.1, A60). 기본 화면에서만 쓰고, 끄는 동안은 [panRate].
+  final CameraPan pan = CameraPan();
+  static const double panRate = 25;
+  int? _anchor;
 
   final Vector2 center = Vector2(0, idleY);
   double width = baseWidth;
@@ -149,17 +174,26 @@ class CameraDirector {
     double aimStretch = 0,
     bool holdImpact = false,
     double aspect = 0.46,
+    int anchor = 0,
   }) {
     final impactAt = _impact;
-    // 착탄 뒤 1.3초, 또는 부서지는 연출이 끝날 때까지 착탄 지점에 머문다.
+    // 착탄 뒤 0.8초, 또는 부서지는 연출이 끝날 때까지 착탄 지점에 머문다.
     final holding = impactAt != null && (_impactLeft > 0 || holdImpact);
     if (_holding && !holding) _returnLeft = returnSec;
     _holding = holding;
+    _track.shot = projectile?.clone();
+    // 턴이 바뀌거나, 해적을 고르거나, 탄·착탄·전체 보기가 시작되면 끌기를 푼다.
+    if ((_anchor != null && anchor != _anchor) || !canPan) pan.reset();
+    _anchor = anchor;
+    final ramp = smooth01(_track.t / shotRampSec);
     _rate = projectile != null
-        ? shotFollowRate
+        ? followRate + (shotFollowRate - followRate) * ramp
         : _returnLeft > 0
         ? returnRate
+        : pan.dragging
+        ? panRate
         : followRate;
+    _rateY = projectile != null ? _rate * shotYLoose : _rate;
     if (overview) {
       final w = ((myX - enemyX).abs() + 800).clamp(baseWidth, maxWidth);
       return (Vector2((myX + enemyX) / 2, -150), w);
@@ -185,7 +219,7 @@ class CameraDirector {
       // 그 배가 들어오도록 가운데를 옮기고 넓힌다.
       final aimX = targetX ?? enemyX;
       final dist = (projectile.x - aimX).abs();
-      final near = (1 - dist / approachDist).clamp(0.0, 1.0);
+      final near = smooth01(1 - dist / approachDist);
       // 세로: 탄 위 여백부터 해수면 아래 여백까지가 화면 높이 안에 든다.
       final top = math.min(projectile.y, -60) - shotMarginTop;
       const bottom = shotMarginBottom;
@@ -197,8 +231,14 @@ class CameraDirector {
         math.max((top + bottom) / 2, top + halfH),
         bottom - halfH,
       );
+      final lead = (_track.vx * shotLeadSec).clamp(
+        -shotLeadMax * w,
+        shotLeadMax * w,
+      );
       final x =
-          projectile.x + ((projectile.x + aimX) / 2 - projectile.x) * near;
+          projectile.x +
+          lead * ramp * (1 - near) +
+          ((projectile.x + aimX) / 2 - projectile.x) * near;
       return (Vector2(x, y), w);
     }
     final feet = focusFeet;
@@ -224,7 +264,21 @@ class CameraDirector {
     final t = ((w - baseWidth) / (maxWidth - baseWidth)).clamp(0.0, 1.0);
     final near = myX + facing * ahead;
     final mid = (myX + enemyX) / 2;
-    return (Vector2(near + (mid - near) * t, idleYFor(w, aspect)), w);
+    final x = pan.apply(
+      near + (mid - near) * t,
+      math.min(myX, enemyX),
+      math.max(myX, enemyX),
+    );
+    return (Vector2(x, idleYFor(w, aspect)), w);
+  }
+
+  /// 지금 끌어서 화면을 옮길 수 있는가: 기본 화면일 때만.
+  bool get canPan =>
+      !overview && focusFeet == null && _track.shot == null && !_holding;
+
+  /// 빈 바다를 끈 만큼(월드 px) 화면을 옮긴다. 손을 떼면 `pan.dragging = false`.
+  void panBy(double dx) {
+    if (canPan) pan.by(dx);
   }
 
   /// 목표로 부드럽게 다가간다.
@@ -233,8 +287,13 @@ class CameraDirector {
     _impactLeft = math.max(0, _impactLeft - dt);
     _returnLeft = math.max(0, _returnLeft - dt);
     _punchT += dt;
-    final k = 1 - math.exp(-_rate * dt);
-    center.add((goal.$1 - center) * k);
-    width += (goal.$2 - width) * k;
+    _track.update(dt);
+    pan.update(dt);
+    final k = _rate * springBoost;
+    center.setValues(
+      _sx.step(center.x, goal.$1.x, k, dt),
+      _sy.step(center.y, goal.$1.y, _rateY * springBoost, dt),
+    );
+    width = _sw.step(width, goal.$2, k, dt);
   }
 }

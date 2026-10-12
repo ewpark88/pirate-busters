@@ -36,8 +36,7 @@ void main() {
 
     test('이번 묶음에 마지막 방패 칸이 부서지면 ‘방패 깨짐’과 그 칸을 준다', () {
       final boss = _bossSide();
-      final shield = boss.shieldCells;
-      shield.forEach(boss.grid.removeAt);
+      final shield = boss.shieldCells..forEach(boss.grid.removeAt);
       final cues = [
         for (final i in shield) ...[
           _hit(1, i),
