@@ -7,10 +7,13 @@ import 'package:pirate_busters/ui/kit/kit_motion.dart';
 /// 보스전 시작 배너 (설계서 §5.4·§13.4): 위쪽 가운데에 “보스!”와, 기믹이 있으면 기믹 한
 /// 줄을 띄웠다가 몇 초 뒤 사라진다. 누르면 바로 닫는다. 판정과 무관하다.
 class BossBanner extends StatefulWidget {
-  const BossBanner({this.gimmick, super.key});
+  const BossBanner({this.gimmick, this.onDone, super.key});
 
   /// 기믹 id (`bow_iron_shield` 등). 글자는 ARB `gimmick_<id>`. 기믹 없는 보스는 null.
   final String? gimmick;
+
+  /// 배너가 닫힐 때(시간이 다 되거나 눌렀을 때) 한 번 부른다.
+  final VoidCallback? onDone;
 
   /// 보여 두는 시간.
   static const Duration shown = Duration(milliseconds: 3800);
@@ -25,9 +28,13 @@ class _BossBannerState extends State<BossBanner> {
   @override
   void initState() {
     super.initState();
-    Future<void>.delayed(BossBanner.shown, () {
-      if (mounted) setState(() => _visible = false);
-    });
+    Future<void>.delayed(BossBanner.shown, _close);
+  }
+
+  void _close() {
+    if (!mounted || !_visible) return;
+    setState(() => _visible = false);
+    widget.onDone?.call();
   }
 
   @override
@@ -39,7 +46,7 @@ class _BossBannerState extends State<BossBanner> {
         opacity: _visible ? 1 : 0,
         duration: const Duration(milliseconds: 400),
         child: GestureDetector(
-          onTap: () => setState(() => _visible = false),
+          onTap: _close,
           child: Align(
             alignment: const Alignment(0, -0.45),
             child: PopIn(

@@ -134,7 +134,8 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
       ..addListener(_checkOver)
       ..addListener(_updateMusic);
     final analytics = ref.read(analyticsProvider);
-    _game = BattleGame(_session, sound: ref.read(soundServiceProvider));
+    _game = BattleGame(_session, sound: ref.read(soundServiceProvider))
+      ..gate.held = _session.bossSide != null;
     _game.settled.addListener(_checkOver);
     _game.onTurnEnd = (e) {
       if (!_session.humanSides.contains(e.side)) return;
@@ -279,7 +280,13 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
             ),
           ),
         if (_session.bossSide != null)
-          Positioned.fill(child: BossBanner(gimmick: widget.stage?.gimmick)),
+          Positioned.fill(
+            child: BossBanner(
+              gimmick: widget.stage?.gimmick,
+              // 배너가 떠 있는 동안 첫 턴 시계를 멈춘다 (A41 점검).
+              onDone: () => _game.gate.held = false,
+            ),
+          ),
         if (_test case TestBattle(dummy: true, :final deck))
           PracticeBar(deck: deck, onPick: _practice),
       ],

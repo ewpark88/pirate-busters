@@ -14,6 +14,22 @@ class BattleSetup {
   /// 시작 해적 (설계서 §4.2, §4.6).
   static const List<String> starterDeck = ['p01_octo', 'p36_tok'];
 
+  /// 실제로 출전하는 덱: 저장된 [deck] 을 배 [hull] 의 선실 수만큼 앞에서 자르고,
+  /// 코스트 한도 [limit] 를 넘으면 뒤에서 뺀다. 그래도 맞지 않으면 시작 덱. 전투 준비
+  /// 화면과 전투가 같은 덱을 쓰게 한다 (A41 점검: 큰 배에서 작은 배로 바꾼 경우).
+  List<String> sailDeck(List<String>? deck, HullSpec hull, int limit) {
+    final out = [
+      for (final id in deck ?? starterDeck)
+        if (catalog.pirates.has(id)) id,
+    ].take(hull.cabinSlots).toList();
+    int cost() => out.fold(0, (a, id) => a + catalog.pirates.byId(id).cost);
+    while (out.length > 1 && cost() > limit) {
+      out.removeLast();
+    }
+    final ok = deckProblem(hull, catalog.pirates, out, limit) == null;
+    return ok ? out : starterDeck;
+  }
+
   /// AI 상대의 덱 후보: 일반 4명. 플레이어 덱과 같은 인원만큼 앞에서부터 태운다.
   /// 캠페인 적 덱은 M7 (§6.1).
   static const List<String> aiDeck = [
@@ -104,10 +120,9 @@ class BattleSetup {
     int? costLimit,
     MatchRules Function(MatchRules rules)? tune,
   }) {
-    final chosen = deck ?? starterDeck;
     final mine = blueprint ?? defaultBlueprint;
     final limit = costLimit ?? BattleSetup.costLimit;
-    final ok = deckProblem(mine.hull, catalog.pirates, chosen, limit) == null;
+    final chosen = sailDeck(deck, mine.hull, limit);
     // 보스 기믹은 상대(진영 1)에 건다 (설계서 §5.4, BALANCE.md A5.4). 튜토리얼 3 은
     // 수리를 보여 주려고 내 배(진영 0)가 구멍 난 채 시작한다 (§15.2, ADR-092).
     final wounded = stage.tutorialStep == 3;
@@ -122,7 +137,7 @@ class BattleSetup {
     // 적 배: 스테이지의 확장 단계·돛대 레벨 (설계서 §3.1·§3.3, BALANCE.md A3.1·A3.2).
     final enemy = enemyBlueprintOf(stage);
     final blueprints = [mine, enemyShip(enemy, stage.enemyMastLevel)];
-    final decks = [if (ok) chosen else starterDeck, stage.enemyDeck];
+    final decks = [chosen, stage.enemyDeck];
     final limits = [limit, BattleSetup.costLimit];
     final match = Match.start(
       seed: seed,
@@ -142,13 +157,11 @@ class BattleSetup {
 
   /// 저장한 설계도·덱으로 새 판. 없거나 규칙에 맞지 않으면(코스트 초과 등) 기본값.
   Match newMatchFor(int seed, {Blueprint? blueprint, List<String>? deck}) {
-    final chosen = deck ?? starterDeck;
     final hull = (blueprint ?? defaultBlueprint).hull;
-    final ok = deckProblem(hull, catalog.pirates, chosen, costLimit) == null;
     return newMatch(
       seed,
       blueprint: blueprint,
-      deck: ok ? chosen : starterDeck,
+      deck: sailDeck(deck, hull, costLimit),
     );
   }
 }
