@@ -12,13 +12,21 @@ Future<void> main() async {
     );
     if (stage.isNotEmpty) out.writeln(stage.replaceAll('**', '').trim());
   }
+  final status = File('docs/STATUS.md');
+  if (status.existsSync()) {
+    final checked = status.readAsLinesSync().firstWhere(
+      (l) => l.startsWith('마지막 점검'),
+      orElse: () => '',
+    );
+    out.writeln('설계 대비 현황: docs/STATUS.md 를 먼저 읽고 「다음에 할 일」부터 잇는다. $checked');
+  }
   final branch = await _run('git', ['branch', '--show-current']);
   out.writeln('브랜치: ${branch.isEmpty ? '(detached)' : branch}');
   if (branch == 'main') {
     out.writeln('주의: main 에서 작업하지 않는다. /step-start 로 feat/<단계>-<이름> 브랜치를 만든다.');
   }
-  final status = await _run('git', ['status', '--short']);
-  final changed = status.isEmpty ? 0 : status.split('\n').length;
+  final gitStatus = await _run('git', ['status', '--short']);
+  final changed = gitStatus.isEmpty ? 0 : gitStatus.split('\n').length;
   out.writeln('커밋 안 된 파일: $changed개');
   final sync = await Process.run('dart', [
     'run',
