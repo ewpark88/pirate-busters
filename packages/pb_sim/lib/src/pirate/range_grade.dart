@@ -1,13 +1,13 @@
 /// 해적 최대 사거리 등급 (설계서 §2.8). 순서는 바꾸지 않는다.
 ///
 /// 사거리는 최대 힘·45° 로 쐈을 때 발사 높이에서 해수면까지의 가로 거리(바람 없음)다.
-/// 최대 탄속 = √(사거리 × 중력 5.598칸/초²) 을 미리 계산한 정수 표로 둔다 (§7.1,
-/// BALANCE.md A2.8, ADR-043·ADR-069·A44). 중력은 `gravityPerTick` 622.
+/// 최대 탄속 = √(사거리 × 중력 3.312칸/초²) 을 미리 계산한 정수 표로 둔다 (§7.1,
+/// BALANCE.md A2.8, ADR-043·ADR-069·A44). 중력은 `gravityPerTick` 368.
 enum RangeGrade {
-  short(26, 12064),
-  medium(36, 14196),
-  long(50, 16730),
-  veryLong(66, 19222);
+  short(26, 9280),
+  medium(36, 10919),
+  long(50, 12869),
+  veryLong(66, 14785);
 
   const RangeGrade(this.cells, this.launchSpeed);
 

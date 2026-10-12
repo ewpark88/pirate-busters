@@ -4,7 +4,7 @@
   "outcome": "timeDecision",
   "winner": 0,
   "turns": 30,
-  "hash": "c76f7cd8"
+  "hash": "5d12769f"
  },
  "replay": {
   "version": 7,
@@ -14,7 +14,7 @@
    "turnTimeMs": 25000,
    "firesPerTurn": 2,
    "maxWind": 3,
-   "windAccel": 15,
+   "windAccel": 9,
    "sunkHullPercent": 40,
    "fuelPerTurn": 30,
    "stormTurns": 4,
@@ -1154,7 +1154,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "b150591a"
+    "hash": "4de21465"
    },
    {
     "turn": 29,
@@ -1165,7 +1165,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "b2a961c9"
+    "hash": "8e341a9e"
    },
    {
     "turn": 30,
@@ -1196,7 +1196,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "c76f7cd8"
+    "hash": "5d12769f"
    }
   ]
  }
