@@ -7,6 +7,7 @@ import 'dart:ui';
 import 'package:flame/cache.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:pb_sim/pb_sim.dart' show Rarity;
 import 'package:pirate_busters/game/anim/anim_data.dart';
 import 'package:pirate_busters/game/anim/part_component.dart';
 import 'package:pirate_busters/game/anim/rarity_fx.dart';
@@ -153,13 +154,30 @@ class CharacterRig extends PositionComponent {
   }
 
   /// 부위보다 먼저(뒤에) 그린다. 캔버스를 월드 px 단위로 돌려 놓고 발 기준으로 그린다.
+  /// 발밑 등급 별 수 (설계서 §10.5, A37). 0 이면 그리지 않는다.
+  int stars = 0;
+
+  /// 등급 [r] 의 연출([fx] 표)과 발밑 별 수를 정한다.
+  void rarity(RarityFx fx, Rarity r) {
+    tier = fx.of(r);
+    stars = RarityPainter.starsOf(r.index);
+  }
+
   @override
   void render(Canvas canvas) {
-    if (tier.color == null || alpha <= 0) return;
+    if (alpha <= 0) return;
     canvas
       ..save()
       ..translate(size.x * anchor.x, size.y * anchor.y)
       ..scale(_n / _battleScale);
+    // 색을 못 구분해도 등급이 보이게 발밑에 별 수를 그린다 (A37).
+    if (alpha > .5) {
+      RarityPainter.starRow(canvas, const Offset(0, 6), stars, 3.6);
+    }
+    if (tier.color == null) {
+      canvas.restore();
+      return;
+    }
     if (!fewer) {
       RarityPainter.glow(canvas, Offset.zero, tier, alpha, sec: _idleT);
     }

@@ -46,7 +46,7 @@ class MotionPreviewGame extends FlameGame {
       team,
       states: a.states,
     );
-    rig.tier = a.rarity.of(rarity);
+    rig.rarity(a.rarity, rarity);
     _rig?.removeFromParent();
     _rig = rig;
     _species = species;

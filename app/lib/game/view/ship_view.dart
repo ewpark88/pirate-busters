@@ -62,7 +62,7 @@ class ShipView extends PositionComponent with HasGameReference {
         states: anims.states,
       );
       rig
-        ..tier = anims.rarity.of(spec.rarity)
+        ..rarity(anims.rarity, spec.rarity)
         ..home.setFrom(cabinFeet(slot));
       rigs.add(rig);
       await add(rig);
