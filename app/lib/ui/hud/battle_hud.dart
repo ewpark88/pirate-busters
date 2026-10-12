@@ -9,6 +9,7 @@ import 'package:pirate_busters/ui/hud/gap_bar.dart';
 import 'package:pirate_busters/ui/hud/hud_scale.dart';
 import 'package:pirate_busters/ui/hud/hud_style.dart';
 import 'package:pirate_busters/ui/hud/move_controls.dart';
+import 'package:pirate_busters/ui/hud/no_shooter_banner.dart';
 import 'package:pirate_busters/ui/hud/pause_menu.dart';
 import 'package:pirate_busters/ui/hud/pirate_cards.dart';
 import 'package:pirate_busters/ui/hud/result_overlay.dart';
@@ -247,6 +248,7 @@ class BattleHud extends StatelessWidget {
             ),
           ),
         ),
+      NoShooterBanner(active: session.autoEnd.noShooter),
       if (session.isOver && session.playback == null && settled)
         ResultOverlay(
           state: session.state,

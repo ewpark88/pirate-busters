@@ -25,6 +25,7 @@ export 'src/match/mast_seats.dart';
 export 'src/match/match.dart';
 export 'src/match/match_state.dart';
 export 'src/match/rules.dart';
+export 'src/match/side_actions.dart';
 export 'src/match/side_status.dart';
 export 'src/match/sim_event.dart';
 export 'src/match/turn_effects.dart';

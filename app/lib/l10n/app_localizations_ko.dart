@@ -79,6 +79,12 @@ class AppLocalizationsKo extends AppLocalizations {
   String get firedDone => '발사 완료';
 
   @override
+  String get noPirateCanFire => '공격할 수 있는 해적이 없습니다. 턴을 상대방에게 넘깁니다';
+
+  @override
+  String get pirateReady => '준비!';
+
+  @override
   String get cabinFlooded => '잠김';
 
   @override

@@ -22,6 +22,7 @@ import 'package:pirate_busters/game/view/backdrop_view.dart';
 import 'package:pirate_busters/game/view/effect_badges.dart';
 import 'package:pirate_busters/game/view/fx_layer.dart';
 import 'package:pirate_busters/game/view/limit_marks.dart';
+import 'package:pirate_busters/game/view/rest_badge.dart';
 import 'package:pirate_busters/game/view/sea_theme.dart';
 import 'package:pirate_busters/game/view/sea_view.dart';
 import 'package:pirate_busters/game/view/shake.dart';
@@ -31,8 +32,7 @@ import 'package:pirate_busters/game/view/water_fx.dart';
 import 'package:pirate_busters/game/view/world_marks.dart';
 import 'package:pirate_busters/game/weapon_styles.dart';
 
-/// 전장 (개발 계획서 M4). 매 프레임 [BattleSession] 을 진행하고 결과를 그린다.
-/// 판정은 하지 않는다 (CLAUDE.md 절대 규칙 3).
+/// 전장 (M4): 매 프레임 [BattleSession] 을 진행하고 그린다. 판정은 안 한다 (규칙 3).
 class BattleGame extends FlameGame with BattleTexts {
   BattleGame(this.session, {this.sound = const SilentSoundService()});
 
@@ -56,8 +56,7 @@ class BattleGame extends FlameGame with BattleTexts {
   final Set<int> _sinkShown = {};
   bool _endPlayed = false;
 
-  /// 저사양 모드(바다 셰이더 끔, §10.2)와 설정의 효과음·진동·흔들림 줄이기(§13.8).
-  /// 화면이 설정 값을 넣는다.
+  /// 저사양(셰이더 끔, §10.2)·효과음·진동·흔들림 줄이기(§13.8). 화면이 설정을 넣는다.
   final ValueNotifier<bool> lowEnd = ValueNotifier(false);
   final ValueNotifier<bool> soundOn = ValueNotifier(true);
   final ValueNotifier<bool> vibrationOn = ValueNotifier(true);
@@ -148,6 +147,7 @@ class BattleGame extends FlameGame with BattleTexts {
         ..turnsText = (turns) => turnsText(turns),
       WorldMarks(session: session, ships: _ships, priority: 25)
         ..turnsText = (turns) => turnsText(turns),
+      RestBadges(session: session, ships: _ships, texts: this, priority: 26),
       _fx,
     ]);
     _cues = BattleCues(

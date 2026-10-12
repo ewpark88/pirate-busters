@@ -65,6 +65,8 @@
     }
   },
   "firedDone": "Fired",
+  "noPirateCanFire": "No pirate can attack. Passing the turn to your opponent.",
+  "pirateReady": "Ready!",
   "cabinFlooded": "Flooded",
   "pirateDown": "Down",
   "pirateSwimming": "Swimming",

@@ -12,6 +12,7 @@ void applyBattleTexts(BattleGame game, AppLocalizations l10n, Locale locale) {
   game
     ..damageText = ((amount) => l10n.damagePopup(number.format(amount)))
     ..turnsText = number.format
+    ..readyText = (() => l10n.pirateReady)
     ..aimAngleText = ((d) => l10n.aimAngle(number.format(d)))
     ..aimPowerText = ((p) => l10n.aimPower(number.format(p)))
     // 감정 연출 강조 문구 (설계서 §10.4).

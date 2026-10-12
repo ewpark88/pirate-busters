@@ -206,6 +206,18 @@ abstract class AppLocalizations {
   /// **'Fired'**
   String get firedDone;
 
+  /// No description provided for @noPirateCanFire.
+  ///
+  /// In en, this message translates to:
+  /// **'No pirate can attack. Passing the turn to your opponent.'**
+  String get noPirateCanFire;
+
+  /// No description provided for @pirateReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready!'**
+  String get pirateReady;
+
   /// No description provided for @cabinFlooded.
   ///
   /// In en, this message translates to:

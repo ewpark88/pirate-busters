@@ -103,6 +103,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get firedDone => 'Fired';
 
   @override
+  String get noPirateCanFire =>
+      'No pirate can attack. Passing the turn to your opponent.';
+
+  @override
+  String get pirateReady => 'Ready!';
+
+  @override
   String get cabinFlooded => 'Flooded';
 
   @override
