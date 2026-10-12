@@ -86,4 +86,36 @@ abstract final class ScorchPainter {
       );
     }
   }
+
+  /// 단계 안 닳음 그을음 (설계서 §10.2 ‘단계 안 손상’, A36): 칸 안에서만 번지는
+  /// 옅은 그을음 얼룩. [wear] 1~3 이 클수록 짙고 넓다. 자리는 칸 번호로 정해져
+  /// 리플레이에서도 같다.
+  static void wear(Canvas canvas, Offset at, int c, int r, int wear) {
+    const u = DamageStyle.unit;
+    final k = wear.clamp(1, 3);
+    final h = (c * 73 + r * 151) % 97;
+    final center =
+        at +
+        Offset(u * (.3 + .4 * (h % 10) / 9), u * (.3 + .4 * (h ~/ 10) / 9));
+    final alpha = const [0.0, .22, .38, .56][k];
+    canvas
+      ..save()
+      ..clipRect(at & const Size.square(u))
+      ..drawCircle(
+        center,
+        u * (.45 + .15 * k),
+        Paint()
+          ..shader = Gradient.radial(
+            center,
+            u * (.45 + .15 * k),
+            [
+              const Color(0xFF140A06).withValues(alpha: alpha),
+              const Color(0xFF2A160B).withValues(alpha: alpha * .5),
+              const Color(0x002A160B),
+            ],
+            const [0, .55, 1],
+          ),
+      )
+      ..restore();
+  }
 }

@@ -18,8 +18,13 @@ class DamageLayer {
   int recordings = 0;
 
   /// 손상 칸 코드: 설계도에 없음 −1, 블록이면 손상 단계 0~2, 부서졌으면 3.
+  /// 블록은 단계 안 닳음 0~3 을 [wearStep] 배로 더해 담는다 (A36).
   static const int none = -1;
   static const int broken = 3;
+  static const int wearStep = 4;
+
+  /// 단계 안 닳음 최대값.
+  static const int maxWear = 3;
 
   /// 칸 하나의 손상 코드: 지금 재질 [material], 판 시작 재질 [built], 내구도 [hp]/[max].
   /// 돛대 칸은 손상 그림을 얹지 않는다(돛대는 MastPainter 가 그린다, 설계서 §3.3).
@@ -30,8 +35,26 @@ class DamageLayer {
           : broken;
     }
     if (BlockMaterial.values[material].rig) return none;
-    return ShipGrid.stageFor(hp, max).index;
+    return ShipGrid.stageFor(hp, max).index + wearStep * wearOf(hp, max);
   }
+
+  /// 단계 안 닳음 0~3 (설계서 §10.2 ‘단계 안 손상’, A36): 지금 단계 구간(내구도의
+  /// 3등분) 위끝에서 얼마나 내려왔는가. 구간 위끝이면 0, 다음 단계 직전이면 3.
+  static int wearOf(int hp, int max) {
+    if (max <= 0 || hp >= max) return 0;
+    final hp3 = hp * 3;
+    final top = hp3 > max * 2 ? max * 3 : (hp3 > max ? max * 2 : max);
+    final depth = top - hp3;
+    return depth <= 0
+        ? 0
+        : (1 + (depth * maxWear - 1) ~/ max).clamp(1, maxWear);
+  }
+
+  /// 코드의 손상 단계 부분 ([none]·0~2·[broken]).
+  static int stageOf(int code) => code < 0 ? code : code % wearStep;
+
+  /// 코드의 단계 안 닳음 부분 (0~3).
+  static int wearPart(int code) => code < 0 ? 0 : code ~/ wearStep;
 
   /// 칸 단계 [codes](칸 번호 = y × width + x, y 는 위로 는다)와 젖은 줄 수
   /// [wetRows](아래부터)로 손상을 그린다. [materials] 는 칸별 재질이고 부서진
@@ -102,10 +125,11 @@ class DamageLayer {
   static void draw(
     Canvas canvas,
     int width,
-    List<int> codes,
+    List<int> worn,
     List<int> materials,
     int wetRows,
   ) {
+    final codes = [for (final c in worn) stageOf(c)];
     final height = codes.length ~/ width;
     final shown = floating(width, codes);
     int at(int c, int r) => c < 0 || c >= width || r < 0 || r >= height
@@ -169,6 +193,13 @@ class DamageLayer {
       }
       canvas.restore();
     }
+
+    // 2-1) 단계 안 그을음: 닳을수록 짙게 (설계서 §10.2, A36).
+    each((c, r, code) {
+      if (code == broken) return;
+      final wear = wearPart(worn[(height - 1 - r) * width + c]);
+      if (wear > 0) ScorchPainter.wear(canvas, o(c, r), c, r, wear);
+    });
 
     // 3) 금 전부, 4) 구멍 전부 (damage_v3.json `order`).
     each((c, r, code) {
