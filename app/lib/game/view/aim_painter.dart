@@ -119,6 +119,38 @@ abstract final class AimPainter {
     return Offset(facing * math.cos(rad), -math.sin(rad));
   }
 
+  /// 산발 연사의 퍼짐 부채꼴 길이(월드 px, 배율 전).
+  static const double fanLength = 70;
+
+  /// 산발 연사 퍼짐 범위 (설계서 §4.8 연사 패턴, ADR-102): 발사점 [from] 에서 조준
+  /// 방향 ±[spreadMdeg]/2 로 흐린 부채꼴. 탄이 그 안 어딘가로 흩어진다는 표시다.
+  static void spreadFan(
+    Canvas c,
+    Offset from,
+    Color color, {
+    required int facing,
+    required int angleMdeg,
+    required int spreadMdeg,
+    double scale = 1,
+  }) {
+    final len = fanLength * scale;
+    final a = from + direction(facing, angleMdeg - spreadMdeg ~/ 2) * len;
+    final b = from + direction(facing, angleMdeg + spreadMdeg ~/ 2) * len;
+    final wedge = Path()
+      ..moveTo(from.dx, from.dy)
+      ..lineTo(a.dx, a.dy)
+      ..lineTo(b.dx, b.dy)
+      ..close();
+    c
+      ..drawPath(wedge, _fill(color, .16))
+      ..drawPath(
+        wedge,
+        _fill(color, .45)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = scale,
+      );
+  }
+
   /// 고무줄을 당긴 끝점: 조준 방향의 반대로 [stretch](0~1)만큼.
   static Offset pulled(
     Offset from,

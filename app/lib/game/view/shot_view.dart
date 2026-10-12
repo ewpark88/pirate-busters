@@ -227,6 +227,17 @@ class ShotView extends Component {
         scale: k,
         flowSec: fewer ? null : _flow,
       );
+      if (spec.ammo == AmmoType.burst && spec.ammoParam == burstScatter) {
+        AimPainter.spreadFan(
+          canvas,
+          from,
+          color,
+          facing: facingOf(side),
+          angleMdeg: launch,
+          spreadMdeg: spec.spreadMdeg,
+          scale: k,
+        );
+      }
     }
     canvas
       ..save()

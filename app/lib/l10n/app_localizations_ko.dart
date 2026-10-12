@@ -232,7 +232,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get pirate_p07_name => '해마 쌍권총 히포';
 
   @override
-  String get pirate_p07_desc => '짧은 사거리 3연사';
+  String get pirate_p07_desc => '짧은 사거리 집중 3연사, 한 점을 연타한다';
 
   @override
   String get pirate_p07_lore => '꼬리로 몸을 지탱하고 쌍권총을 쏜다.';
@@ -349,7 +349,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get pirate_p09_name => '쏠배감펭 가시포 라이언';
 
   @override
-  String get pirate_p09_desc => '가시 부채꼴 연사, 망사를 찢는다';
+  String get pirate_p09_desc => '가시 산발 연사, 넓게 흩뿌려 망사를 찢는다';
 
   @override
   String get pirate_p09_lore => '지느러미 하나하나가 독 가시 대포다.';
