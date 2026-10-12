@@ -17,22 +17,22 @@ Projectile _launch({required int angle, int side = 0, int power = 10000}) =>
 
 void main() {
   test(
-    '중력은 9.5칸/초²(30Hz 틱, 속도 단위 ×100) = 1056, 바람 1단계는 그 2.5% (ADR-043, ADR-069)',
+    '중력은 5.6칸/초²(30Hz 틱, 속도 단위 ×100) = 622, 바람 1단계는 그 2.5% (ADR-043, A44)',
     () {
-      expect(gravityPerTick, 1056);
-      expect(windAccelPerStep, 26);
+      expect(gravityPerTick, 622);
+      expect(windAccelPerStep, 15);
       expect(const MatchRules().windAccel, windAccelPerStep);
     },
   );
 
-  test('사거리 긺 해적의 최대 힘 수평 발사는 틱당 0.727칸, 오른쪽 진영은 반대 방향이다', () {
-    // √(50 × 9.504) = 21.80칸/초 ÷ 30 = 0.7266칸/틱 → 속도 단위 72663.
+  test('사거리 긺 해적의 최대 힘 수평 발사는 틱당 0.558칸, 오른쪽 진영은 반대 방향이다', () {
+    // √(50 × 5.598) = 16.73칸/초 ÷ 30 = 0.5577칸/틱 → 속도 단위 55767.
     final left = _launch(angle: 0);
-    expect([left.vx, left.vy], [72663, 0]);
+    expect([left.vx, left.vy], [55767, 0]);
     final right = _launch(side: 1, angle: 0);
-    expect([right.vx, right.vy], [-72663, 0]);
+    expect([right.vx, right.vy], [-55767, 0]);
     final up = _launch(angle: 90000, power: 5000);
-    expect([up.vx, up.vy], [0, 36332]);
+    expect([up.vx, up.vy], [0, 27883]);
   });
 
   test('탄도는 가로는 바람을 더한 속도로, 세로는 반 스텝 보정한 속도로 옮기는 정수 적분과 같다', () {
@@ -59,10 +59,10 @@ void main() {
 
   test('최대 힘·45° 비행 시간이 BALANCE.md A2.8 표와 같다(±1틱)', () {
     const seconds = {
-      RangeGrade.short: 23,
-      RangeGrade.medium: 28,
-      RangeGrade.long: 32,
-      RangeGrade.veryLong: 37,
+      RangeGrade.short: 30,
+      RangeGrade.medium: 36,
+      RangeGrade.long: 42,
+      RangeGrade.veryLong: 49,
     };
     for (final grade in RangeGrade.values) {
       final p = Projectile.launch(
