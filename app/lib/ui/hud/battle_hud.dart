@@ -5,6 +5,7 @@ import 'package:pirate_busters/battle/playback.dart';
 import 'package:pirate_busters/battle/session_views.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
 import 'package:pirate_busters/port/port_widgets.dart';
+import 'package:pirate_busters/ui/hud/foe_alert.dart';
 import 'package:pirate_busters/ui/hud/gap_bar.dart';
 import 'package:pirate_busters/ui/hud/hud_scale.dart';
 import 'package:pirate_busters/ui/hud/hud_style.dart';
@@ -199,6 +200,11 @@ class BattleHud extends StatelessWidget {
             ),
           ),
         ),
+      // 상대 턴 읽기: 상대 조준 중·포탄이 날아온다 (설계서 §2.3, A34).
+      Align(
+        alignment: const Alignment(0, -0.62),
+        child: FoeAlert(session: session),
+      ),
       if (_awaitingTap)
         // 분열탄이 날고 있다: 화면 어디든 탭하면 갈라진다 (설계서 §2.2, §4.8).
         Align(

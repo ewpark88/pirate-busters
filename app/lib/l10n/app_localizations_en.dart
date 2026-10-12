@@ -723,6 +723,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tapToSplit => 'Tap to split!';
 
   @override
+  String get foeAiming => 'Enemy aiming';
+
+  @override
+  String get shotIncoming => 'Incoming!';
+
+  @override
   String get aimCancel => 'Release to cancel';
 
   @override

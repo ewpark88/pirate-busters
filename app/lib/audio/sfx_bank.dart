@@ -119,6 +119,12 @@ abstract final class SfxBank {
     Sfx.whistle => (PcmSynth(
       durationSec: .9,
     )..tone(1700, 650, .85, vol: .07)).toWav(gain: masterGain),
+    // 남은 5초 째깍: 짧고 마른 나무 딱 (A34).
+    Sfx.tick =>
+      (PcmSynth(durationSec: .09)
+            ..tone(2200, 1800, .03, wave: Wave.triangle, vol: .16)
+            ..noise(.025, 5200, 3200, vol: .07, seed: 23))
+          .toWav(gain: masterGain),
   };
 
   /// 음 [hz] 를 [step] 초 간격으로 이어 부는 짧은 악구. 마지막 음은 길게 끈다.
