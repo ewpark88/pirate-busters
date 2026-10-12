@@ -107,20 +107,33 @@ extension FxText on FxLayer {
   /// 숫자끼리 겹치지 않는 자리: [at] 근처에 떠 있는 숫자가 있으면 그 위로 올린다
   /// (연사·같은 해적 여러 번 피격, A33).
   Vector2 freeSpot(Vector2 at) {
-    final spot = at.clone();
     final shown = [
       for (final c in children)
         if (c is TextComponent && c.priority == numberPriority) c.position,
       for (final (p, _) in pendingNumbers) p,
     ];
+    final spot = FxText.stackSpot(at, shown);
+    pendingNumbers.add((spot.clone(), clock));
+    return spot;
+  }
+
+  /// 숫자 칸의 크기(월드 px). 숫자는 1.7~2.1배로 그려지고 아래에 이름표가 붙으므로
+  /// 글자 크기보다 넉넉하게 잡는다 (A41 점검: 숫자 3개와 이름표가 겹치던 문제).
+  static const double slotWidth = 60;
+  static const double slotHeight = 40;
+
+  /// [shown] 숫자들과 겹치지 않을 때까지 [at] 에서 한 칸씩 위로 올린 자리(최대 6칸).
+  static Vector2 stackSpot(Vector2 at, List<Vector2> shown) {
+    final spot = at.clone();
     for (var tries = 0; tries < 6; tries++) {
       final hit = shown.any(
-        (p) => (p.x - spot.x).abs() < 34 && (p.y - spot.y).abs() < 20,
+        (p) =>
+            (p.x - spot.x).abs() < slotWidth &&
+            (p.y - spot.y).abs() < slotHeight,
       );
       if (!hit) break;
-      spot.y -= 22;
+      spot.y -= slotHeight;
     }
-    pendingNumbers.add((spot.clone(), clock));
     return spot;
   }
 

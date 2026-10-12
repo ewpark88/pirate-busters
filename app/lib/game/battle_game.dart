@@ -180,12 +180,12 @@ class BattleGame extends FlameGame with BattleTexts {
   double _shakeT = 0;
   final SfxMixer _mixer = SfxMixer();
   final WhistleCue _whistle = WhistleCue();
-  final StartGate _gate = StartGate();
+  final StartGate gate = StartGate();
 
   @override
   void update(double dt) {
     _mixer.beginFrame();
-    if (_gate.tick(dt)) session.update((dt * 1000).round().clamp(0, 100));
+    if (gate.tick(dt)) session.update((dt * 1000).round().clamp(0, 100));
     if (_whistle.update(_shot.projectile?.y)) playSfx(Sfx.whistle);
     final cues = session.takeCues();
     for (final e in cues) {

@@ -52,7 +52,10 @@ class _BattlePrepScreenState extends ConsumerState<BattlePrepScreen> {
     final catalog = ref.watch(gameCatalogProvider);
     final fleet = ref.watch(fleetStoreProvider);
     final progress = ref.watch(progressProvider);
-    final deck = fleet.deck ?? const ['p01_octo', 'p36_tok'];
+    // 전투가 쓰는 것과 같은 출전 덱(선실 수·코스트로 자름, A41 점검).
+    final deck = BattleSetup(
+      catalog,
+    ).sailDeck(fleet.deck, progress.ship.hull, progress.costLimit);
     final used = deck.fold(
       0,
       (a, id) => a + catalog.pirates.byId(id).rarity.cost,
