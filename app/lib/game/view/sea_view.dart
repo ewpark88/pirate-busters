@@ -3,22 +3,28 @@ import 'dart:ui';
 
 import 'package:flame/components.dart';
 import 'package:flutter/foundation.dart';
+import 'package:pirate_busters/game/view/sea_shape.dart';
 import 'package:pirate_busters/game/view/sea_theme.dart';
 
 /// 전장 가로 범위(월드 px). 월드 ±100칸보다 넓게 그린다.
 const double seaHalfWidth = 3600;
 const double seaDepth = 900;
 
-/// 바다 (설계서 §10.2): 사인파 격자 + 포말 파티클 + 앞쪽은 측면 굴절 셰이더.
+/// 바다 (설계서 §10.2): 사인파 격자 + 큰 너울·물마루 + 포말 파티클(배 둘레
+/// 물갈림·이동 항적) + 앞쪽은 측면 굴절 셰이더.
 ///
 /// 수면 높이는 [swell] 로 두 배의 파도 위아래(시뮬레이션 값)를 따라 오르내려 배와
-/// 물이 어긋나지 않는다. [front] 면 배 앞에 반투명으로 그려 잠긴 부분을 덮는다.
-/// [lowEnd] 가 켜져 있거나 셰이더를 쓸 수 없으면 그라데이션으로 그린다 (ADR-030).
+/// 물이 어긋나지 않는다. [front] 면 배 앞에 얇은 물 막으로 그린다. 잠긴 선체의
+/// 물빛은 배가 직접 그린다(`HullWater`, A24). [shape] 가 있으면 너울 꼭대기에 흰
+/// 물마루를, 배 앞뒤에 물갈림을, 움직이는 배 뒤에 항적을 그린다.
+/// [lowEnd] 가 켜져 있거나 셰이더를 쓸 수 없으면 그라데이션으로 그리고 항적을 끈다
+/// (ADR-030).
 class SeaView extends Component {
   SeaView({
     required this.front,
     required this.theme,
     this.swell,
+    this.shape,
     this.shader,
     this.lowEnd,
     super.priority,
@@ -27,10 +33,12 @@ class SeaView extends Component {
   final bool front;
   final SeaTheme theme;
   final double Function(double x)? swell;
+  final SeaShape? shape;
   final FragmentShader? shader;
   final ValueListenable<bool>? lowEnd;
   final math.Random _rnd = math.Random(3);
   final List<_Foam> _foam = [];
+  final List<_Foam> _wake = [];
   double _t = 0;
 
   /// 포말 수. 저사양 모드에서는 절반 (설계서 §12).
@@ -38,6 +46,12 @@ class SeaView extends Component {
 
   @visibleForTesting
   int get foamCount => _foam.length;
+
+  /// 배 둘레 물갈림·항적 포말 수.
+  @visibleForTesting
+  int get wakeCount => _wake.length;
+
+  bool get _low => lowEnd?.value ?? false;
 
   @override
   void update(double dt) {
@@ -49,6 +63,7 @@ class SeaView extends Component {
         ..x += f.vx * dt;
     }
     _foam.removeWhere((f) => f.life <= 0);
+    _updateWake(dt);
     while (_foam.length < foamTarget) {
       _foam.add(
         _Foam(
@@ -57,6 +72,40 @@ class SeaView extends Component {
           life: 1 + _rnd.nextDouble() * 2.5,
         ),
       );
+    }
+  }
+
+  /// 배 앞뒤 끝 물갈림(늘 조금)과 움직이는 배 선미 뒤 항적(저사양이면 끔).
+  void _updateWake(double dt) {
+    for (final f in _wake) {
+      f
+        ..life -= dt
+        ..x += f.vx * dt;
+    }
+    _wake.removeWhere((f) => f.life <= 0);
+    for (final ship in shape?.current ?? const <ShipOnSea>[]) {
+      for (final end in const [-1, 1]) {
+        if (_rnd.nextDouble() < dt * 6) {
+          _wake.add(
+            _Foam(
+              x: ship.x + end * (ship.half + _rnd.nextDouble() * 10),
+              vx: end * (4 + _rnd.nextDouble() * 8),
+              life: .6 + _rnd.nextDouble() * .6,
+            ),
+          );
+        }
+      }
+      if (!ship.moving || _low) continue;
+      final stern = ship.x - ship.facing * ship.half;
+      for (var i = 0; i < 3; i++) {
+        _wake.add(
+          _Foam(
+            x: stern - ship.facing * _rnd.nextDouble() * 24,
+            vx: -ship.facing * (10 + _rnd.nextDouble() * 18),
+            life: 1.2 + _rnd.nextDouble() * 1.4,
+          ),
+        );
+      }
     }
   }
 
@@ -76,7 +125,7 @@ class SeaView extends Component {
       ..lineTo(seaHalfWidth, seaDepth)
       ..close();
     final fx = shader;
-    if (front && fx != null && !(lowEnd?.value ?? false)) {
+    if (front && fx != null && !_low) {
       // FlutterFragCoord 는 캔버스 로컬(= 월드 px) 좌표라 해수면 0, 배율 1 이다.
       fx
         ..setFloat(0, _t)
@@ -100,6 +149,31 @@ class SeaView extends Component {
     for (final f in _foam) {
       foam.color = theme.foam.withValues(alpha: (f.life / 1.5).clamp(0, 0.8));
       canvas.drawCircle(Offset(f.x, surface(f.x) + 1), 2.2, foam);
+    }
+    for (final f in _wake) {
+      foam.color = theme.foam.withValues(alpha: (f.life / 1.2).clamp(0, 0.9));
+      canvas.drawCircle(Offset(f.x, surface(f.x) + 1), 2.8, foam);
+    }
+    _renderCrests(canvas, foam);
+  }
+
+  /// 너울 꼭대기의 흰 물마루: 배 둘레 잔잔한 곳에는 없다.
+  void _renderCrests(Canvas canvas, Paint foam) {
+    final sea = shape;
+    if (sea == null) return;
+    final ships = sea.current;
+    for (final x in sea.crests(-seaHalfWidth, seaHalfWidth)) {
+      final w = SeaShape.calm(ships, x);
+      if (w < .4) continue;
+      foam.color = theme.foam.withValues(alpha: .55 * w);
+      for (var i = -3; i <= 3; i++) {
+        final cx = x + i * 9;
+        canvas.drawCircle(
+          Offset(cx, surface(cx) + 1),
+          2.6 - i.abs() * .4,
+          foam,
+        );
+      }
     }
   }
 
@@ -131,7 +205,8 @@ class SeaView extends Component {
         ..shader = Gradient.linear(
           rect.topCenter,
           rect.bottomCenter,
-          [for (final c in theme.sea) c.withValues(alpha: front ? 0.62 : 1)],
+          // 앞 바다는 얇은 막: 잠긴 선체가 비쳐 보인다 (A24).
+          [for (final c in theme.sea) c.withValues(alpha: front ? 0.32 : 1)],
           const [0, 0.35, 1],
         ),
     );

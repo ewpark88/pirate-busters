@@ -29,6 +29,7 @@ void main() {
   vec3 col = mix(mix(uTop, uMid, clamp(t * 2.0, 0.0, 1.0)), uDeep,
                  clamp(t * 2.0 - 1.0, 0.0, 1.0));
   col += uLight * light * 0.28;
-  float a = mix(0.58, 0.9, t);
+  // 얇은 막: 잠긴 선체가 비쳐 보인다(물빛은 배가 직접 그린다, A24).
+  float a = mix(0.3, 0.75, t);
   fragColor = vec4(col * a, a);
 }

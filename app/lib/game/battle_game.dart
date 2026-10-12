@@ -23,6 +23,7 @@ import 'package:pirate_busters/game/view/effect_badges.dart';
 import 'package:pirate_busters/game/view/fx_layer.dart';
 import 'package:pirate_busters/game/view/limit_marks.dart';
 import 'package:pirate_busters/game/view/rest_badge.dart';
+import 'package:pirate_busters/game/view/sea_shape.dart';
 import 'package:pirate_busters/game/view/sea_theme.dart';
 import 'package:pirate_busters/game/view/sea_view.dart';
 import 'package:pirate_busters/game/view/shake.dart';
@@ -125,14 +126,16 @@ class BattleGame extends FlameGame with BattleTexts {
     );
     await world.addAll([
       backdrop,
-      SeaView(front: false, theme: theme, swell: _swell, priority: -10),
+      _sea,
+      SeaView(front: false, theme: theme, swell: _sea.call, priority: -10),
       // 한계 표식은 물 위 소품이라 배(0)보다 뒤에 둔다.
       LimitMarks(session: session, sprites: sprites, priority: -5),
       ..._ships,
       SeaView(
         front: true,
         theme: theme,
-        swell: _swell,
+        swell: _sea.call,
+        shape: _sea,
         shader: seaShader,
         lowEnd: lowEnd,
         priority: 10,
@@ -166,6 +169,7 @@ class BattleGame extends FlameGame with BattleTexts {
     void applyLowEnd() {
       _shot.fewer = lowEnd.value;
       for (final ship in _ships) {
+        ship.fewer = lowEnd.value;
         for (final rig in ship.rigs) {
           rig.fewer = lowEnd.value;
         }
@@ -210,7 +214,7 @@ class BattleGame extends FlameGame with BattleTexts {
     for (final ship in _ships) {
       if (ship.motion.sinking && _sinkShown.add(ship.side)) {
         _fx.sinkSplash(
-          Vector2(_shipCenterX(ship.side), 0),
+          Vector2(shipOnSea(ship).x, 0),
           session.state.sides[ship.side].grid.width * Coords.cell,
         );
         playSfx(Sfx.sink);
@@ -228,19 +232,13 @@ class BattleGame extends FlameGame with BattleTexts {
     settled.value = true;
   }
 
-  /// 수면 높이(월드 px): 두 배의 파도 위아래 사이를 잇는다. 배와 물이 함께 오르내린다.
-  double _swell(double x) {
-    final x0 = _shipCenterX(0);
-    final x1 = _shipCenterX(1);
-    final h0 = Coords.y(_ships[0].heave);
-    final h1 = Coords.y(_ships[1].heave);
-    final t = ((x - x0) / (x1 - x0)).clamp(0.0, 1.0);
-    return h0 + (h1 - h0) * t;
-  }
-
-  double _shipCenterX(int side) =>
-      Coords.x(_ships[side].bowX) -
-      facingOf(side) * session.state.sides[side].grid.width * Coords.cell / 2;
+  /// 수면 모양: 두 배의 파도를 잇고 먼 바다에 너울 (설계서 §10.2, A24).
+  late final SeaShape _sea = SeaShape(
+    ships: () => [for (final ship in _ships) shipOnSea(ship)],
+    scale: () => session.state.rules.isStorm(session.state.turn)
+        ? session.state.rules.stormWavePercent / 100
+        : 1,
+  );
 
   void _updateCamera(double dt) {
     final me = CameraDirector.anchorSide(session.state, viewSide);
@@ -249,11 +247,11 @@ class BattleGame extends FlameGame with BattleTexts {
     director.focusFeet = focusFeetOf(_ships[viewSide], session.focusSlot);
     director.shipTop = -session.state.sides[me].grid.height * Coords.cell;
     final goal = director.target(
-      myX: _shipCenterX(me),
-      enemyX: _shipCenterX(1 - me),
+      myX: shipOnSea(_ships[me]).x,
+      enemyX: shipOnSea(_ships[1 - me]).x,
       facing: facingOf(me),
       projectile: _shot.projectile,
-      targetX: shot is ShotPlayback ? _shipCenterX(1 - shot.side) : null,
+      targetX: shot is ShotPlayback ? shipOnSea(_ships[1 - shot.side]).x : null,
       aimStretch: aim?.stretch ?? 0,
       holdImpact: shot is ShotPlayback && shot.landed && !shot.isDone,
       aspect: size.x > 0 ? size.y / size.x : 0.46,
