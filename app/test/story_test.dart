@@ -4,12 +4,14 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:pirate_busters/app/app_theme.dart';
 import 'package:pirate_busters/game/view/backdrop.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
 import 'package:pirate_busters/meta/progress.dart';
 import 'package:pirate_busters/settings/language.dart';
 import 'package:pirate_busters/story/cutscene_screen.dart';
 import 'package:pirate_busters/story/story_data.dart';
+import 'package:pirate_busters/ui/kit/kit_motion.dart';
 
 void main() {
   group('컷신 데이터 (설계서 §15.2, §15.4)', () {
@@ -101,12 +103,19 @@ void main() {
   });
 
   group('컷신 화면', () {
-    Future<void> pump(WidgetTester tester, Locale locale) async {
+    /// 컷신을 여는 버튼 화면. [motion] 이면 화면·컷 전환이 움직인다(앱 테마).
+    Future<void> open(
+      WidgetTester tester,
+      Locale locale, {
+      bool motion = false,
+    }) async {
       tester.view.physicalSize = const Size(1280, 720);
       tester.view.devicePixelRatio = 2;
       addTearDown(tester.view.reset);
       await tester.pumpWidget(
         MaterialApp(
+          theme: appTheme(),
+          builder: (_, child) => KitMotion(reduced: !motion, child: child!),
           locale: locale,
           supportedLocales: supportedLocales,
           localizationsDelegates: const [
@@ -131,7 +140,22 @@ void main() {
         ),
       );
       await tester.tap(find.text('go'));
+    }
+
+    Future<void> pump(
+      WidgetTester tester,
+      Locale locale, {
+      bool motion = false,
+    }) async {
+      await open(tester, locale, motion: motion);
       await tester.pumpAndSettle();
+    }
+
+    /// [finder] 를 감싼 가장 가까운 [Opacity] 의 진하기. 없으면 1.
+    double opacityOf(WidgetTester tester, Finder finder) {
+      final o = find.ancestor(of: finder, matching: find.byType(Opacity));
+      if (o.evaluate().isEmpty) return 1;
+      return tester.widget<Opacity>(o.first).opacity;
     }
 
     for (final locale in const [Locale('ko'), Locale('en')]) {
@@ -152,15 +176,40 @@ void main() {
       });
     }
 
-    testWidgets('컷은 0.3초 페이드로 바뀐다 (§15.4)', (tester) async {
-      await pump(tester, const Locale('ko'));
+    testWidgets('컷은 0.3초 페이드로 바뀌고 두 컷이 겹쳐 보이지 않는다 (§15.4, A58)', (
+      tester,
+    ) async {
+      await pump(tester, const Locale('ko'), motion: true);
       expect(CutsceneScreen.fade, const Duration(milliseconds: 300));
       await tester.tap(find.text('1 / 5'));
+      const first = ValueKey(0);
+      const second = ValueKey(1);
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 75));
+      expect(opacityOf(tester, find.byKey(first)), greaterThan(0));
+      expect(opacityOf(tester, find.byKey(second)), 0, reason: '아직 안 나타남');
       await tester.pump(const Duration(milliseconds: 150));
-      // 바뀌는 중에는 두 컷이 겹쳐 보인다.
-      expect(find.byType(FadeTransition), findsAtLeastNWidgets(2));
-      await tester.pump(const Duration(milliseconds: 200));
+      expect(opacityOf(tester, find.byKey(second)), greaterThan(0));
+      expect(
+        find.byKey(first).evaluate().isEmpty ||
+            opacityOf(tester, find.byKey(first)) == 0,
+        isTrue,
+        reason: '이전 컷은 다 사라졌다',
+      );
+      await tester.pumpAndSettle();
       expect(find.text('2 / 5'), findsOneWidget);
+    });
+
+    testWidgets('컷신을 열면 아래 화면이 먼저 사라진다 (잔상 없음, A58)', (tester) async {
+      await open(tester, const Locale('ko'), motion: true);
+      await tester.pump();
+      // 화면 전환 300ms 의 가운데: 이전 화면은 이미 사라졌다.
+      await tester.pump(const Duration(milliseconds: 150));
+      expect(opacityOf(tester, find.text('go')), 0);
+      await tester.pumpAndSettle();
+      expect(find.text('1 / 5'), findsOneWidget);
+      await tester.tap(find.text('1 / 5'));
+      await tester.pumpAndSettle();
     });
 
     testWidgets('건너뛰기를 누르면 바로 닫힌다', (tester) async {

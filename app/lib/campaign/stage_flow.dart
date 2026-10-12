@@ -103,10 +103,8 @@ abstract final class StageFlow {
             .read(progressProvider.notifier)
             .update((p) => p.seeStory(after));
         await navigator.pushReplacement(
-          MaterialPageRoute<void>(
-            fullscreenDialog: true,
-            builder: (_) => CutsceneScreen(cuts: cuts),
-          ),
+          // fullscreenDialog 는 쓰지 않는다: 전투 화면이 사라지지 않아 잔상이 남는다(A58).
+          MaterialPageRoute<void>(builder: (_) => CutsceneScreen(cuts: cuts)),
         );
       }
     }

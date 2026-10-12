@@ -8,6 +8,7 @@ import 'package:pirate_busters/story/backdrop_picture.dart';
 import 'package:pirate_busters/story/rig_portrait.dart';
 import 'package:pirate_busters/story/story_data.dart';
 import 'package:pirate_busters/ui/hud/hud_style.dart';
+import 'package:pirate_busters/ui/kit/kit_motion.dart';
 import 'package:pirate_busters/ui/kit/nine_slice.dart';
 import 'package:pirate_busters/ui/kit/pb_button.dart';
 
@@ -23,6 +24,10 @@ class CutsceneScreen extends StatefulWidget {
   /// 컷 전환 페이드 (설계서 §15.4).
   static const Duration fade = Duration(milliseconds: 300);
 
+  /// 컷 전환 진행 [t](나가는 컷은 1 → 0)에서 컷의 진하기. 나가는 컷은 앞 절반에
+  /// 사라지고 들어오는 컷은 뒤 절반에 나타나 두 컷이 겹치지 않는다(A58).
+  static double cutOpacity(double t) => ((t - 0.5) * 2).clamp(0, 1);
+
   /// 배경 데이터와 등장 해적의 자세를 미리 읽는다(첫 컷이 바로 보이게).
   static Future<void> preload(List<StoryCut> cuts) => Future.wait([
     BackdropPicture.data(),
@@ -35,10 +40,8 @@ class CutsceneScreen extends StatefulWidget {
   static Future<void> show(BuildContext context, List<StoryCut> cuts) {
     unawaited(preload(cuts));
     return Navigator.of(context).push(
-      MaterialPageRoute<void>(
-        fullscreenDialog: true,
-        builder: (_) => CutsceneScreen(cuts: cuts),
-      ),
+      // fullscreenDialog 는 쓰지 않는다: 아래 화면이 사라지지 않아 잔상이 남는다(A58).
+      MaterialPageRoute<void>(builder: (_) => CutsceneScreen(cuts: cuts)),
     );
   }
 
@@ -75,7 +78,17 @@ class _CutsceneScreenState extends State<CutsceneScreen> {
                   top: band,
                   bottom: band,
                   child: AnimatedSwitcher(
-                    duration: CutsceneScreen.fade,
+                    duration: KitMotion.reducedOf(context)
+                        ? Duration.zero
+                        : CutsceneScreen.fade,
+                    transitionBuilder: (child, a) => AnimatedBuilder(
+                      animation: a,
+                      child: child,
+                      builder: (_, child) => Opacity(
+                        opacity: CutsceneScreen.cutOpacity(a.value),
+                        child: child,
+                      ),
+                    ),
                     child: _Scene(
                       key: ValueKey(_index),
                       cut: widget.cuts[_index],
