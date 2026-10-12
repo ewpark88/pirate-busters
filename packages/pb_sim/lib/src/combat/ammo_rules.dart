@@ -134,7 +134,9 @@ void armShot(Projectile p, Reach reach) {
       final n = spec.ammoValue + bonus;
       p.pierceLeft = n < 1 ? 1 : n;
     case AmmoType.skip:
-      p.bouncesLeft = spec.ammoValue;
+      // 멀면 튕김이 하나 준다(최소 1) (설계서 §2.6, BALANCE.md A2.6, ADR-102).
+      final n = spec.ammoValue - (reach == Reach.far ? 1 : 0);
+      p.bouncesLeft = n < 1 ? 1 : n;
     case AmmoType.homing:
       p.gravity = false;
     case _:
