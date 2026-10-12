@@ -272,7 +272,11 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
         ),
         if (widget.stage?.tutorialStep case final step? when step > 0)
           Positioned.fill(
-            child: TutorialFinger(session: _session, step: step),
+            child: TutorialFinger(
+              session: _session,
+              step: step,
+              pullAnchor: _game.focusPirateScreen,
+            ),
           ),
         if (_session.bossSide != null)
           Positioned.fill(child: BossBanner(gimmick: widget.stage?.gimmick)),

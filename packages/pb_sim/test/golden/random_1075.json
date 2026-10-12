@@ -14,7 +14,7 @@
    "turnTimeMs": 25000,
    "firesPerTurn": 2,
    "maxWind": 3,
-   "windAccel": 26,
+   "windAccel": 15,
    "sunkHullPercent": 40,
    "fuelPerTurn": 30,
    "stormTurns": 4,
@@ -804,7 +804,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "daa9eb24"
+    "hash": "4eea23d6"
    },
    {
     "turn": 16,
@@ -825,7 +825,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "7bc1ad39"
+    "hash": "399e76e6"
    },
    {
     "turn": 17,
@@ -855,13 +855,13 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "e934e132"
+    "hash": "2483d9bd"
    },
    {
     "turn": 18,
     "side": 1,
     "cmds": [],
-    "hash": "08f4e450"
+    "hash": "6481e41b"
    },
    {
     "turn": 19,
@@ -875,7 +875,7 @@
       "power": 8238
      }
     ],
-    "hash": "6220c3ad"
+    "hash": "a3a893c2"
    },
    {
     "turn": 20,
@@ -900,7 +900,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "2411d139"
+    "hash": "52460426"
    },
    {
     "turn": 21,
@@ -930,7 +930,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "4423e98f"
+    "hash": "d90e2ff4"
    },
    {
     "turn": 22,
@@ -941,7 +941,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "5a9eff09"
+    "hash": "1daf15b6"
    },
    {
     "turn": 23,
@@ -977,7 +977,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "8a6a6d37"
+    "hash": "f82ee196"
    },
    {
     "turn": 24,
