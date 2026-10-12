@@ -38,6 +38,14 @@ class PullAim {
   /// 이보다 약하게 당기면 놓아도 쏘지 않는다(취소).
   static const int minPower = 1000;
 
+  /// 한 번 충분히 당긴 뒤 누른 자리에서 이 거리(화면 논리 px) 안으로 되돌리면
+  /// 놓아도 쏘지 않는다. [minPower] 보다 넓게 잡아 손가락으로도 맞추기 쉽게 한다 (A60).
+  static const double cancelPx = 28;
+
+  /// 이만큼(화면 논리 px) 당겨야 '당겼다'로 본다: 그 뒤로 [cancelPx] 안에 들어오면
+  /// 취소다. 처음부터 짧게만 당긴 약한 샷은 취소되지 않는다.
+  static const double armPx = 40;
+
   final int facing;
 
   /// 이만큼 당기면 최대 힘.
@@ -64,7 +72,7 @@ class PullAim {
   int? _signed;
   bool _active = false;
 
-  /// 한 번이라도 [minPower] 이상 당겼다.
+  /// 한 번이라도 [armPx] 이상 당겼다.
   bool _armed = false;
 
   bool get isActive => _active;
@@ -73,7 +81,10 @@ class PullAim {
   bool get isWeak => shot.power < minPower;
 
   /// 충분히 당겼다가 누른 자리 가까이 되돌렸다: 놓으면 취소된다.
-  bool get isCancelling => _armed && isWeak;
+  bool get isCancelling => _armed && (isWeak || _inCancel(_dx, _dy));
+
+  static bool _inCancel(double dx, double dy) =>
+      dx * dx + dy * dy < cancelPx * cancelPx;
 
   void start() {
     _active = true;
@@ -97,7 +108,7 @@ class PullAim {
     _signed = prev == null || len * k >= steadyPx
         ? raw
         : prev + ((raw - prev) * steadyFollow).round();
-    if (!isWeak) _armed = true;
+    if (len * k >= armPx) _armed = true;
     if (ms == null) return;
     _trail.add((ms, _dx, _dy, _signed!));
     // 놓을 때 되돌아볼 만큼만 남긴다.
@@ -119,10 +130,17 @@ class PullAim {
 
   /// 놓기. 너무 약하면 null(취소). [ms] 를 주면 놓기 직전 [releaseSlipMs] 안의
   /// 움직임(손가락이 떨어지며 미끄러진 것)은 빼고 그 앞의 마지막 값으로 쏜다.
+  ///
+  /// 놓는 순간 '놓으면 취소'가 보이고 있었거나, 미끄러짐 구간 안에서 한 번이라도
+  /// 취소 자리에 있었으면 쏘지 않는다: 미끄러짐 보정이 취소를 뒤집지 않는다 (A60).
   AimShot? release({int? ms}) {
     if (!_active) return null;
     _active = false;
+    if (isCancelling) return null;
     if (ms != null) {
+      for (final (t, dx, dy, _) in _trail) {
+        if (_armed && t > ms - releaseSlipMs && _inCancel(dx, dy)) return null;
+      }
       for (final (t, dx, dy, a) in _trail.reversed) {
         if (t <= ms - releaseSlipMs) {
           _dx = dx;

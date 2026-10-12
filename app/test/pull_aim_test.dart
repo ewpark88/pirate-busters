@@ -92,6 +92,46 @@ void main() {
       expect(aim.release(), isNull);
     });
 
+    test('빨리 되돌린 뒤 미끄러짐 시간 안에 놓아도 취소된다 (A60)', () {
+      final aim = PullAim(facing: 1)
+        ..start()
+        ..drag(-80, 80, ms: 0)
+        ..drag(-80, 80, ms: 500)
+        // 손가락을 누른 자리로 빨리 되돌리고 10ms 만에 뗐다.
+        ..drag(-2, 2, ms: 990);
+      expect(aim.isCancelling, isTrue);
+      expect(aim.release(ms: 1000), isNull);
+    });
+
+    test('취소 자리를 지나 떼면서 미끄러져 나가도 쏘지 않는다 (A60)', () {
+      final aim = PullAim(facing: 1)
+        ..start()
+        ..drag(-80, 80, ms: 0)
+        ..drag(-80, 80, ms: 500)
+        ..drag(-3, 3, ms: 980)
+        ..drag(-30, 30, ms: 995);
+      expect(aim.isCancelling, isFalse);
+      expect(aim.release(ms: 1000), isNull);
+    });
+
+    test('한 번 당긴 뒤에는 누른 자리 28px 안이면 취소된다 (A60)', () {
+      final aim = PullAim(facing: 1)
+        ..start()
+        ..drag(-80, 80)
+        ..drag(-18, 18); // 약 25px: 힘은 최소보다 세다.
+      expect(aim.isWeak, isFalse);
+      expect(aim.isCancelling, isTrue);
+      expect(aim.release(), isNull);
+    });
+
+    test('당긴 적 없이 처음부터 짧게 당겨 놓으면 약하게 쏜다', () {
+      final aim = PullAim(facing: 1)
+        ..start()
+        ..drag(-18, 18);
+      expect(aim.isCancelling, isFalse);
+      expect(aim.release(), isNotNull);
+    });
+
     test('되돌렸다가 다시 당기면 취소가 풀리고 쏜다', () {
       final aim = PullAim(facing: 1)
         ..start()

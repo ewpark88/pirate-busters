@@ -11,7 +11,8 @@ import 'package:pirate_busters/input/aim_ticks.dart';
 import 'package:pirate_busters/input/pull_aim.dart';
 
 /// 전장 위 제스처 (설계서 §2.1, §2.2, ADR-033): 배 위 해적을 한 손가락으로 끌면
-/// 조준하고 놓으면 쏜다. 두 손가락은 핀치 줌. 탭은 해적 고르기·선택 풀기, 비행 중이면 `TAP`.
+/// 조준하고 놓으면 쏜다. 해적이 아닌 곳을 끌면 화면을 옆으로 옮긴다(A60). 두 손가락은
+/// 핀치 줌. 탭은 해적 고르기·선택 풀기, 비행 중이면 `TAP`.
 /// mozzi lib/game/input/play_input.dart 의 라우팅(발사 전 당기기 / 비행 중 탭)을 따른다.
 class FieldGestures extends StatefulWidget {
   const FieldGestures({
@@ -35,6 +36,10 @@ class _FieldGesturesState extends State<FieldGestures> {
   Offset _start = Offset.zero;
   bool _pinching = false;
 
+  /// 빈 바다를 끌어 화면을 옮기는 중(설계서 §2.1, A60)과 앞 손가락 위치.
+  bool _panning = false;
+  Offset _last = Offset.zero;
+
   /// 힘 링 눈금마다 가벼운 진동, 최대 힘에서 딸깍 (설계서 §10.4 발사).
   final AimTicks _ticks = AimTicks();
 
@@ -45,14 +50,25 @@ class _FieldGesturesState extends State<FieldGestures> {
 
   void _onStart(ScaleStartDetails d) {
     if (d.pointerCount >= 2) {
+      _endPan();
       _pinching = true;
       widget.game.pinchStart();
       return;
     }
+    // 핀치하다 한 손가락만 뗐다: 다 뗄 때까지 조준·끌기를 새로 시작하지 않는다.
+    if (_pinching) return;
     final slot = widget.game.pirateAt(
       Vector2(d.localFocalPoint.dx, d.localFocalPoint.dy),
     );
-    if (slot == null || !_s.canFire(slot)) return;
+    if (slot == null) {
+      // 해적이 아닌 곳: 끌어서 화면을 옮긴다. 해적에 줌인해 있으면 풀고 옮긴다
+      // (상대 턴에 미리 고른 해적은 줌인이 아니라 그대로 둔다).
+      if (_s.focusSlot != null) _s.select(null, toggle: false);
+      _panning = true;
+      _last = d.localFocalPoint;
+      return;
+    }
+    if (!_s.canFire(slot)) return;
     _s.select(slot, toggle: false);
     _slot = slot;
     _start = d.localFocalPoint;
@@ -76,6 +92,13 @@ class _FieldGesturesState extends State<FieldGestures> {
       widget.game.pinchUpdate(d.scale);
       return;
     }
+    if (_panning) {
+      final dx = d.localFocalPoint.dx - _last.dx;
+      _last = d.localFocalPoint;
+      final zoom = widget.game.camera.viewfinder.zoom;
+      if (zoom > 0) widget.game.director.panBy(-dx / zoom);
+      return;
+    }
     final aim = _aim;
     if (aim == null) return;
     final delta = d.localFocalPoint - _start;
@@ -95,7 +118,11 @@ class _FieldGesturesState extends State<FieldGestures> {
   }
 
   void _onEnd(ScaleEndDetails d) {
-    _pinching = false;
+    _endPan();
+    if (_pinching) {
+      if (d.pointerCount == 0) _pinching = false;
+      return;
+    }
     final shot = _aim?.release(ms: _clock.elapsedMilliseconds);
     _aim = null;
     if (shot == null) {
@@ -116,6 +143,12 @@ class _FieldGesturesState extends State<FieldGestures> {
       Vector2(d.localPosition.dx, d.localPosition.dy),
     );
     _s.select(slot, toggle: false);
+  }
+
+  void _endPan() {
+    if (!_panning) return;
+    _panning = false;
+    widget.game.director.pan.dragging = false;
   }
 
   void _cancelAim() {
