@@ -1191,11 +1191,12 @@ M7                                                ████████
 
 **선행:** M4(연사탄), R1a(라이언 망사 찢기). 사용자 요청: 연사 해적을 한 점 집중형과 산발형으로 나눈다. 히포 = 집중, 라이언 = 산발. 계획: docs/plans/2026-10-12-A51-A53-skip-burst-rest.md
 
-- [ ] 해적 JSON `ammo.pattern`(`focus`·`scatter`) 읽기·검증 (§4.3)
-- [ ] 집중: 모든 발 같은 각도·세기. 산발: 발마다 매치 시드 난수로 각도·세기 흔들림 (§4.8, BALANCE.md A4.8)
-- [ ] 히포 집중·라이언 산발 데이터, `weapons.json` 연사 설명 맞춤
-- [ ] 조준 화면에 산발 퍼짐 범위 부채꼴 (§4.8)
-- [ ] 테스트: 집중 각도 동일, 산발 범위·재현성 해시, 잘못된 pattern 로드 오류
+- [x] 해적 JSON `ammo.pattern`(`focus`·`scatter`) 읽기·검증 (§4.3) — 했다: `pirate_def.dart` → `ammoParam`(`burstFocus`·`burstScatter`)
+- [x] 집중: 모든 발 같은 각도·세기. 산발: 발마다 매치 시드 난수로 각도·세기 흔들림 (§4.8, BALANCE.md A4.8) — 했다: `launchVolley`·`_scatter`(`scatterPowerPermille`)
+- [x] 히포 집중·라이언 산발 데이터, `weapons.json` 연사 설명 맞춤, 해적 설명 ko·en
+- [x] 조준 화면에 산발 퍼짐 범위 부채꼴 (§4.8) — 했다: `AimPainter.spreadFan`
+- [x] 테스트: 집중 각도 동일, 산발 범위·재현성 해시, 잘못된 pattern 로드 오류 — 했다: `a52_burst_pattern_test` 4개, `game_data_test` 2개
+- [ ] 사람 확인: 히포 연타·라이언 흩뿌림 손맛, 라이언 승률(sim_runner 로 A51 측정 때 같이 본다)
 
 **완료 조건:** 같은 시드면 같은 산발 결과(해시 테스트). 히포는 같은 칸을 연타하고 라이언은 흩어진다(테스트·화면 확인). verify 통과.
 

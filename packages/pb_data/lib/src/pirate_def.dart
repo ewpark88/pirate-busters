@@ -62,7 +62,9 @@ class PirateDef {
         '$path.ammo.type',
       ),
       spreadDeg: ammo.integerOr('spreadDeg', 0),
-      ammoParam: ammo.integerOr('repairCells', ammo.integerOr('delayed', 0)),
+      ammoParam: ammo.has('pattern')
+          ? _burstPattern(ammo.string('pattern'), '$path.ammo.pattern')
+          : ammo.integerOr('repairCells', ammo.integerOr('delayed', 0)),
       ability: abilityName == null
           ? Ability.none
           : _parse(() => Ability.byName(abilityName), '$path.ability.type'),
@@ -82,8 +84,22 @@ class PirateDef {
       props: render.has('props') ? render.stringList('props') : const [],
       teamColorPart: render.stringOrNull('teamColorPart') ?? '',
     );
+    if (ammo.has('pattern') && def.ammo != AmmoType.burst) {
+      throw DataFormatError(
+        '$path.ammo.pattern',
+        '${def.id}: 연사 패턴(pattern)은 연사탄에만 (§4.3)',
+      );
+    }
     return def.._check(path);
   }
+
+  /// 연사탄 `ammo.pattern` (설계서 §4.3·§4.8, ADR-102): focus → [burstFocus],
+  /// scatter → [burstScatter].
+  static int _burstPattern(String name, String path) => switch (name) {
+    'focus' => burstFocus,
+    'scatter' => burstScatter,
+    _ => throw DataFormatError(path, '연사 패턴은 focus·scatter 중 하나: $name'),
+  };
 
   static T _parse<T>(T Function() f, String path) {
     try {
@@ -110,6 +126,11 @@ class PirateDef {
     need(
       ok: want == null || want == ammo,
       what: '고유 능력 ${ability.jsonName} 은 ${want?.jsonName} 탄종에만 (ADR-075)',
+    );
+    // 산발 연사는 퍼짐 각이 있어야 한다 (설계서 §4.3).
+    need(
+      ok: ammo != AmmoType.burst || ammoParam != burstScatter || spreadDeg > 0,
+      what: '산발 연사는 spreadDeg 가 0 보다 커야 한다 (§4.3)',
     );
     final wrongKey = speciesProblem(id, species);
     need(ok: wrongKey == null, what: wrongKey ?? '');

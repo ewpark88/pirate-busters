@@ -210,6 +210,38 @@ void main() {
       }
     });
 
+    test('연사 패턴: 히포는 집중, 라이언은 산발로 읽는다 (§4.8, ADR-102)', () {
+      final c = _load().catalog;
+      expect(c.byId('p07_hippo').ammoParam, burstFocus);
+      expect(c.byId('p07_hippo').spreadMdeg, 0);
+      expect(c.byId('p09_lion').ammoParam, burstScatter);
+      expect(c.byId('p09_lion').spreadMdeg, 12000);
+    });
+
+    test('연사 패턴이 틀리거나 연사탄이 아니거나 산발에 퍼짐 각이 없으면 거부한다', () {
+      void bad(Map<String, Object?> ammo) => expect(
+        () => GameData.parse(
+          ammoJson: ammoJson,
+          piratesJson: _pirate({'family': 'direct', 'ammo': ammo}),
+        ),
+        throwsA(isA<DataFormatError>()),
+        reason: '$ammo',
+      );
+      bad({'type': 'burst', 'pattern': 'spiral', 'spreadDeg': 4});
+      bad({'type': 'explosive', 'pattern': 'focus'});
+      bad({'type': 'burst', 'pattern': 'scatter', 'spreadDeg': 0});
+      expect(
+        GameData.parse(
+          ammoJson: ammoJson,
+          piratesJson: _pirate({
+            'family': 'direct',
+            'ammo': {'type': 'burst', 'pattern': 'scatter', 'spreadDeg': 6},
+          }),
+        ).catalog.byId('x').ammoParam,
+        burstScatter,
+      );
+    });
+
     test('실수·범위 밖 값·모르는 탄종·겹치는 id 는 거부한다', () {
       void bad(Map<String, Object?> o) => expect(
         () => GameData.parse(ammoJson: ammoJson, piratesJson: _pirate(o)),

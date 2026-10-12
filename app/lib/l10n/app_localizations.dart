@@ -503,7 +503,7 @@ abstract class AppLocalizations {
   /// No description provided for @pirate_p07_desc.
   ///
   /// In en, this message translates to:
-  /// **'Short-range triple shot'**
+  /// **'Short-range focused triple shot that hammers one spot'**
   String get pirate_p07_desc;
 
   /// No description provided for @pirate_p07_lore.
@@ -737,7 +737,7 @@ abstract class AppLocalizations {
   /// No description provided for @pirate_p09_desc.
   ///
   /// In en, this message translates to:
-  /// **'Fan of spines that shreds nets'**
+  /// **'Scattered spines that spray wide and shred nets'**
   String get pirate_p09_desc;
 
   /// No description provided for @pirate_p09_lore.
