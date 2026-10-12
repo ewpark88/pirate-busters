@@ -6,6 +6,7 @@ import 'package:pirate_busters/battle/battle_session.dart';
 import 'package:pirate_busters/battle/playback.dart';
 import 'package:pirate_busters/game/coords.dart';
 import 'package:pirate_busters/game/sprites.dart';
+import 'package:pirate_busters/game/view/ship_view.dart';
 
 /// 불붙은 블록과 그을린 블록 (설계서 §2.5, §10.4, 에셋 v0.23 `ship/tiles_v2/burn_*`·
 /// `charred`). `ShipView` 의 자식이라 배의 이동·뒤집기·기울기를 그대로 따른다.
@@ -79,7 +80,11 @@ class FireView extends Component {
         overridePaint: _soot,
       );
     }
-    final frame = (_t / frameSec).floor() % 3;
+    // 저사양은 불꽃을 두 장만, 절반 빠르기로 바꾼다 (설계서 §10.4 저사양, A57).
+    final low = parent is ShipView && (parent! as ShipView).fewer;
+    final frame = low
+        ? (_t / (frameSec * 2)).floor() % 2 * 2
+        : (_t / frameSec).floor() % 3;
     final flame = sprites.get('ship/tiles_v2/burn_$frame.png');
     for (final i in burning) {
       if (!grid.hasBlockAt(i)) continue;

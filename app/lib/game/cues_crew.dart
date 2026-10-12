@@ -49,11 +49,12 @@ extension CrewCues on BattleCues {
 
   /// 한 착탄의 선체 피해 합 [amount] 를 맞은 곳 [at] 위에 띄운다 (설계서 §10.4 피해
   /// 숫자, A33). 해적 숫자보다 조금 위에서 시작한다.
-  void hullNumber(Vector2? at, int amount, HitWeight weight) {
+  void hullNumber(Vector2? at, int amount, HitWeight weight, {String? tag}) {
     if (at == null || amount <= 0) return;
     fx.damageNumber(
       at - Vector2(0, Coords.cell),
       damageText(amount),
+      tag: tag,
       style: DamageStyle.of(weight),
     );
   }

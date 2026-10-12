@@ -13,6 +13,7 @@ import 'package:pirate_busters/game/emotion_cues.dart';
 import 'package:pirate_busters/game/hit_stop.dart';
 import 'package:pirate_busters/game/hit_tag.dart';
 import 'package:pirate_busters/game/impact_sound.dart';
+import 'package:pirate_busters/game/shield_cue.dart';
 import 'package:pirate_busters/game/shooter_tracker.dart';
 import 'package:pirate_busters/game/view/breakage_fx.dart';
 import 'package:pirate_busters/game/view/fx_layer.dart';
@@ -97,8 +98,13 @@ class BattleCues {
     emote(cues, weight, quiet: landsQuietly(spec));
     var jolted = false;
     Vector2? hitAt;
-    // 착탄마다 블록 피해를 모아 숫자 하나로 띄운다 (§10.4, A33).
+    // 착탄마다 블록 피해를 모아 숫자 하나로 띄운다 (§10.4, A33). 보스 방패가
+    // 서 있으면 숫자에 ‘방패’ 이름표를 붙인다 (§5.4, A57).
     var hull = 0;
+    final shields = shieldsOf(cues);
+    final shieldTag = shields.any((s) => s.stood)
+        ? tagText(HitTag.shield)
+        : null;
     final collapsed = <int, List<int>>{};
     void joltOnce(double scale) {
       if (jolted) return;
@@ -122,7 +128,7 @@ class BattleCues {
           final at = Coords.point(e.x, e.y);
           // 첫 착탄 전 피해(그물·돛 통과)는 이 착탄 숫자에 합친다.
           if (hitAt != null) {
-            hullNumber(hitAt, hull, weight);
+            hullNumber(hitAt, hull, weight, tag: shieldTag);
             hull = 0;
           }
           hitAt = at;
@@ -264,8 +270,9 @@ class BattleCues {
           playSfx(Sfx.ko);
       }
     }
-    hullNumber(hitAt, hull, weight);
+    hullNumber(hitAt, hull, weight, tag: shieldTag);
     supplyTag(spec, hitAt, cues);
+    shieldBroken(shields);
     for (final MapEntry(key: side, value: cells) in collapsed.entries) {
       fx.collapseCells(
         cells,

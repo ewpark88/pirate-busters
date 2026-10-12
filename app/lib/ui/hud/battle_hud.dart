@@ -79,6 +79,9 @@ class BattleHud extends StatelessWidget {
   /// 연출 중 위쪽 정보의 진하기.
   static const double busyOpacity = 0.25;
 
+  /// 상대 턴 배너 자리. 위쪽 패널·거리 막대·시간 판정 띠보다 아래다.
+  static const Alignment foeTurnAlignment = Alignment(0, -0.25);
+
   /// 흐려지고 돌아오는 시간.
   static const Duration fade = Duration(milliseconds: 220);
 
@@ -200,11 +203,6 @@ class BattleHud extends StatelessWidget {
             ),
           ),
         ),
-      // 상대 턴 읽기: 상대 조준 중·포탄이 날아온다 (설계서 §2.3, A34).
-      Align(
-        alignment: const Alignment(0, -0.62),
-        child: FoeAlert(session: session),
-      ),
       if (_awaitingTap)
         // 분열탄이 날고 있다: 화면 어디든 탭하면 갈라진다 (설계서 §2.2, §4.8).
         Align(
@@ -242,15 +240,25 @@ class BattleHud extends StatelessWidget {
           child: HudPanel(child: Text(l10n.surrenderQueued)),
         ),
       if (!myTurn && !session.isOver)
+        // 상대 턴 배너와 상대 턴 읽기(A34)는 위쪽 패널·시간 판정 띠 아래에 둔다
+        // (설계서 §13.4 턴 전환, A43 점검 버그 6: 띠 글자를 가렸다).
         Align(
-          alignment: const Alignment(0, -0.45),
+          alignment: foeTurnAlignment,
           child: IgnorePointer(
-            child: HudPanel(
-              borderColor: HudColors.red,
-              child: Text(
-                l10n.enemyTurn,
-                style: const TextStyle(fontSize: 24),
-              ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                HudPanel(
+                  key: const ValueKey('enemy-turn'),
+                  borderColor: HudColors.red,
+                  child: Text(
+                    l10n.enemyTurn,
+                    style: const TextStyle(fontSize: 24),
+                  ),
+                ),
+                const SizedBox(height: 6),
+                FoeAlert(session: session),
+              ],
             ),
           ),
         ),

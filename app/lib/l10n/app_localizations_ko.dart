@@ -1411,6 +1411,12 @@ class AppLocalizationsKo extends AppLocalizations {
   String get hitTagNoRepair => '고칠 곳 없음';
 
   @override
+  String get hitTagShield => '방패 −50%';
+
+  @override
+  String get hitTagShieldBroken => '방패 깨짐!';
+
+  @override
   String get hitTagSeal => '봉쇄';
 
   @override
@@ -1537,6 +1543,11 @@ class AppLocalizationsKo extends AppLocalizations {
   @override
   String hullPercent(int percent) {
     return '선체 $percent%';
+  }
+
+  @override
+  String hullGain(int percent) {
+    return '+$percent%';
   }
 
   @override

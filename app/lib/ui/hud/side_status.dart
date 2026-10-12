@@ -80,6 +80,8 @@ class ShipStatusPanel extends StatelessWidget {
               warnAt: (sunkPercent + 10) / 100,
               // 격침은 기준 '미만'이라 내려 읽어야 판정과 맞는다.
               label: l10n.hullPercent((hull * 100).floor()),
+              // 수리로 오른 몫 (A41 제안 3, A57).
+              gainLabel: l10n.hullGain,
             ),
             const SizedBox(height: 4),
             Row(

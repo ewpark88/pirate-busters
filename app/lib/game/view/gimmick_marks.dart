@@ -6,9 +6,13 @@ import 'package:pb_sim/pb_sim.dart';
 /// 보스 기믹 표시 (설계서 §5.4). 판정은 시뮬레이션에 있고 그리기만 한다.
 abstract final class GimmickMarks {
   static final Paint _plate = Paint()..color = const Color(0x997D8590);
+  // 금색 테: 장갑 프리셋의 철 블록과 방패 철판을 구별한다 (A43 점검 제안 3, A57).
   static final Paint _rim = Paint()
-    ..color = const Color(0xFF2E3440)
+    ..color = const Color(0xFFFFC24A)
     ..style = PaintingStyle.stroke
+    ..strokeWidth = 2.5;
+  static final Paint _shine = Paint()
+    ..color = const Color(0x88FFFFFF)
     ..strokeWidth = 2;
   static final Paint _rivet = Paint()..color = const Color(0xFF2E3440);
 
@@ -50,9 +54,7 @@ abstract final class GimmickMarks {
       canvas.drawLine(
         Offset(r.left + 2, y),
         Offset(r.right - 2, math.max(r.top, y - r.height * 0.3)),
-        Paint()
-          ..color = const Color(0x88FFFFFF)
-          ..strokeWidth = 2,
+        _shine,
       );
     }
   }

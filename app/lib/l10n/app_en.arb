@@ -710,6 +710,8 @@
   "hitTagBite": "BITE",
   "hitTagRepair": "REPAIR",
   "hitTagNoRepair": "NOTHING TO FIX",
+  "hitTagShield": "SHIELD −50%",
+  "hitTagShieldBroken": "SHIELD BROKEN!",
   "hitTagSeal": "SEALED",
   "hitTagPull": "PULLED",
   "hitTagWind": "WIND FLIP",
@@ -788,6 +790,11 @@
   "devStagePick": "Pick stage (dev)",
   "ok": "OK",
   "hullPercent": "Hull {percent}%",
+  "hullGain": "+{percent}%",
+  "@hullGain": {
+    "description": "Hull gauge popup when repair raises the hull percent (A57).",
+    "placeholders": {"percent": {"type": "int"}}
+  },
   "@hullPercent": {
     "placeholders": {
       "percent": {

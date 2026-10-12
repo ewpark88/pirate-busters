@@ -23,6 +23,7 @@ class HudGauge extends StatefulWidget {
     this.warnAt = 0,
     this.calm = false,
     this.jolts = true,
+    this.gainLabel,
     super.key,
   });
 
@@ -45,6 +46,12 @@ class HudGauge extends StatefulWidget {
 
   /// 깎일 때 흔들리고 번쩍이는가(선체). 연료처럼 조금씩 계속 주는 값은 끈다.
   final bool jolts;
+
+  /// 값이 1%p 이상 오르면 막대 위에 잠깐 띄울 글자(수리 ‘+n%’, A57). null 이면 없다.
+  final String Function(int percent)? gainLabel;
+
+  /// 오른 몫 글자가 떠 있는 시간(초).
+  static const double gainSec = 1.4;
 
   /// 잔상 막대가 머무는 시간과 따라가는 빠르기(1/초).
   static const double holdSec = .45;
@@ -70,6 +77,10 @@ class HudGaugeState extends State<HudGauge>
   /// 마지막 변화가 찬 쪽이다(잔상이 초록).
   bool rising = false;
   double _pulse = 0;
+
+  /// 마지막으로 오른 몫(%p)과 그 글자가 남은 시간.
+  int gain = 0;
+  double gainLeft = 0;
 
   double get _target => widget.value.clamp(0.0, 1.0);
 
@@ -102,6 +113,11 @@ class HudGaugeState extends State<HudGauge>
       trail = to;
       _hold = .15;
       rising = true;
+      final up = ((to - old.value.clamp(0.0, 1.0)) * 100).round();
+      if (widget.gainLabel != null && up >= 1) {
+        gain = up;
+        gainLeft = HudGauge.gainSec;
+      }
     }
     _start();
   }
@@ -121,7 +137,8 @@ class HudGaugeState extends State<HudGauge>
     final settled =
         (front - _target).abs() < 1e-3 &&
         (trail - _target).abs() < 1e-3 &&
-        _hit <= 0;
+        _hit <= 0 &&
+        gainLeft <= 0;
     if (settled && !_warn) {
       front = trail = _target;
       _ticker.stop();
@@ -133,6 +150,7 @@ class HudGaugeState extends State<HudGauge>
     final to = _target;
     _hit = math.max(0, _hit - dt * 3);
     _pulse += dt;
+    gainLeft = math.max(0, gainLeft - dt);
     _hold = math.max(0, _hold - dt);
     if (to < front || _hold <= 0) {
       // 줄 때는 곧바로, 찰 때는 잔상이 머문 뒤 따라 오른다.
@@ -154,7 +172,7 @@ class HudGaugeState extends State<HudGauge>
   Widget build(BuildContext context) {
     final shake = widget.calm ? 0.0 : math.sin(_hit * 40) * _hit * 2.5;
     final glow = _warn ? (math.sin(_pulse * 5) + 1) / 2 : 0.0;
-    return Transform.translate(
+    final gauge = Transform.translate(
       offset: Offset(shake, 0),
       child: SizedBox(
         height: widget.height,
@@ -189,6 +207,32 @@ class HudGaugeState extends State<HudGauge>
                 ),
         ),
       ),
+    );
+    if (gainLeft <= 0 || widget.gainLabel == null) return gauge;
+    // 오른 몫: 막대 위로 떠오르며 흐려진다.
+    final age = HudGauge.gainSec - gainLeft;
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        gauge,
+        Positioned(
+          right: 6,
+          bottom: widget.height * .6 + age * 10,
+          child: Opacity(
+            opacity: math.min(1, gainLeft / .4),
+            child: Text(
+              widget.gainLabel!(gain),
+              key: const ValueKey('gauge-gain'),
+              style: TextStyle(
+                fontSize: widget.height * .9,
+                fontWeight: FontWeight.w900,
+                color: HudColors.good,
+                shadows: const [Shadow(blurRadius: 3)],
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

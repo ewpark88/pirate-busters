@@ -2648,6 +2648,18 @@ abstract class AppLocalizations {
   /// **'NOTHING TO FIX'**
   String get hitTagNoRepair;
 
+  /// No description provided for @hitTagShield.
+  ///
+  /// In en, this message translates to:
+  /// **'SHIELD −50%'**
+  String get hitTagShield;
+
+  /// No description provided for @hitTagShieldBroken.
+  ///
+  /// In en, this message translates to:
+  /// **'SHIELD BROKEN!'**
+  String get hitTagShieldBroken;
+
   /// No description provided for @hitTagSeal.
   ///
   /// In en, this message translates to:
@@ -2869,6 +2881,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Hull {percent}%'**
   String hullPercent(int percent);
+
+  /// Hull gauge popup when repair raises the hull percent (A57).
+  ///
+  /// In en, this message translates to:
+  /// **'+{percent}%'**
+  String hullGain(int percent);
 
   /// No description provided for @fuelPercent.
   ///

@@ -115,9 +115,22 @@ class SeaView extends Component {
       math.sin(x / 90 + _t * 1.3) * 1.6 +
       math.sin(x / 37 - _t * 2.1) * 0.7;
 
+  // 매 프레임 다시 쓰는 그리기 도구 (A57, 할당 줄이기).
+  final Path _path = Path();
+  final Path _line = Path();
+  final Paint _fill = Paint();
+  final Paint _foamPaint = Paint();
+  final Paint _linePaint = Paint()
+    ..style = PaintingStyle.stroke
+    ..strokeWidth = 1;
+  Shader? _gradient;
+  SeaTheme? _gradientTheme;
+
   @override
   void render(Canvas canvas) {
-    final path = Path()..moveTo(-seaHalfWidth, seaDepth);
+    final path = _path
+      ..reset()
+      ..moveTo(-seaHalfWidth, seaDepth);
     for (var x = -seaHalfWidth; x <= seaHalfWidth; x += 24) {
       path.lineTo(x, surface(x));
     }
@@ -133,19 +146,20 @@ class SeaView extends Component {
         ..setFloat(2, 0)
         ..setFloat(3, 1);
       var i = 4;
-      for (final c in [...theme.sea, theme.foam]) {
+      for (var k = 0; k <= theme.sea.length; k++) {
+        final c = k < theme.sea.length ? theme.sea[k] : theme.foam;
         fx
           ..setFloat(i++, c.r)
           ..setFloat(i++, c.g)
           ..setFloat(i++, c.b);
       }
-      canvas.drawPath(path, Paint()..shader = fx);
+      canvas.drawPath(path, _fill..shader = fx);
     } else {
       _renderGradient(canvas, path);
     }
     if (!front) return;
     _renderLattice(canvas);
-    final foam = Paint();
+    final foam = _foamPaint;
     for (final f in _foam) {
       foam.color = theme.foam.withValues(alpha: (f.life / 1.5).clamp(0, 0.8));
       canvas.drawCircle(Offset(f.x, surface(f.x) + 1), 2.2, foam);
@@ -179,16 +193,16 @@ class SeaView extends Component {
 
   /// 수면 아래 사인파 격자: 깊어질수록 옅어진다.
   void _renderLattice(Canvas canvas) {
-    final line = Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1;
+    final line = _linePaint;
     for (final (depth, alpha) in const [
       (18.0, .22),
       (44.0, .15),
       (86.0, .09),
     ]) {
       line.color = theme.foam.withValues(alpha: alpha);
-      final p = Path()..moveTo(-seaHalfWidth, surface(-seaHalfWidth) + depth);
+      final p = _line
+        ..reset()
+        ..moveTo(-seaHalfWidth, surface(-seaHalfWidth) + depth);
       for (var x = -seaHalfWidth; x <= seaHalfWidth; x += 32) {
         final wave = math.sin(x / 55 + _t * 1.1 + depth) * 3;
         p.lineTo(x, surface(x) + depth + wave);
@@ -199,17 +213,18 @@ class SeaView extends Component {
 
   void _renderGradient(Canvas canvas, Path path) {
     const rect = Rect.fromLTWH(-seaHalfWidth, 0, seaHalfWidth * 2, seaDepth);
-    canvas.drawPath(
-      path,
-      Paint()
-        ..shader = Gradient.linear(
-          rect.topCenter,
-          rect.bottomCenter,
-          // 앞 바다는 얇은 막: 잠긴 선체가 비쳐 보인다 (A24).
-          [for (final c in theme.sea) c.withValues(alpha: front ? 0.32 : 1)],
-          const [0, 0.35, 1],
-        ),
-    );
+    // 테마가 같으면 그라데이션을 다시 만들지 않는다 (A57).
+    if (_gradient == null || !identical(_gradientTheme, theme)) {
+      _gradientTheme = theme;
+      _gradient = Gradient.linear(
+        rect.topCenter,
+        rect.bottomCenter,
+        // 앞 바다는 얇은 막: 잠긴 선체가 비쳐 보인다 (A24).
+        [for (final c in theme.sea) c.withValues(alpha: front ? 0.32 : 1)],
+        const [0, 0.35, 1],
+      );
+    }
+    canvas.drawPath(path, _fill..shader = _gradient);
   }
 }
 

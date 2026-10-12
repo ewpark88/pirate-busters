@@ -16,10 +16,17 @@ class ShipGridView extends StatelessWidget {
     required this.cell,
     this.bare = false,
     this.water = false,
+    this.marked = const {},
     super.key,
   });
 
   final ShipyardModel model;
+
+  /// 금색 테를 두를 칸(`y * width + x`). 보스 방패 칸 표시 (설계서 §5.4, A57).
+  final Set<int> marked;
+
+  /// 표시 칸 테 색.
+  static const Color markColor = Color(0xFFFFC24A);
 
   /// 흘수선 아래를 물빛으로 칠한다(조선소 격자).
   final bool water;
@@ -100,6 +107,17 @@ class ShipGridView extends StatelessWidget {
             Positioned.fill(
               child: CustomPaint(
                 painter: ShipGridPainter(model, cell, overlay: true),
+              ),
+            ),
+          for (final i in marked)
+            Positioned.fromRect(
+              rect: at(i % model.width, i ~/ model.width).deflate(1),
+              child: DecoratedBox(
+                key: ValueKey('mark-$i'),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(cell * .12),
+                  border: Border.all(color: markColor, width: cell * .08 + 1),
+                ),
               ),
             ),
         ],

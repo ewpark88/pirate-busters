@@ -1498,6 +1498,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get hitTagNoRepair => 'NOTHING TO FIX';
 
   @override
+  String get hitTagShield => 'SHIELD −50%';
+
+  @override
+  String get hitTagShieldBroken => 'SHIELD BROKEN!';
+
+  @override
   String get hitTagSeal => 'SEALED';
 
   @override
@@ -1624,6 +1630,11 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String hullPercent(int percent) {
     return 'Hull $percent%';
+  }
+
+  @override
+  String hullGain(int percent) {
+    return '+$percent%';
   }
 
   @override

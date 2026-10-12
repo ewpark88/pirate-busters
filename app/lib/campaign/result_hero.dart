@@ -79,13 +79,15 @@ class ResultHero extends ConsumerWidget {
                     gradient: LinearGradient(
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
-                      // 위 끝은 투명하게 풀어 각진 물 사각형으로 보이지 않게 한다.
+                      // 위·아래 끝을 투명하게 풀어 각진 물 사각형으로 보이지 않게
+                      // 한다 (A41 점검 버그 6: 아래 끝이 직선으로 끊겼다, A57).
                       colors: [
                         Color(0x002A8FA8),
                         Color(0xCC2A8FA8),
                         Color(0xF0145A70),
+                        Color(0x00145A70),
                       ],
-                      stops: [0, 0.3, 1],
+                      stops: [0, 0.3, 0.7, 1],
                     ),
                   ),
                 ),

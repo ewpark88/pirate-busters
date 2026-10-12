@@ -180,14 +180,22 @@ abstract final class ExplosionFx {
 /// 불덩이 하나: 나이에 따라 그림이 뜨거움 → 연기로 바뀌며 빠르게 커졌다가 흐려진다
 /// (에셋 README 폭발 v3: 커지는 시간상수 0.035초, 0.35초부터 식어 떠오름).
 class Fireball extends PositionComponent {
-  Fireball(this.frames, Vector2 at, this.size0, {this.delay = 0})
-    : super(position: at.clone(), anchor: Anchor.center);
+  Fireball(
+    this.frames,
+    Vector2 at,
+    this.size0, {
+    this.delay = 0,
+    this.low = false,
+  }) : super(position: at.clone(), anchor: Anchor.center);
 
   final List<Sprite> frames;
 
   /// 다 커졌을 때의 지름(월드 px).
   final double size0;
   final double delay;
+
+  /// 저사양: 그림을 하나 건너 바꿔 프레임 수를 줄인다 (설계서 §10.4 저사양, A57).
+  final bool low;
   double _age = 0;
 
   /// 전체 수명(초).
@@ -228,7 +236,8 @@ class Fireball extends PositionComponent {
     final age = _age - delay;
     if (age < 0) return;
     _paint.color = Color.fromRGBO(255, 255, 255, alphaAt(age));
-    frames[frameAt(age)].render(
+    final f = frameAt(age);
+    frames[low ? f - f % 2 : f].render(
       canvas,
       size: Vector2.all(size0 * scaleAt(age)),
       anchor: Anchor.center,

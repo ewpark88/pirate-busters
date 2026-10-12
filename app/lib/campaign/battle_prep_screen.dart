@@ -238,6 +238,7 @@ class _BattlePrepScreenState extends ConsumerState<BattlePrepScreen> {
               ).enemyBlueprintOf(stage),
               line: keys.isEmpty ? '' : dataText(l10n, keys[_line]),
               tapHint: l10n.dialogueTap,
+              shield: gimmick == 'bow_iron_shield',
               onTap: () => setState(() => _line = (_line + 1) % keys.length),
             ),
           ),

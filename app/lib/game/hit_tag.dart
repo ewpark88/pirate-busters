@@ -25,7 +25,12 @@ enum HitTag {
   intercept,
 
   /// 보급탄(수리)이 맞았지만 내 배에 고칠 ‘구멍’이 없었다 (ADR-092).
-  noRepair;
+  noRepair,
+
+  /// 보스 뱃머리 방패가 서 있어 블록 피해가 줄었다 / 마지막 방패 칸이 깨졌다
+  /// (설계서 §5.4, A43 점검 제안 3, A57).
+  shield,
+  shieldBroken;
 
   /// 상대 배에 건 고유 능력 [ability] 의 이름표. 없으면 null.
   static HitTag? ofAbility(Ability ability) => switch (ability) {

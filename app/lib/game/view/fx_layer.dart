@@ -40,8 +40,18 @@ class FxLayer extends Component {
     if (vibration?.value ?? true) unawaited(impact());
   }
 
-  /// 저사양이면 [count] 의 절반(올림).
-  int few(int count) => lowEnd?.value ?? false ? (count + 1) ~/ 2 : count;
+  /// 떠 있는 효과가 이보다 많으면 새 입자를 절반으로 줄인다(연쇄 폭발·연사로
+  /// 붐빌 때 입자 총량 상한, 설계서 §10.4 저사양, A57).
+  static const int busyChildren = 60;
+
+  bool get _low => lowEnd?.value ?? false;
+
+  /// 저사양이면 [count] 의 절반(올림). 효과가 붐비면 한 번 더 절반.
+  int few(int count) {
+    var n = _low ? (count + 1) ~/ 2 : count;
+    if (children.length > busyChildren) n = (n + 1) ~/ 2;
+    return n;
+  }
 
   /// 연출 난수(판정과 무관, ADR-003 은 pb_sim 만).
   final math.Random rnd = math.Random(7);
@@ -99,12 +109,14 @@ class FxLayer extends Component {
     final size = 48.0 + radius * 28;
     final frames = [for (final f in ExplosionFx.fireballFrames) sprites.get(f)];
     spawn(popSprite('fx/impact/flash.png', at, size * 1.2, 0.18));
-    spawn(Fireball(frames, at, size * 1.1));
+    spawn(Fireball(frames, at, size * 1.1, low: _low));
     // 둘레의 작은 불덩이 (README v3: 0.16·0.26초에 작은 폭발).
     for (var i = 0; i < few(heavy ? 4 : 2); i++) {
       final a = rnd.nextDouble() * math.pi * 2;
       final off = Vector2(math.cos(a), math.sin(a) * .6) * size * .35;
-      spawn(Fireball(frames, at + off, size * .55, delay: .1 + i * .08));
+      spawn(
+        Fireball(frames, at + off, size * .55, delay: .1 + i * .08, low: _low),
+      );
     }
     spawn(ExplosionFx.embers(sprites, rnd, at, count: few(heavy ? 18 : 10)));
     spawn(ExplosionFx.debris(sprites, rnd, at, count: few(6 + radius * 3)));

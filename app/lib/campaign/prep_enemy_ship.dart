@@ -10,10 +10,14 @@ class PrepEnemyShip extends StatelessWidget {
     required this.line,
     required this.tapHint,
     required this.onTap,
+    this.shield = false,
     super.key,
   });
 
   final Blueprint blueprint;
+
+  /// 뱃머리 방패 보스(1-5): 방패 칸에 금색 테를 두른다 (§5.4, A57).
+  final bool shield;
 
   /// 지금 대사(빈 글자면 말풍선 없음).
   final String line;
@@ -28,7 +32,7 @@ class PrepEnemyShip extends StatelessWidget {
       children: [
         Positioned.fill(
           top: line.isEmpty ? 0 : 52,
-          child: BlueprintPreview(blueprint: blueprint),
+          child: BlueprintPreview(blueprint: blueprint, markBow: shield),
         ),
         if (line.isNotEmpty)
           Align(

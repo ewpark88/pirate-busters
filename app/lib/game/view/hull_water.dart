@@ -1,6 +1,8 @@
 import 'dart:math' as math;
 import 'dart:ui';
 
+import 'package:flutter/foundation.dart' show listEquals;
+
 import 'package:pb_sim/pb_sim.dart';
 import 'package:pirate_busters/game/coords.dart';
 import 'package:pirate_busters/game/view/hull_trim.dart';
@@ -14,6 +16,24 @@ import 'package:pirate_busters/game/view/ship_view.dart';
 /// 격침 깊이·흔들림을 되돌려 구한 직선이라 배가 기울어도 수면과 맞는다. 침수로
 /// 흘수가 깊어지면 수면선도 같이 오른다. 그리기만 하고 판정과 무관하다.
 abstract final class HullWater {
+  /// 배마다 선체 경로 캐시. 격자가 바뀔 때만 다시 만든다 (A57, 매 프레임 할당 줄이기).
+  static final Expando<HullPathCache> _caches = Expando('hull-path');
+
+  // 매 프레임 다시 쓰는 그리기 도구 (A57).
+  static final Paint _fill = Paint();
+  static final Paint _line = Paint()
+    ..style = PaintingStyle.stroke
+    ..strokeWidth = 2
+    ..strokeCap = StrokeCap.round;
+  static final Paint _wet = Paint()
+    ..style = PaintingStyle.stroke
+    ..strokeWidth = 6;
+  static final Paint _foam = Paint()
+    ..style = PaintingStyle.stroke
+    ..strokeWidth = 2.4;
+  static final Path _below = Path();
+  static final Path _wave = Path();
+
   /// 배 로컬 x 에서의 수면 y. [w0] 은 기울기가 없을 때 수면 y, [angle] 은 배가 기운
   /// 각(라디안), [sx] 는 좌우 뒤집기(±1).
   static double surfaceAt(
@@ -52,13 +72,19 @@ abstract final class HullWater {
     final state = ship.session.state.sides[ship.side];
     final grid = state.grid;
     final motion = ship.motion;
-    final hull = hullPath(grid.hull, materials, grid.width, ship.cellRect);
+    final cache = _caches[ship] ??= HullPathCache();
+    final (hull, bounds) = cache.of(
+      grid.hull,
+      materials,
+      grid.width,
+      ship.cellRect,
+    );
     final w0 =
         -state.draft * Coords.cell / cellUnit - motion.depth - motion.dip;
     draw(
       canvas,
       hull: hull,
-      bounds: hull.getBounds(),
+      bounds: bounds,
       waterAt: (lx) =>
           surfaceAt(lx, w0: w0, angle: ship.angle, sx: ship.scale.x),
       t: ship.session.turnMs / 1000,
@@ -84,7 +110,8 @@ abstract final class HullWater {
     final yr = waterAt(r);
     final bottom = bounds.bottom + 4;
     if (yl >= bottom && yr >= bottom) return;
-    final below = Path()
+    final below = _below
+      ..reset()
       ..moveTo(l, yl)
       ..lineTo(r, yr)
       ..lineTo(r, bottom)
@@ -96,7 +123,7 @@ abstract final class HullWater {
       ..clipPath(hull)
       ..drawRect(
         Rect.fromLTRB(l, math.min(yl, yr), r, bottom),
-        Paint()
+        _fill
           ..shader = Gradient.linear(
             Offset(0, math.min(yl, yr)),
             Offset(0, bottom),
@@ -123,14 +150,11 @@ abstract final class HullWater {
     double t,
     SeaTheme theme,
   ) {
-    final line = Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 2
-      ..strokeCap = StrokeCap.round;
+    final line = _line;
     for (var k = 0; k < 6; k++) {
       final depth = 8.0 + k * 14;
       line.color = theme.foam.withValues(alpha: .16 * (1 - k / 6));
-      final p = Path();
+      final p = _wave..reset();
       for (var x = l; x <= r; x += 8) {
         final y = waterAt(x) + depth + math.sin(x / 21 + t * 1.8 + k * 1.7) * 3;
         if (x == l) {
@@ -154,7 +178,7 @@ abstract final class HullWater {
     double t,
     SeaTheme theme,
   ) {
-    final wave = Path();
+    final wave = _wave..reset();
     for (var x = l; x <= r; x += 6) {
       final y = waterAt(x) + math.sin(x / 14 + t * 3) * 1.2;
       if (x == l) {
@@ -168,18 +192,39 @@ abstract final class HullWater {
       ..clipPath(hull)
       ..drawPath(
         wave.shift(const Offset(0, 3)),
-        Paint()
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 6
-          ..color = theme.sea[2].withValues(alpha: .35),
+        _wet..color = theme.sea[2].withValues(alpha: .35),
       )
       ..drawPath(
         wave,
-        Paint()
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 2.4
-          ..color = theme.foam.withValues(alpha: .85),
+        _foam..color = theme.foam.withValues(alpha: .85),
       )
       ..restore();
+  }
+}
+
+/// 선체 경로 캐시 (A57). 보이는 격자가 같으면 지난 경로를 그대로 쓴다. 칸 자리는
+/// 배마다 고정이다.
+class HullPathCache {
+  List<int>? _key;
+  Path _path = Path();
+  Rect _bounds = Rect.zero;
+
+  /// 다시 만든 횟수 (테스트용).
+  int builds = 0;
+
+  /// 격자 [materials] 의 선체 경로와 그 테두리 상자.
+  (Path, Rect) of(
+    HullSpec hull,
+    List<int> materials,
+    int width,
+    Rect Function(int x, int y) cellRect,
+  ) {
+    if (_key == null || !listEquals(_key, materials)) {
+      _key = List.of(materials);
+      _path = HullWater.hullPath(hull, materials, width, cellRect);
+      _bounds = _path.getBounds();
+      builds++;
+    }
+    return (_path, _bounds);
   }
 }

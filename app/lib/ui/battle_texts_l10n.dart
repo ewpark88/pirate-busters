@@ -42,5 +42,7 @@ void applyBattleTexts(BattleGame game, AppLocalizations l10n, Locale locale) {
       HitTag.wall => l10n.hitTagWall,
       HitTag.revive => l10n.hitTagRevive,
       HitTag.intercept => l10n.hitTagIntercept,
+      HitTag.shield => l10n.hitTagShield,
+      HitTag.shieldBroken => l10n.hitTagShieldBroken,
     };
 }
