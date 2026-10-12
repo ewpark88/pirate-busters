@@ -313,9 +313,10 @@ void main() {
       // ignore: cascade_invocations, mount 은 위의 ignore 가 필요해 캐스케이드로 못 묶는다.
       game.update(0);
       await game.ready();
-      // 허수아비가 먼저 두는 판: 탄이 날아 착탄할 때까지 6초를 돌린다.
+      // 허수아비가 먼저 두는 판: 탄이 날아 착탄할 때까지 11초를 돌린다(A51 뒤 이
+      // 판의 첫 탄은 높은 궤적이라 7초쯤 난다).
       var sawShot = false;
-      for (var i = 0; i < 180; i++) {
+      for (var i = 0; i < 330; i++) {
         game.update(1 / 30);
         sawShot |= session.playback != null;
       }

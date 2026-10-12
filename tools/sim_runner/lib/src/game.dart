@@ -29,6 +29,8 @@ class GameResult {
     required this.moveCells,
     required this.gapSum,
     required this.gapSamples,
+    this.shots = const {},
+    this.hits = const {},
   });
 
   final GameSetup setup;
@@ -44,6 +46,39 @@ class GameResult {
   /// 턴 끝마다 잰 뱃머리 간격(칸)의 합과 횟수.
   final int gapSum;
   final int gapSamples;
+
+  /// 해적 id 별 발사 수와, 그중 상대 배에 한 번이라도 닿은 발사 수 (A51 명중률).
+  final Map<String, int> shots;
+  final Map<String, int> hits;
+}
+
+/// 한 턴의 이벤트(턴 시작에 비워진다)에서 [side] 진영 발사마다 상대 배에 닿았는지 센다. 발사 이벤트
+/// 뒤 다음 발사 전까지 상대 배 `impact` 가 있으면 명중이다.
+void countHits(
+  MatchState state,
+  int side,
+  Map<String, int> shots,
+  Map<String, int> hits,
+) {
+  String? open;
+  var hit = false;
+  void close() {
+    final id = open;
+    if (id == null) return;
+    shots[id] = (shots[id] ?? 0) + 1;
+    if (hit) hits[id] = (hits[id] ?? 0) + 1;
+  }
+
+  for (final e in state.events) {
+    if (e.kind == SimEventKind.fire && e.side == side) {
+      close();
+      open = state.sides[side].crew.pirates[e.slot].spec.id;
+      hit = false;
+    } else if (e.kind == SimEventKind.impact && e.side == 1 - side) {
+      hit = true;
+    }
+  }
+  close();
 }
 
 /// 게임 데이터로 판을 만들고 두는 도구.
@@ -143,13 +178,17 @@ class GameFactory {
     var moved = 0;
     var gapSum = 0;
     var samples = 0;
+    final shots = <String, int>{};
+    final hits = <String, int>{};
     while (!match.isOver) {
       final state = match.state;
+      final side = state.activeSide;
       final bundle = ais[state.activeSide].turnFor(state);
       for (final c in bundle.commands) {
         if (c is MoveCommand) moved += c.dx.abs();
       }
       match.playTurn(bundle);
+      countHits(match.state, side, shots, hits);
       gapSum += (state.sides[0].bowX - state.sides[1].bowX).abs() ~/ cellUnit;
       samples++;
     }
@@ -162,6 +201,8 @@ class GameFactory {
       moveCells: moved ~/ 10,
       gapSum: gapSum,
       gapSamples: samples,
+      shots: shots,
+      hits: hits,
     );
   }
 }

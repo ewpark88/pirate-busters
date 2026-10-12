@@ -39,6 +39,10 @@ class Report {
   final Map<MatchOutcome, int> outcomes = {};
   final Map<String, int> comboGames = {};
   final Map<String, int> comboTime = {};
+
+  /// 계열별 발사·명중 수 (A51: 발사 대비 상대 배에 닿은 비율).
+  final Map<String, int> familyShots = {};
+  final Map<String, int> familyHits = {};
   var _turns = 0;
   var _moves = 0;
   var _gapSum = 0;
@@ -55,6 +59,11 @@ class Report {
       comboGames[combo] = (comboGames[combo] ?? 0) + 1;
       if (r.outcome == MatchOutcome.timeDecision) {
         comboTime[combo] = (comboTime[combo] ?? 0) + 1;
+      }
+      for (final e in r.shots.entries) {
+        final f = catalog.byId(e.key).family.jsonName;
+        familyShots[f] = (familyShots[f] ?? 0) + e.value;
+        familyHits[f] = (familyHits[f] ?? 0) + (r.hits[e.key] ?? 0);
       }
       for (var side = 0; side < 2; side++) {
         final win = r.winner == side;
@@ -148,6 +157,13 @@ class Report {
     table('pirate', pirates);
     table('family', families);
     table('range', ranges);
+    b.writeln('-- family hit% (hits / shots)');
+    for (final e in _sorted(familyShots)) {
+      final hit = familyHits[e.key] ?? 0;
+      b.writeln(
+        '  ${e.key.padRight(14)} ${_pct(e.value == 0 ? 0 : hit * 100 / e.value).padLeft(6)} / ${e.value}',
+      );
+    }
     final w = warnings;
     b.writeln(w.isEmpty ? 'warnings: none' : 'warnings:\n  ${w.join('\n  ')}');
     return b.toString();
