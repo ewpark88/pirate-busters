@@ -787,6 +787,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get toolErase => 'Erase';
 
   @override
+  String get toolTabMaterials => 'Materials';
+
+  @override
+  String get toolTabModules => 'Modules';
+
+  @override
+  String get toolTabMasts => 'Masts';
+
+  @override
+  String toolPoints(int n) {
+    return '$n pt';
+  }
+
+  @override
   String get moduleGunPort => 'Gun port';
 
   @override

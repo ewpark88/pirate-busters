@@ -733,6 +733,20 @@ class AppLocalizationsKo extends AppLocalizations {
   String get toolErase => '지우기';
 
   @override
+  String get toolTabMaterials => '재질';
+
+  @override
+  String get toolTabModules => '모듈';
+
+  @override
+  String get toolTabMasts => '돛대';
+
+  @override
+  String toolPoints(int n) {
+    return '$n 포인트';
+  }
+
+  @override
   String get moduleGunPort => '포문';
 
   @override

@@ -443,6 +443,17 @@
   "materialNet": "Net",
   "toolCabin": "Cabin",
   "toolErase": "Erase",
+  "toolTabMaterials": "Materials",
+  "toolTabModules": "Modules",
+  "toolTabMasts": "Masts",
+  "toolPoints": "{n} pt",
+  "@toolPoints": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
   "moduleGunPort": "Gun port",
   "moduleMagazine": "Magazine",
   "modulePump": "Pump",

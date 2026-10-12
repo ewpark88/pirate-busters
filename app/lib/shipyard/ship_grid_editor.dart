@@ -42,7 +42,8 @@ class ShipGridEditor extends StatelessWidget {
           },
           child: ListenableBuilder(
             listenable: model,
-            builder: (context, _) => ShipGridView(model: model, cell: cell),
+            builder: (context, _) =>
+                ShipGridView(model: model, cell: cell, water: true),
           ),
         ),
       );
@@ -54,12 +55,19 @@ class ShipGridEditor extends StatelessWidget {
 /// 끊긴 블록의 빨간 테두리와 흘수선이다. 재질 타일·선실·모듈 그림은 [ShipGridView] 가
 /// 그 사이에 겹친다.
 class ShipGridPainter extends CustomPainter {
-  ShipGridPainter(this.model, this.cell, {this.overlay = false})
-    : loose = model.loose;
+  ShipGridPainter(
+    this.model,
+    this.cell, {
+    this.overlay = false,
+    this.water = false,
+  }) : loose = model.loose;
 
   final ShipyardModel model;
   final double cell;
   final bool overlay;
+
+  /// 바탕에 흘수선 아래 물빛을 칠한다(조선소 격자).
+  final bool water;
   final Set<int> loose;
 
   static final Paint _line = Paint()
@@ -73,10 +81,19 @@ class ShipGridPainter extends CustomPainter {
   static final Paint _water = Paint()
     ..color = const Color(0xCC3FA9F5)
     ..strokeWidth = 2;
+  static final Paint _sea = Paint()..color = const Color(0x333FA9F5);
 
   @override
   void paint(Canvas canvas, Size size) {
     final h = model.height;
+    // 흘수선: 무게로 정해지는 잠긴 깊이 (설계서 §3.4).
+    final wl = model.stats.waterline / 1000 * cell;
+    if (!overlay && water) {
+      canvas.drawRect(
+        Rect.fromLTRB(0, size.height - wl, size.width, size.height),
+        _sea,
+      );
+    }
     for (var y = 0; y < h; y++) {
       for (var x = 0; x < model.width; x++) {
         // 선체 틀 밖 칸은 그리지 않아 격자가 배 모양으로 보인다 (설계서 §3.4).
@@ -118,8 +135,6 @@ class ShipGridPainter extends CustomPainter {
         );
       }
     }
-    // 흘수선: 무게로 정해지는 잠긴 깊이 (설계서 §3.4).
-    final wl = model.stats.waterline / 1000 * cell;
     canvas.drawLine(
       Offset(0, size.height - wl),
       Offset(size.width, size.height - wl),

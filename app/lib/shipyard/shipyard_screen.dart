@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
 import 'package:pb_sim/pb_sim.dart';
 import 'package:pirate_busters/app/providers.dart';
 import 'package:pirate_busters/battle/battle_setup.dart';
@@ -13,9 +12,10 @@ import 'package:pirate_busters/meta/ship_upgrades.dart';
 import 'package:pirate_busters/platform/analytics.dart';
 import 'package:pirate_busters/shipyard/ship_grid_editor.dart';
 import 'package:pirate_busters/shipyard/ship_upgrade_sheet.dart';
+import 'package:pirate_busters/shipyard/shipyard_actions.dart';
 import 'package:pirate_busters/shipyard/shipyard_model.dart';
+import 'package:pirate_busters/shipyard/shipyard_stats.dart';
 import 'package:pirate_busters/shipyard/tool_palette.dart';
-import 'package:pirate_busters/ui/kit/kit_art.dart';
 import 'package:pirate_busters/ui/kit/pb_button.dart';
 import 'package:pirate_busters/ui/kit/pb_dialog.dart';
 import 'package:pirate_busters/ui/kit/pb_panel.dart';
@@ -88,20 +88,20 @@ class _ShipyardScreenState extends ConsumerState<ShipyardScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final ship = ref.watch(progressProvider).ship;
+    final progress = ref.watch(progressProvider);
+    final ship = progress.ship;
     _syncHull(ship.hull);
     return PbScaffold(
       title: l10n.menuShipyard,
       actions: [
-        PbIconButton(
+        PbButton.small(
+          label: l10n.shipUpgrades,
           icon: MetaIcons.gold,
-          tooltip: l10n.shipUpgrades,
           onPressed: () => unawaited(showShipUpgrades(context)),
         ),
-        const SizedBox(width: 6),
-        PbIconButton(
+        PbButton.small(
+          label: l10n.loadPreset,
           icon: MetaIcons.blueprint,
-          tooltip: l10n.loadPreset,
           onPressed: () => unawaited(_pickPreset(l10n)),
         ),
       ],
@@ -109,30 +109,20 @@ class _ShipyardScreenState extends ConsumerState<ShipyardScreen> {
         padding: const EdgeInsets.fromLTRB(10, 0, 10, 8),
         child: Column(
           children: [
-            ListenableBuilder(
-              listenable: _model,
-              builder: (context, _) => _stats(context, l10n),
-            ),
-            const SizedBox(height: 6),
             Expanded(
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Expanded(
-                    flex: 3,
-                    child: PbPanel(
-                      padding: const EdgeInsets.all(8),
-                      child: ShipGridEditor(model: _model),
-                    ),
-                  ),
+                  Expanded(flex: 3, child: _gridPanel()),
                   const SizedBox(width: 8),
                   Expanded(
                     flex: 2,
                     child: PbPanel(
-                      padding: const EdgeInsets.all(8),
+                      padding: const EdgeInsets.fromLTRB(14, 12, 14, 18),
                       child: ToolPalette(
                         model: _model,
                         ship: ship,
+                        gold: progress.gold,
                         onLocked: (tool, gold) => unawaited(
                           unlockTool(context, ref, tool, gold).then((ok) {
                             if (ok) _model.selectTool(tool);
@@ -147,13 +137,63 @@ class _ShipyardScreenState extends ConsumerState<ShipyardScreen> {
             const SizedBox(height: 6),
             ListenableBuilder(
               listenable: _model,
-              builder: (context, _) => _actions(l10n),
+              builder: (context, _) => ShipyardActions(
+                model: _model,
+                slot: _slot,
+                active: _fleet.activeSlot == _slot,
+                saved: _fleet.blueprint(_slot) != null,
+                onSlot: (i) => setState(() {
+                  _slot = i;
+                  _loadSlot(_slot);
+                }),
+                onSave: () => unawaited(_save(l10n)),
+                onSail: () async {
+                  await _fleet.setActiveSlot(_slot);
+                  setState(() {});
+                },
+              ),
             ),
           ],
         ),
       ),
     );
   }
+
+  /// 격자 패널: 위 저장 조건, 가운데 바다 바탕 격자, 아래 참고 수치 (설계서 §13.6).
+  Widget _gridPanel() => PbPanel(
+    padding: const EdgeInsets.fromLTRB(14, 12, 14, 18),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        ListenableBuilder(
+          listenable: _model,
+          builder: (context, _) => ShipyardGauges(model: _model),
+        ),
+        const SizedBox(height: 4),
+        Expanded(
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+              gradient: const LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [Color(0x332E5A86), Color(0x14000000)],
+              ),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(4),
+              child: ShipGridEditor(model: _model),
+            ),
+          ),
+        ),
+        const SizedBox(height: 4),
+        ListenableBuilder(
+          listenable: _model,
+          builder: (context, _) => ShipyardStatLine(model: _model),
+        ),
+      ],
+    ),
+  );
 
   /// 추천 설계도 불러오기 (설계서 §3.4).
   Future<void> _pickPreset(AppLocalizations l10n) async {
@@ -167,104 +207,5 @@ class _ShipyardScreenState extends ConsumerState<ShipyardScreen> {
       ],
     );
     if (i != null) _model.load(_ship.unlockedOnly(presets[i].blueprint));
-  }
-
-  /// 수치 줄: 넘친 값은 빨간색 (설계서 §13.6 “수치가 바로 바뀐다”).
-  Widget _stats(BuildContext context, AppLocalizations l10n) {
-    final hull = _model.hull;
-    final s = _model.stats;
-    final locale = Localizations.localeOf(context).toLanguageTag();
-    final one = NumberFormat('0.0', locale);
-    final two = NumberFormat('0.00', locale);
-    final cabins = _model.cabins.length;
-    Widget chip(String text, {bool bad = false}) => Padding(
-      padding: const EdgeInsets.only(right: 4),
-      child: PbChip(label: text, warn: bad),
-    );
-    // 한 줄로 두고 넘치면 옆으로 민다(작은 폰 높이 360dp 에서 격자 자리를 지킨다).
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(
-        children: [
-          chip(
-            l10n.statPoints(s.cost, hull.buildPoints),
-            bad: s.cost > hull.buildPoints,
-          ),
-          chip(l10n.statWaterline(one.format(s.waterline / 1000))),
-          chip(l10n.statSpeed(one.format(hull.moveSpeed / 1000))),
-          chip(
-            l10n.statFuelPerCell(
-              two.format(hull.fuelPerCell * s.fuelPermille / 1000),
-            ),
-          ),
-          chip(l10n.statTank(s.tank)),
-          chip(
-            l10n.statCabins(cabins, hull.cabinSlots),
-            bad: cabins != hull.cabinSlots,
-          ),
-          chip(
-            l10n.statModules(s.modulesCounted, hull.moduleLimit),
-            bad: s.modulesCounted > hull.moduleLimit,
-          ),
-          chip(l10n.statCaptain(s.captains), bad: s.captains != 1),
-          if (!_model.canSave) chip(l10n.cannotSave, bad: true),
-        ],
-      ),
-    );
-  }
-
-  Widget _actions(AppLocalizations l10n) {
-    final active = _fleet.activeSlot == _slot;
-    final saved = _fleet.blueprint(_slot) != null;
-    return Row(
-      children: [
-        Expanded(
-          child: Align(
-            alignment: Alignment.centerLeft,
-            child: FittedBox(
-              child: PbTabs(
-                labels: [
-                  for (var i = 0; i < FleetStore.slots; i++)
-                    l10n.planSlot(i + 1),
-                ],
-                selected: _slot,
-                onSelect: (i) => setState(() {
-                  _slot = i;
-                  _loadSlot(_slot);
-                }),
-              ),
-            ),
-          ),
-        ),
-        PbIconButton(
-          icon: KitArt.back,
-          tooltip: l10n.undo,
-          onPressed: _model.canUndo ? _model.undo : null,
-        ),
-        const SizedBox(width: 6),
-        PbButton(
-          label: l10n.save,
-          kind: PbButtonKind.gold,
-          height: 42,
-          minWidth: 90,
-          fontSize: 17,
-          onPressed: _model.canSave ? () => _save(l10n) : null,
-        ),
-        const SizedBox(width: 6),
-        PbButton(
-          label: active ? l10n.sailing : l10n.sailWithThis,
-          kind: PbButtonKind.secondary,
-          height: 42,
-          minWidth: 90,
-          fontSize: 16,
-          onPressed: saved && !active
-              ? () async {
-                  await _fleet.setActiveSlot(_slot);
-                  setState(() {});
-                }
-              : null,
-        ),
-      ],
-    );
   }
 }

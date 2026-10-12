@@ -15,10 +15,14 @@ class ShipGridView extends StatelessWidget {
     required this.model,
     required this.cell,
     this.bare = false,
+    this.water = false,
     super.key,
   });
 
   final ShipyardModel model;
+
+  /// 흘수선 아래를 물빛으로 칠한다(조선소 격자).
+  final bool water;
 
   /// 격자선·흘수선·선실 번호 없이 배만 그린다(결과 화면 등 장식용).
   final bool bare;
@@ -56,7 +60,9 @@ class ShipGridView extends StatelessWidget {
         children: [
           if (!bare)
             Positioned.fill(
-              child: CustomPaint(painter: ShipGridPainter(model, cell)),
+              child: CustomPaint(
+                painter: ShipGridPainter(model, cell, water: water),
+              ),
             ),
           for (var y = 0; y < h; y++)
             for (var x = 0; x < model.width; x++) ...[
