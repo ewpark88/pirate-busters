@@ -120,9 +120,8 @@ class ShotView extends Component {
         canvas.restore();
         continue;
       }
-      // 멀리 뺀 화면에서도 탄이 보이게 키우고 밝은 테두리를 두른다 (설계서 §10.4).
+      // 멀리 뺀 화면에서도 탄이 보이게 키운다 (설계서 §10.4).
       final grow = visibleScale(_zoom);
-      _halo(canvas, pos, 11 * grow);
       final w = weapons;
       if (style == null || w == null) {
         sprites
@@ -164,20 +163,6 @@ class ShotView extends Component {
   /// 줌 [zoom] 에서 탄을 키울 배율. 화면에서 [minScreenPx] 보다 작아지지 않는다.
   static double visibleScale(double zoom) =>
       zoom <= 0 ? 1 : (minScreenPx / (18 * zoom)).clamp(1, 8).toDouble();
-
-  static final Paint _haloFill = Paint()..color = const Color(0x99FFF4C2);
-  static final Paint _haloRing = Paint()
-    ..color = const Color(0xCC14161C)
-    ..style = PaintingStyle.stroke
-    ..strokeWidth = 2;
-
-  /// 탄 뒤의 밝은 원과 어두운 테두리. 바다·하늘 어디서나 구분된다.
-  static void _halo(Canvas canvas, Vector2 pos, double r) {
-    final c = pos.toOffset();
-    canvas
-      ..drawCircle(c, r, _haloFill)
-      ..drawCircle(c, r, _haloRing);
-  }
 
   /// 꼬리 점 수와 점 사이 간격(틱). 지나온 약 0.16초를 오래된 것부터 담는다.
   static const int tailPoints = 12;
