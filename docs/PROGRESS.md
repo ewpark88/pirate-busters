@@ -772,6 +772,16 @@
 **남은 것**
 - 지옥 모드 연패 보정 제외는 R3
 
+## A35·A36 — 바람 시인성·단계 안 손상 (2026-10-12, 브랜치 `feat/A35-A36-wind-wear`, 실기기 확인 남음, ADR-104)
+
+**완료**
+- 사용자 승인으로 설계서 §2.3·§10.2 에 ‘바람’·‘단계 안 손상’ 문장을 넣고 계획서를 동기화했다(ADR-104)
+- 하늘 바람 줄(`WindStreaks`), 돛·깃발 펄럭임(`MastPainter.breezeOf`), 단계 안 그을음(`DamageLayer.wearOf`·`ScorchPainter.wear`)
+- `turn_tension.dart` 를 `battle_overlays.dart` 로 넓혀 `battle_game` 300줄 안. 테스트 `a35_wind_test` 5개·`a36_wear_test` 6개, 골든 `damage_wear.png` 새로·`battle_sea.png`·`hull_balanced.png` 재생성
+
+**남은 것**
+- 실기기에서 바람 줄이 눈에 띄되 거슬리지 않는지, 그을음 단계가 자연스러운지
+
 ## A34 — 상대 턴 읽기·턴 타이머 긴장감 (2026-10-12, 브랜치 `feat/A34-foe-turn-timer`, 실기기 확인 남음, ADR-088)
 
 **완료**

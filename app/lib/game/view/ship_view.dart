@@ -220,7 +220,7 @@ class ShipView extends PositionComponent with HasGameReference {
     final snap = shot is ShotPlayback ? shot.live[side] : null;
     final materials = snap?.materials ?? grid.rawMaterials;
     final hp = snap?.hp ?? grid.rawHp;
-    MastPainter.paint(canvas, sprites, _state, materials, cellRect);
+    MastPainter.paint(canvas, this, materials); // 바람에 펄럭임 (A35)
     for (var y = 0; y < grid.height; y++) {
       for (var x = 0; x < grid.width; x++) {
         final i = y * grid.width + x;
