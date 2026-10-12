@@ -50,10 +50,10 @@ void main() {
       expect(KitPageTransitions.outgoing(1), 0);
       for (var i = 0; i <= 20; i++) {
         final t = i / 20;
-        // 같은 진행에서 두 화면이 함께 진하게 보이는 일이 없다(잔상).
+        // 같은 진행에서 두 화면이 함께 보이는 일이 없다(잔상, A58).
         expect(
           KitPageTransitions.incoming(t) * KitPageTransitions.outgoing(t),
-          lessThan(0.05),
+          0,
           reason: '$t',
         );
       }

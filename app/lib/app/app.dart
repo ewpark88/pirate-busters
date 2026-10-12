@@ -34,12 +34,16 @@ class PirateBustersApp extends ConsumerWidget {
       ],
       theme: appTheme(),
       // 등급 카드 움직임의 공용 시계 (설계서 §10.5). 저사양 모드에서는 멈춘다.
-      builder: (context, child) => MusicDirector(
-        child: KitMotion(
-          reduced: ref.watch(lowEndProvider),
-          child: CardMotion(
-            enabled: !ref.watch(lowEndProvider),
-            child: child ?? const SizedBox.shrink(),
+      // 앱 바탕을 맨 아래 깔아 화면 전환 틈에 기기 창 바탕(흰색)이 비치지 않게 한다(A58).
+      builder: (context, child) => ColoredBox(
+        color: AppColors.background,
+        child: MusicDirector(
+          child: KitMotion(
+            reduced: ref.watch(lowEndProvider),
+            child: CardMotion(
+              enabled: !ref.watch(lowEndProvider),
+              child: child ?? const SizedBox.shrink(),
+            ),
           ),
         ),
       ),

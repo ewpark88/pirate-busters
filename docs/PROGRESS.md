@@ -861,3 +861,13 @@
 **남은 것**
 - ~~BALANCE.md A4.8 임시값 확정~~ 사용자가 그대로 확정(2026-10-12)
 - 돌피 승률 경고(보통 69%)는 개편 전부터 있었다(63.9%). 비공개 테스트 밸런스와 함께 본다
+
+## A58 — 화면 전환 잔상 2차 (2026-10-12, 브랜치 `feat/A58-transition-ghost`, A42 후속)
+
+**완료**
+- 원인: 컷신 경로가 `fullscreenDialog: true` 라 Flutter `MaterialRouteTransitionMixin.canTransitionTo` 가 false → 아래 화면의 secondaryAnimation 이 멈춰 A42 fade-through 가 안 먹었다(항구 → 프롤로그, 전투 → 보스 뒤 컷신)
+- `fullscreenDialog` 제거, 컷 사이 페이드를 겹침 없는 fade-through(`cutOpacity`)로, `KitPageTransitions.split` 0.4 하나로 겹침 0, 앱 루트 `ColoredBox` 바탕
+- 테스트 `story_test` 2개(컷신 열 때 아래 화면 사라짐 — 옛 경로에서 실패 확인, 컷 넘김 겹침 없음), `screen_fit_test` 곱 0
+
+**남은 것**
+- 실기기 확인: 프롤로그·보스 컷신·항구↔지도↔전투↔결과 전환

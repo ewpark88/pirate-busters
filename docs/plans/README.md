@@ -51,3 +51,4 @@
 | [2026-10-12-A51-A53-skip-burst-rest.md](2026-10-12-A51-A53-skip-burst-rest.md) | 물수제비 튕김 조건 강화·연사 집중/산발·쉬는 턴 머리 위 표시와 쏠 해적 없음 자동 넘김 (A51~A53, ADR-102) |
 | [2026-10-12-A24-sea-hull-art.md](2026-10-12-A24-sea-hull-art.md) | 전투 아트 보강: 잠긴 선체 물빛·수면선, 큰 너울·물마루·항적, 진영 색 장식 (A24, ADR-079) |
 | [2026-10-12-quality-6-finale-meta-sound.md](2026-10-12-quality-6-finale-meta-sound.md) | 퀄리티 6차: 전투 마무리·턴 리듬, 메타 화면 손맛, 소리·진동, 읽기 쉬움·성능(A54~A57)과 점검 후속 규칙(A59), ADR-105 |
+| [2026-10-12-A58-transition-ghost.md](2026-10-12-A58-transition-ghost.md) | 화면 전환 잔상 2차: 컷신 fullscreenDialog 제거·컷 fade-through·루트 바탕색 (A58, A42 후속) |

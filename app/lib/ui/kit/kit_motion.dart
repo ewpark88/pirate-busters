@@ -20,19 +20,20 @@ class KitMotion extends InheritedWidget {
 /// 화면 전환: 이전 화면이 먼저 사라지고 새 화면이 짧게 밀며 나타난다 (설계서 §13 공통).
 ///
 /// 새 화면만 투명에서 나타나게 하면 그동안 아래 화면이 비쳐 두 화면이 겹친 잔상이
-/// 생긴다(A42). 이전 화면은 앞 절반에 사라지고, 새 화면은 뒤쪽에 나타난다.
+/// 생긴다(A42). 이전 화면은 [split] 까지 사라지고, 새 화면은 그 뒤에 나타난다.
+/// `fullscreenDialog` 경로는 아래 화면의 secondaryAnimation 이 움직이지 않아
+/// 이전 화면이 그대로 남으므로 쓰지 않는다(A58).
 class KitPageTransitions extends PageTransitionsBuilder {
   const KitPageTransitions();
 
-  /// 새 화면이 나타나기 시작하는 지점과 이전 화면이 다 사라지는 지점(전환 진행 0~1).
-  static const double inFrom = 0.35;
-  static const double outUntil = 0.4;
+  /// 이전 화면이 다 사라지고 새 화면이 나타나기 시작하는 지점(전환 진행 0~1).
+  static const double split = 0.4;
 
-  /// 전환 진행 [t] 에서 새 화면·이전 화면의 진하기.
+  /// 전환 진행 [t] 에서 새 화면·이전 화면의 진하기. 두 값이 함께 0 보다 큰 때가 없다.
   static double incoming(double t) =>
-      Curves.easeOut.transform(((t - inFrom) / (1 - inFrom)).clamp(0, 1));
+      Curves.easeOut.transform(((t - split) / (1 - split)).clamp(0, 1));
   static double outgoing(double t) =>
-      1 - Curves.easeIn.transform((t / outUntil).clamp(0, 1));
+      1 - Curves.easeIn.transform((t / split).clamp(0, 1));
 
   @override
   Widget buildTransitions<T>(
