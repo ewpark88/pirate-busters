@@ -11,7 +11,7 @@
 | | `docs/RELEASE.md` | 릴리스 | 버전·태그·체크리스트·서명·핫픽스·롤백 |
 | | `docs/DECISIONS.md` | 결정마다 | ADR |
 | | `CHANGELOG.md` | 단계 완료·릴리스 | 사용자 관점 변경 |
-| 에이전트 | `.claude/settings.json` 권한 | 도구 호출마다 | 설계서 편집 거부, 비밀 파일 읽기 거부, force push·`--no-verify`·훅 끄기 거부, push·tag·의존성 추가는 확인 |
+| 에이전트 | `.claude/settings.json` 권한 | 도구 호출마다 | 설계서 편집 거부, 비밀 파일 읽기 거부, force push·`--no-verify`·훅 끄기 거부, tag·의존성 추가는 확인. 작업이 끝나면 브랜치 push·main 병합·push 는 묻지 않고 한다 (ADR-098) |
 | | `SessionStart` 훅 `tool/hooks/session_start.dart` | 세션 시작 | 현재 단계·브랜치·미커밋 수·문서 동기화·git 훅 상태를 알림 |
 | | `PostToolUse` 훅 `tool/hooks/format_on_edit.dart` | 파일 편집 뒤 | `dart format` |
 | | `Stop` 훅 `tool/hooks/stop_check.dart` | 턴 끝 | 바뀐 파일이 있으면 아키텍처·결정론, 문서 동기화, ARB 검사. 위반이면 되돌려 고치게 함 |

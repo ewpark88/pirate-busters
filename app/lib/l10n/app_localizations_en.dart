@@ -971,7 +971,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get story_t2_enemy =>
-      'Patrol recruit: Two of us this time. We\'ll keep our distance and fire!';
+      'Patrol recruit: We\'ll keep our distance and fire! Catch us if you can!';
 
   @override
   String get story_t2_ally =>
@@ -1019,7 +1019,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get story_s1_5_enemy =>
-      'Crab Lieutenant: See the iron bow? Your bullets bounce right off!';
+      'Crab Lieutenant: See the iron bow? Half of every shot bounces right off!';
 
   @override
   String get story_s1_5_ally =>
@@ -1135,7 +1135,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get gimmick_bow_iron_shield =>
-      'Iron bow shield: direct fire deals half damage while it stands. Break the bow first';
+      'Iron bow shield: all block damage is halved while it stands. Break the bow first';
 
   @override
   String get gimmick_patrol_closing_in =>

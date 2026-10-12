@@ -12,8 +12,13 @@ class StartGate {
 
   bool get isOpen => _open;
 
+  /// 보스 배너처럼 판 시작을 가리는 안내가 떠 있는 동안 true: 판 시계를 돌리지 않는다
+  /// (A41 점검: 배너 동안 첫 턴 시간이 줄던 문제).
+  bool held = false;
+
   /// 한 프레임([dt] 초)을 지나고, 판 시계를 돌려도 되면 true.
   bool tick(double dt) {
+    if (held) return false;
     if (_open) return true;
     _waited += dt;
     _steady = dt <= steadyDt ? _steady + 1 : 0;
