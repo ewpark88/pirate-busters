@@ -914,7 +914,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get story_t1_ally => '옥토: 해적? 우린 그냥 배를 고치던 중인데… 좋아, 폭탄 맛 좀 봐라!';
 
   @override
-  String get story_t2_enemy => '초계대 신병: 이번엔 둘이다. 거리를 벌려서 쏴 주지!';
+  String get story_t2_enemy => '초계대 신병: 거리를 벌려서 쏴 주지! 따라올 수 있으면 따라와 봐!';
 
   @override
   String get story_t2_ally => '톡: 연료를 아껴 두렴. 다가갈 때와 물러날 때를 골라야 해.';
@@ -950,7 +950,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get story_s1_4_ally => '폴리: 하늘은 내 거야! 위에서 내리꽂아 줄게.';
 
   @override
-  String get story_s1_5_enemy => '꽃게 부대장: 뱃머리 철판을 봐라. 직사탄 따위는 튕겨낸다!';
+  String get story_s1_5_enemy => '꽃게 부대장: 뱃머리 철판을 봐라. 어떤 탄이든 반은 튕겨낸다!';
 
   @override
   String get story_s1_5_ally => '톡: 정면이 단단하면 위에서, 아래에서 치면 되지.';
@@ -1063,7 +1063,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get gimmick_bow_iron_shield =>
-      '뱃머리 철판 방패: 방패가 서 있는 동안 직사 피해 절반. 뱃머리를 먼저 부숴라';
+      '뱃머리 철판 방패: 방패가 서 있는 동안 받는 블록 피해 절반. 뱃머리를 먼저 부숴라';
 
   @override
   String get gimmick_patrol_closing_in => '초계선이 턴마다 한 칸씩 다가오고 쿨다운이 두 배로 빨리 준다';

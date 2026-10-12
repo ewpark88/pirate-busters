@@ -1757,7 +1757,7 @@ abstract class AppLocalizations {
   /// No description provided for @story_t2_enemy.
   ///
   /// In en, this message translates to:
-  /// **'Patrol recruit: Two of us this time. We\'ll keep our distance and fire!'**
+  /// **'Patrol recruit: We\'ll keep our distance and fire! Catch us if you can!'**
   String get story_t2_enemy;
 
   /// No description provided for @story_t2_ally.
@@ -1829,7 +1829,7 @@ abstract class AppLocalizations {
   /// No description provided for @story_s1_5_enemy.
   ///
   /// In en, this message translates to:
-  /// **'Crab Lieutenant: See the iron bow? Your bullets bounce right off!'**
+  /// **'Crab Lieutenant: See the iron bow? Half of every shot bounces right off!'**
   String get story_s1_5_enemy;
 
   /// No description provided for @story_s1_5_ally.
@@ -2021,7 +2021,7 @@ abstract class AppLocalizations {
   /// No description provided for @gimmick_bow_iron_shield.
   ///
   /// In en, this message translates to:
-  /// **'Iron bow shield: direct fire deals half damage while it stands. Break the bow first'**
+  /// **'Iron bow shield: all block damage is halved while it stands. Break the bow first'**
   String get gimmick_bow_iron_shield;
 
   /// No description provided for @gimmick_patrol_closing_in.
