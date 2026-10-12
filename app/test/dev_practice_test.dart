@@ -55,7 +55,7 @@ Future<void> _pump(
   await tester.pump();
 }
 
-/// 빌드 종류와 상관없이 스위치 값을 정한다(테스트는 디버그 빌드라 늘 켜져 있다).
+/// 저장소와 상관없이 운영자 모드 값을 정한다.
 class _FixedDevTools extends DevToolsNotifier {
   _FixedDevTools({required this.on});
 
@@ -68,8 +68,8 @@ class _FixedDevTools extends DevToolsNotifier {
 const _deck = ['p04_uni', 'p28_pelly', 'p01_octo', 'p11_finn'];
 
 void main() {
-  group('개발 도구 숨은 스위치·더미배 연습 (ADR-073)', () {
-    testWidgets('설정의 언어 글자를 7번 연달아 누르면 스위치가 켜지고 다시 7번이면 꺼진다', (
+  group('개발 도구 숨은 스위치·더미배 연습 (ADR-073, ADR-099)', () {
+    testWidgets('설정의 언어 글자를 7번 연달아 누르면 운영자 버튼만 나타나고 모드는 켜지지 않는다', (
       tester,
     ) async {
       final settings = MemorySettingsStore();
@@ -82,12 +82,10 @@ void main() {
       }
 
       await taps(devToolsTaps - 1);
-      expect(settings.devTools, isFalse);
+      expect(find.byKey(const ValueKey('operator_enter')), findsNothing);
       await taps(1);
-      expect(settings.devTools, isTrue);
-      expect(find.text('개발 도구를 켰습니다'), findsOneWidget);
-      await tester.pump(const Duration(seconds: 2));
-      await taps(devToolsTaps);
+      expect(find.byKey(const ValueKey('operator_enter')), findsOneWidget);
+      expect(find.text('운영자 버튼이 나타났습니다'), findsOneWidget);
       expect(settings.devTools, isFalse);
       // 알림 토스트가 사라질 때까지 기다린다.
       await tester.pump(const Duration(seconds: 5));

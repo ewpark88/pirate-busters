@@ -8,6 +8,7 @@ import 'package:pirate_busters/app/providers.dart';
 import 'package:pirate_busters/campaign/battle_prep_screen.dart';
 import 'package:pirate_busters/campaign/stage_node.dart';
 import 'package:pirate_busters/campaign/stage_spec.dart';
+import 'package:pirate_busters/dev/dev_flags.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
 import 'package:pirate_busters/l10n/data_text.dart';
 import 'package:pirate_busters/meta/progress.dart';
@@ -93,11 +94,19 @@ class _CampaignMapScreenState extends ConsumerState<CampaignMapScreen> {
     final sea = ref.watch(campaignProvider).sea(widget.sea);
     final progress = ref.watch(progressProvider);
     // 튜토리얼 3판을 마치기 전에는 튜토리얼 노드만 연다 (설계서 §13.1).
+    // 운영자 모드면 튜토리얼과 캠페인을 모두 보이고 모두 연다(저장은 그대로, ADR-099).
+    final operator = ref.watch(devToolsProvider);
     final tutorial = !progress.tutorialFinished;
-    final stages = tutorial ? sea.tutorial : sea.campaign;
-    bool open(int i) => tutorial
-        ? i <= progress.tutorialDone
-        : CampaignMapScreen.unlocked(stages, i, progress);
+    final stages = operator
+        ? [...sea.tutorial, ...sea.campaign]
+        : tutorial
+        ? sea.tutorial
+        : sea.campaign;
+    bool open(int i) =>
+        operator ||
+        (tutorial
+            ? i <= progress.tutorialDone
+            : CampaignMapScreen.unlocked(stages, i, progress));
     var current = 0;
     for (var i = 0; i < stages.length; i++) {
       if (open(i)) current = i;

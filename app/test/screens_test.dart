@@ -96,10 +96,11 @@ void main() {
   });
 
   testWidgets('선원: 해적을 빈 선실로 끌어다 놓으면 덱에 들고 저장된다', (tester) async {
-    // 큰 슬루프(선실 4칸)를 지은 진행 (설계서 §3.1).
+    // 큰 슬루프(선실 4칸)를 지은 진행 (설계서 §3.1). 보유하지 않은 해적도 보이게
+    // 해적 전원 보기로 연다(운영자 모드와 같은 목록, ADR-099).
     final store = await _pump(
       tester,
-      const CrewScreen(),
+      const CrewScreen(showAll: true),
       const Locale('ko'),
       progress: const PlayerProgress(ship: ShipUpgrades(stage: 4)),
     );

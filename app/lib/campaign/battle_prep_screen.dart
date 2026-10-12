@@ -14,6 +14,7 @@ import 'package:pirate_busters/campaign/stage_spec.dart';
 import 'package:pirate_busters/crew/crew_screen.dart';
 import 'package:pirate_busters/data/fleet_store.dart';
 import 'package:pirate_busters/data/game_catalog.dart';
+import 'package:pirate_busters/dev/operator_limits.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
 import 'package:pirate_busters/l10n/data_text.dart';
 import 'package:pirate_busters/meta/my_ship.dart';
@@ -90,7 +91,7 @@ class _BattlePrepScreenState extends ConsumerState<BattlePrepScreen> {
                       child: PrepCabins(
                         deck: deck,
                         used: used,
-                        limit: progress.costLimit,
+                        limit: ref.watch(costLimitProvider),
                         cabins: progress.ship.hull.cabinSlots,
                       ),
                     ),

@@ -44,3 +44,4 @@
 | [2026-10-06-quality-5-durability-aim.md](2026-10-06-quality-5-durability-aim.md) | 퀄리티 5차: 착탄에 맞춘 내구도 표시·선체 피해 숫자, HUD·연료 게이지 디자인, 조준선 손맛(손가락 고정·화면 크기·유도탄 미리보기), A33 제안과 A34~A37 후보 |
 | [2026-10-07-pull-guide-enemy-camera.md](2026-10-07-pull-guide-enemy-camera.md) | 튜토리얼 당기기 안내를 고른 해적 위치에 맞춤, 상대 턴에는 카메라가 상대 배를 비춤 |
 | [2026-10-07-boss-marks.md](2026-10-07-boss-marks.md) | 보스 전용 그림 없이 보스전 표시(붉은 테·왕관·배너), 해역 2~6 기믹 폐기 (A45, ADR-096) |
+| [2026-10-12-A48-operator-mode.md](2026-10-12-A48-operator-mode.md) | 운영자 모드: 비밀번호 진입·전 스테이지 열기·해적 모션 보기·배/진행 조작 (A48, ADR-099) |

@@ -95,13 +95,13 @@ void main() {
       expect(enemy.toSet(), hasLength(4));
     });
 
-    testWidgets('개발 도구가 꺼져 있으면 항구에 테스트 대전 버튼이 없다', (tester) async {
+    testWidgets('운영자 모드가 꺼져 있으면 항구에 운영자 버튼이 없다', (tester) async {
       Widget bar({VoidCallback? onTest}) => Scaffold(
         body: PortTopBar(
           progress: const PlayerProgress(),
           onSettings: () {},
           onHotseat: () {},
-          onTestBattle: onTest,
+          onOperator: onTest,
         ),
       );
       await _pump(tester, bar(), MemoryFleetStore());
