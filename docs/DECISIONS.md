@@ -932,3 +932,8 @@
   - 숫자 칸은 그려지는 크기로 잡는다(60×40).
 - **영향:** 앱 `battle_setup`·`battle_prep_screen`·`start_gate`·`battle_game`(`gate` 공개)·`boss_banner`(`onDone`)·`battle_screen`·`fx_text`. 설계서·BALANCE 변경 없음.
 
+## ADR-098 작업이 끝나면 브랜치 push·main 병합·main push 까지 한다 (2026-10-12)
+- **배경:** 지금까지는 커밋·머지·push 를 사용자가 요청할 때만 했다. 그래서 작업이 끝나도 브랜치가 로컬에 남거나 main 에 늦게 들어가, 같은 폴더를 쓰는 다른 세션과 어긋나는 일이 생겼다. 사용자가 이 절차를 기본으로 하라고 정했다.
+- **결정:** 명령받은 작업이 끝나면 verify 통과 → 작업 브랜치 커밋 → 브랜치 push → 최신 `main` 을 브랜치에 합쳐 verify 재통과 → `main` 에 병합(`ALLOW_MAIN_COMMIT=1`) → `main` push 까지 묻지 않고 한다. 공유 작업 트리에서는 내 경로만 커밋하고, main 이 다른 곳에 체크아웃돼 있지 않으면 `commit-tree` 로 병합한다.
+- **그대로 두는 것:** 태그·릴리스(`/release`)는 요청할 때만. force push 금지, `--no-verify`·훅 끄기 금지. main 에 바로 커밋하지 않는다.
+- **영향:** CLAUDE.md ‘브랜치·커밋·버전’, HARNESS.md 에이전트 권한 줄.
