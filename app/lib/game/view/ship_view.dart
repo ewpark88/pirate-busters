@@ -9,6 +9,7 @@ import 'package:pirate_busters/game/anim/anim_data.dart';
 import 'package:pirate_busters/game/anim/character_rig.dart';
 import 'package:pirate_busters/game/coords.dart';
 import 'package:pirate_busters/game/sprites.dart';
+import 'package:pirate_busters/game/view/boss_mark.dart';
 import 'package:pirate_busters/game/view/cabin_painter.dart';
 import 'package:pirate_busters/game/view/crew_reactions.dart';
 import 'package:pirate_busters/game/view/damage_layer.dart';
@@ -271,6 +272,12 @@ class ShipView extends PositionComponent with HasGameReference {
       origin: cellRect(0, grid.height - 1).topLeft,
       cell: _cell,
     );
+    // 보스 배 위 붉은 왕관 (설계서 §13.4, ADR-096).
+    final over = session.state.isOver;
+    if (BossMark.showsOn(side, bossSide: session.bossSide, over: over)) {
+      final top = cellRect(0, grid.height - 1).top;
+      BossMark.crown(canvas, Offset(0, top - _cell * 0.8), _cell * 2, _t);
+    }
   }
 
   /// 칸별 손상 코드 (`DamageLayer.none`·단계 0~2·`DamageLayer.broken`).

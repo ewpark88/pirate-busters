@@ -4,13 +4,13 @@ import 'package:pirate_busters/l10n/data_text.dart';
 import 'package:pirate_busters/ui/kit/kit_art.dart';
 import 'package:pirate_busters/ui/kit/kit_motion.dart';
 
-/// 보스전 시작 배너 (설계서 §5.4): 위쪽 가운데에 “보스!”와 기믹 한 줄을 띄웠다가
-/// 몇 초 뒤 사라진다. 누르면 바로 닫는다. 판정과 무관하다.
+/// 보스전 시작 배너 (설계서 §5.4·§13.4): 위쪽 가운데에 “보스!”와, 기믹이 있으면 기믹 한
+/// 줄을 띄웠다가 몇 초 뒤 사라진다. 누르면 바로 닫는다. 판정과 무관하다.
 class BossBanner extends StatefulWidget {
-  const BossBanner({required this.gimmick, super.key});
+  const BossBanner({this.gimmick, super.key});
 
-  /// 기믹 id (`bow_iron_shield` 등). 글자는 ARB `gimmick_<id>`.
-  final String gimmick;
+  /// 기믹 id (`bow_iron_shield` 등). 글자는 ARB `gimmick_<id>`. 기믹 없는 보스는 null.
+  final String? gimmick;
 
   /// 보여 두는 시간.
   static const Duration shown = Duration(milliseconds: 3800);
@@ -54,18 +54,20 @@ class _BossBannerState extends State<BossBanner> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     OutlinedText(l10n.bossBanner, size: 30),
-                    const SizedBox(height: 4),
-                    ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 420),
-                      child: Text(
-                        dataText(l10n, 'gimmick_${widget.gimmick}'),
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          fontSize: 15,
-                          color: Color(0xFFFFC24A),
+                    if (widget.gimmick case final gimmick?) ...[
+                      const SizedBox(height: 4),
+                      ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 420),
+                        child: Text(
+                          dataText(l10n, 'gimmick_$gimmick'),
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            fontSize: 15,
+                            color: Color(0xFFFFC24A),
+                          ),
                         ),
                       ),
-                    ),
+                    ],
                   ],
                 ),
               ),

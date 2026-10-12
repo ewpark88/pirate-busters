@@ -101,7 +101,7 @@ dart run tool/import_assets.dart --merge art/pb_v0.24_main
 - **흘수선 아래 칸:** 참나무·소나무만 `tiles_v2/bot_*`(젖은 타일)다(README). 앱은 칸 가운데가 잠긴 깊이 아래면 젖은 것으로 본다(`BattleSprites.isWet`, A11).
 - **데이터로 쓰지 않는 파일:**
   - `ship/hulls/hulls.json`: 격자 크기와 선실 수는 설계서 §3.1 과 같다. 하지만 블록을 꽉 채운 그림이라 건조 포인트(BALANCE.md A3.1)의 약 2배이고, 추천 설계도도 프리깃 기준이다. 앱 추천 설계도(`app/assets/game/blueprints.json`, 슬루프)를 바꾸지 않는다.
-  - `boss/bosses.json`: 선원 목록에 같은 해적이 중복되고 중간·해역 보스가 같다. 크라켄 촉수 6개·체력 칸 4/3/2/1 은 설계서·BALANCE.md 에 근거가 없다(계획서 11장, R3).
+  - `boss/bosses.json`: 선원 목록에 같은 해적이 중복되고 중간·해역 보스가 같다. 크라켄 촉수 6개·체력 칸 4/3/2/1 은 설계서·BALANCE.md 에 근거가 없다. 크라켄 보스는 없앴다(ADR-096).
   - `story/cutscenes.json`: `lineKey` 4개(`story_prologue_1_tok` 등)가 앱 ARB 에 없다. 앱 키(`story_prologue_n`)에 맞춘다.
 - **디자인 쪽 요청 중 v0.23 에서도 남은 것(ADR-057, v0.24 에서 모두 해결):**
   - `style/tokens.json` `battleScale 0.16`·`roomSlot` 3×2칸(README 문장만 0.095·1칸이다)
@@ -116,9 +116,9 @@ dart run tool/import_assets.dart --merge art/pb_v0.24_main
   - `ship/hulls/hulls.json`: 선형마다 앱 `blueprints.json` 형식의 기준 설계도(`starter.blueprint`)가 건조 포인트·모듈 한도 안이다(슬루프 58/60, 브리건틴 74/80, 프리깃 93/100, 갤리온 113/120). 앱 추천 설계도는 그대로이고, R2 선형별 추천 설계도의 출발점으로 쓴다.
   - `boss/bosses.json`: 배 안 해적 중복이 없고 중간·해역 보스 선원이 다르다(그림용 제안, 실제 덱은 R3). 기믹 문구는 BALANCE.md A5.4 값이다.
   - `story/cutscenes.json`: 앱 ARB 키만 쓴다. 프롤로그는 `story_prologue_1~5` 자막만(말풍선 없음), 해역 1 인트로·1-5 뒤·1-12 전후는 이미 있는 해역 1 대사 키다.
-- 크라켄 촉수는 체력 칸 그림 대신 촉수 1개 손상 단계 4장(`boss/kraken_tentacle_dmg0~3`)이다. 촉수 수·체력은 여전히 정해지지 않았다(계획서 11장, R3).
+- 크라켄 촉수는 체력 칸 그림 대신 촉수 1개 손상 단계 4장(`boss/kraken_tentacle_dmg0~3`)이다. 크라켄 보스를 없애서(ADR-096) 쓰지 않는다.
 - 비교 페이지 31~37단계 화면 47장을 실제 크기 배로 다시 그렸다(보스 화면만 1.4배). A12 화면 시안 대조는 이 그림을 쓴다.
-- 앱 이미지는 바뀌지 않는다. `boss/` 는 `deferredImages` 로 R3 까지 가져오지 않는다.
+- 앱 이미지는 바뀌지 않는다. `boss/` 는 `deferredImages` 로 가져오지 않는다. 보스 전용 그림을 쓰지 않기로 해서(ADR-096) 원본만 둔다.
 
 ## v0.26 (2026-10-02, ADR-070)
 

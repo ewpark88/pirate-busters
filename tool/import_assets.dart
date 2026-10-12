@@ -37,7 +37,7 @@ String? imageTarget(String rel) {
 /// 그 기능 단계에서 여기서 빼고 pubspec 에 폴더를 더한다.
 const deferredImages = [
   'bg/abyss/', 'bg/fog/', 'bg/glacier/', // 해역 2·4·5 (R3)
-  'boss/', // 보스 기믹 (R3)
+  'boss/', // 보스 전용 그림: 쓰지 않음 (ADR-096)
   'ui/meta/chest/', 'ui/meta/tier/', 'ui/meta/heart/', // 메타 (R4)
   'ui/meta/weather/', 'ui/meta/traj/', // 오늘의 해전·궤적 효과 (R4·R1)
   // 특수 블록: 유령선(R2)·얼음·금박·뱃머리 방패(R3). 불·그을린 블록은 R1c 에서 쓴다.
