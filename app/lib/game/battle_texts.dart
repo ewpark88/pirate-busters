@@ -11,6 +11,9 @@ mixin BattleTexts {
   String Function(HitTag tag) tagText = (tag) => tag.name;
   String Function(int turns) turnsText = (turns) => '$turns';
 
+  /// 쉬는 턴이 풀린 해적 머리 위 ‘준비!’ (설계서 §13.4).
+  String Function() readyText = () => 'Ready!';
+
   /// 감정 연출 강조 문구 (설계서 §10.4).
   String Function(Emphasis e) emphasisText = (e) => e.name;
 

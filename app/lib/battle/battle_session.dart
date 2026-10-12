@@ -124,10 +124,11 @@ class BattleSession extends ChangeNotifier with SessionUiState {
     notifyListeners();
   }
 
-  bool _autoEndDue(int dtMs) => autoEnd.tick(
+  bool _autoEndDue(int dtMs) => autoEnd.due(
     dtMs,
-    done: state.firesThisTurn >= state.rules.firesPerTurn,
+    state,
     held: moveHeld,
+    canMove: state.sides[activeSide].canMove && (reach(1) | reach(-1)) != 0,
   );
 
   /// 배를 [dx](1/10칸, 전진 +)만큼 움직인다.
@@ -227,8 +228,7 @@ class BattleSession extends ChangeNotifier with SessionUiState {
     _scriptIndex = 0;
   }
 
-  /// [followTap] 은 컴퓨터 발사 바로 뒤의 같은 해적 `TAP`: 기다리는 탄을 그 탭으로
-  /// 계산해 재생(턴 묶음)과 같은 결과를 낸다.
+  /// [followTap]: 컴퓨터 발사 뒤 같은 해적 `TAP`. 그 탭으로 계산해 턴 묶음과 같게 한다.
   void _apply(Command c, {TapCommand? followTap}) {
     final side = state.activeSide;
     final turn = state.turn;

@@ -18,6 +18,8 @@
   "firesLeft": "남은 발사 {count}",
   "cooldown": "쉬는 턴 {count}",
   "firedDone": "발사 완료",
+  "noPirateCanFire": "공격할 수 있는 해적이 없습니다. 턴을 상대방에게 넘깁니다",
+  "pirateReady": "준비!",
   "cabinFlooded": "잠김",
   "pirateDown": "쓰러짐",
   "pirateSwimming": "헤엄 중",

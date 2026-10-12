@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pb_sim/pb_sim.dart';
 import 'package:pirate_busters/battle/battle_session.dart';
+import 'package:pirate_busters/battle/rest_turns.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
 import 'package:pirate_busters/ui/cards/rarity_card.dart';
 import 'package:pirate_busters/ui/hud/ammo_label.dart';
@@ -75,6 +76,7 @@ class _PirateCardState extends State<_PirateCard> {
     final pirate = side.crew.pirates[widget.slot];
     final species = _s.speciesOf(pirate.spec.id);
     final team = widget.side == 0 ? 'blue' : 'red';
+    final rest = restTurnsOf(side, widget.slot);
     final note = switch (pirate.status) {
       PirateStatus.down => l10n.pirateDown,
       PirateStatus.swimming => l10n.pirateSwimming,
@@ -85,12 +87,8 @@ class _PirateCardState extends State<_PirateCard> {
       // 이번 턴에 쏜 해적: 쉬는 턴과 헷갈리지 않게 ‘발사 완료’, 다음 턴도 쉬면 남은
       // 쉬는 턴을 적는다 (A39 점검, ADR-092).
       PirateStatus.aboard when side.crew.firedThisTurn[widget.slot] =>
-        pirate.cooldown > 1
-            ? l10n.cooldown(pirate.cooldown - 1)
-            : l10n.firedDone,
-      PirateStatus.aboard when pirate.cooldown > 0 => l10n.cooldown(
-        pirate.cooldown,
-      ),
+        rest > 0 ? l10n.cooldown(rest) : l10n.firedDone,
+      PirateStatus.aboard when rest > 0 => l10n.cooldown(rest),
       PirateStatus.aboard => null,
     };
     final locale = Localizations.localeOf(context).toLanguageTag();
