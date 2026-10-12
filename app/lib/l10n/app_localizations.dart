@@ -1412,6 +1412,30 @@ abstract class AppLocalizations {
   /// **'Erase'**
   String get toolErase;
 
+  /// No description provided for @toolTabMaterials.
+  ///
+  /// In en, this message translates to:
+  /// **'Materials'**
+  String get toolTabMaterials;
+
+  /// No description provided for @toolTabModules.
+  ///
+  /// In en, this message translates to:
+  /// **'Modules'**
+  String get toolTabModules;
+
+  /// No description provided for @toolTabMasts.
+  ///
+  /// In en, this message translates to:
+  /// **'Masts'**
+  String get toolTabMasts;
+
+  /// No description provided for @toolPoints.
+  ///
+  /// In en, this message translates to:
+  /// **'{n} pt'**
+  String toolPoints(int n);
+
   /// No description provided for @moduleGunPort.
   ///
   /// In en, this message translates to:
