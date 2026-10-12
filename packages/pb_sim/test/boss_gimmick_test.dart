@@ -30,10 +30,10 @@ void main() {
       expect(_boss(BossGimmick.none).shieldCells, isEmpty);
     });
 
-    test('방패가 서 있는 동안 직사만 블록 피해 50%, 방패가 다 부서지면 원래대로', () {
+    test('방패가 서 있는 동안 모든 계열 블록 피해 50%, 방패가 다 부서지면 원래대로 (ADR-094)', () {
       final s = _boss(BossGimmick.bowIronShield);
       expect(shieldPercent(s, _shot(Family.direct)), 50);
-      expect(shieldPercent(s, _shot(Family.lob)), 100);
+      expect(shieldPercent(s, _shot(Family.lob)), 50);
       s.shieldCells.forEach(s.grid.removeAt);
       expect(shieldPercent(s, _shot(Family.direct)), 100);
     });

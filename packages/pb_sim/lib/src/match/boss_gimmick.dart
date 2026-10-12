@@ -1,6 +1,5 @@
 import 'package:pb_sim/src/match/match_state.dart';
 import 'package:pb_sim/src/match/rules.dart';
-import 'package:pb_sim/src/pirate/ammo.dart';
 import 'package:pb_sim/src/pirate/pirate_spec.dart';
 import 'package:pb_sim/src/ship/ship_grid.dart';
 import 'package:pb_sim/src/world/world.dart';
@@ -10,7 +9,8 @@ import 'package:pb_sim/src/world/world.dart';
 enum BossGimmick {
   none,
 
-  /// 1-5 꽃게 부대장의 순찰선: 뱃머리 철판 방패가 서 있는 동안 직사 피해 50%.
+  /// 1-5 꽃게 부대장의 순찰선: 뱃머리 철판 방패가 서 있는 동안 블록 피해 50%
+  /// (모든 계열, ADR-094. 이전에는 직사만).
   bowIronShield,
 
   /// 1-12 해군 초계선: 전진 한계가 턴마다 1칸씩 다가오고(최대 6칸), 보스 쪽 해적
@@ -32,7 +32,7 @@ enum BossGimmick {
 
 /// 기믹 수치 (BALANCE.md A5.4).
 abstract final class GimmickNumbers {
-  static const int shieldDirectPercent = 50;
+  static const int shieldPercent = 50;
   static const int patrolStep = cellUnit;
   static const int patrolMax = 6 * cellUnit;
   static const int patrolCooldownStep = 2;
@@ -82,13 +82,13 @@ void woundAtStart(ShipGrid grid) {
   }
 }
 
-/// [target] 이 [spec] 탄에 받는 블록 피해 배율(%). 방패가 하나라도 남아 있으면 직사는 50%.
+/// [target] 이 [spec] 탄에 받는 블록 피해 배율(%). 방패가 하나라도 남아 있으면 50%
+/// (모든 계열, BALANCE.md A5.4, ADR-094).
 int shieldPercent(SideState target, PirateSpec spec) {
-  if (spec.family != Family.direct) return 100;
   final shield = target.shieldCells;
   if (shield.isEmpty) return 100;
   final up = shield.any(target.grid.hasBlockAt);
-  return up ? GimmickNumbers.shieldDirectPercent : 100;
+  return up ? GimmickNumbers.shieldPercent : 100;
 }
 
 /// 턴 시작: 초계선의 전진 한계를 정한다. 상대 뱃머리와 [GimmickNumbers.minBowGap]

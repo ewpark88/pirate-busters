@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:pb_sim/pb_sim.dart';
 import 'package:pirate_busters/battle/battle_session.dart';
 import 'package:pirate_busters/game/hit_tag.dart';
+import 'package:pirate_busters/game/shooter_tracker.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
 import 'package:pirate_busters/ui/hud/pirate_cards.dart';
 import 'package:pirate_busters/ui/hud/time_verdict_bar.dart';
@@ -92,6 +93,34 @@ void main() {
       expect(HitTag.ofSupply(pumpum, const []), isNull, reason: '수리 안 하는 보급');
       final octo = testCatalog.pirates.byId('p01_octo');
       expect(HitTag.ofSupply(octo, const []), isNull);
+    });
+
+    test('착탄 프레임에 연출이 끝나도 그 묶음을 낸 해적을 안다 (A41 점검)', () {
+      // 블록을 안 부순 탄은 마지막 착탄과 같은 프레임에 playback 이 빈다.
+      var caught = 0;
+      for (var angle = 10000; angle <= 80000; angle += 5000) {
+        for (var power = 4000; power <= 10000; power += 1000) {
+          final s = _session()..update(100);
+          final tracker = ShooterTracker();
+          final slot = [
+            for (var i = 0; i < s.state.sides[0].crew.size; i++)
+              if (s.canFire(i)) i,
+          ].first;
+          s.fire(slot, angle, power);
+          var guard = 0;
+          while (s.playback != null && guard++ < 3000) {
+            s.update(16);
+            final hit = s.takeCues().any(
+              (e) => e.kind == SimEventKind.impact,
+            );
+            final shooter = tracker.take(s);
+            if (!hit) continue;
+            expect(shooter, isNotNull, reason: '$angle $power');
+            if (s.playback == null) caught++;
+          }
+        }
+      }
+      expect(caught, greaterThan(0), reason: '같은 프레임에 끝나는 착탄이 있어야 한다');
     });
   });
 }

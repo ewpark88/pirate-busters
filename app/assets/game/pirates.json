@@ -999,15 +999,15 @@
       "family": "support",
       "rarity": "common",
       "hp": 260,
-      "cooldownTurns": 1,
+      "cooldownTurns": 0,
       "ammo": {
         "type": "support"
       },
       "projectile": {},
       "onHit": {
         "radiusCells": 0,
-        "blockDmg": 20,
-        "pirateDmg": 40
+        "blockDmg": 30,
+        "pirateDmg": 60
       },
       "ability": {
         "type": "bail",
@@ -1057,15 +1057,15 @@
       "family": "support",
       "rarity": "hero",
       "hp": 260,
-      "cooldownTurns": 1,
+      "cooldownTurns": 0,
       "ammo": {
         "type": "support"
       },
       "projectile": {},
       "onHit": {
         "radiusCells": 0,
-        "blockDmg": 20,
-        "pirateDmg": 40
+        "blockDmg": 30,
+        "pirateDmg": 60
       },
       "ability": {
         "type": "coral",

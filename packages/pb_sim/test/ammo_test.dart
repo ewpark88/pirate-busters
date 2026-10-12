@@ -2,6 +2,7 @@ import 'package:pb_sim/pb_sim.dart';
 import 'package:pb_sim/src/combat/ammo_rules.dart';
 import 'package:pb_sim/src/combat/flight.dart';
 import 'package:pb_sim/src/combat/hit_effects.dart';
+import 'package:pb_sim/src/combat/support_effects.dart';
 import 'package:test/test.dart';
 
 import 'aim.dart';
@@ -318,6 +319,26 @@ void main() {
       isTrue,
     );
     expect(grid.hpAt(5, 1), max, reason: '효과는 내 배에');
+  });
+
+  test('보급탄 수리가 물에 잠긴 구멍을 고치면 칸마다 침수 2%p 를 뺀다 (ADR-094)', () {
+    final tok = _ammoPirate(
+      AmmoType.support,
+      value: 100,
+      param: 3,
+      family: Family.support,
+      blockDamage: 20,
+      pirateDamage: 40,
+    );
+    final m = _duel(tok);
+    final me = m.state.sides[0];
+    final grid = me.grid;
+    final max = grid.materialAt(5, 0)!.durability;
+    grid.damage(5, 0, max - max ~/ 4);
+    me.flood = 100;
+    m.apply(aimAt(m.state, slot: 0, tx: 6, ty: 1));
+    expect(_of(m, SimEventKind.repaired), isNotEmpty);
+    expect(me.flood, 100 - repairBailPerCell);
   });
 
   test('여러 탄종이 섞인 판을 끝까지 돌려도 재생 해시가 같다', () {

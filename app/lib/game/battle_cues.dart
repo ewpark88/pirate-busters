@@ -4,7 +4,6 @@ import 'package:flame/components.dart';
 import 'package:pb_sim/pb_sim.dart';
 import 'package:pirate_busters/audio/sound_service.dart';
 import 'package:pirate_busters/battle/battle_session.dart';
-import 'package:pirate_busters/battle/playback.dart';
 import 'package:pirate_busters/game/anim/rarity_fx.dart';
 import 'package:pirate_busters/game/camera_director.dart';
 import 'package:pirate_busters/game/coords.dart';
@@ -14,6 +13,7 @@ import 'package:pirate_busters/game/emotion_cues.dart';
 import 'package:pirate_busters/game/hit_stop.dart';
 import 'package:pirate_busters/game/hit_tag.dart';
 import 'package:pirate_busters/game/impact_sound.dart';
+import 'package:pirate_busters/game/shooter_tracker.dart';
 import 'package:pirate_busters/game/view/breakage_fx.dart';
 import 'package:pirate_busters/game/view/fx_layer.dart';
 import 'package:pirate_busters/game/view/fx_text.dart';
@@ -60,12 +60,8 @@ class BattleCues {
   final EmotionTracker emotion = EmotionTracker();
   String Function(Emphasis e) emphasisText = (e) => e.name;
 
-  /// 지금 탄을 쏜 해적의 정의. 턴 효과로 터진 것이면 null.
-  PirateSpec? get _shooter {
-    final p = session.playback;
-    if (p is! ShotPlayback) return null;
-    return session.state.sides[p.side].crew.pirates[p.slot].spec;
-  }
+  /// 이번 묶음을 낸 해적 (A41 점검).
+  final ShooterTracker _shooters = ShooterTracker();
 
   /// 칸 (진영 [side], 칸 번호 [cell]) 의 월드 위치.
   Vector2 cellWorld(int side, int cell) {
@@ -92,7 +88,7 @@ class BattleCues {
   void dispatch(List<SimEvent> cues) {
     var woodPlayed = false;
     var repairTagged = false;
-    final spec = _shooter;
+    final spec = _shooters.take(session);
     final tier = spec == null ? RarityFx.common : rarity.of(spec.rarity);
     final tag = spec == null ? null : HitTag.ofAmmo(spec.ammo);
     final shown = <HitTag>{};

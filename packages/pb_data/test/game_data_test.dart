@@ -173,6 +173,8 @@ void main() {
         'p26_polly',
         'p27_wing',
         'p36_tok',
+        'p37_pumpum',
+        'p39_corey',
       };
       for (final p in _load().pirates) {
         final want = twoTurns.contains(p.id)
