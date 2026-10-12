@@ -16,6 +16,7 @@ import 'package:pirate_busters/game/view/damage_layer.dart';
 import 'package:pirate_busters/game/view/fire_view.dart';
 import 'package:pirate_busters/game/view/gimmick_marks.dart';
 import 'package:pirate_busters/game/view/hull_trim.dart';
+import 'package:pirate_busters/game/view/hull_water.dart';
 import 'package:pirate_busters/game/view/mast_painter.dart';
 import 'package:pirate_busters/game/view/module_painter.dart';
 import 'package:pirate_busters/game/view/plank_join.dart';
@@ -40,6 +41,7 @@ class ShipView extends PositionComponent with HasGameReference {
   /// 지지가 끊겨 떨어져 나간 칸 (`blockCollapsed`). 배 속을 그리지 않는다.
   final Set<int> gone = {};
   final List<CharacterRig> rigs = [];
+  bool fewer = false; // 저사양: 잠긴 선체 빛 무늬를 끈다 (§12, A24).
 
   static const double _cell = Coords.cell;
 
@@ -116,8 +118,7 @@ class ShipView extends PositionComponent with HasGameReference {
   /// 흔들림·격침 연출 (설계서 §10.4).
   final ShipMotion motion = ShipMotion();
 
-  /// 맞은 방향으로 흔들렸다가 돌아온다 (설계서 §10.4).
-  void rock(int dir) => motion.rock(dir);
+  void rock(int dir) => motion.rock(dir); // 맞은 쪽으로 흔들림 (§10.4).
 
   void recoil(int dir) => motion.recoil(dir); // 쏠 때 반동 (A20).
 
@@ -254,9 +255,9 @@ class ShipView extends PositionComponent with HasGameReference {
       materials: materials,
       tileAt: (m, x, y) => sprites.tileOf(m, x, y, _state.draft),
       cellRect: cellRect,
+      style: TrimStyle.ofSide(side),
     );
-    final t = session.turnMs / 1000;
-    GimmickMarks.shield(canvas, _state, materials, cellRect, t);
+    GimmickMarks.shield(canvas, _state, materials, cellRect, _t);
     // 배 속·그을음·금·구멍·찢긴 변·파편은 타일을 모두 그린 뒤 한 장으로 얹는다.
     var wetRows = 0;
     while (wetRows < grid.height &&
@@ -272,6 +273,7 @@ class ShipView extends PositionComponent with HasGameReference {
       origin: cellRect(0, grid.height - 1).topLeft,
       cell: _cell,
     );
+    HullWater.paint(canvas, this, materials); // 잠긴 선체·수면선 (§10.2, A24)
     // 보스 배 위 붉은 왕관 (설계서 §13.4, ADR-096).
     final over = session.state.isOver;
     if (BossMark.showsOn(side, bossSide: session.bossSide, over: over)) {
