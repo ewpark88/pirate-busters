@@ -113,7 +113,8 @@ class HudGaugeState extends State<HudGauge>
       trail = to;
       _hold = .15;
       rising = true;
-      final up = ((to - old.value.clamp(0.0, 1.0)) * 100).round();
+      // 라벨(내림 %)과 같은 셈: 오른 뒤 % − 오른 앞 %.
+      final up = (to * 100).floor() - (old.value.clamp(0.0, 1.0) * 100).floor();
       if (widget.gainLabel != null && up >= 1) {
         gain = up;
         gainLeft = HudGauge.gainSec;

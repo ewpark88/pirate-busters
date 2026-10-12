@@ -1,5 +1,6 @@
 import 'package:pb_sim/src/combat/fire.dart';
 import 'package:pb_sim/src/combat/impact.dart';
+import 'package:pb_sim/src/match/boss_gimmick.dart';
 import 'package:pb_sim/src/match/match_state.dart';
 import 'package:pb_sim/src/match/rules.dart';
 import 'package:pb_sim/src/match/sim_event.dart';
@@ -159,18 +160,24 @@ void endTurnWater(
     events.add(SimEvent(SimEventKind.flood, side: ship.side, value: gain));
   }
   beforePumps?.call();
-  runRepairAndPumps(ship, events, pumpsOff: pumpsOff);
+  // 튜토리얼 3 내 배는 펌프 하나 몫을 더 뺀다. 1단계 배는 모듈 한도가 차서 펌프를
+  // 달 수 없으므로 시작 상태 기믹에 붙인다 (설계서 §13.1, ADR-105).
+  final bonus = gimmickOf(rules, ship.side) == BossGimmick.woundedStart ? 1 : 0;
+  runRepairAndPumps(ship, events, pumpsOff: pumpsOff, bonusPumps: bonus);
 }
 
-/// 턴 끝 수리·펌프 (설계서 §2.3 턴 끝 처리 3번째): 펌프마다 침수량 −4%p, 목수
+/// 턴 끝 수리·펌프 (설계서 §2.3 턴 끝 처리 3번째): 펌프마다([bonusPumps] 포함) 침수량 −4%p, 목수
 /// 공방마다 ‘구멍’ 단계 블록 1칸을 최대 내구도로 고친다(아래 줄부터, 같은 줄은
 /// 왼쪽부터). 부서진 칸은 고치지 못한다(§2.5).
 void runRepairAndPumps(
   SideState ship,
   List<SimEvent> events, {
   bool pumpsOff = false,
+  int bonusPumps = 0,
 }) {
-  final pumps = pumpsOff ? 0 : ship.modules.intactCount(ModuleKind.pump);
+  final pumps = pumpsOff
+      ? 0
+      : ship.modules.intactCount(ModuleKind.pump) + bonusPumps;
   if (pumps > 0 && ship.flood > 0) {
     final before = ship.flood;
     final next = before - pumps * ModuleNumbers.pumpFlood;

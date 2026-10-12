@@ -1,6 +1,7 @@
 import 'package:pb_sim/src/match/sim_event.dart';
 import 'package:pb_sim/src/math/fx.dart';
 import 'package:pb_sim/src/pirate/ability.dart';
+import 'package:pb_sim/src/pirate/ammo.dart';
 import 'package:pb_sim/src/pirate/pirate_spec.dart';
 
 /// 선실이 부서져 떨어질 때 입는 피해: 최대 체력의 20% (ADR-010).
@@ -64,6 +65,19 @@ class Crew {
 
   /// 전멸: 모두 KO (설계서 §2.4).
   bool get allDown => pirates.every((p) => p.status == PirateStatus.down);
+
+  /// 공격 불능 전멸: 공격 해적(보급 계열이 아닌 해적)이 있던 진영에서 그들이 모두
+  /// KO 되어 보급 해적만 남았다 (설계서 §2.4, ADR-105). 처음부터 보급 해적만
+  /// 태운 진영(튜토리얼 상대 등)은 해당하지 않는다.
+  bool get attackersDown {
+    var any = false;
+    for (final p in pirates) {
+      if (p.spec.family == Family.support) continue;
+      any = true;
+      if (p.status != PirateStatus.down) return false;
+    }
+    return any;
+  }
 
   /// 쐈다. 쿨다운을 건다.
   void markFired(int slot) {

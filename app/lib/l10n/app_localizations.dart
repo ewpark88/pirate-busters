@@ -1787,7 +1787,7 @@ abstract class AppLocalizations {
   /// No description provided for @mission_turns_within.
   ///
   /// In en, this message translates to:
-  /// **'Win within {turns} turns'**
+  /// **'Win within {turns} of your turns'**
   String mission_turns_within(Object turns);
 
   /// No description provided for @story_t1_enemy.
@@ -2087,7 +2087,7 @@ abstract class AppLocalizations {
   /// No description provided for @resultInTurns.
   ///
   /// In en, this message translates to:
-  /// **'Win within {turns} turns'**
+  /// **'Win within {turns} of your turns'**
   String resultInTurns(Object turns);
 
   /// No description provided for @rewardGold.

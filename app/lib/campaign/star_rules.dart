@@ -16,6 +16,7 @@ class MatchSummary {
     this.damageDealt = 0,
     this.blocksDestroyed = 0,
     this.mvpPirate,
+    this.myTurns,
   });
 
   /// 끝난 판의 상태에서 [side] 기준으로 만든다.
@@ -34,10 +35,7 @@ class MatchSummary {
       // 무승부는 pb_sim 이 정한다(승자 −1). 앱이 침수 % 로 다시 재지 않는다 (§2.4).
       draw: state.outcome != MatchOutcome.ongoing && state.winner < 0,
       outcome: state.outcome,
-      // 시간 판정으로 끝나면 턴 번호가 최대 턴 다음으로 넘어가 있다 (A25 점검: ‘사용 턴 31’).
-      turns: state.turn > state.rules.maxTurns
-          ? state.rules.maxTurns
-          : state.turn,
+      turns: lastTurnOf(state),
       floodPercent: me.flood * 100 ~/ fullFlood,
       hullPercent: me.grid.initialTotalHp == 0
           ? 0
@@ -52,6 +50,7 @@ class MatchSummary {
       mvpPirate: mvpSlot >= 0 && mvpSlot < crew.length
           ? crew[mvpSlot].spec.id
           : null,
+      myTurns: ownTurnsOf(state, side),
     );
   }
 
@@ -63,6 +62,28 @@ class MatchSummary {
 
   /// 판이 끝난 턴 번호 (양쪽 합산, 설계서 §2.4).
   final int turns;
+
+  /// 내가 쓴 턴 수. 없으면 [turns] 의 절반(올림)으로 본다.
+  final int? myTurns;
+
+  /// 별·미션의 턴 기준: 내 턴 수 (설계서 §6.1, BALANCE.md A6.1, ADR-105).
+  int get ownTurns => myTurns ?? (turns + 1) ~/ 2;
+
+  /// 마지막으로 둔 턴 번호(양쪽 합산). 판이 끝나면 pb_sim 이 턴을 하나 넘겨 두므로
+  /// 하나 뺀다(A25 점검 ‘사용 턴 31’, A59 검토).
+  static int lastTurnOf(MatchState state) {
+    final last = state.outcome == MatchOutcome.ongoing
+        ? state.turn
+        : state.turn - 1;
+    return last.clamp(0, state.rules.maxTurns);
+  }
+
+  /// [side] 가 판이 끝날 때까지 쓴 턴 수. 선공은 홀수 턴, 후공은 짝수 턴이다.
+  static int ownTurnsOf(MatchState state, int side) {
+    final last = lastTurnOf(state);
+    return side == state.firstSide ? (last + 1) ~/ 2 : last ~/ 2;
+  }
+
   final int floodPercent;
   final int hullPercent;
   final int piratesDown;
@@ -102,7 +123,7 @@ class StarRules {
 
   StarResult evaluate(StageSpec stage, MatchSummary s) => StarResult(
     won: s.won,
-    inTurns: s.won && s.turns <= stage.starTurns,
+    inTurns: s.won && s.ownTurns <= stage.starTurns,
     mission: s.won && missionDone(stage.mission, s),
   );
 
@@ -112,7 +133,7 @@ class StarRules {
     'hull_above' => s.hullPercent >= m.param('percent'),
     'win_by_sink' =>
       s.outcome == MatchOutcome.sunk || s.outcome == MatchOutcome.floodSunk,
-    'turns_within' => s.turns <= m.param('turns'),
+    'turns_within' => s.ownTurns <= m.param('turns'),
     _ => false,
   };
 }

@@ -987,7 +987,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String mission_turns_within(Object turns) {
-    return 'Win within $turns turns';
+    return 'Win within $turns of your turns';
   }
 
   @override
@@ -1177,7 +1177,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String resultInTurns(Object turns) {
-    return 'Win within $turns turns';
+    return 'Win within $turns of your turns';
   }
 
   @override

@@ -54,7 +54,7 @@ extension CrewCues on BattleCues {
     fx.damageNumber(
       at - Vector2(0, Coords.cell),
       damageText(amount),
-      tag: tag,
+      tag: tag == null || tag.isEmpty ? null : tag,
       style: DamageStyle.of(weight),
     );
   }

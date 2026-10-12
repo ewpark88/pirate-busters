@@ -12,7 +12,7 @@ void judgeInstant(MatchState state) {
     final lost = [
       for (final s in state.sides)
         switch (outcome) {
-          MatchOutcome.annihilation => s.crew.allDown,
+          MatchOutcome.annihilation => s.crew.allDown || s.crew.attackersDown,
           MatchOutcome.sunk =>
             s.grid.totalHp * 100 < s.grid.initialTotalHp * percent,
           _ => s.flood >= fullFlood,

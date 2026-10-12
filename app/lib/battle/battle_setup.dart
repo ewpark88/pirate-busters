@@ -124,7 +124,8 @@ class BattleSetup {
     final limit = costLimit ?? BattleSetup.costLimit;
     final chosen = sailDeck(deck, mine.hull, limit);
     // 보스 기믹은 상대(진영 1)에 건다 (설계서 §5.4, BALANCE.md A5.4). 튜토리얼 3 은
-    // 수리를 보여 주려고 내 배(진영 0)가 구멍 난 채 시작한다 (§15.2, ADR-092).
+    // 수리를 보여 주려고 내 배(진영 0)가 구멍 난 채 시작하고, 턴 끝마다 펌프 하나
+    // 몫의 물이 빠진다 (§15.2, ADR-092·105, pb_sim `endTurnWater`).
     final wounded = stage.tutorialStep == 3;
     final base = MatchRules(
       waveLevel: stage.waveLevel,

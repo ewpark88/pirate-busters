@@ -52,6 +52,10 @@ extension ShieldCues on BattleCues {
     for (final s in session.state.sides) ShieldCue.of(s, cues),
   ];
 
+  /// [side] 배의 방패가 이 묶음 시작에 서 있었으면 ‘방패’ 이름표, 아니면 빈 글자.
+  String shieldTagFor(List<ShieldCue> shields, int side) =>
+      shields[side].stood ? tagText(HitTag.shield) : '';
+
   /// 마지막 방패 칸이 깨진 진영에 ‘방패 깨짐!’ 이름표와 철판 소리.
   void shieldBroken(List<ShieldCue> shields) {
     for (final (side, s) in shields.indexed) {

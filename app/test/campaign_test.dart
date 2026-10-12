@@ -149,14 +149,15 @@ void main() {
 
   group('별 판정 (설계서 §6.1)', () {
     const rules = StarRules();
-    final s11 = sea1.byId('1-1'); // 미션: 해적 KO 없음, 12턴 이내
+    final s11 = sea1.byId('1-1'); // 미션: 해적 KO 없음, 내 턴 12번 이내 (ADR-105)
 
     test('지면 별이 없고, 이기면 1개, 턴 안이면 2개, 미션까지 하면 3개', () {
       expect(rules.evaluate(s11, summary(won: false)).count, 0);
-      expect(rules.evaluate(s11, summary(turns: 20, down: 1)).count, 1);
-      expect(rules.evaluate(s11, summary(turns: 12, down: 1)).count, 2);
+      // 별 턴은 내 턴 수로 센다: 양쪽 합산 24턴 = 내 턴 12번 (BALANCE.md A6.1).
+      expect(rules.evaluate(s11, summary(turns: 26, down: 1)).count, 1);
+      expect(rules.evaluate(s11, summary(turns: 24, down: 1)).count, 2);
       expect(rules.evaluate(s11, summary(turns: 8)).count, 3);
-      expect(rules.evaluate(s11, summary(turns: 20)).count, 2);
+      expect(rules.evaluate(s11, summary(turns: 26)).count, 2);
     });
 
     test('미션 5종이 요약 값으로 판정된다', () {
@@ -195,7 +196,7 @@ void main() {
         isFalse,
       );
       expect(
-        rules.missionDone(m('turns_within', {'turns': 10}), summary(turns: 11)),
+        rules.missionDone(m('turns_within', {'turns': 10}), summary(turns: 21)),
         isFalse,
       );
     });

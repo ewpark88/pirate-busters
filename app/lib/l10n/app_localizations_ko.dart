@@ -930,7 +930,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String mission_turns_within(Object turns) {
-    return '$turns턴 안에 승리';
+    return '내 턴 $turns번 안에 승리';
   }
 
   @override
@@ -1101,7 +1101,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String resultInTurns(Object turns) {
-    return '$turns턴 안에 승리';
+    return '내 턴 $turns번 안에 승리';
   }
 
   @override

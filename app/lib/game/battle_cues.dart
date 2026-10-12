@@ -102,9 +102,8 @@ class BattleCues {
     // 서 있으면 숫자에 ‘방패’ 이름표를 붙인다 (§5.4, A57).
     var hull = 0;
     final shields = shieldsOf(cues);
-    final shieldTag = shields.any((s) => s.stood)
-        ? tagText(HitTag.shield)
-        : null;
+    // 방패가 선 쪽 블록 피해에만 붙인다(묶음에서 처음 맞은 배 기준).
+    String? shieldTag;
     final collapsed = <int, List<int>>{};
     void joltOnce(double scale) {
       if (jolted) return;
@@ -180,6 +179,7 @@ class BattleCues {
           // 턴 끝 화재처럼 착탄 없이 깎인 칸은 번쩍이지 않는다(불 연출이 따로 있다).
           if (hitAt != null || spec != null) flashCell(e);
           hull += e.value;
+          shieldTag ??= shieldTagFor(shields, e.side);
         case SimEventKind.blockCollapsed:
           // 끊긴 칸은 묶음이 끝난 뒤 덩어리로 묶어 떨어뜨린다 (§10.4, A32).
           (collapsed[e.side] ??= []).add(e.cell);
