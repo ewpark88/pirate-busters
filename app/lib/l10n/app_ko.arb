@@ -202,6 +202,8 @@
   "rangeVeryLong": "매우 긺",
   "outOfRange": "사거리 밖",
   "tapToSplit": "탭해서 분열!",
+  "foeAiming": "상대 조준 중",
+  "shotIncoming": "포탄이 날아온다!",
   "aimCancel": "놓으면 취소",
   "menuHotseat": "둘이서 해전",
   "menuShipyard": "조선소",

@@ -361,6 +361,8 @@
   "rangeVeryLong": "Far",
   "outOfRange": "Out of range",
   "tapToSplit": "Tap to split!",
+  "foeAiming": "Enemy aiming",
+  "shotIncoming": "Incoming!",
   "aimCancel": "Release to cancel",
   "menuHotseat": "Two players",
   "menuShipyard": "Shipyard",

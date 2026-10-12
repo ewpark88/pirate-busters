@@ -1310,6 +1310,18 @@ abstract class AppLocalizations {
   /// **'Tap to split!'**
   String get tapToSplit;
 
+  /// No description provided for @foeAiming.
+  ///
+  /// In en, this message translates to:
+  /// **'Enemy aiming'**
+  String get foeAiming;
+
+  /// No description provided for @shotIncoming.
+  ///
+  /// In en, this message translates to:
+  /// **'Incoming!'**
+  String get shotIncoming;
+
   /// No description provided for @aimCancel.
   ///
   /// In en, this message translates to:

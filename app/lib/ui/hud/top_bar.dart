@@ -6,6 +6,7 @@ import 'package:pirate_busters/l10n/app_localizations.dart';
 import 'package:pirate_busters/ui/hud/hit_clear.dart';
 import 'package:pirate_busters/ui/hud/hud_style.dart';
 import 'package:pirate_busters/ui/hud/side_status.dart';
+import 'package:pirate_busters/ui/hud/turn_timer.dart';
 import 'package:pirate_busters/ui/meta_icons.dart';
 
 /// 위 가운데: 남은 턴, 누구 턴, 턴 타이머, 바람 / 위 양쪽: 선체·침수·선원 (설계서 §13.4).
@@ -53,7 +54,7 @@ class TopBar extends StatelessWidget {
             duration: const Duration(milliseconds: 220),
             child: FittedBox(
               fit: BoxFit.scaleDown,
-              child: _TurnInfo(session: session),
+              child: _TurnInfo(session: session, calm: calm),
             ),
           ),
         ),
@@ -64,9 +65,10 @@ class TopBar extends StatelessWidget {
 }
 
 class _TurnInfo extends StatelessWidget {
-  const _TurnInfo({required this.session});
+  const _TurnInfo({required this.session, this.calm = false});
 
   final BattleSession session;
+  final bool calm;
 
   @override
   Widget build(BuildContext context) {
@@ -78,9 +80,6 @@ class _TurnInfo extends StatelessWidget {
         ? l10n.playerTurn(side + 1)
         : (session.isHumanTurn ? l10n.yourTurn : l10n.enemyTurn);
     final seconds = (session.remainingMs + 999) ~/ 1000;
-    final timerColor = seconds <= 5
-        ? HudColors.danger
-        : (seconds <= 10 ? HudColors.warn : HudColors.text);
     final turnsLeft = (rules.maxTurns - state.turn + 1).clamp(
       0,
       rules.maxTurns,
@@ -102,10 +101,8 @@ class _TurnInfo extends StatelessWidget {
           const SizedBox(width: 12),
           MetaIcons.image(MetaIcons.timer, size: 18),
           const SizedBox(width: 2),
-          Text(
-            '$seconds',
-            style: TextStyle(color: timerColor, fontSize: 22),
-          ),
+          // 남은 5초는 내 턴에 초마다 튄다 (§2.3, A34).
+          TurnTimer(seconds: seconds, pulse: session.isHumanTurn, calm: calm),
           const SizedBox(width: 12),
           _Wind(wind: state.wind, note: _windNote(context, state)),
         ],

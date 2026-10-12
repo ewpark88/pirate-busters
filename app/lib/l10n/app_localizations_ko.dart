@@ -666,6 +666,12 @@ class AppLocalizationsKo extends AppLocalizations {
   String get tapToSplit => '탭해서 분열!';
 
   @override
+  String get foeAiming => '상대 조준 중';
+
+  @override
+  String get shotIncoming => '포탄이 날아온다!';
+
+  @override
   String get aimCancel => '놓으면 취소';
 
   @override
