@@ -57,7 +57,8 @@ tool/              검사·훅 스크립트
 - `main` 에 직접 커밋하지 않는다(pre-commit 훅이 막는다). 머지·릴리스 커밋만 `ALLOW_MAIN_COMMIT=1` 로 한다.
 - 커밋은 Conventional Commits: `<type>(<scope>): <요약>` (첫 줄 72자 이하, 끝에 마침표 없음). type: feat, fix, refactor, test, docs, chore, build, ci, perf, balance. scope: sim, ai, data, app, render, input, shipyard, meta, tool, docs, release, deps. commit-msg 훅과 CI 가 검사한다.
 - 버전: MVP 동안은 `0.<마일스톤>.PATCH` (M1 완료 = `0.1.0`). 스토어에 올릴 때마다 BUILD +1. 버전은 손으로 고치지 않고 `dart run tool/release.dart bump` 로 올린다.
-- 커밋·머지·push·태그는 사용자가 요청할 때만 한다. 훅을 우회(`--no-verify`)하거나 끄지 않는다.
+- **명령받은 작업이 끝나면 끝까지 올린다 (ADR-098):** `bash tool/verify.sh` 통과 → 작업 브랜치 커밋 → 브랜치 push → `main` 에 병합 → `main` push 까지 한 번에 한다. 따로 묻지 않는다. 병합 전에 최신 `main` 을 브랜치에 먼저 합쳐 verify 를 다시 통과시킨다. 사람 확인(실기기·손맛)이 남았으면 보고에 적는다.
+- 태그·릴리스는 지금처럼 사용자가 요청할 때만 한다. force push 하지 않고, 훅을 우회(`--no-verify`)하거나 끄지 않는다.
 
 ## 출시 (docs/RELEASE.md)
 - 릴리스는 `main` 에서 `/release <patch|minor|major>` 로만 한다: CHANGELOG → verify → bump → `chore(release): vX.Y.Z+B` 커밋 → 주석 태그 → push 하면 CI 가 서명된 AAB 와 Release 초안을 만든다.
