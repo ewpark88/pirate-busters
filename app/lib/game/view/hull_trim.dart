@@ -4,6 +4,21 @@ import 'package:flame/components.dart';
 import 'package:pb_sim/pb_sim.dart';
 import 'package:pirate_busters/game/view/plank_join.dart';
 
+/// 장식 색 (설계서 §10.2 배 장식, A24): 진영 색 뱃전 띠와 기움대 끝 깃발.
+/// 선형(R2)·캠페인 모드(R3, 어려움 짙은 빨강·지옥 검정) 색은 그 단계에서 이 표에
+/// 값만 더한다. 새 그림은 쓰지 않는다.
+class TrimStyle {
+  const TrimStyle(this.accent);
+
+  final Color accent;
+
+  static const TrimStyle blue = TrimStyle(Color(0xFF2F7FD8));
+  static const TrimStyle red = TrimStyle(Color(0xFFD8452F));
+
+  /// 진영 0 은 파랑, 1 은 빨강 (해적 팀 색과 같다).
+  static TrimStyle ofSide(int side) => side == 0 ? blue : red;
+}
+
 /// 선체 마감 (설계서 §3.4 선체 틀, §10.2 배 장식): 틀의 V 자 계단을 비스듬한
 /// 선체 판으로 메우고, 바깥 둘레 외곽선·용골 띠·선수 기움대·선미 키를 그린다.
 /// 판정에 들지 않고(맞지 않는다), 붙은 칸이 부서지면 같이 사라진다. 그리기만 한다.
@@ -72,6 +87,7 @@ abstract final class HullTrim {
     required List<int> materials,
     required Sprite Function(int material, int x, int y) tileAt,
     required Rect Function(int x, int y) cellRect,
+    TrimStyle style = TrimStyle.blue,
   }) {
     final width = hull.width;
     bool filled(int x, int y) =>
@@ -110,7 +126,8 @@ abstract final class HullTrim {
     }
     PlankJoin.outline(canvas, materials, width, cellRect, hidden: hidden);
     _keelBand(canvas, filled, width, cellRect);
-    _bowsprit(canvas, filled, hull, cellRect);
+    _rail(canvas, filled, hull, cellRect, style);
+    _bowsprit(canvas, filled, hull, cellRect, style);
     _rudder(canvas, filled, hull, cellRect);
   }
 
@@ -131,23 +148,53 @@ abstract final class HullTrim {
     }
   }
 
-  /// 뱃머리 맨 앞 칸 가장 높은 블록에서 앞으로 비스듬히 뻗는 기움대(bowsprit).
+  /// 뱃전 띠: 줄마다 가장 위 블록 윗변에 진영 색 띠를 두른다. 칸이 부서지면
+  /// 그 칸의 띠도 사라진다.
+  static void _rail(
+    Canvas canvas,
+    bool Function(int x, int y) filled,
+    HullSpec hull,
+    Rect Function(int x, int y) cellRect,
+    TrimStyle style,
+  ) {
+    final paint = Paint()..color = style.accent;
+    for (var x = 0; x < hull.width; x++) {
+      for (var y = hull.height - 1; y >= 0; y--) {
+        if (!filled(x, y)) continue;
+        final r = cellRect(x, y);
+        canvas.drawRect(
+          Rect.fromLTRB(r.left, r.top, r.right, r.top + 4),
+          paint,
+        );
+        break;
+      }
+    }
+  }
+
+  /// 뱃머리 맨 앞 칸 가장 높은 블록에서 앞으로 비스듬히 뻗는 기움대(bowsprit)와
+  /// 그 끝의 진영 색 삼각 깃발.
   static void _bowsprit(
     Canvas canvas,
     bool Function(int x, int y) filled,
     HullSpec hull,
     Rect Function(int x, int y) cellRect,
+    TrimStyle style,
   ) {
     final x = hull.width - 1;
     for (var y = hull.height - 1; y >= 0; y--) {
       if (!filled(x, y)) continue;
       final r = cellRect(x, y);
       final from = Offset(r.right - 4, r.top + r.height * 0.35);
-      canvas.drawLine(
-        from,
-        from + Offset(r.width * 1.3, -r.height * 0.75),
-        _pole,
-      );
+      final tip = from + Offset(r.width * 1.3, -r.height * 0.75);
+      final flag = Path()
+        ..moveTo(tip.dx, tip.dy)
+        ..lineTo(tip.dx - r.width * 0.45, tip.dy - r.height * 0.12)
+        ..lineTo(tip.dx - r.width * 0.2, tip.dy + r.height * 0.22)
+        ..close();
+      canvas
+        ..drawLine(from, tip, _pole)
+        ..drawPath(flag, Paint()..color = style.accent)
+        ..drawPath(flag, _dark);
       return;
     }
   }
