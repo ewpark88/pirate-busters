@@ -32,7 +32,7 @@
 
 | 스크립트 | 규칙 | 근거 |
 |---|---|---|
-| `check_architecture.dart` | 의존 방향, 순수 Dart, 결정론 금지 식별자·실수·`/`, lib 300줄, 메타 화면(`port`·`campaign`·`crew`·`shipyard`·`story`·일시정지·둘이서 결과창)의 기본 앱 위젯 금지(`metaUiPaths`) | ADR-002, ADR-003, ADR-071, 절대 규칙 2·9, 설계서 §13 공통 |
+| `check_architecture.dart` | 의존 방향, 순수 Dart, 결정론 금지 식별자·실수·`/`, lib 300줄(머리 `// 줄 수 예외: <이유>` 가 있으면 450줄까지, 예외 목록 출력), 메타 화면(`port`·`campaign`·`crew`·`shipyard`·`story`·일시정지·둘이서 결과창)의 기본 앱 위젯 금지(`metaUiPaths`) | ADR-002, ADR-003, ADR-071, ADR-107, 절대 규칙 2·9, 설계서 §13 공통 |
 | `check_doc_sync.dart` | 설계서 + `docs/BALANCE.md` 해시 = 계획서 `기준 문서 동기화:` 표시 (기준 문서만 바뀐 커밋을 막는다. 내용 대조는 `/doc-sync`) | ADR-008, ADR-030, ADR-037 |
 | `check_l10n.dart` | `app_ko.arb`·`app_en.arb` 키·플레이스홀더 짝, 빈 값, 플레이스홀더 2개 이상이면 `app_en.arb` `@키` placeholders 로 인자 순서 명시 | 설계서 §14, 절대 규칙 10 |
 | `check_secrets.dart` | 키 파일·키 모양 문자열 | `docs/RELEASE.md` §4 |

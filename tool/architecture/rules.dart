@@ -28,6 +28,17 @@ const Set<String> deterministicPackages = {'pb_sim', 'pb_ai'};
 /// lib/ 파일 최대 줄 수.
 const int maxLibLines = 300;
 
+/// 줄 수 예외 표시가 있는 lib/ 파일의 최대 줄 수 (ADR-107).
+const int maxExceptionLines = 450;
+
+/// 줄 수 예외 표시를 찾는 파일 머리 줄 수.
+const int exceptionHeaderLines = 20;
+
+/// 줄 수 예외 이유의 최소 글자 수.
+const int minExceptionReason = 10;
+
+final RegExp _exceptionRe = RegExp(r'^\s*//\s*줄 수 예외:\s*(.*)$');
+
 const List<String> _pureForbiddenImports = [
   'package:flutter/',
   'package:flame/',
@@ -140,13 +151,43 @@ List<String> checkFile(String relPath, String source) {
     }
   }
 
-  final lines = '\n'.allMatches(source).length + 1;
   // gen-l10n 이 만드는 파일은 키 수만큼 길어진다 (ADR-029).
   final generated = relPath.contains('/lib/l10n/app_localizations');
-  if (relPath.contains('/lib/') && !generated && lines > maxLibLines) {
-    violations.add('$relPath — $lines 줄, lib 파일은 $maxLibLines 줄 이하');
+  if (relPath.contains('/lib/') && !generated) {
+    violations.addAll(_checkLength(relPath, source));
   }
   return violations;
+}
+
+/// 파일 머리의 `// 줄 수 예외: <이유>` 이유. 표시가 없으면 null (ADR-107).
+String? lineExceptionReason(String source) {
+  final head = source.split('\n').take(exceptionHeaderLines);
+  for (final line in head) {
+    final m = _exceptionRe.firstMatch(line.trimRight());
+    if (m != null) return m.group(1)!.trim();
+  }
+  return null;
+}
+
+const String _hint = '나눌 수 없으면 머리에 `// 줄 수 예외: <이유>`, ADR-107';
+
+/// 300줄 규칙. 예외 표시가 있으면 이유를 적고 [maxExceptionLines] 까지 (ADR-107).
+List<String> _checkLength(String relPath, String source) {
+  final lines = '\n'.allMatches(source).length + 1;
+  final reason = lineExceptionReason(source);
+  if (reason == null) {
+    return [
+      if (lines > maxLibLines)
+        '$relPath — $lines 줄, lib 파일은 $maxLibLines 줄 이하 ($_hint)',
+    ];
+  }
+  return [
+    if (reason.length < minExceptionReason)
+      '$relPath — 줄 수 예외 이유를 $minExceptionReason 자 이상 적는다',
+    if (lines <= maxLibLines) '$relPath — $lines 줄이라 줄 수 예외가 필요 없다. 표시를 지운다',
+    if (lines > maxExceptionLines)
+      '$relPath — $lines 줄, 줄 수 예외 파일도 $maxExceptionLines 줄 이하',
+  ];
 }
 
 List<String> _checkDeterminism(String relPath, String code) {

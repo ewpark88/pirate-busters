@@ -6,6 +6,7 @@ import 'architecture/rules.dart';
 
 void main() {
   final violations = <String>[];
+  final exceptions = <String>[];
   var fileCount = 0;
   for (final root in packageRoots.values) {
     for (final sub in const ['lib', 'bin']) {
@@ -16,9 +17,17 @@ void main() {
         if (entity.path.endsWith('.g.dart')) continue;
         fileCount++;
         final rel = entity.path.replaceAll(r'\', '/');
-        violations.addAll(checkFile(rel, entity.readAsStringSync()));
+        final source = entity.readAsStringSync();
+        violations.addAll(checkFile(rel, source));
+        if (sub == 'lib' && lineExceptionReason(source) != null) {
+          exceptions.add(rel);
+        }
       }
     }
+  }
+  // 줄 수 예외는 통과해도 매번 보여 준다 (ADR-107).
+  for (final e in exceptions) {
+    stdout.writeln('  줄 수 예외: $e');
   }
   if (violations.isEmpty) {
     stdout.writeln('architecture OK ($fileCount files)');
