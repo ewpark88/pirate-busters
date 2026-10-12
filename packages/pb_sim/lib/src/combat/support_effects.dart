@@ -5,6 +5,7 @@ import 'package:pb_sim/src/match/sim_event.dart';
 import 'package:pb_sim/src/pirate/ability.dart';
 import 'package:pb_sim/src/pirate/crew.dart';
 import 'package:pb_sim/src/projectile/projectile.dart';
+import 'package:pb_sim/src/ship/flooding.dart';
 import 'package:pb_sim/src/ship/motion.dart';
 import 'package:pb_sim/src/ship/ship_grid.dart';
 
@@ -87,7 +88,11 @@ void _heal(MatchState state, SideState ship, int amount) {
   }
 }
 
-/// 보급탄 수리: ([cx], [cy]) 에서 가까운 ‘구멍’ 단계 블록 [count] 칸을 고친다. 고치는 양은
+/// 물에 잠긴 칸을 고칠 때마다 빼는 침수량(0.1%p 단위): 2%p (BALANCE.md A4.2, ADR-094).
+const int repairBailPerCell = 20;
+
+/// 보급탄 수리: ([cx], [cy]) 에서 가까운 ‘구멍’ 단계 블록 [count] 칸을 고친다.
+/// 물에 잠긴 칸을 고치면 칸마다 [repairBailPerCell] 만큼 물도 뺀다 (ADR-094). 고치는 양은
 /// 최대 내구도 × [percent]% (설계서 §4.2 톡, §2.5 부서진 칸은 못 고침).
 void _repairAround(
   MatchState state,
@@ -108,6 +113,7 @@ void _repairAround(
     }
   }
   holes.sort((a, b) => a.$1 != b.$1 ? a.$1 - b.$1 : a.$2 - b.$2);
+  var bail = 0;
   for (final (_, i) in holes.take(count)) {
     final x = i % grid.width;
     final y = i ~/ grid.width;
@@ -121,6 +127,10 @@ void _repairAround(
           y: grid.hpAt(x, y),
         ),
       );
+      if (submersionOf(y, ship.draft) != Submersion.dry) {
+        bail += repairBailPerCell;
+      }
     }
   }
+  addFlood(state, ship, -bail);
 }

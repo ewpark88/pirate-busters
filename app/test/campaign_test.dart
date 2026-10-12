@@ -71,9 +71,9 @@ void main() {
     });
 
     test(
-      '일반 모드 해역 1 은 1-3·1-4 만 보통이고 나머지(보스 포함)는 쉬움이다 (설계서 §6.1, ADR-092)',
+      '일반 모드 해역 1 은 1-3 만 보통이고 나머지(보스 포함)는 쉬움이다 (설계서 §6.1, ADR-094)',
       () {
-        const later = {'1-3', '1-4'};
+        const later = {'1-3'};
         for (final stage in sea1.stages) {
           final want = later.contains(stage.id) ? AiLevel.normal : AiLevel.easy;
           expect(stage.aiLevel, want, reason: stage.id);
