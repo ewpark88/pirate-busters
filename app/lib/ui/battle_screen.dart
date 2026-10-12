@@ -12,6 +12,7 @@ import 'package:pirate_busters/battle/battle_session.dart';
 import 'package:pirate_busters/battle/battle_setup.dart';
 import 'package:pirate_busters/battle/battle_stats.dart';
 import 'package:pirate_busters/campaign/stage_spec.dart';
+import 'package:pirate_busters/dev/operator_limits.dart';
 import 'package:pirate_busters/dev/practice_bar.dart';
 import 'package:pirate_busters/dev/test_battle.dart';
 import 'package:pirate_busters/game/battle_game.dart';
@@ -99,7 +100,7 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
             stage,
             blueprint: blueprint,
             deck: fleet.deck,
-            costLimit: ref.read(progressProvider).costLimit,
+            costLimit: ref.read(costLimitProvider),
             tune: (r) => applyRemoteRules(r, remote),
           );
     final test = _test;
@@ -122,6 +123,10 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
                     stage?.aiLevel ?? test?.level ?? widget.level,
                     ref.read(remoteValuesProvider).intOr,
                   ),
+                  // 캠페인만 연패 보정 (설계서 §5.2, ADR-100).
+                  losses: stage == null
+                      ? 0
+                      : ref.read(progressProvider).lossStreak,
                 ),
     );
     _reported = false;
@@ -272,7 +277,11 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
         ),
         if (widget.stage?.tutorialStep case final step? when step > 0)
           Positioned.fill(
-            child: TutorialFinger(session: _session, step: step),
+            child: TutorialFinger(
+              session: _session,
+              step: step,
+              pullAnchor: _game.focusPirateScreen,
+            ),
           ),
         if (_session.bossSide != null)
           Positioned.fill(child: BossBanner(gimmick: widget.stage?.gimmick)),

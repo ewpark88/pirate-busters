@@ -12,7 +12,7 @@ import 'package:pirate_busters/campaign/battle_prep_screen.dart';
 import 'package:pirate_busters/campaign/campaign_map_screen.dart';
 import 'package:pirate_busters/crew/crew_screen.dart';
 import 'package:pirate_busters/dev/dev_flags.dart';
-import 'package:pirate_busters/dev/test_battle_screen.dart';
+import 'package:pirate_busters/dev/operator_screen.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
 import 'package:pirate_busters/meta/my_ship.dart';
 import 'package:pirate_busters/meta/progress.dart';
@@ -97,8 +97,12 @@ class _PortScreenState extends ConsumerState<PortScreen> {
   /// 출항 (설계서 §13.3): 캠페인 지도로 간다. 모드 선택(랭크·오늘의 해전)은 R4.
   Future<void> _sail() => _open(const CampaignMapScreen());
 
+  /// 조선소 열림 (설계서 §13.1). 운영자 모드면 늘 열린다 (ADR-099).
+  bool _shipyardOpen(PlayerProgress progress) =>
+      progress.shipyardUnlocked || ref.read(devToolsProvider);
+
   void _shipyard(PlayerProgress progress) {
-    if (progress.shipyardUnlocked) {
+    if (_shipyardOpen(progress)) {
       unawaited(_open(const ShipyardScreen()));
       return;
     }
@@ -126,8 +130,8 @@ class _PortScreenState extends ConsumerState<PortScreen> {
                   progress: progress,
                   onSettings: () => _open(const SettingsScreen()),
                   onHotseat: () => _open(const BattleScreen(hotseat: true)),
-                  onTestBattle: ref.watch(devToolsProvider)
-                      ? () => _open(const TestBattleScreen())
+                  onOperator: ref.watch(devToolsProvider)
+                      ? () => _open(const OperatorScreen())
                       : null,
                 ),
                 // 다음 할 일 (설계서 §13.2): 튜토리얼이 끝나면 보인다.
@@ -148,7 +152,7 @@ class _PortScreenState extends ConsumerState<PortScreen> {
                       : const SizedBox.shrink(),
                 ),
                 PortTabs(
-                  shipyardLocked: !progress.shipyardUnlocked,
+                  shipyardLocked: !_shipyardOpen(progress),
                   shipyardDot: hasShipUpgradeReady(
                     progress,
                     ref.watch(campaignProvider),

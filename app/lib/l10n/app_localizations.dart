@@ -2300,17 +2300,191 @@ abstract class AppLocalizations {
   /// **'Dummy practice'**
   String get devPractice;
 
-  /// No description provided for @devToolsOn.
+  /// No description provided for @operatorMode.
   ///
   /// In en, this message translates to:
-  /// **'Developer tools on'**
-  String get devToolsOn;
+  /// **'Operator mode'**
+  String get operatorMode;
 
-  /// No description provided for @devToolsOff.
+  /// No description provided for @operatorEnter.
   ///
   /// In en, this message translates to:
-  /// **'Developer tools off'**
-  String get devToolsOff;
+  /// **'Enter operator mode'**
+  String get operatorEnter;
+
+  /// No description provided for @operatorExit.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to player mode'**
+  String get operatorExit;
+
+  /// No description provided for @operatorPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get operatorPassword;
+
+  /// No description provided for @operatorWrongPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Wrong password'**
+  String get operatorWrongPassword;
+
+  /// No description provided for @operatorOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Operator mode on'**
+  String get operatorOn;
+
+  /// No description provided for @operatorOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Back in player mode'**
+  String get operatorOff;
+
+  /// No description provided for @operatorRevealed.
+  ///
+  /// In en, this message translates to:
+  /// **'Operator button unlocked'**
+  String get operatorRevealed;
+
+  /// No description provided for @operatorStages.
+  ///
+  /// In en, this message translates to:
+  /// **'Stages (all open)'**
+  String get operatorStages;
+
+  /// No description provided for @operatorPirates.
+  ///
+  /// In en, this message translates to:
+  /// **'Pirates'**
+  String get operatorPirates;
+
+  /// No description provided for @operatorShip.
+  ///
+  /// In en, this message translates to:
+  /// **'Ship'**
+  String get operatorShip;
+
+  /// No description provided for @operatorProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Progress (changes your save)'**
+  String get operatorProgress;
+
+  /// No description provided for @operatorMotions.
+  ///
+  /// In en, this message translates to:
+  /// **'Pirate motions'**
+  String get operatorMotions;
+
+  /// No description provided for @operatorShipUpgrades.
+  ///
+  /// In en, this message translates to:
+  /// **'Ship upgrades (free)'**
+  String get operatorShipUpgrades;
+
+  /// No description provided for @operatorShipMax.
+  ///
+  /// In en, this message translates to:
+  /// **'Max out ship'**
+  String get operatorShipMax;
+
+  /// No description provided for @operatorGold.
+  ///
+  /// In en, this message translates to:
+  /// **'Gold +{gold}'**
+  String operatorGold(String gold);
+
+  /// No description provided for @operatorLevelMax.
+  ///
+  /// In en, this message translates to:
+  /// **'Max player level'**
+  String get operatorLevelMax;
+
+  /// No description provided for @operatorAllPirates.
+  ///
+  /// In en, this message translates to:
+  /// **'Get all pirates'**
+  String get operatorAllPirates;
+
+  /// No description provided for @operatorReset.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset progress'**
+  String get operatorReset;
+
+  /// No description provided for @operatorResetAsk.
+  ///
+  /// In en, this message translates to:
+  /// **'Erase all progress (stars, gold, pirates, ship)?'**
+  String get operatorResetAsk;
+
+  /// No description provided for @operatorDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get operatorDone;
+
+  /// No description provided for @motionIdle.
+  ///
+  /// In en, this message translates to:
+  /// **'Idle'**
+  String get motionIdle;
+
+  /// No description provided for @motionAttack.
+  ///
+  /// In en, this message translates to:
+  /// **'Attack'**
+  String get motionAttack;
+
+  /// No description provided for @motionHit.
+  ///
+  /// In en, this message translates to:
+  /// **'Hit'**
+  String get motionHit;
+
+  /// No description provided for @motionAim.
+  ///
+  /// In en, this message translates to:
+  /// **'Aim'**
+  String get motionAim;
+
+  /// No description provided for @motionFall.
+  ///
+  /// In en, this message translates to:
+  /// **'Fall'**
+  String get motionFall;
+
+  /// No description provided for @motionSwim.
+  ///
+  /// In en, this message translates to:
+  /// **'Swim'**
+  String get motionSwim;
+
+  /// No description provided for @motionWin.
+  ///
+  /// In en, this message translates to:
+  /// **'Win'**
+  String get motionWin;
+
+  /// No description provided for @motionLose.
+  ///
+  /// In en, this message translates to:
+  /// **'Lose'**
+  String get motionLose;
+
+  /// No description provided for @motionTeamBlue.
+  ///
+  /// In en, this message translates to:
+  /// **'Blue'**
+  String get motionTeamBlue;
+
+  /// No description provided for @motionTeamRed.
+  ///
+  /// In en, this message translates to:
+  /// **'Red'**
+  String get motionTeamRed;
 
   /// No description provided for @storyReplay.
   ///

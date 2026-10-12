@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:pb_sim/pb_sim.dart';
 import 'package:pirate_busters/battle/battle_session.dart';
 import 'package:pirate_busters/battle/battle_setup.dart';
+import 'package:pirate_busters/game/camera_director.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
 import 'package:pirate_busters/meta/progress.dart';
 import 'package:pirate_busters/meta/ship_upgrades.dart';
@@ -56,6 +57,26 @@ void main() {
       expect(TutorialFinger.cueOf(s2, 2), FingerCue.move);
       s2.state.sides[s2.activeSide].offset = 1000;
       expect(TutorialFinger.cueOf(s2, 2), FingerCue.tapCard);
+    });
+
+    test('당기기 안내는 해적 몸에서 시작해 뒤·아래로 뻗는다', () {
+      const body = Offset(300, 200);
+      final (from, to) = TutorialFinger.pullPath(body, 1);
+      expect(from, body);
+      expect(to.dx, lessThan(body.dx), reason: '오른쪽을 보는 배는 왼쪽이 뒤');
+      expect(to.dy, greaterThan(body.dy));
+      final (_, back) = TutorialFinger.pullPath(body, -1);
+      expect(back.dx, greaterThan(body.dx));
+    });
+
+    test('카메라 기본 화면은 지금 턴 배, 판이 끝나면 보는 사람 배', () {
+      final s = _tutorial(1).state;
+      final first = s.activeSide;
+      expect(CameraDirector.anchorSide(s, 0), first);
+      s.turn += 1;
+      expect(CameraDirector.anchorSide(s, 0), 1 - first, reason: '상대 턴');
+      s.outcome = MatchOutcome.surrender;
+      expect(CameraDirector.anchorSide(s, 0), 0);
     });
 
     test('다음 목표: 튜토리얼을 끝냈으면 안 깬 첫 지도 스테이지, 배 확장 안내', () async {

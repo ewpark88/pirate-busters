@@ -59,7 +59,11 @@ abstract final class RewardRules {
       ? pirate
       : null;
 
-  var next = progress.countMatch().addXp(xp).addGold(gold);
+  var next = progress
+      .countMatch()
+      .recordOutcome(won: won)
+      .addXp(xp)
+      .addGold(gold);
   if (won) next = next.recordStage(stage.id, stars.count);
   if (newPirate != null) next = next.addPirate(newPirate);
   if (stage.kind == StageKind.tutorial && won) {

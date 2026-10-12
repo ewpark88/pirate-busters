@@ -59,6 +59,21 @@ void main() {
       expect(r.progress.matchesPlayed, 1);
     });
 
+    test('지면 연패 수가 쌓이고 이기면 0으로 돌아가며 저장에도 남는다 (설계서 §5.2)', () {
+      var p = const PlayerProgress();
+      for (var i = 0; i < 3; i++) {
+        p = applyStageResult(p, s12, stars(won: false)).progress;
+      }
+      expect(p.lossStreak, 3);
+      expect(PlayerProgress.parse(p.encode()).lossStreak, 3);
+      p = applyStageResult(p, s12, stars()).progress;
+      expect(p.lossStreak, 0);
+    });
+
+    test('연패 보정 없던 옛 저장은 연패 0으로 읽는다', () {
+      expect(PlayerProgress.parse('{"level":3}').lossStreak, 0);
+    });
+
     test('튜토리얼을 이기면 튜토리얼 진행이 남는다', () {
       final r = applyStageResult(const PlayerProgress(), t1, stars());
       expect(r.progress.tutorialDone, 1);

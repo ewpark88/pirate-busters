@@ -243,14 +243,10 @@ class BattleGame extends FlameGame with BattleTexts {
       facingOf(side) * session.state.sides[side].grid.width * Coords.cell / 2;
 
   void _updateCamera(double dt) {
-    final me = viewSide;
+    final me = CameraDirector.anchorSide(session.state, viewSide);
     final aim = session.aim;
     final shot = session.playback;
-    // 카드로 고른 해적이 있으면 그 해적으로 줌인 (설계서 §2.2, ADR-033).
-    final focus = session.focusSlot;
-    director.focusFeet = focus != null && focus < _ships[me].rigs.length
-        ? _ships[me].rigs[focus].absolutePosition
-        : null;
+    director.focusFeet = focusFeetOf(_ships[viewSide], session.focusSlot);
     director.shipTop = -session.state.sides[me].grid.height * Coords.cell;
     final goal = director.target(
       myX: _shipCenterX(me),
@@ -292,8 +288,12 @@ class BattleGame extends FlameGame with BattleTexts {
     );
   }
 
-  /// 화면 좌표 [screen] 에 있는 사람 쪽 해적 슬롯. 배 위 캐릭터를 끌어 조준한다
-  /// (설계서 §2.2 “배 위 캐릭터”). 없으면 null.
+  /// 화면 좌표 [screen] 의 사람 쪽 해적 슬롯(배 위 캐릭터를 끌어 조준, 설계서 §2.2).
   int? pirateAt(Vector2 screen) =>
       nearestPirate(_ships[viewSide], camera.globalToLocal(screen));
+
+  /// 고른 해적 몸 가운데의 화면 좌표 (튜토리얼 당기기 안내, §13.1).
+  Offset? focusPirateScreen() => isLoaded
+      ? pirateScreen(_ships[viewSide], session.focusSlot, camera)
+      : null;
 }
