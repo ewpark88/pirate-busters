@@ -143,8 +143,10 @@ bool _ammoHit(
       _markDrop(state, p, target, x);
       return true;
     case AmmoType.skip:
-      // 수면에서 튕긴 뒤 맞으면 흘수선 명중 ×1.5 (설계서 §4.3 계열 기준 수치).
-      impact(blockPercent: p.bounced ? 150 : 100);
+      // 수면에서 튕긴 뒤 흘수선 줄(물이 닿는 줄과 그 아래) 칸에 맞으면 ×1.5
+      // (설계서 §4.3·§4.8, BALANCE.md A4.3, ADR-102).
+      final waterline = p.bounced && cy <= target.draft ~/ cellUnit;
+      impact(blockPercent: waterline ? 150 : 100);
       return true;
     case AmmoType.sniper:
       impact(piratePercent: spec.ammoValue);
@@ -201,16 +203,26 @@ bool onSeaHit(
   return true;
 }
 
-/// 물수제비탄이 튕길 수 있으면 수면 ([x], 0) 에서 튕긴다: 세로 속도 ×0.55 로
-/// 뒤집고 가로 ×0.85 (ADR-035 임시값). 튕겼으면 true.
+/// 물수제비 튕김 입사각 상한: 세로 속도 ≤ 가로 속도 × 이 값 / 1000 (25°의 tan,
+/// BALANCE.md A4.8 임시값, ADR-102).
+const int skipMaxSlopePermille = 466;
+
+/// 물수제비 튕김 감쇠(%): 세로·가로 (BALANCE.md A4.8 임시값, ADR-102).
+const int skipBounceVyPercent = 45;
+const int skipBounceVxPercent = 70;
+
+/// 물수제비탄이 튕길 수 있으면 수면 ([x], 0) 에서 튕긴다 (설계서 §4.8): 튕김이
+/// 남고 얕은 각도([skipMaxSlopePermille])로 닿을 때만, 세로 속도를 뒤집어 줄이고
+/// 가로도 줄인다. 가파르면 첨벙이다. 튕겼으면 true.
 bool bounceOffSea(Projectile p, int x) {
   if (p.spec.ammo != AmmoType.skip || p.bouncesLeft <= 0) return false;
+  if (p.vy.abs() * 1000 > p.vx.abs() * skipMaxSlopePermille) return false;
   p
     ..bouncesLeft -= 1
     ..bounced = true
     ..placeAt(x, 0)
-    ..vy = -p.vy * 55 ~/ 100
-    ..vx = p.vx * 85 ~/ 100;
+    ..vy = -p.vy * skipBounceVyPercent ~/ 100
+    ..vx = p.vx * skipBounceVxPercent ~/ 100;
   return true;
 }
 

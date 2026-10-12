@@ -52,6 +52,32 @@ void main() {
     expect(a.every((r) => r.turns > 0 && r.turns <= 30), isTrue);
   });
 
+  test('발사마다 상대 배에 닿았는지 세고, 계열별 명중률로 묶는다 (A51)', () {
+    const o = _Opts();
+    final results = runRange(data, o.options, 0, 4);
+    final shots = results.fold(
+      0,
+      (n, r) => n + r.shots.values.fold(0, (a, b) => a + b),
+    );
+    final hits = results.fold(
+      0,
+      (n, r) => n + r.hits.values.fold(0, (a, b) => a + b),
+    );
+    expect(shots, greaterThan(0));
+    expect(hits, inInclusiveRange(1, shots));
+    for (final r in results) {
+      for (final e in r.hits.entries) {
+        expect(e.value, lessThanOrEqualTo(r.shots[e.key]!));
+      }
+    }
+    final report = Report(results, factory.catalog)..build();
+    expect(
+      report.familyShots.values.fold(0, (a, b) => a + b),
+      shots,
+    );
+    expect(report.text(), contains('family hit%'));
+  });
+
   test('요약: 같은 등급 평균보다 5%p 넘게 이기는 해적과 시간 판정 25% 초과를 경고한다', () {
     // 왼쪽에만 있는 일반 해적과 오른쪽 일반 해적이 함께 있는 판(같은 등급 평균 비교).
     bool common(String id) => factory.catalog.byId(id).rarity == Rarity.common;

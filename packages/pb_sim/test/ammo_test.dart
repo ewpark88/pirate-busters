@@ -214,7 +214,7 @@ void main() {
   test('물수제비탄: 바다에 떨어지면 튕기고 튕김 수를 넘지 않는다', () {
     final suri = _ammoPirate(AmmoType.skip, value: 2);
     final m = _duel(suri)
-      ..apply(const FireCommand(t: 1000, slot: 0, angle: 8000, power: 4000));
+      ..apply(const FireCommand(t: 1000, slot: 0, angle: 8000, power: 8000));
     final bounces = _of(m, SimEventKind.bounce);
     expect(bounces, isNotEmpty);
     expect(bounces.length, lessThanOrEqualTo(2));

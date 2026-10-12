@@ -99,8 +99,10 @@ class _Recorder implements Controller {
   }
 }
 
-/// R1a-2 섞인 판(시드 777, 스크립트 33·34)의 기대 해시. 의도한 규칙 변경일 때만 갱신한다.
-const int _mixedHash = 3442898622;
+/// R1a-2 섞인 판(시드 777, 스크립트 34·35)의 기대 해시. 의도한 규칙 변경일 때만 갱신한다.
+/// A51(ADR-102): 물수제비가 얕게 닿을 때만 튕겨 무작위 조준으로는 거의 튕기지 않으므로
+/// 스크립트를 34·35 로 옮기고, 튕김은 `ammo_test`·`a51_skip_test` 에서 본다.
+const int _mixedHash = 679377806;
 
 List<SimEvent> _of(Match m, SimEventKind kind) =>
     m.state.events.where((e) => e.kind == kind).toList();
@@ -494,8 +496,8 @@ void main() {
     final a = start();
     runMatch(
       a,
-      _Recorder(RandomController(33), seen),
       _Recorder(RandomController(34), seen),
+      _Recorder(RandomController(35), seen),
     );
     seen.addAll(a.state.events.map((e) => e.kind));
     expect(hashMatchState(a.state), _mixedHash);
@@ -504,12 +506,11 @@ void main() {
       SimEventKind.effectFired,
       SimEventKind.barrierPlaced,
       SimEventKind.barrierHit,
-      SimEventKind.bounce,
     ]) {
       expect(seen, contains(k), reason: '이 판에서 ${k.name} 이 일어난다');
     }
     final b = start();
-    runMatch(b, RandomController(33), RandomController(34));
+    runMatch(b, RandomController(34), RandomController(35));
     expect(hashMatchState(b.state), _mixedHash);
     final c = start();
     a.turnLog.forEach(c.playTurn);
