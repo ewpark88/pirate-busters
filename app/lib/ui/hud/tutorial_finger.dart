@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:pb_sim/pb_sim.dart' show facingOf;
 import 'package:pirate_busters/battle/battle_session.dart';
 
 /// 튜토리얼 손가락 안내가 가리키는 것 (설계서 §13.1).
@@ -21,12 +22,25 @@ enum FingerCue {
 /// 튜토리얼 손가락 안내 (설계서 §13.1): 지금 해야 할 조작을 화면에서 가리킨다.
 /// 단계마다 한 번 끝까지(첫 발사·첫 이동) 해 보면 사라진다. 그리기만 한다.
 class TutorialFinger extends StatefulWidget {
-  const TutorialFinger({required this.session, required this.step, super.key});
+  const TutorialFinger({
+    required this.session,
+    required this.step,
+    this.pullAnchor,
+    super.key,
+  });
 
   final BattleSession session;
 
   /// 튜토리얼 번호 1~3.
   final int step;
+
+  /// 고른 해적 몸 가운데의 화면 좌표. 당기기 안내가 여기서 시작한다. 없으면 안 그린다.
+  final Offset? Function()? pullAnchor;
+
+  /// 당기기 안내 길(화면 px): 해적 [from] 에서 뒤(−[facing])·아래로. `PullAim` 의
+  /// 당김 방향과 같고 최대 당김(160px)보다 짧다.
+  static (Offset, Offset) pullPath(Offset from, int facing) =>
+      (from, from + Offset(-facing * 70.0, 55));
 
   /// [session] 의 지금 상태에서 가리킬 것. 없으면 null.
   static FingerCue? cueOf(BattleSession session, int step) {
@@ -66,9 +80,16 @@ class _TutorialFingerState extends State<TutorialFinger>
       builder: (context, _) {
         final cue = TutorialFinger.cueOf(widget.session, widget.step);
         if (cue == null) return const SizedBox.shrink();
+        (Offset, Offset)? pull;
+        if (cue == FingerCue.pullBack) {
+          final at = widget.pullAnchor?.call();
+          if (at == null) return const SizedBox.shrink();
+          final facing = facingOf(widget.session.state.activeSide);
+          pull = TutorialFinger.pullPath(at, facing);
+        }
         return CustomPaint(
           size: Size.infinite,
-          painter: _FingerPainter(cue, _loop.value),
+          painter: _FingerPainter(cue, _loop.value, pull),
         );
       },
     ),
@@ -76,10 +97,13 @@ class _TutorialFingerState extends State<TutorialFinger>
 }
 
 class _FingerPainter extends CustomPainter {
-  _FingerPainter(this.cue, this.t);
+  _FingerPainter(this.cue, this.t, this.pull);
 
   final FingerCue cue;
   final double t;
+
+  /// 당기기 안내 길(시작·끝 화면 좌표).
+  final (Offset, Offset)? pull;
 
   static final Paint _dot = Paint()..color = const Color(0xEEFFFFFF);
   static final Paint _edge = Paint()
@@ -100,9 +124,10 @@ class _FingerPainter extends CustomPainter {
       case FingerCue.flood:
         _tap(canvas, _at(size, const Alignment(-0.82, -0.78)));
       case FingerCue.pullBack:
-        // 해적에서 뒤(왼쪽 아래)로 당기는 길을 따라 점이 움직인다.
-        final from = _at(size, const Alignment(-0.12, 0.05));
-        final to = _at(size, const Alignment(-0.42, 0.32));
+        // 고른 해적 몸에서 뒤·아래로 당기는 길을 따라 점이 움직인다.
+        final path = pull;
+        if (path == null) return;
+        final (from, to) = path;
         final p = Offset.lerp(from, to, Curves.easeInOut.transform(t))!;
         canvas
           ..drawLine(
@@ -154,5 +179,5 @@ class _FingerPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant _FingerPainter old) =>
-      old.cue != cue || old.t != t;
+      old.cue != cue || old.t != t || old.pull != pull;
 }

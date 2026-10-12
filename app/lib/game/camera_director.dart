@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:flame/components.dart';
+import 'package:pb_sim/pb_sim.dart' show MatchState;
 import 'package:pirate_busters/game/coords.dart';
 
 /// 카메라 목표 계산 (설계서 §2.1, 렌더 전용). Flame 과 무관한 순수 계산이라 테스트한다.
@@ -9,9 +10,14 @@ import 'package:pirate_busters/game/coords.dart';
 /// 기본 화면은 내 배와 앞바다, 조준할수록 줌아웃. 탄을 쏘면 탄을 화면 가운데 가까이
 /// 두고 거의 같은 줌으로 따라간다(높이 올라가면 해수면이 보일 만큼만 넓힌다). 탄이 목표
 /// 배에 가까워지면 목표 배가 들어오고, 착탄·파괴 연출이 끝날 때까지 착탄 지점에 머문 뒤
-/// 천천히 돌아간다. 상대 턴도 같다 (설계서 §2.1·§10.4, ADR-043·ADR-069). 핀치 줌은
-/// 1.5배 확대부터 간격 42칸까지.
+/// 천천히 돌아간다. 상대 턴에는 상대 배와 그 앞바다를 같은 방식으로 보여 준다
+/// ([anchorSide], 설계서 §2.1·§10.4, ADR-043·ADR-069). 핀치 줌은 1.5배 확대부터
+/// 간격 42칸까지.
 class CameraDirector {
+  /// 기본 화면이 기준으로 삼는 배: 지금 턴 진영. 판이 끝나면 보는 사람 쪽 [viewSide].
+  static int anchorSide(MatchState state, int viewSide) =>
+      state.isOver ? viewSide : state.activeSide;
+
   /// 기본 화면 폭(월드 px, 약 24칸). 전장이 넓어 보여 900(28칸)에서 줄였다 (ADR-072).
   static const double baseWidth = 760;
 
