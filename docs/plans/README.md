@@ -45,3 +45,4 @@
 | [2026-10-07-pull-guide-enemy-camera.md](2026-10-07-pull-guide-enemy-camera.md) | 튜토리얼 당기기 안내를 고른 해적 위치에 맞춤, 상대 턴에는 카메라가 상대 배를 비춤 |
 | [2026-10-07-boss-marks.md](2026-10-07-boss-marks.md) | 보스 전용 그림 없이 보스전 표시(붉은 테·왕관·배너), 해역 2~6 기믹 폐기 (A45, ADR-096) |
 | [2026-10-12-A48-operator-mode.md](2026-10-12-A48-operator-mode.md) | 운영자 모드: 비밀번호 진입·전 스테이지 열기·해적 모션 보기·배/진행 조작 (A48, ADR-099) |
+| [2026-10-12-A44-shot-slower-again.md](2026-10-12-A44-shot-slower-again.md) | 탄 비행 1.3배 더 느리게(중력 5.6 → 3.3, A44 보정, ADR-095) |
