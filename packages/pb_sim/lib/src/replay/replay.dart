@@ -6,8 +6,8 @@ import 'package:pb_sim/src/match/rules.dart';
 import 'package:pb_sim/src/pirate/pirate_spec.dart';
 import 'package:pb_sim/src/ship/blueprint.dart';
 
-/// 매치 파라미터 (설계서 §7.2): 진영별 선체 보정 ‰(§3.5), 켜진 세트(§4.7), 수치 버전.
-/// MVP 는 보정 1000·세트 없음이다. 보정·세트는 R4·A3 에서 판에 적용한다.
+/// 매치 파라미터 (설계서 §7.2): 진영별 선체 보정 ‰, 켜진 세트, 수치 버전. 보정·세트는
+/// 보류된 기능(설계서 부록 A, ADR-111)이라 지금은 1000·없음만 받는다.
 class MatchParams {
   const MatchParams({
     this.hullPermille = const [1000, 1000],
