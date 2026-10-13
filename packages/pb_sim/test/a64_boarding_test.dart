@@ -1,5 +1,6 @@
 import 'package:pb_sim/pb_sim.dart';
 import 'package:pb_sim/src/combat/hit_effects.dart';
+import 'package:pb_sim/src/combat/hit_helpers.dart';
 import 'package:test/test.dart';
 
 import 'fixtures.dart';
@@ -163,6 +164,38 @@ void main() {
         isEmpty,
         reason: '남은 물기는 지운다',
       );
+    });
+
+    test('충격탄·오르카에 1칸 밀려도 바다에 빠져 KO 다 (ADR-113)', () {
+      final m = _duel(_assault('sharky'));
+      _land(m, 5, 2);
+      pushShip(m.state, m.state.sides[1], 1);
+      expect(_boarder(m).status, PirateStatus.down);
+      expect(_of(m, SimEventKind.pirateFell).single.side, 0);
+    });
+
+    test('모비에 1칸 끌려도 바다에 빠져 KO 다 (ADR-113)', () {
+      final m = _duel(_assault('sharky'));
+      _land(m, 5, 2);
+      pushShip(m.state, m.state.sides[1], -1);
+      expect(_boarder(m).status, PirateStatus.down);
+    });
+
+    test('바다 끝에 붙어 밀려도 움직이지 않으면 그대로 서 있다', () {
+      final m = _duel(_assault('sharky'));
+      final target = m.state.sides[1]..offset = -m.state.rules.backRoom;
+      _land(m, 5, 2);
+      pushShip(m.state, target, 1);
+      expect(_boarder(m).status, PirateStatus.boarding);
+    });
+
+    test('흔들기 이동 합은 턴마다 새로 센다', () {
+      final m = _duel(_assault('sharky'));
+      // 오른쪽 배가 지난 자기 턴에 0.9칸 움직인 채로 왼쪽 턴이 시작된다.
+      m.state.sides[1].status.shakeMoved = 900;
+      m.apply(const EndTurnCommand(t: 9000));
+      _passTo(m, 0);
+      expect(m.state.sides[1].status.shakeMoved, 0);
     });
 
     test('1칸보다 짧게 움직이면 그대로 서 있다', () {

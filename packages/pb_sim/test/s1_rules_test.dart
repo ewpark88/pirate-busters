@@ -100,7 +100,7 @@ void main() {
       expect(m.state.winner, -1);
     });
 
-    test('전멸은 선장실 파괴보다 먼저 본다', () {
+    test('같은 순간 한쪽은 전멸, 다른 쪽은 선장실이 부서져도 무승부다 (ADR-113)', () {
       final m = newSampleMatch(1, rules: const MatchRules(calmSea: true));
       final a = m.state.sides[0];
       for (var slot = 0; slot < a.crew.size; slot++) {
@@ -109,6 +109,17 @@ void main() {
       final b = m.state.sides[1];
       b.grid.damage(1, 1, 9999);
       settleModules(b, m.state.events);
+      judgeInstant(m.state);
+      expect(m.state.outcome, MatchOutcome.annihilation);
+      expect(m.state.winner, -1);
+    });
+
+    test('한쪽만 전멸하면 상대가 이긴다', () {
+      final m = newSampleMatch(1, rules: const MatchRules(calmSea: true));
+      final a = m.state.sides[0];
+      for (var slot = 0; slot < a.crew.size; slot++) {
+        a.crew.damage(slot, 9999, 0, m.state.events);
+      }
       judgeInstant(m.state);
       expect(m.state.outcome, MatchOutcome.annihilation);
       expect(m.state.winner, 1);

@@ -11,15 +11,15 @@ import 'package:pb_sim/src/world/world.dart';
 /// ADR-110). 상대는 배를 흔들어 떨어뜨리거나(이동), 근처 해적이 근접 수비로
 /// 반격하거나, 그 배에 떨어진 폭발로 맞힌다. 내 탄은 내 배에 닿지 않는다(§2.7).
 
-/// 근접 수비 반경(칸): 선 자리에서 이 안의 배 위 해적이 반격한다 (BALANCE.md A4.8
-/// 임시값).
+/// 근접 수비 반경(칸): 선 자리에서 이 안의 배 위 해적이 반격한다 (BALANCE.md A4.8,
+/// ADR-113).
 const int boardDefenseRadius = 2;
 
-/// 근접 수비 해적 1명당 강습 해적이 받는 피해 (BALANCE.md A4.8 임시값).
+/// 근접 수비 해적 1명당 강습 해적이 받는 피해 (BALANCE.md A4.8, ADR-113).
 const int boardDefenseDamage = 30;
 
-/// 흔들기: 이번 턴 이동 합이 이 거리(1/1000칸) 이상이면 선 강습 해적이 바다에
-/// 빠진다 (ADR-110 임시값. 설계서·BALANCE 에는 아직 없다).
+/// 흔들기: 배의 이번 턴 이동 합(밀림·끌림 포함)이 이 거리(1/1000칸) 이상이면 선
+/// 강습 해적이 바다에 빠진다 (BALANCE.md A4.8, ADR-113).
 const int shakeOffDistance = cellUnit;
 
 /// [grid] 세로줄 [cx] 의 맨 위 블록 칸(강습 해적이 그 위에 선다). 없으면 −1.
@@ -76,7 +76,11 @@ void boardShooter(MatchState state, Projectile p, SideState target, int cx) {
 void boardingTurnStart(MatchState state) {
   final side = state.activeSide;
   _returnBoarders(state, side);
-  final ship = state.sides[side]..status.shakeMoved = 0;
+  // 흔들기 이동 합은 한 턴 단위다: 턴마다 두 배 모두 0 부터 센다.
+  for (final s in state.sides) {
+    s.status.shakeMoved = 0;
+  }
+  final ship = state.sides[side];
   dropUnsupportedBoarders(ship, state.events);
   _defend(state, ship);
 }
@@ -148,9 +152,9 @@ void dropUnsupportedBoarders(SideState ship, List<SimEvent> events) {
   }
 }
 
-/// [ship] 배가 뱃머리 [fromBowX] 에서 지금 자리로 움직였다. 이번 턴 이동 합이 흔들기
-/// 거리 이상이면 선 상대 강습 해적이 모두 바다에 빠진다(이동 버튼은 0.1칸씩 낸다).
-/// 끌려간 것(모비)은 이동이 아니라 부르지 않는다.
+/// [ship] 배가 뱃머리 [fromBowX] 에서 지금 자리로 움직였다(내 이동, 충격탄·오르카
+/// 밀림, 모비 끌림 모두, 설계서 §2.3). 이번 턴 이동 합이 흔들기 거리 이상이면 선 상대
+/// 강습 해적이 모두 바다에 빠진다(이동 버튼은 0.1칸씩 낸다).
 void shakeOffBoarders(MatchState state, SideState ship, int fromBowX) {
   final status = ship.status..shakeMoved += (ship.bowX - fromBowX).abs();
   final foe = ship.crew.foe;

@@ -2,6 +2,7 @@
 library;
 
 import 'package:pb_sim/src/combat/block_damage.dart';
+import 'package:pb_sim/src/combat/boarding.dart';
 import 'package:pb_sim/src/combat/module_effects.dart';
 import 'package:pb_sim/src/match/match_state.dart';
 import 'package:pb_sim/src/match/sim_event.dart';
@@ -81,8 +82,10 @@ int waterlineCellIn(SideState ship, int cx) {
 }
 
 /// [target] 배를 [cells] 칸 민다(음수면 끌어당긴다). 그 배 기준 뒤로 가는 쪽이
-/// 미는 것이다. 바다 끝·최소 간격에서 멈춘다 (설계서 §2.6·§4.8).
+/// 미는 것이다. 바다 끝·최소 간격에서 멈춘다 (설계서 §2.6·§4.8). 움직인 거리는
+/// 흔들기에 더해 그 배에 선 상대 강습 해적을 떨어뜨릴 수 있다 (설계서 §2.3, ADR-113).
 void pushShip(MatchState state, SideState target, int cells) {
+  final from = target.bowX;
   final moved = shoveShip(
     target,
     state.otherOf(target.side),
@@ -98,4 +101,5 @@ void pushShip(MatchState state, SideState target, int cells) {
       x: target.bowX,
     ),
   );
+  shakeOffBoarders(state, target, from);
 }
