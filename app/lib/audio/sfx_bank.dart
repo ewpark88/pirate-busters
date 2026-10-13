@@ -18,6 +18,12 @@ abstract final class SfxBank {
             ..noise(.55, 420, 60, vol: .34, q: .7, seed: 3)
             ..noise(.09, 2400, 900, vol: .16, seed: 4))
           .toWav(gain: masterGain),
+    // 먼 포성: 높은 소리를 깎은 낮은 쿵과 긴 꼬리 (S4).
+    Sfx.cannonFar =>
+      (PcmSynth(durationSec: 1.1)
+            ..tone(80, 30, 1, vol: .34)
+            ..noise(.9, 260, 40, vol: .26, q: .6, seed: 31))
+          .toWav(gain: masterGain),
     // 나무 부서짐: 우지끈 세 번.
     Sfx.wood =>
       (PcmSynth(durationSec: .45)
