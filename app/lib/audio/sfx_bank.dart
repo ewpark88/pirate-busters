@@ -208,6 +208,18 @@ abstract final class SfxBank {
     return s.toWav(gain: masterGain);
   }
 
+  /// 바람 소리 4초 루프 (설계서 §2.4·§10.3): 높은 대역 바람결이 느리게 오르내린다.
+  /// 음량은 바람 단계로 `WindLoop` 가 정한다.
+  static Uint8List windLoop() {
+    final s = PcmSynth(durationSec: 4);
+    for (var i = 0; i < 4; i++) {
+      s
+        ..noise(1.6, 900, 1700, vol: .07, q: 1.6, seed: 60 + i, delay: i * .9)
+        ..noise(1.1, 2400, 1500, vol: .03, q: 2.4, seed: 70 + i, delay: .4 + i);
+    }
+    return s.toWav(gain: masterGain);
+  }
+
   /// 음 [hz] 를 [step] 초 간격으로 이어 부는 짧은 악구. 마지막 음은 길게 끈다.
   static Uint8List _phrase(List<double> hz, double step, Wave wave) {
     final synth = PcmSynth(durationSec: step * hz.length + .5);

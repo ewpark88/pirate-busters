@@ -21,6 +21,9 @@ import 'package:pirate_busters/game/view/hit_weight.dart';
 import 'test_catalog.dart';
 
 class _Sound implements SoundService {
+  @override
+  void windLevel(int level) {}
+
   final List<Sfx> played = [];
   final List<bool> ducks = [];
   final List<bool> sea = [];

@@ -353,7 +353,6 @@ flutter:
     - assets/images/ship/modules/
     - assets/images/ship/rig/
     - assets/images/ship/rooms/
-    - assets/images/ship/tiles/
     - assets/images/ship/tiles_v2/
     - assets/images/ui/cards/
     - assets/images/ui/icons/

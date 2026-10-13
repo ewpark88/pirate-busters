@@ -144,6 +144,14 @@ class Backdrop {
   /// 배 위 소품처럼 읽혀서, 원경(설계서 §10.2)으로 보이게 흐린다 (A40).
   static double hazeOf(String id) => id == 'mid' ? 0.35 : 0;
 
+  /// 바람에 흘러가는 겹: 구름 (설계서 §2.4 “구름이 바람 방향으로 흘러간다”).
+  static bool drifts(String id) => id == 'clouds';
+
+  /// 바람 [wind](−3~+3) 에 구름이 흐르는 빠르기(월드 px/초, 오른쪽 +). 무풍이면
+  /// 아주 느리게 오른쪽으로 흐른다.
+  static double cloudSpeed(double wind) =>
+      wind.abs() < .05 ? 6 : wind.sign * (6 + 14 * wind.abs());
+
   static double glowOpacity(SeaMode mode) => switch (mode) {
     SeaMode.normal => 0.35,
     SeaMode.hard => 0.75,
@@ -156,8 +164,14 @@ class Backdrop {
 
   /// 카메라 x 가 [cameraX] 일 때 겹의 왼쪽 끝(월드 px). 겹은 카메라보다
   /// `parallax` 배로 움직이고 [width] 마다 이어 붙는다. 화면 왼쪽 끝은 [viewLeft].
-  double tileStart(BackdropLayer layer, double cameraX, double viewLeft) {
-    final offset = cameraX * (1 - layer.parallax);
+  /// [drift] 는 겹이 바람에 흘러간 거리(월드 px, 구름 겹만 쓴다).
+  double tileStart(
+    BackdropLayer layer,
+    double cameraX,
+    double viewLeft, {
+    double drift = 0,
+  }) {
+    final offset = cameraX * (1 - layer.parallax) + drift % width;
     final k = ((viewLeft - offset) / width).floorToDouble();
     return offset + k * width;
   }

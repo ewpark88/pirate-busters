@@ -90,3 +90,31 @@ class CameraPan {
     return px;
   }
 }
+
+/// 명중 때 당기는 줌 (설계서 §10.4, A32): 화면 폭을 한 방 크기에 비례하는 비율
+/// (4~12%, `HitWeight.punch`)만큼 [punchIn] 초에 빠르게 좁혔다가 [punchOut] 초에
+/// 걸쳐 부드럽게 푼다. 이미 당긴 줌보다 약하면 덮어쓰지 않는다.
+class PunchZoom {
+  static const double punchIn = 0.05;
+  static const double punchOut = 0.3;
+  double _zoom = 0;
+  double _t = punchIn + punchOut;
+
+  /// 지금 화면 폭에 곱할 배율(1 이하).
+  double get scale {
+    if (_t >= punchIn + punchOut) return 1;
+    final k = _t < punchIn
+        ? _t / punchIn
+        : math.pow(1 - (_t - punchIn) / punchOut, 2).toDouble();
+    return 1 - _zoom * k;
+  }
+
+  void hit(double punch) {
+    if (punch > 0 && punch >= 1 - scale) {
+      _zoom = punch;
+      _t = 0;
+    }
+  }
+
+  void update(double dt) => _t += dt;
+}

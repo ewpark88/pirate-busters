@@ -46,6 +46,7 @@ Future<void> main() async {
   await sound.loadClips(await SoundLibrary.loadSfx(rootBundle));
   await sound.loadMusicClips(await SoundLibrary.loadMusic(rootBundle));
   await sound.loadAmbience(SfxBank.seaLoop());
+  await sound.loadWind(SfxBank.windLoop());
   runApp(
     ProviderScope(
       overrides: [

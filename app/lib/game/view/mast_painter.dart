@@ -4,11 +4,8 @@ import 'dart:ui';
 import 'package:flame/components.dart';
 import 'package:pb_sim/pb_sim.dart';
 import 'package:pirate_busters/game/sprites.dart';
+import 'package:pirate_busters/game/view/breeze.dart';
 import 'package:pirate_busters/game/view/ship_view.dart';
-
-/// 돛·깃발에 닿는 바람 (설계서 §10.2 ‘바람’, A35): 세기 0~1, 배 로컬 기준 바람이
-/// 부는 쪽(−1·0·+1), 시각(초).
-typedef Breeze = ({double strength, int dir, double t});
 
 /// 돛대 그리기 (설계서 §3.3 돛대 칸, §10.2): 돛대 모듈 칸 위로 돛대 칸을 따라 기둥을
 /// 세우고, 다 서 있으면 돛·깃발을 단다. 돛대 칸이 부서지면 남은 높이까지만 그루터기로
@@ -58,7 +55,7 @@ abstract final class MastPainter {
       (0.16 + 0.03 * math.sin(b.t * (2.5 + 5 * b.strength)));
 
   /// 깃발이 아래로 처지는 각(라디안): 무풍이면 가장 처지고 세질수록 펴진다.
-  static double flagDroop(Breeze b) => (1 - b.strength) * 1.1;
+  static double flagDroop(Breeze b) => FlagWave.droop(b);
 
   /// [view] 배의 돛대를 모두 그린다. [materials] 는 지금 그리는 격자(착탄 전 모습일
   /// 수 있다). 돛·깃발은 바람 세기·방향으로 펄럭인다 (§10.2, A35).
@@ -166,7 +163,7 @@ abstract final class MastPainter {
     final flag = sprites.get('ship/rig/flag_${blue ? 'blue' : 'red'}.png');
     final s = breeze.strength;
     // 깃대에 붙은 자리를 축으로 바람 쪽을 향하고, 세기만큼 펄럭이며, 약하면 처진다.
-    final wave = 1 + .14 * s * math.sin(breeze.t * (5 + 8 * s));
+    final wave = 1 + FlagWave.flutter(breeze);
     canvas
       ..save()
       ..translate(top.dx, top.dy - 14)

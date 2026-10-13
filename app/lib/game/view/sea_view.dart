@@ -3,8 +3,10 @@ import 'dart:ui';
 
 import 'package:flame/components.dart';
 import 'package:flutter/foundation.dart';
+import 'package:pirate_busters/game/view/sea_crests.dart';
 import 'package:pirate_busters/game/view/sea_shape.dart';
 import 'package:pirate_busters/game/view/sea_theme.dart';
+import 'package:pirate_busters/game/view/wind_feel.dart';
 
 /// 전장 가로 범위(월드 px). 월드 ±100칸보다 넓게 그린다.
 const double seaHalfWidth = 3600;
@@ -19,6 +21,10 @@ const double seaDepth = 900;
 /// 물마루를, 배 앞뒤에 물갈림을, 움직이는 배 뒤에 항적을 그린다.
 /// [lowEnd] 가 켜져 있거나 셰이더를 쓸 수 없으면 그라데이션으로 그리고 항적을 끈다
 /// (ADR-030).
+///
+/// 파도 구간(§2.6): 잔물결·포말·물마루가 그 자리 구간 세기를 따른다. 잔잔한 구간은
+/// 평평하고 포말이 거의 없고, 거친 구간은 물마루가 많다. 바람(§2.4, [wind]): 포말이
+/// 바람 쪽으로 흐르고 늘어나며, 물마루가 바람 쪽으로 눕는다.
 class SeaView extends Component {
   SeaView({
     required this.front,
@@ -27,6 +33,7 @@ class SeaView extends Component {
     this.shape,
     this.shader,
     this.lowEnd,
+    this.wind,
     super.priority,
   });
 
@@ -36,6 +43,7 @@ class SeaView extends Component {
   final SeaShape? shape;
   final FragmentShader? shader;
   final ValueListenable<bool>? lowEnd;
+  final WindFeel? wind;
   final math.Random _rnd = math.Random(3);
   final List<_Foam> _foam = [];
   final List<_Foam> _wake = [];
@@ -64,16 +72,29 @@ class SeaView extends Component {
     }
     _foam.removeWhere((f) => f.life <= 0);
     _updateWake(dt);
+    final drift = SeaCrests.foamDrift(wind?.value ?? 0);
     while (_foam.length < foamTarget) {
       _foam.add(
         _Foam(
-          x: (_rnd.nextDouble() * 2 - 1) * seaHalfWidth,
-          vx: (_rnd.nextDouble() - 0.5) * 16,
+          x: _foamX(),
+          vx: drift + (_rnd.nextDouble() - 0.5) * 8,
           life: 1 + _rnd.nextDouble() * 2.5,
         ),
       );
     }
   }
+
+  /// 새 포말 x: 거친 구간일수록 자주 고른다.
+  double _foamX() {
+    var x = 0.0;
+    for (var i = 0; i < 6; i++) {
+      x = (_rnd.nextDouble() * 2 - 1) * seaHalfWidth;
+      if (_rnd.nextDouble() < SeaCrests.foamWeight(_level(x))) break;
+    }
+    return x;
+  }
+
+  double _level(double x) => shape?.levelAt(x) ?? 1;
 
   /// 배 앞뒤 끝 물갈림(늘 조금)과 움직이는 배 선미 뒤 항적(저사양이면 끔).
   void _updateWake(double dt) {
@@ -112,8 +133,9 @@ class SeaView extends Component {
   /// 수면 높이(월드 px, 아래가 +).
   double surface(double x) =>
       (swell?.call(x) ?? 0) +
-      math.sin(x / 90 + _t * 1.3) * 1.6 +
-      math.sin(x / 37 - _t * 2.1) * 0.7;
+      SeaCrests.rippleFor(_level(x)) *
+          (math.sin(x / 90 + _t * 1.3) * 1.6 +
+              math.sin(x / 37 - _t * 2.1) * 0.7);
 
   // 매 프레임 다시 쓰는 그리기 도구 (A57, 할당 줄이기).
   final Path _path = Path();
@@ -160,9 +182,18 @@ class SeaView extends Component {
     if (!front) return;
     _renderLattice(canvas);
     final foam = _foamPaint;
+    // 포말은 바람 쪽으로 늘어난다.
+    final stretch = 2.2 * (1 + 0.7 * (wind?.strength ?? 0));
     for (final f in _foam) {
       foam.color = theme.foam.withValues(alpha: (f.life / 1.5).clamp(0, 0.8));
-      canvas.drawCircle(Offset(f.x, surface(f.x) + 1), 2.2, foam);
+      canvas.drawOval(
+        Rect.fromCenter(
+          center: Offset(f.x, surface(f.x) + 1),
+          width: stretch * 2,
+          height: 4.4,
+        ),
+        foam,
+      );
     }
     for (final f in _wake) {
       foam.color = theme.foam.withValues(alpha: (f.life / 1.2).clamp(0, 0.9));
@@ -171,22 +202,23 @@ class SeaView extends Component {
     _renderCrests(canvas, foam);
   }
 
-  /// 너울 꼭대기의 흰 물마루: 배 둘레 잔잔한 곳에는 없다.
+  /// 너울 꼭대기의 흰 물마루: 배 둘레와 잔잔한 구간에는 없다. 보통 구간은 둘에
+  /// 하나, 거친 구간은 모든 꼭대기에 선다. 바람이 불면 바람 쪽으로 눕는다.
   void _renderCrests(Canvas canvas, Paint foam) {
     final sea = shape;
     if (sea == null) return;
     final ships = sea.current;
+    final lean = (wind?.value ?? 0) / 3;
     for (final x in sea.crests(-seaHalfWidth, seaHalfWidth)) {
       final w = SeaShape.calm(ships, x);
-      if (w < .4) continue;
-      foam.color = theme.foam.withValues(alpha: .55 * w);
-      for (var i = -3; i <= 3; i++) {
-        final cx = x + i * 9;
-        canvas.drawCircle(
-          Offset(cx, surface(cx) + 1),
-          2.6 - i.abs() * .4,
-          foam,
-        );
+      final level = sea.levelAt(x);
+      if (!SeaCrests.shown(level, x) || w < .4) continue;
+      foam.color = theme.foam.withValues(
+        alpha: .55 * w * math.min(1, level / 1.5),
+      );
+      for (final (dx, lift, r) in SeaCrests.dots(lean)) {
+        final cx = x + dx;
+        canvas.drawCircle(Offset(cx, surface(cx) + 1 - lift), r, foam);
       }
     }
   }

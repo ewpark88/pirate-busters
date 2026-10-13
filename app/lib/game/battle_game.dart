@@ -17,19 +17,23 @@ import 'package:pirate_busters/game/coords.dart';
 import 'package:pirate_busters/game/finale_director.dart';
 import 'package:pirate_busters/game/impact_sound.dart';
 import 'package:pirate_busters/game/pirate_pick.dart';
+import 'package:pirate_busters/game/sea_layers.dart';
 import 'package:pirate_busters/game/sprites.dart';
 import 'package:pirate_busters/game/start_gate.dart';
 import 'package:pirate_busters/game/view/backdrop_view.dart';
 import 'package:pirate_busters/game/view/effect_badges.dart';
 import 'package:pirate_busters/game/view/fx_layer.dart';
+import 'package:pirate_busters/game/view/guide_marks.dart';
 import 'package:pirate_busters/game/view/limit_marks.dart';
 import 'package:pirate_busters/game/view/sea_shape.dart';
 import 'package:pirate_busters/game/view/sea_theme.dart';
-import 'package:pirate_busters/game/view/sea_view.dart';
+import 'package:pirate_busters/game/view/sea_zones.dart';
 import 'package:pirate_busters/game/view/shake.dart';
 import 'package:pirate_busters/game/view/ship_view.dart';
 import 'package:pirate_busters/game/view/shot_view.dart';
+import 'package:pirate_busters/game/view/wind_feel.dart';
 import 'package:pirate_busters/game/weapon_styles.dart';
+import 'package:pirate_busters/game/wind_sound.dart';
 
 /// 전장 (M4): 매 프레임 [BattleSession] 을 진행하고 그린다. 판정은 안 한다 (규칙 3).
 class BattleGame extends FlameGame with BattleTexts {
@@ -123,25 +127,24 @@ class BattleGame extends FlameGame with BattleTexts {
       priority: 30,
     );
     await world.addAll([
-      backdrop,
-      _sea,
-      SeaView(front: false, theme: theme, swell: _sea.call, priority: -10),
-      // 한계 표식은 물 위 소품이라 배(0)보다 뒤에 둔다.
-      LimitMarks(session: session, sprites: sprites, priority: -5),
-      ..._ships,
-      SeaView(
-        front: true,
+      backdrop..wind = () => wind.value,
+      ...seaLayers(
+        sea: _sea,
+        wind: wind,
         theme: theme,
-        swell: _sea.call,
-        shape: _sea,
         shader: seaShader,
         lowEnd: lowEnd,
-        priority: 10,
       ),
+      // 한계 표식은 물 위 소품이라 배(0)보다 뒤에 둔다.
+      LimitMarks(session: session, sprites: sprites, priority: -5),
+      // 이동 끝 점선은 앞 바다(10) 위에 둔다 (설계서 §2.5).
+      GuideMarks(session: session, sea: _sea, theme: theme, priority: 12),
+      ..._ships,
       _shot,
       EffectBadges(session: session, weapons: weapons, priority: 25)
         ..turnsText = (turns) => turnsText(turns),
       ...battleOverlays(session, _ships, playSfx, vibrationOn, lowEnd),
+      WindSound(session: session, sound: sound),
       _fx,
     ]);
     _cues = BattleCues(
@@ -217,11 +220,14 @@ class BattleGame extends FlameGame with BattleTexts {
     super.update(visual);
   }
 
-  /// 수면 모양: 두 배의 파도를 잇고 먼 바다에 너울 (설계서 §10.2, A24).
+  /// 수면 모양: 두 배의 파도를 잇고 먼 바다에 구간 세기만큼 너울 (설계서 §2.6·§10.2).
   late final SeaShape _sea = SeaShape(
     ships: () => [for (final ship in _ships) shipOnSea(ship)],
-    scale: () => 1,
+    zones: SeaZones.of(session.state),
   );
+
+  /// 전장이 느끼는 바람: 구름·포말·물보라가 따라간다 (설계서 §2.4).
+  late final WindFeel wind = WindFeel(session: session);
 
   void _updateCamera(double dt) {
     final me = CameraDirector.anchorSide(session.state, viewSide);

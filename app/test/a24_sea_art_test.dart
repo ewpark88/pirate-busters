@@ -67,24 +67,23 @@ void main() {
     test('너울은 배 자리에서 0이라 배와 물이 어긋나지 않는다', () {
       for (final s in _ships) {
         for (final dx in [-s.half, 0.0, s.half]) {
-          expect(SeaShape.swell(s.x + dx, 3, _ships, 1), 0);
+          expect(SeaShape.swell(s.x + dx, 3, _ships, null), 0);
         }
       }
     });
 
-    test('먼 바다에는 너울이 있고 폭풍이면 커진다', () {
-      double peak(double scale) => [
+    test('먼 바다에는 너울이 있다', () {
+      final peak = [
         for (var x = -3000.0; x < -1500; x += 7)
-          SeaShape.swell(x, 0, _ships, scale).abs(),
+          SeaShape.swell(x, 0, _ships, null).abs(),
       ].reduce(math.max);
-      expect(peak(1), greaterThan(SeaShape.amp * .9));
-      expect(peak(1.5), closeTo(peak(1) * 1.5, 1e-9));
+      expect(peak, greaterThan(SeaShape.amp * .9));
     });
 
     test('물마루는 수면이 가장 높은 곳(화면 y 최소)이다', () {
-      final sea = SeaShape(ships: () => _ships, scale: () => 1)..update(2);
+      final sea = SeaShape(ships: () => _ships)..update(2);
       for (final x in sea.crests(-3600, -1800)) {
-        final h = SeaShape.swell(x, sea.t, _ships, 1);
+        final h = SeaShape.swell(x, sea.t, _ships, null);
         expect(h, closeTo(-SeaShape.amp * SeaShape.calm(_ships, x), 1e-6));
       }
     });
@@ -101,7 +100,7 @@ void main() {
     SeaView make({required bool low}) => SeaView(
       front: true,
       theme: SeaTheme.tropicalDay,
-      shape: SeaShape(ships: () => moving, scale: () => 1)..update(0),
+      shape: SeaShape(ships: () => moving)..update(0),
       lowEnd: ValueNotifier(low),
     );
     final full = make(low: false);
