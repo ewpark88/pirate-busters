@@ -155,7 +155,6 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
   }
 
   void _checkOver() {
-    // 격침 연출이 끝난 뒤에 결과로 넘어간다 (설계서 §10.4).
     if (_reported || !_session.isOver || !_game.settled.value) return;
     _reported = true;
     // 더미배 연습은 결과 없이 같은 덱으로 다시 시작한다 (ADR-073).
@@ -265,6 +264,7 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
               settled: settled,
               onClick: () => _game.playSfx(Sfx.click),
               calm: _game.calmShake.value,
+              banner: _game.banner,
             ),
           ),
         ),

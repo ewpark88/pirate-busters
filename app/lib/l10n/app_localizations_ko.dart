@@ -199,6 +199,20 @@ class AppLocalizationsKo extends AppLocalizations {
   String get sunkBanner => '격침!';
 
   @override
+  String get bannerMyTurn => '내 턴!';
+
+  @override
+  String get bannerStorm => '폭풍 타임!';
+
+  @override
+  String get bannerAnnihilation => '전멸!';
+
+  @override
+  String bannerFloodCompare(String mine, String foe) {
+    return '침수 $mine% : $foe%';
+  }
+
+  @override
   String get surrenderQueued => '내 턴이 오면 항복합니다';
 
   @override

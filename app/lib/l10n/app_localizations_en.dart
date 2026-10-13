@@ -224,6 +224,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sunkBanner => 'Sunk!';
 
   @override
+  String get bannerMyTurn => 'Your turn!';
+
+  @override
+  String get bannerStorm => 'Storm time!';
+
+  @override
+  String get bannerAnnihilation => 'Wiped out!';
+
+  @override
+  String bannerFloodCompare(String mine, String foe) {
+    return 'Flood $mine% : $foe%';
+  }
+
+  @override
   String get surrenderQueued => 'You will surrender at the start of your turn';
 
   @override

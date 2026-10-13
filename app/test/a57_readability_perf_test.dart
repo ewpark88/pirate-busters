@@ -4,7 +4,7 @@ import 'package:pb_sim/pb_sim.dart';
 import 'package:pirate_busters/battle/battle_setup.dart';
 import 'package:pirate_busters/game/shield_cue.dart';
 import 'package:pirate_busters/game/view/hull_water.dart';
-import 'package:pirate_busters/ui/hud/battle_hud.dart';
+import 'package:pirate_busters/ui/hud/battle_banners.dart';
 import 'package:pirate_busters/ui/hud/hud_gauge.dart';
 
 import 'test_catalog.dart';
@@ -86,8 +86,8 @@ void main() {
 
   group('A57 상대 턴 배치 (A43 점검 버그 6)', () {
     test('상대 턴 배너는 위쪽 패널·시간 판정 띠(화면 위 30%)보다 아래에 둔다', () {
-      expect(BattleHud.foeTurnAlignment.y, greaterThan(-0.4));
-      expect(BattleHud.foeTurnAlignment.y, lessThan(0));
+      expect(BattleBanners.foeTurnAlignment.y, greaterThan(-0.4));
+      expect(BattleBanners.foeTurnAlignment.y, lessThan(0));
     });
   });
 

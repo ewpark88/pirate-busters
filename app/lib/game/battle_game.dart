@@ -14,7 +14,7 @@ import 'package:pirate_busters/game/battle_overlays.dart';
 import 'package:pirate_busters/game/battle_texts.dart';
 import 'package:pirate_busters/game/camera_director.dart';
 import 'package:pirate_busters/game/coords.dart';
-import 'package:pirate_busters/game/emotion_cues.dart';
+import 'package:pirate_busters/game/finale_director.dart';
 import 'package:pirate_busters/game/impact_sound.dart';
 import 'package:pirate_busters/game/pirate_pick.dart';
 import 'package:pirate_busters/game/sprites.dart';
@@ -55,8 +55,10 @@ class BattleGame extends FlameGame with BattleTexts {
 
   /// 판이 끝난 뒤 연출(격침)까지 끝났다. 결과 창은 이것을 기다린다 (설계서 §10.4).
   final ValueNotifier<bool> settled = ValueNotifier(false);
-  final Set<int> _sinkShown = {};
-  bool _endPlayed = false;
+
+  /// 판의 끝과 턴 사이 연출 (설계서 §10.4, §13.4, A54)과 HUD 가 그리는 배너.
+  late final FinaleDirector finale;
+  final ValueNotifier<BattleBanner?> banner = ValueNotifier(null);
 
   /// 저사양(셰이더 끔, §10.2)·효과음·진동·흔들림 줄이기(§13.8). 화면이 설정을 넣는다.
   final ValueNotifier<bool> lowEnd = ValueNotifier(false);
@@ -166,6 +168,18 @@ class BattleGame extends FlameGame with BattleTexts {
       damageText: (amount) => damageText(amount),
       tagText: (tag) => tagText(tag),
     )..emphasisText = ((e) => emphasisText(e));
+    finale = FinaleDirector(
+      session: session,
+      ships: _ships,
+      fx: _fx,
+      stop: _cues.stop,
+      gate: gate,
+      settled: settled,
+      playSfx: playSfx,
+      viewSide: () => viewSide,
+      lowEnd: lowEnd,
+      banner: banner,
+    );
     overview.addListener(() => director.overview = overview.value);
     // 저사양 모드에서는 등급 고리의 입자와 외곽 빛을 줄인다 (설계서 §12).
     void applyLowEnd() {
@@ -199,7 +213,7 @@ class BattleGame extends FlameGame with BattleTexts {
       if (e.kind == SimEventKind.turnEnd) onTurnEnd?.call(e);
     }
     _cues.dispatch(cues);
-    _watchEnd();
+    finale.update(dt, cues);
     // 명중 순간(한 방 크기에 비례해 0.05~0.16초)은 연출만 멈춘다. 시뮬레이션은 위에서
     // 이미 진행했다. 묵직한 한 방은 멈춘 동안에도 화면이 떨린다 (§10.4, A32).
     final trembling = _cues.stop.trembling;
@@ -207,31 +221,6 @@ class BattleGame extends FlameGame with BattleTexts {
     _shakeT += trembling ? dt : visual;
     _updateCamera(visual);
     super.update(visual);
-  }
-
-  /// 판이 끝난 뒤: 가라앉기 시작한 배에 큰 물보라·물안개와 격침음, 다 가라앉으면
-  /// 승리·패배 악구를 내고 [settled] 를 켠다 (설계서 §10.3, §10.4).
-  void _watchEnd() {
-    if (!session.state.isOver) return;
-    for (final ship in _ships) {
-      if (ship.motion.sinking && _sinkShown.add(ship.side)) {
-        _fx.sinkSplash(
-          Vector2(shipOnSea(ship).x, 0),
-          session.state.sides[ship.side].grid.width * Coords.cell,
-        );
-        playSfx(Sfx.sink);
-        _cues.stop.slow(EmotionCues.slowFor(lowEnd: lowEnd.value)); // §10.4
-      }
-    }
-    if (session.playback != null || !_ships.every((s) => s.motion.settled)) {
-      return;
-    }
-    if (!_endPlayed) {
-      _endPlayed = true;
-      final winner = session.state.winner;
-      playSfx(winner >= 0 && winner == viewSide ? Sfx.win : Sfx.lose);
-    }
-    settled.value = true;
   }
 
   /// 수면 모양: 두 배의 파도를 잇고 먼 바다에 너울 (설계서 §10.2, A24).

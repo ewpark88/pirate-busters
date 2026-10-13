@@ -94,8 +94,26 @@ class FireView extends Component {
         position: Vector2(r.left, r.bottom - flameHeight),
         size: Vector2(Coords.cell, flameHeight),
       );
+      _smoke(canvas, r, i, low ? 1 : 2);
     }
   }
 
+  /// 연기가 오른다 (설계서 §10.4 화재, A54): 불꽃 위로 회색 연기 [puffs] 개가 칸마다
+  /// 엇갈린 박자로 떠오르며 커지고 흐려진다. 저사양은 하나.
+  void _smoke(Canvas canvas, Rect r, int cell, int puffs) {
+    for (var k = 0; k < puffs; k++) {
+      final phase = (_t / smokeSec + cell * .37 + k / puffs) % 1;
+      final x = r.center.dx + (phase - .5) * 6 + (k.isEven ? -3 : 3);
+      final y = r.bottom - flameHeight - phase * smokeRise;
+      _smokePaint.color = Color.fromRGBO(70, 66, 62, (1 - phase) * .45);
+      canvas.drawCircle(Offset(x, y), 4 + phase * 8, _smokePaint);
+    }
+  }
+
+  /// 연기 한 줄기가 떠올라 사라지는 시간(초)과 오르는 높이(px).
+  static const double smokeSec = 1.6;
+  static const double smokeRise = 34;
+
   static final Paint _soot = Paint()..color = const Color(0xC0FFFFFF);
+  static final Paint _smokePaint = Paint();
 }

@@ -4,7 +4,6 @@ import 'package:pirate_busters/app/app_theme.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
 import 'package:pirate_busters/ui/hud/hud_style.dart';
 import 'package:pirate_busters/ui/kit/kit_art.dart';
-import 'package:pirate_busters/ui/kit/kit_motion.dart';
 import 'package:pirate_busters/ui/kit/pb_button.dart';
 import 'package:pirate_busters/ui/kit/pb_panel.dart';
 
@@ -48,18 +47,6 @@ class ResultOverlay extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              if (state.outcome == MatchOutcome.sunk ||
-                  state.outcome == MatchOutcome.floodSunk)
-                // ‘격침!’ 배너 (설계서 §14.2).
-                PopIn(
-                  child: OutlinedText(
-                    AppLocalizations.of(context).sunkBanner,
-                    size: 48,
-                    color: HudColors.warn,
-                    font: AppFonts.display,
-                    stroke: 6,
-                  ),
-                ),
               OutlinedText(
                 title,
                 size: 34,

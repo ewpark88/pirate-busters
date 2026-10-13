@@ -16,9 +16,19 @@ class StartGate {
   /// (A41 점검: 배너 동안 첫 턴 시간이 줄던 문제).
   bool held = false;
 
+  /// 턴 전환 멈춤(설계서 §13.4 턴 전환, A54): 남은 초 동안 판 시계를 세운다.
+  double _pause = 0;
+
+  /// [sec] 초 동안 판 시계를 세운다. 이미 더 길게 서 있으면 그대로.
+  void pause(double sec) => _pause = sec > _pause ? sec : _pause;
+
   /// 한 프레임([dt] 초)을 지나고, 판 시계를 돌려도 되면 true.
   bool tick(double dt) {
     if (held) return false;
+    if (_pause > 0) {
+      _pause -= dt;
+      return false;
+    }
     if (_open) return true;
     _waited += dt;
     _steady = dt <= steadyDt ? _steady + 1 : 0;

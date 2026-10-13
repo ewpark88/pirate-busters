@@ -434,6 +434,30 @@ abstract class AppLocalizations {
   /// **'Sunk!'**
   String get sunkBanner;
 
+  /// No description provided for @bannerMyTurn.
+  ///
+  /// In en, this message translates to:
+  /// **'Your turn!'**
+  String get bannerMyTurn;
+
+  /// No description provided for @bannerStorm.
+  ///
+  /// In en, this message translates to:
+  /// **'Storm time!'**
+  String get bannerStorm;
+
+  /// No description provided for @bannerAnnihilation.
+  ///
+  /// In en, this message translates to:
+  /// **'Wiped out!'**
+  String get bannerAnnihilation;
+
+  /// Time decision banner comparing flood, viewer first (A54).
+  ///
+  /// In en, this message translates to:
+  /// **'Flood {mine}% : {foe}%'**
+  String bannerFloodCompare(String mine, String foe);
+
   /// No description provided for @surrenderQueued.
   ///
   /// In en, this message translates to:

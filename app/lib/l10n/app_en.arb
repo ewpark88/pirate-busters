@@ -124,6 +124,11 @@
     }
   },
   "sunkBanner": "Sunk!",
+  "bannerMyTurn": "Your turn!",
+  "bannerStorm": "Storm time!",
+  "bannerAnnihilation": "Wiped out!",
+  "bannerFloodCompare": "Flood {mine}% : {foe}%",
+  "@bannerFloodCompare": {"description": "Time decision banner comparing flood, viewer first (A54).", "placeholders": {"mine": {"type": "String"}, "foe": {"type": "String"}}},
   "surrenderQueued": "You will surrender at the start of your turn",
   "pirate_p01_name": "Octo the Bomber",
   "pirate_p01_desc": "Lobbed bomb that bursts in a 1-cell radius",

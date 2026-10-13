@@ -1,11 +1,13 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:pirate_busters/app/app_theme.dart';
 import 'package:pirate_busters/battle/battle_session.dart';
 import 'package:pirate_busters/battle/playback.dart';
 import 'package:pirate_busters/battle/session_views.dart';
+import 'package:pirate_busters/game/finale_director.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
 import 'package:pirate_busters/port/port_widgets.dart';
-import 'package:pirate_busters/ui/hud/foe_alert.dart';
+import 'package:pirate_busters/ui/hud/battle_banners.dart';
 import 'package:pirate_busters/ui/hud/gap_bar.dart';
 import 'package:pirate_busters/ui/hud/hud_scale.dart';
 import 'package:pirate_busters/ui/hud/hud_style.dart';
@@ -32,8 +34,13 @@ class BattleHud extends StatelessWidget {
     this.settled = true,
     this.onClick,
     this.calm = false,
+    this.banner,
     super.key,
   });
+
+  /// 전장 배너 (A54). 없으면 상대 턴 패널만 보인다.
+  final ValueListenable<BattleBanner?>? banner;
+  static final ValueNotifier<BattleBanner?> _noBanner = ValueNotifier(null);
 
   /// 화면 흔들림 줄이기 (설계서 §13.8): 게이지 흔들림·번쩍임을 뺀다.
   final bool calm;
@@ -78,9 +85,6 @@ class BattleHud extends StatelessWidget {
 
   /// 연출 중 위쪽 정보의 진하기.
   static const double busyOpacity = 0.25;
-
-  /// 상대 턴 배너 자리. 위쪽 패널·거리 막대·시간 판정 띠보다 아래다.
-  static const Alignment foeTurnAlignment = Alignment(0, -0.25);
 
   /// 흐려지고 돌아오는 시간.
   static const Duration fade = Duration(milliseconds: 220);
@@ -239,29 +243,12 @@ class BattleHud extends StatelessWidget {
           alignment: const Alignment(0, 0.35),
           child: HudPanel(child: Text(l10n.surrenderQueued)),
         ),
-      if (!myTurn && !session.isOver)
-        // 상대 턴 배너와 상대 턴 읽기(A34)는 위쪽 패널·시간 판정 띠 아래에 둔다
-        // (설계서 §13.4 턴 전환, A43 점검 버그 6: 띠 글자를 가렸다).
-        Align(
-          alignment: foeTurnAlignment,
-          child: IgnorePointer(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                HudPanel(
-                  key: const ValueKey('enemy-turn'),
-                  borderColor: HudColors.red,
-                  child: Text(
-                    l10n.enemyTurn,
-                    style: const TextStyle(fontSize: 24),
-                  ),
-                ),
-                const SizedBox(height: 6),
-                FoeAlert(session: session),
-              ],
-            ),
-          ),
-        ),
+      // 상대 턴 패널·턴 전환·폭풍·판 끝 배너 (설계서 §10.4, §13.4, A54).
+      BattleBanners(
+        session: session,
+        banner: banner ?? _noBanner,
+        myTurn: myTurn,
+      ),
       NoShooterBanner(active: session.autoEnd.noShooter),
       if (session.isOver && session.playback == null && settled)
         ResultOverlay(
