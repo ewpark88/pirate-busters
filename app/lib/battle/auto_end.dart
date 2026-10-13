@@ -43,16 +43,15 @@ class AutoEndClock {
     required bool canMove,
   }) {
     final fired = state.firesThisTurn;
-    final stuck =
-        fired < state.rules.firesPerTurn &&
-        !state.sides[state.activeSide].anyCanFire;
+    // 한 턴 한 발 (설계서 §2.3).
+    final stuck = fired < 1 && !state.sides[state.activeSide].anyCanFire;
     if (stuck && fired == 0) {
       noShooter = true;
       if (held) return false;
       _idleMs += dtMs;
       return _idleMs >= (canMove ? moveGraceMs : graceMs);
     }
-    final done = fired >= state.rules.firesPerTurn || stuck;
+    final done = fired >= 1 || stuck;
     return tick(dtMs, done: done, held: held);
   }
 

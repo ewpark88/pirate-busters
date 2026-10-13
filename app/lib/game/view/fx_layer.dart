@@ -164,7 +164,7 @@ class FxLayer extends Component {
   }) {
     var kind = AccentKind.impact;
     switch (family) {
-      case Family.lob || Family.air || Family.support:
+      case Family.lob || Family.air || Family.shock:
         explosion(at, radius: radius);
       case Family.direct:
         // 작은 불꽃과 구멍.

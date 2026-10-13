@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pb_sim/pb_sim.dart';
 import 'package:pirate_busters/app/providers.dart';
 import 'package:pirate_busters/battle/battle_setup.dart';
 import 'package:pirate_busters/data/fleet_store.dart';
@@ -47,31 +46,13 @@ class _ShipyardScreenState extends ConsumerState<ShipyardScreen> {
     _loadSlot(_slot);
   }
 
-  /// 확장 단계·선형 레벨이 바뀌면 그 격자로 다시 연다 (설계서 §3.1, §13.6).
-  void _syncHull(HullSpec hull) {
-    if (_model.hull.stage == hull.stage && _model.hull.level == hull.level) {
-      return;
-    }
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) return;
-      setState(() {
-        _model.dispose();
-        _model = ShipyardModel(hull: hull);
-        _loadSlot(_slot);
-      });
-    });
-  }
-
-  /// 칸이 비었으면 지금 단계의 추천 설계도 ‘밸런스’로 시작한다. 작은 단계에서 키운
-  /// 설계도는 새 칸이 빈 채로 이어 고친다 (설계서 §3.1).
+  /// 칸이 비었으면 추천 설계도 ‘밸런스’로 시작한다. 저장한 초안은 이어 고친다.
   void _loadSlot(int slot) {
     final catalog = ref.read(gameCatalogProvider);
-    final draft = _fleet.draft(slot, _ship.stage);
+    final draft = _fleet.draft(slot);
     if (draft != null && _model.loadJson(draft)) return;
     _model.load(
-      _ship.unlockedOnly(
-        catalog.preset(BattleSetup.defaultPreset, stage: _ship.stage).blueprint,
-      ),
+      _ship.unlockedOnly(catalog.preset(BattleSetup.defaultPreset).blueprint),
     );
   }
 
@@ -90,15 +71,9 @@ class _ShipyardScreenState extends ConsumerState<ShipyardScreen> {
     final l10n = AppLocalizations.of(context);
     final progress = ref.watch(progressProvider);
     final ship = progress.ship;
-    _syncHull(ship.hull);
     return PbScaffold(
       title: l10n.menuShipyard,
       actions: [
-        PbButton.small(
-          label: l10n.shipUpgrades,
-          icon: MetaIcons.gold,
-          onPressed: () => unawaited(showShipUpgrades(context)),
-        ),
         PbButton.small(
           label: l10n.loadPreset,
           icon: MetaIcons.blueprint,
@@ -197,7 +172,7 @@ class _ShipyardScreenState extends ConsumerState<ShipyardScreen> {
 
   /// 추천 설계도 불러오기 (설계서 §3.4).
   Future<void> _pickPreset(AppLocalizations l10n) async {
-    final presets = ref.read(gameCatalogProvider).presetsAt(_ship.stage);
+    final presets = ref.read(gameCatalogProvider).presets;
     final i = await showPbChoice<int>(
       context,
       title: l10n.loadPreset,

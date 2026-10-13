@@ -73,37 +73,22 @@ void main() {
     expect(eventsOf(events, SimEventKind.pirateDown, 1), hasLength(4));
   });
 
-  test('시나리오: 선체 내구도를 격침 기준(30%) 미만으로 만들면 격침으로 이긴다', () {
-    // 물에 거의 뜬 배(흘수선 ≈ 0)에 침수 없이: 용골 줄까지 직접 맞혀 내구도만으로 가린다.
-    final m = startScenario(
-      'wrecker',
-      sampleBlueprint(),
-      rules: const MatchRules(
-        waveLevel: 0,
-        waterlineDivisor: 1000,
-        floodFullCell: 0,
-        floodHalfCell: 0,
-      ),
-    );
-    runToEnd(
+  test('시나리오: 선장실 블록을 부수면 선장실 파괴로 이긴다', () {
+    // 해적 피해 없는 탄으로 선장실만 노린다(전멸이 먼저 나지 않게).
+    final m = startScenario('sapper', sampleBlueprint());
+    final events = runToEnd(
       m,
       shooter((s) {
-        final grid = s.sides[1].grid;
-        for (var y = 0; y < grid.height; y++) {
-          for (var x = 0; x < grid.width; x++) {
-            if (grid.hasBlock(x, y)) return (x, y);
-          }
+        for (final mod in s.sides[1].modules.list) {
+          if (mod.kind == ModuleKind.captain) return (mod.x, mod.y);
         }
         return null;
-      }),
+      }, highArc: true),
       passController,
     );
-    final grid = m.state.sides[1].grid;
-    expect(m.state.outcome, MatchOutcome.sunk);
+    expect(m.state.outcome, MatchOutcome.captainLost);
     expect(m.state.winner, 0);
-    expect(
-      grid.totalHp * 100,
-      lessThan(grid.initialTotalHp * m.state.rules.sunkHullPercent),
-    );
+    expect(m.state.sides[1].captainStanding, isFalse);
+    expect(eventsOf(events, SimEventKind.moduleDestroyed, 1), isNotEmpty);
   });
 }

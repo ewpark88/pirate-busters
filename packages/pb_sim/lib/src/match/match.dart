@@ -1,13 +1,10 @@
-import 'package:pb_sim/src/combat/ability_effects.dart';
 import 'package:pb_sim/src/combat/ammo_rules.dart';
 import 'package:pb_sim/src/combat/boarding.dart';
 import 'package:pb_sim/src/combat/flight.dart';
 import 'package:pb_sim/src/combat/launch.dart';
-import 'package:pb_sim/src/combat/module_effects.dart';
 import 'package:pb_sim/src/combat/volley.dart';
 import 'package:pb_sim/src/command/command.dart';
 import 'package:pb_sim/src/hash/state_hasher.dart';
-import 'package:pb_sim/src/match/boss_gimmick.dart';
 import 'package:pb_sim/src/match/judge.dart';
 import 'package:pb_sim/src/match/match_state.dart';
 import 'package:pb_sim/src/match/rules.dart';
@@ -16,7 +13,6 @@ import 'package:pb_sim/src/match/turn_end.dart';
 import 'package:pb_sim/src/match/turn_start.dart';
 import 'package:pb_sim/src/math/fx.dart';
 import 'package:pb_sim/src/math/trig.dart';
-import 'package:pb_sim/src/pirate/ability.dart';
 import 'package:pb_sim/src/pirate/ammo.dart';
 import 'package:pb_sim/src/pirate/pirate_spec.dart';
 import 'package:pb_sim/src/projectile/projectile.dart';
@@ -48,6 +44,12 @@ class Match {
     for (var i = 0; i < 2; i++) {
       final lineup = [for (final id in decks[i]) pirates.byId(id)];
       checkLineup(blueprints[i].hull, lineup, costLimits[i]);
+      if (lineup.length > blueprints[i].seatCount) {
+        throw ArgumentError(
+          '출전 인원이 자리 수보다 많다: ${lineup.length} > '
+          '${blueprints[i].seatCount}',
+        );
+      }
       sides.add(
         SideState(
           side: i,
@@ -101,7 +103,7 @@ class Match {
       final turn = state.turn;
       if (c is TapCommand && c.slot == pendingSlot) {
         _current.add(c);
-        _resolve(pending, c.ticks, tapDir: c.dir);
+        _resolve(pending, c.ticks);
         return;
       }
       _resolve(pending, -1);
@@ -110,7 +112,7 @@ class Match {
     if (!_turnOpen && !_openTurn()) return;
     _current.add(c);
     final at = effectiveMs(state, c.t);
-    if (at > state.rules.turnTimeFor(state.turn)) {
+    if (at > state.rules.turnTimeMs) {
       _endTurn(TurnEndReason.timeout);
       return;
     }
@@ -173,9 +175,15 @@ class Match {
 
   void _move(MoveCommand c, int at) {
     final side = state.sides[state.activeSide];
-    final left = state.rules.turnTimeFor(state.turn) - at;
+    final left = state.rules.turnTimeMs - at;
     final from = side.bowX;
-    final r = applyMove(side, state.rules, state.turn, c.dx, left);
+    final r = applyMove(
+      side,
+      state.otherOf(side.side),
+      state.rules,
+      c.dx,
+      left,
+    );
     if (r.distance == 0) return;
     state.busyUntilMs = at + r.durationMs;
     state.events.add(
@@ -187,8 +195,6 @@ class Match {
         value: r.distance,
       ),
     );
-    // 지나간 떠 있는 기뢰가 터진다(젤리, 설계서 §4.8).
-    triggerFloatMines(state, side.side, from);
     // 배를 흔들어 선 강습 해적을 떨어뜨린다 (설계서 §2.3, ADR-110).
     shakeOffBoarders(state, side, from);
     judgeInstant(state);
@@ -198,7 +204,8 @@ class Match {
   void _fire(FireCommand c, int at) {
     final active = state.activeSide;
     final side = state.sides[active];
-    if (state.firesThisTurn >= state.rules.firesPerTurn) return;
+    // 한 턴에 한 발 (설계서 §2.3).
+    if (state.firesThisTurn >= 1) return;
     if (!side.canFire(c.slot)) return;
     if (c.angle < 0 || c.angle >= fullTurnMdeg) return;
     if (c.power < 0 || c.power > maxFirePower) return;
@@ -210,7 +217,7 @@ class Match {
       power: c.power,
       ms: ms,
     );
-    markFiredWithModules(side, c.slot);
+    side.crew.markFired(c.slot);
     side.shotsFired++;
     state
       ..firesThisTurn += 1
@@ -226,9 +233,8 @@ class Match {
         ),
       );
     final pending = Volley(shots, ms);
-    // 분열탄과 방향 전환 탄은 TAP 을 기다린다 (설계서 §4.8).
-    final first = shots.first.spec;
-    if (first.ammo == AmmoType.split || first.ability == Ability.steer) {
+    // 분열탄은 TAP 을 기다린다 (설계서 §4.8).
+    if (shots.first.spec.ammo == AmmoType.split) {
       _pending = pending;
     } else {
       _resolve(pending, -1);
@@ -237,43 +243,32 @@ class Match {
 
   /// 발사한 탄을 떨어질 때까지 계산하고 그만큼 턴 타이머를 멈춘다. [closeTurn] 이면
   /// 판이 끝나거나 발사를 다 썼을 때 턴을 닫는다.
-  void _resolve(
-    Volley shot,
-    int tapTick, {
-    int tapDir = 0,
-    bool closeTurn = true,
-  }) {
+  void _resolve(Volley shot, int tapTick, {bool closeTurn = true}) {
     _pending = null;
     final before = state.events.length;
-    final ticks = runVolley(
-      state,
-      shot.shots,
-      shot.ms,
-      tapTick: tapTick,
-      tapDir: tapDir,
-    );
+    final ticks = runVolley(state, shot.shots, shot.ms, tapTick: tapTick);
     state.pausedMs +=
         roundDiv(ticks * 1000, simTickHz) + breakPauseOf(state, from: before);
-    // 화재·붕괴처럼 착탄 밖에서 밟은 블록이 없어졌으면 떨어진다 (ADR-110).
+    // 붕괴처럼 착탄 밖에서 밟은 블록이 없어졌으면 떨어진다 (ADR-110).
     for (final s in state.sides) {
       dropUnsupportedBoarders(s, state.events);
     }
     judgeInstant(state);
     if (!closeTurn) return;
-    // 2발을 다 쏴도 턴은 닫지 않는다: 유예 뒤 END_TURN 은 컨트롤러가 낸다
+    // 쏴도 턴은 닫지 않는다: 탄이 떨어지고 유예 뒤 END_TURN 은 컨트롤러가 낸다
     // (설계서 §2.2, ADR-042).
     if (state.isOver) _endTurn(TurnEndReason.matchOver);
   }
 
-  /// 턴 끝 처리 (설계서 §2.3): 화재 → 침수 → 수리·펌프 → 쿨다운 → 바람.
-  /// 30턴이 끝나면 시간 판정 (설계서 §2.4).
+  /// 턴 끝 처리 (설계서 §2.3): 크라키 촉수 → 쏜 기록 비움 → 바람·턴 넘김.
+  /// 마지막 턴이 끝나면 턴 제한 판정 (설계서 §2.7).
   void _endTurn(TurnEndReason reason) {
     final pending = _pending;
     if (pending != null) _resolve(pending, -1, closeTurn: false);
     final side = state.activeSide;
     final turn = state.turn;
     if (!state.isOver) endTurnUpkeep(state);
-    state.sides[side].crew.endOwnTurn(cooldownStepOf(state.rules, side));
+    state.sides[side].crew.endOwnTurn();
     state.events.add(
       SimEvent(
         SimEventKind.turnEnd,

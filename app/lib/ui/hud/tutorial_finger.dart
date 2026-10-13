@@ -14,9 +14,6 @@ enum FingerCue {
 
   /// 이동 버튼을 누른다(튜토리얼 2).
   move,
-
-  /// 침수량을 본다(튜토리얼 3).
-  flood,
 }
 
 /// 튜토리얼 손가락 안내 (설계서 §13.1): 지금 해야 할 조작을 화면에서 가리킨다.
@@ -51,7 +48,6 @@ class TutorialFinger extends StatefulWidget {
     if (step == 2 && me.offset == 0 && me.shotsFired == 0) {
       return FingerCue.move;
     }
-    if (step == 3 && me.flood > 0 && me.shotsFired == 0) return FingerCue.flood;
     if (me.shotsFired > 0 || session.aim != null) return null;
     return session.selected == null ? FingerCue.tapCard : FingerCue.pullBack;
   }
@@ -121,8 +117,6 @@ class _FingerPainter extends CustomPainter {
       case FingerCue.move:
         // 꾹 누르기: 손가락 둘레에 채워지는 원호 (A25 점검: 누르기로만 보였다).
         _hold(canvas, _at(size, const Alignment(-0.7, 0.82)));
-      case FingerCue.flood:
-        _tap(canvas, _at(size, const Alignment(-0.82, -0.78)));
       case FingerCue.pullBack:
         // 고른 해적 몸에서 뒤·아래로 당기는 길을 따라 점이 움직인다.
         final path = pull;

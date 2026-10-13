@@ -6,10 +6,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pb_sim/pb_sim.dart';
 import 'package:pirate_busters/battle/battle_session.dart';
-import 'package:pirate_busters/data/fleet_store.dart';
 import 'package:pirate_busters/game/battle_game.dart';
 import 'package:pirate_busters/game/coords.dart';
-import 'package:pirate_busters/game/view/hull_trim.dart';
 import 'package:pirate_busters/game/view/plank_join.dart';
 import 'package:pirate_busters/game/view/ship_view.dart';
 
@@ -23,7 +21,7 @@ const int _e = ShipGrid.emptyCell;
 
 void main() {
   group('판자 이음 (설계서 §10.2)', () {
-    test('같은 나무 재질 이웃 쪽만 잇고, 철판·망사·다른 재질은 잇지 않는다', () {
+    test('같은 나무 재질 이웃 쪽만 잇고, 철판·다른 재질은 잇지 않는다', () {
       // 3×2, y = 0 이 아래 줄: [참 참 소] / [참 철 _]
       final mats = [
         BlockMaterial.oak.index,
@@ -46,41 +44,6 @@ void main() {
         PlankJoin.trimmed(src, PlankJoin.left | PlankJoin.up),
         const ui.Rect.fromLTRB(2, 2, 64, 64),
       );
-    });
-  });
-
-  group('선체 마감 (설계서 §3.4, §10.2)', () {
-    test('슬루프 틀 계단은 양쪽 두 줄씩 네 개이고, 칸이 부서지면 그 판도 없다', () {
-      const hull = HullSpec.sloop;
-      final all = HullTrim.steps(hull, hull.inFrame);
-      expect(all, hasLength(4));
-      expect(all.map((s) => (s.y, s.low, s.high, s.left)), [
-        (0, 2, 1, true),
-        (0, 9, 10, false),
-        (1, 1, 0, true),
-        (1, 10, 11, false),
-      ]);
-      final broken = HullTrim.steps(
-        hull,
-        (x, y) => hull.inFrame(x, y) && !(x == 2 && y == 0),
-      );
-      expect(broken, hasLength(3), reason: '붙은 칸이 부서지면 같이 사라진다');
-    });
-
-    test('틀이 생기기 전에 저장한 설계도는 틀 밖 칸만 빼고 살린다', () {
-      final preset = testCatalog.preset('balanced').blueprint.toJson();
-      final old = {
-        ...preset,
-        'cells': [
-          ...preset['cells']! as List<Object?>,
-          [0, 0, 'oak'],
-          [11, 0, 'oak'],
-        ],
-      };
-      expect(Blueprint.problemOfJson(old), isNotNull);
-      final fitted = FleetStore.fitToFrame(old);
-      expect(Blueprint.problemOfJson(fitted), isNull);
-      expect(fitted['cells'], preset['cells']);
     });
   });
 

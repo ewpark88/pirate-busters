@@ -10,11 +10,9 @@ import 'package:pb_sim/src/match/rules.dart';
 /// 1칸의 월드 단위.
 const int cellUnit = 1000;
 
-/// 판 시작 때 두 선체 끝(뱃머리) 사이 간격: 22칸 (설계서 §2.6, 범위 2~42칸, ADR-048).
+/// 판 시작 때 두 선체 끝(뱃머리) 사이 간격: 22칸 (설계서 §2.1, BALANCE.md A2.6).
+/// 이동 한계는 `MatchRules.minGap`·`MatchRules.backRoom` 이다.
 const int startGap = 22 * cellUnit;
-
-/// 배마다 시작 위치에서 전진·후퇴할 수 있는 거리: 10칸 (설계서 §2.6, 이동은 M3).
-const int moveRange = 10 * cellUnit;
 
 /// 투사체 속도 단위: 월드 단위(1/1000칸)의 1/[velocityScale]. 중력·바람을 정수로
 /// 나타내려고 속도만 더 잘게 센다 (ADR-043). 위치는 틱마다 나머지를 이어 받는다.

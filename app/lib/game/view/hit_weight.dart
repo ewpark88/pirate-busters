@@ -19,10 +19,9 @@ class HitWeight {
       switch (e.kind) {
         case SimEventKind.impact:
           hit = true;
-        // 터진 설치탄·떠 있는 기뢰는 비행 착탄 없이 블록을 깬다 (§4.8, A61).
+        // 터진 설치탄은 비행 착탄 없이 블록을 깬다 (§4.8, A61).
         case SimEventKind.effectFired
-            when e.value == EffectKind.mineBlast.index ||
-                e.value == EffectKind.floatMine.index:
+            when e.value == EffectKind.mineBlast.index:
           hit = true;
         case SimEventKind.blockDestroyed:
           s += perDestroyed;
@@ -34,12 +33,6 @@ class HitWeight {
           s += perFell;
         case SimEventKind.pirateDown:
           s += perDown;
-        // 화약고·연료통 유폭만 크다(다른 모듈은 블록 파괴로 이미 셌다).
-        case SimEventKind.moduleDestroyed
-            when ModuleKind.values[e.value] == ModuleKind.magazine ||
-                ModuleKind.values[e.value] == ModuleKind.fuelTank:
-          hit = true;
-          s += perBlast;
         case _:
           break;
       }
@@ -64,7 +57,6 @@ class HitWeight {
   static const int perPirateDamage = 3;
   static const int perFell = 150;
   static const int perDown = 300;
-  static const int perBlast = 400;
   static const int crit = 150;
   static const int max = 1000;
 

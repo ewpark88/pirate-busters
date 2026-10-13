@@ -20,14 +20,14 @@ void main() {
     expect(() => SimOptions.parse(['--left', 'god']), throwsFormatException);
   });
 
-  test('판 구성은 시드로 정해지고 덱은 코스트 한도 안 4명이다 (§4.5)', () {
+  test('판 구성은 시드로 정해지고 덱은 코스트 한도 안 5명(선실 4 + 망대)이다 (§4.5)', () {
     for (var seed = 1; seed < 40; seed++) {
       final a = factory.setupFor(seed, const [AiLevel.normal, AiLevel.normal]);
       final b = factory.setupFor(seed, const [AiLevel.normal, AiLevel.normal]);
       expect(a.decks, b.decks);
       expect(a.blueprints, b.blueprints);
       for (final deck in a.decks) {
-        expect(deck, hasLength(4));
+        expect(deck, hasLength(5));
         expect(
           deckProblem(
             HullSpec.sloop,
@@ -102,7 +102,7 @@ void main() {
     final results = [
       for (var i = 0; i < 40; i++)
         game(
-          i < 20 ? MatchOutcome.timeDecision : MatchOutcome.sunk,
+          i < 20 ? MatchOutcome.timeDecision : MatchOutcome.captainLost,
           0,
         ),
     ];

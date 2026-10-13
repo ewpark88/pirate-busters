@@ -10,7 +10,7 @@ import 'package:pirate_busters/ui/kit/kit_motion.dart';
 import 'package:pirate_busters/ui/labels.dart';
 import 'package:pirate_busters/ui/meta_icons.dart';
 
-/// 팔레트 묶음: 재질 5종, 모듈, 돛대 5종 (설계서 §13.6, §3.3).
+/// 팔레트 묶음: 재질 3종, 선장실, 돛대 (설계서 §13.6, §3.3).
 enum ToolGroup { materials, modules, masts }
 
 /// 재질·모듈·돛대 팔레트 (설계서 §13.6). 묶음 탭 아래에 같은 크기 카드를 2열로 두고,

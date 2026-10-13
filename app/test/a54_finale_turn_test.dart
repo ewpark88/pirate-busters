@@ -52,7 +52,7 @@ void main() {
     });
   });
 
-  group('A54 판 끝 배너 (설계서 §10.4 격침·마무리)', () {
+  group('A54 판 끝 배너 (설계서 §10.4 마무리)', () {
     test('끝난 방식마다 배너가 정해지고, 항복은 배너 없이 바로 결과로 간다', () {
       final s = testSetup.newMatch(3).state;
       BattleBannerKind? kind(MatchOutcome o, int winner) {
@@ -62,21 +62,18 @@ void main() {
         return FinaleDirector.endKindOf(s);
       }
 
-      expect(kind(MatchOutcome.sunk, 0), BattleBannerKind.sunk);
-      expect(kind(MatchOutcome.floodSunk, 1), BattleBannerKind.sunk);
+      expect(kind(MatchOutcome.captainLost, 0), BattleBannerKind.captainLost);
       expect(kind(MatchOutcome.annihilation, 0), BattleBannerKind.annihilation);
       expect(kind(MatchOutcome.timeDecision, 0), BattleBannerKind.timeDecision);
       expect(kind(MatchOutcome.timeDecision, -1), BattleBannerKind.draw);
       expect(kind(MatchOutcome.surrender, 1), isNull);
     });
 
-    testWidgets('시간 판정 배너는 양쪽 침수량을 나란히 보여 준다', (tester) async {
+    testWidgets('턴 제한 판정 배너가 뜬다', (tester) async {
       final session = _session();
-      final st = session.state
+      session.state
         ..outcome = MatchOutcome.timeDecision
         ..winner = 0;
-      st.sides[0].flood = 20;
-      st.sides[1].flood = 135;
       final banner = ValueNotifier<BattleBanner?>(
         const BattleBanner(BattleBannerKind.timeDecision, 1),
       );
@@ -85,7 +82,6 @@ void main() {
       );
       await tester.pump(const Duration(milliseconds: 400));
       expect(find.text('시간 판정'), findsOneWidget);
-      expect(find.text('침수 2.0% : 13.5%'), findsOneWidget);
     });
   });
 
@@ -111,25 +107,13 @@ void main() {
       await tester.pump(const Duration(milliseconds: 300));
       expect(find.byKey(const ValueKey('enemy-turn')), findsOneWidget);
     });
-
-    testWidgets('폭풍 타임 배너가 뜬다', (tester) async {
-      final banner = ValueNotifier<BattleBanner?>(null);
-      await tester.pumpWidget(
-        _app(BattleBanners(session: _session(), banner: banner, myTurn: true)),
-      );
-      banner.value = const BattleBanner(BattleBannerKind.storm, 2);
-      await tester.pump(const Duration(milliseconds: 300));
-      expect(find.text('폭풍 타임!'), findsOneWidget);
-      await tester.pump(BattleBanners.turnShown);
-      await tester.pump();
-    });
   });
 
-  group('A54 배너 골든 (설계서 §10.4 격침, §13.4 턴 전환)', () {
+  group('A54 배너 골든 (설계서 §10.4 마무리, §13.4 턴 전환)', () {
     setUpAll(loadAppFonts);
     for (final locale in supportedLocales) {
       for (final (name, kind) in const [
-        ('sunk', BattleBannerKind.sunk),
+        ('captain', BattleBannerKind.captainLost),
         ('myturn', BattleBannerKind.myTurn),
       ]) {
         testWidgets(
@@ -139,9 +123,9 @@ void main() {
             tester.view.devicePixelRatio = 2;
             addTearDown(tester.view.reset);
             final session = _session();
-            if (kind == BattleBannerKind.sunk) {
+            if (kind == BattleBannerKind.captainLost) {
               session.state
-                ..outcome = MatchOutcome.sunk
+                ..outcome = MatchOutcome.captainLost
                 ..winner = 0;
             }
             final banner = ValueNotifier<BattleBanner?>(null);

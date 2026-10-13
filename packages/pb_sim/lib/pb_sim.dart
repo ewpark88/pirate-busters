@@ -5,7 +5,7 @@
 /// (`tool/check_architecture.dart` 가 검사한다).
 library;
 
-export 'src/combat/ammo_rules.dart' show armShot, flockDropHeight, steerHoming;
+export 'src/combat/ammo_rules.dart' show armShot, steerHoming;
 export 'src/combat/boarding.dart'
     show
         boardDefenseDamage,
@@ -15,22 +15,21 @@ export 'src/combat/boarding.dart'
         hasBoarders,
         isBoarderBite,
         shakeOffDistance;
-export 'src/combat/crack_spread.dart';
 export 'src/combat/flight.dart' show predictFirstHit;
-export 'src/combat/hit_effects.dart' show Reach, reachOf;
 export 'src/combat/impact.dart';
 export 'src/combat/launch.dart';
+export 'src/combat/legend_effects.dart'
+    show
+        legendHalfPercent,
+        skeletonReach,
+        tentacleBlockDamage,
+        torpedoDepthLimit;
 export 'src/combat/preview.dart';
-export 'src/combat/unique_effects.dart' show torpedoDepthLimit;
-export 'src/combat/unique_turns.dart' show armUnique;
 export 'src/command/command.dart';
 export 'src/hash/state_hasher.dart';
-export 'src/match/barrier.dart';
-export 'src/match/boss_gimmick.dart';
 export 'src/match/controller.dart';
 export 'src/match/headless.dart';
 export 'src/match/judge.dart';
-export 'src/match/mast_seats.dart';
 export 'src/match/match.dart';
 export 'src/match/match_state.dart';
 export 'src/match/rules.dart';
@@ -45,7 +44,6 @@ export 'src/pirate/ability.dart';
 export 'src/pirate/ammo.dart';
 export 'src/pirate/crew.dart';
 export 'src/pirate/pirate_spec.dart';
-export 'src/pirate/range_grade.dart';
 export 'src/projectile/grid_trace.dart';
 export 'src/projectile/projectile.dart';
 export 'src/projectile/shot_trace.dart';
@@ -53,7 +51,6 @@ export 'src/random/xorshift32.dart';
 export 'src/replay/replay.dart';
 export 'src/ship/blueprint.dart';
 export 'src/ship/build_check.dart';
-export 'src/ship/flooding.dart';
 export 'src/ship/hull.dart';
 export 'src/ship/material.dart';
 export 'src/ship/module.dart';

@@ -115,19 +115,6 @@ void main() {
             final room = ship.sprites.get(BattleSprites.roomFile(v)).image;
             expect((room.width, room.height), (64, 64));
           }
-          // 젖은 줄 판정은 시뮬레이션의 선실 잠김 판정과 같아야 한다(ADR-061).
-          final flood = side.flood;
-          for (var f = 0; f <= fullFlood; f += fullFlood ~/ 10) {
-            side.flood = f;
-            for (var slot = 0; slot < side.crew.size; slot++) {
-              expect(
-                BattleSprites.isWet(side.cabins[slot].y, side.draft),
-                side.isCabinFlooded(slot),
-                reason: '침수 $f 슬롯 $slot',
-              );
-            }
-          }
-          side.flood = flood;
         }
       });
       expect(tester.takeException(), isNull);

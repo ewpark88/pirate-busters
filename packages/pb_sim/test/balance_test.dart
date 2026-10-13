@@ -49,12 +49,6 @@ void main() {
       BlockMaterial.iron: [
         (4, i), (8, i), (3, c), (4, i), (6, i), (4, i), (4, i), (8, i), //
       ],
-      BlockMaterial.cork: [
-        (1, d), (2, h), (1, d), (1, d), (1, d), (1, d), (1, d), (2, h), //
-      ],
-      BlockMaterial.net: [
-        (1, d), (1, d), (1, d), (1, d), (1, d), (1, d), (1, d), (1, d), //
-      ],
     };
     for (final MapEntry(key: m, value: row) in table.entries) {
       test('${m.name}: 표의 발 수와 첫 발 뒤 손상 단계가 같다', () {
@@ -67,70 +61,38 @@ void main() {
     });
   });
 
-  group('BALANCE.md B4: 격침 속도 (설계서 §2.4)', () {
-    test('일반 폭발탄 한 발은 블록 피해 104(중심 40 + 균열 조각 4개 × 16, A4.8 바깥 40%)', () {
-      const octo = PirateSpec(
-        id: 'octo',
-        rarity: Rarity.common,
-        hp: 240,
-        cooldownTurns: 0,
-        blockDamage: 40,
-        pirateDamage: 80,
-        blastRadius: 1,
-        ammoValue: 40,
-      );
-      final ship = SideState(
-        side: 1,
-        blueprint: Blueprint(
-          boxSloop,
-          [
-            for (var x = 0; x < 12; x++) BlockCell(x, 0, BlockMaterial.oak),
-            for (var x = 5; x <= 7; x++) BlockCell(x, 1, BlockMaterial.oak),
-            const BlockCell(6, 2, BlockMaterial.oak),
-          ],
-          cabins: const [
-            CabinCell(0, 0),
-            CabinCell(1, 0),
-            CabinCell(2, 0),
-            CabinCell(3, 0),
-          ],
-          modules: const [ModuleCell(11, 0, ModuleKind.captain)],
-        ),
-        lineup: const [],
-        rules: const MatchRules(),
-      );
-      final before = ship.grid.totalHp;
-      resolveImpact(
-        ship,
-        spec: octo,
-        cx: 6,
-        cy: 1,
-        x: 0,
-        y: 0,
-        events: [],
-        rng: XorShift32(7),
-      );
-      // 두 걸음 안이 모두 참나무라 조각 16 이 넘치지 않는다. (5, 2)·(7, 2) 가 비어
-      // 그쪽을 고른 조각은 바다로 흩어지므로 104 이하이고, 가득 찬 선체의 104 는
-      // crack_spread_test 가 본다.
-      final loss = before - ship.grid.totalHp;
-      expect(loss, lessThanOrEqualTo(104));
-      expect((loss - 40) % 16, 0);
-    });
-
-    test('기준 배 A(테스트 슬루프): 내구도 2,110, 격침(40%)까지 1,267 → 일반 폭발탄 13발', () {
-      final grid = ShipGrid.fromBlueprint(sampleBlueprint());
-      expect(sampleBlueprint().cost, 57);
-      expect(grid.initialTotalHp, 2110);
-      // 격침: 남은 내구도 × 100 < 시작 × 40 (A2.4) → 843 이하로 깎아야 한다.
-      final percent = const MatchRules().sunkHullPercent;
-      var toCut = 0;
-      while ((grid.initialTotalHp - toCut) * 100 >=
-          grid.initialTotalHp * percent) {
-        toCut++;
-      }
-      expect(toCut, 1267);
-      expect((toCut + 103) ~/ 104, 13);
-    });
+  test('일반 폭발탄 한 발은 블록 피해 중심 40 + 둘레 4칸 × 12 (A4.8 바깥 30%)', () {
+    const octo = PirateSpec(
+      id: 'octo',
+      rarity: Rarity.common,
+      hp: 240,
+      blockDamage: 40,
+      pirateDamage: 80,
+      blastRadius: 1,
+      ammoValue: 30,
+    );
+    final ship = SideState(
+      side: 1,
+      blueprint: Blueprint(
+        boxSloop,
+        [
+          for (var x = 0; x < 12; x++) BlockCell(x, 0, BlockMaterial.oak),
+          for (var x = 5; x <= 7; x++) BlockCell(x, 1, BlockMaterial.oak),
+          const BlockCell(6, 2, BlockMaterial.oak),
+        ],
+        cabins: const [
+          CabinCell(0, 0),
+          CabinCell(1, 0),
+          CabinCell(2, 0),
+          CabinCell(3, 0),
+        ],
+        modules: const [ModuleCell(11, 0, ModuleKind.captain)],
+      ),
+      lineup: const [],
+      rules: const MatchRules(),
+    );
+    final before = ship.grid.totalHp;
+    resolveImpact(ship, spec: octo, cx: 6, cy: 1, x: 0, y: 0, events: []);
+    expect(before - ship.grid.totalHp, 40 + 4 * 12);
   });
 }

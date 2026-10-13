@@ -17,7 +17,7 @@ class GoldenScenario {
   final MatchResult Function() run;
 }
 
-const MatchRules _calm = MatchRules(waveLevel: 0);
+const MatchRules _calm = MatchRules(calmSea: true);
 
 MatchResult _sample(
   int seed,
@@ -53,26 +53,9 @@ MatchResult _versus(
   right: passController,
 );
 
-/// 물 위로 드러난 가장 낮은 블록, 뱃머리(쏘는 쪽)부터 (흘수선 공격).
-(int, int)? _waterlineBlock(MatchState s) {
-  final enemy = s.sides[1];
-  final grid = enemy.grid;
-  for (var y = 0; y < grid.height; y++) {
-    // 수면 위로 반 칸 이상 드러난 줄만 노린다(겨우 드러난 칸은 탄이 닿기 어렵다).
-    if ((y + 1) * cellUnit <= enemy.draft + cellUnit ~/ 2) continue;
-    for (var x = grid.width - 1; x >= 0; x--) {
-      if (grid.hasBlock(x, y)) return (x, y);
-    }
-  }
-  return null;
-}
-
-(int, int)? _anyBlock(MatchState s) {
-  final grid = s.sides[1].grid;
-  for (var y = 0; y < grid.height; y++) {
-    for (var x = 0; x < grid.width; x++) {
-      if (grid.hasBlock(x, y)) return (x, y);
-    }
+(int, int)? _captain(MatchState s) {
+  for (final m in s.sides[1].modules.list) {
+    if (m.kind == ModuleKind.captain) return (m.x, m.y);
   }
   return null;
 }
@@ -96,24 +79,11 @@ final List<int> randomGoldenSeeds = [
   for (var i = 1; i <= 90; i++) 1000 + i,
 ];
 
-/// 판 끝 방식마다 하나씩(6판) + 무작위 94판 = 100판.
+/// 판 끝 방식마다 하나씩(5판) + 무작위 94판 = 99판.
 final List<GoldenScenario> goldenScenarios = [
   GoldenScenario(
-    'sunk_hull',
-    () => _versus(
-      'wrecker',
-      shooter(_anyBlock),
-      rules: const MatchRules(
-        waveLevel: 0,
-        waterlineDivisor: 1000,
-        floodFullCell: 0,
-        floodHalfCell: 0,
-      ),
-    ),
-  ),
-  GoldenScenario(
-    'sunk_flood',
-    () => _versus('sapper', shooter(_waterlineBlock)),
+    'captain_lost',
+    () => _versus('sapper', shooter(_captain, highArc: true)),
   ),
   GoldenScenario(
     'annihilation',
@@ -123,7 +93,7 @@ final List<GoldenScenario> goldenScenarios = [
     'time_decision_win',
     () => _versus(
       'gun',
-      shooter((s) => s.turn <= 2 ? _waterlineBlock(s) : null),
+      shooter((s) => s.turn <= 4 ? _cabin(s) : null, highArc: true),
     ),
   ),
   GoldenScenario(

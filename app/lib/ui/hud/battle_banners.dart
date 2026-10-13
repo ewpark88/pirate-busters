@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart' show NumberFormat;
 import 'package:pirate_busters/app/app_theme.dart';
 import 'package:pirate_busters/battle/battle_session.dart';
 import 'package:pirate_busters/game/finale_director.dart';
@@ -123,13 +122,9 @@ class _BattleBannersState extends State<BattleBanners> {
               child: PopIn(
                 key: ValueKey('turn-banner-${turn.serial}'),
                 child: OutlinedText(
-                  turn.kind == BattleBannerKind.storm
-                      ? l10n.bannerStorm
-                      : l10n.bannerMyTurn,
+                  l10n.bannerMyTurn,
                   size: 46,
-                  color: turn.kind == BattleBannerKind.storm
-                      ? HudColors.danger
-                      : HudColors.warn,
+                  color: HudColors.warn,
                   font: AppFonts.display,
                   stroke: 6,
                 ),
@@ -142,52 +137,23 @@ class _BattleBannersState extends State<BattleBanners> {
   }
 
   Widget _end(BuildContext context, AppLocalizations l10n, BattleBanner b) {
-    final sides = widget.session.state.sides;
-    final format = NumberFormat(
-      '0.0',
-      Localizations.localeOf(context).toLanguageTag(),
-    );
-    String flood(int side) => format.format(sides[side].flood / 10);
-    // 사람 한 명이면 그쪽이 ‘나’(앞), 핫시트는 진영 1 이 앞 (TimeVerdictBar 와 같다).
-    final humans = widget.session.humanSides;
-    final me = humans.length == 1 ? humans.first : 0;
+    // 선장실 파괴 전용 문구는 S3 에서 붙인다(지금은 격침 배너 문구).
     final title = switch (b.kind) {
-      BattleBannerKind.sunk => l10n.sunkBanner,
       BattleBannerKind.annihilation => l10n.bannerAnnihilation,
       BattleBannerKind.draw => l10n.resultDraw,
-      _ => l10n.outcomeTimeDecision,
+      BattleBannerKind.timeDecision => l10n.outcomeTimeDecision,
+      _ => l10n.bannerCaptainLost,
     };
-    final compare =
-        b.kind == BattleBannerKind.timeDecision ||
-        b.kind == BattleBannerKind.draw;
     return Align(
       alignment: const Alignment(0, -0.1),
       child: PopIn(
         key: ValueKey('end-banner-${b.serial}'),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            OutlinedText(
-              title,
-              size: 56,
-              color: HudColors.warn,
-              font: AppFonts.display,
-              stroke: 7,
-            ),
-            if (compare) ...[
-              const SizedBox(height: 6),
-              HudPanel(
-                key: const ValueKey('flood-compare'),
-                child: Text(
-                  l10n.bannerFloodCompare(flood(me), flood(1 - me)),
-                  style: const TextStyle(
-                    fontSize: 22,
-                    color: Color(0xFF9CC8F0),
-                  ),
-                ),
-              ),
-            ],
-          ],
+        child: OutlinedText(
+          title,
+          size: 56,
+          color: HudColors.warn,
+          font: AppFonts.display,
+          stroke: 7,
         ),
       ),
     );

@@ -1,21 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart' show NumberFormat;
 import 'package:pb_sim/pb_sim.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
 import 'package:pirate_busters/ui/hud/hud_gauge.dart';
 import 'package:pirate_busters/ui/hud/hud_style.dart';
 import 'package:pirate_busters/ui/meta_icons.dart';
 
-/// 한 배의 선체 내구도·침수량·생존 선원 (설계서 §13.4, A33 디자인).
+/// 한 배의 선체 내구도·생존 선원 (설계서 §13.4, A33 디자인).
 ///
 /// 진영색 원형 배지(선체 아이콘)가 패널 바깥쪽에 겹쳐 붙고, 굵은 선체 게이지 아래에
-/// 침수 숫자와 선원 칸을 둔다. 오른쪽 배는 좌우 대칭이다. 선체 값 [hull] 은 화면에
+/// 선원 칸을 둔다. 오른쪽 배는 좌우 대칭이다. 선체 값 [hull] 은 화면에
 /// 보이는 값(탄이 닿은 만큼)이라 착탄 순간에 줄어든다.
 class ShipStatusPanel extends StatelessWidget {
   const ShipStatusPanel({
     required this.side,
     required this.hull,
-    required this.sunkPercent,
     this.calm = false,
     super.key,
   });
@@ -24,9 +22,6 @@ class ShipStatusPanel extends StatelessWidget {
 
   /// 0~1.
   final double hull;
-
-  /// 격침 기준(선체 %, 설계서 §2.4). 이보다 10%p 위부터 막대가 경고색이 된다.
-  final int sunkPercent;
 
   /// 화면 흔들림 줄이기 (설계서 §13.8).
   final bool calm;
@@ -39,10 +34,6 @@ class ShipStatusPanel extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     final team = HudColors.team(side.side);
     final mirror = side.side == 1;
-    final flood = NumberFormat(
-      '0.0',
-      Localizations.localeOf(context).toLanguageTag(),
-    ).format(side.flood / 10);
     final panel = Container(
       margin: EdgeInsets.only(
         left: mirror ? 0 : badge / 2,
@@ -77,44 +68,14 @@ class ShipStatusPanel extends StatelessWidget {
               color: team,
               height: 16,
               calm: calm,
-              warnAt: (sunkPercent + 10) / 100,
-              // 격침은 기준 '미만'이라 내려 읽어야 판정과 맞는다.
               label: l10n.hullPercent((hull * 100).floor()),
               // 수리로 오른 몫 (A41 제안 3, A57).
               gainLabel: l10n.hullGain,
             ),
             const SizedBox(height: 4),
-            Row(
-              children: [
-                if (mirror) ...[
-                  _CrewPips(side: side),
-                  const SizedBox(width: 4),
-                ],
-                Expanded(
-                  child: Row(
-                    mainAxisAlignment: mirror
-                        ? MainAxisAlignment.end
-                        : MainAxisAlignment.start,
-                    children: [
-                      MetaIcons.image(MetaIcons.flood, size: 14),
-                      const SizedBox(width: 2),
-                      Flexible(
-                        child: FittedBox(
-                          fit: BoxFit.scaleDown,
-                          child: Text(
-                            l10n.flood(flood),
-                            style: const TextStyle(color: Color(0xFF9CC8F0)),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                if (!mirror) ...[
-                  const SizedBox(width: 4),
-                  _CrewPips(side: side),
-                ],
-              ],
+            Align(
+              alignment: mirror ? Alignment.centerRight : Alignment.centerLeft,
+              child: _CrewPips(side: side),
             ),
           ],
         ),
@@ -170,8 +131,6 @@ class _CrewPips extends StatelessWidget {
               decoration: BoxDecoration(
                 color: p.status == PirateStatus.down
                     ? HudColors.panelHi
-                    : p.status == PirateStatus.swimming
-                    ? HudColors.warn
                     : HudColors.team(side.side),
                 borderRadius: BorderRadius.circular(2),
                 border: Border.all(width: .8),

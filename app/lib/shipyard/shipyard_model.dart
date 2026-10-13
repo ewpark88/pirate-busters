@@ -83,7 +83,7 @@ class ShipyardModel extends ChangeNotifier {
       if (_modules[i] case final k?) ModuleCell(i % width, i ~/ width, k),
   ];
 
-  ShipStats get stats => ShipStats.of(hull, cells, modules);
+  ShipStats get stats => ShipStats.of(cells, modules);
 
   /// 규칙 문제(개발용 글), 없으면 null. 화면은 문제 글 대신 빨간 칸과 수치를 보인다.
   String? get problem =>
@@ -174,7 +174,7 @@ class ShipyardModel extends ChangeNotifier {
 
   /// 지금 도구를 ([x], [y]) 칸에 쓴다. 끌기 중이면 같은 획으로 친다.
   void apply(int x, int y) {
-    // 선체 틀 밖에는 아무것도 놓지 않는다 (설계서 §3.4).
+    // 격자 밖에는 아무것도 놓지 않는다 (설계서 §3.4).
     if (!hull.inFrame(x, y)) return;
     if (!_strokeOpen) _remember();
     final i = y * width + x;
@@ -232,31 +232,28 @@ class ShipyardModel extends ChangeNotifier {
     for (final (x, y) in mastSeats(hull, modules)) y * width + x,
   };
 
-  /// 블록 위나 돛 자리에서만. 선실 슬롯이 다 차면 더 놓지 않는다. 선실을 빼면
-  /// 선실 옵션도 뺀다.
+  /// 블록 위에서만 (망대는 돛대 꼭대기에 저절로 생긴다, 설계서 §3.3). 선실 슬롯이
+  /// 다 차면 더 놓지 않는다. 선실 칸의 모듈은 뺀다.
   bool _toggleCabin(int i) {
-    if (_materials[i] == null && !seatCells.contains(i)) return false;
-    if (_cabins.remove(i)) {
-      if (_modules[i]?.cabinOption ?? false) _modules[i] = null;
-      return true;
-    }
+    if (_materials[i] == null) return false;
+    if (_cabins.remove(i)) return true;
     if (_cabins.length >= hull.cabinSlots) return false;
-    // 선실 칸에는 선실 옵션(포문·망루)만 둔다.
-    if (!(_modules[i]?.cabinOption ?? true)) _modules[i] = null;
+    _modules[i] = null;
     _cabins.add(i);
     return true;
   }
 
-  /// 블록 위에서만. 같은 모듈이면 뺀다. 선실 옵션은 선실 칸에만, 나머지는 선실 아닌 칸에만.
+  /// 선실이 아닌 블록 위에서만. 같은 모듈이면 뺀다. 선장실·돛대는 하나씩이라
+  /// 다른 칸에 놓으면 그리로 옮긴다 (설계서 §3.3).
   bool _toggleModule(int i, ModuleKind kind) {
-    if (_materials[i] == null) return false;
+    if (_materials[i] == null || _cabins.contains(i)) return false;
     if (_modules[i] == kind) {
-      final seats = seatCells;
       _modules[i] = null;
-      _cabins.removeWhere((c) => seats.contains(c) && !seatCells.contains(c));
       return true;
     }
-    if (kind.cabinOption != _cabins.contains(i)) return false;
+    for (var j = 0; j < _modules.length; j++) {
+      if (_modules[j] == kind) _modules[j] = null;
+    }
     _modules[i] = kind;
     return true;
   }

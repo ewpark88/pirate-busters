@@ -14,7 +14,6 @@ import 'package:pirate_busters/game/emotion_cues.dart';
 import 'package:pirate_busters/game/hit_stop.dart';
 import 'package:pirate_busters/game/hit_tag.dart';
 import 'package:pirate_busters/game/impact_sound.dart';
-import 'package:pirate_busters/game/shield_cue.dart';
 import 'package:pirate_busters/game/shooter_tracker.dart';
 import 'package:pirate_busters/game/view/breakage_fx.dart';
 import 'package:pirate_busters/game/view/fx_layer.dart';
@@ -24,7 +23,6 @@ import 'package:pirate_busters/game/view/ship_crew.dart';
 import 'package:pirate_busters/game/view/ship_view.dart';
 import 'package:pirate_busters/game/view/shot_fx.dart';
 import 'package:pirate_busters/game/view/shot_view.dart';
-import 'package:pirate_busters/game/view/water_fx.dart';
 import 'package:pirate_busters/game/weapon_styles.dart';
 
 /// 시뮬레이션 이벤트를 화면 연출로 바꾼다 (설계서 §10.4, §10.5). 판정은 이미 끝났고
@@ -82,14 +80,13 @@ class BattleCues {
   );
 
   /// 조용히 내려앉는 탄인가: 설치탄은 붙어서 턴을 기다린다. 선체에 닿아도 명중
-  /// 연출(폭발·흔들림·히트스톱)을 내지 않는다 (설계서 §10.4 탄종별 전달). 보급탄은
-  /// 상대에 맞는 공격이라, 크라키는 붙는 순간 터져서 명중 연출을 낸다(ADR-090, R1d).
+  /// 연출(폭발·흔들림·히트스톱)을 내지 않는다 (설계서 §10.4 탄종별 전달). 크라키는
+  /// 붙는 순간 터져서 명중 연출을 낸다.
   static bool landsQuietly(PirateSpec? spec) =>
       spec?.ammo == AmmoType.mine && spec!.ability != Ability.tentacle;
 
   void dispatch(List<SimEvent> cues) {
     var woodPlayed = false;
-    var repairTagged = false;
     final spec = _shooters.take(session);
     final tier = spec == null ? RarityFx.common : rarity.of(spec.rarity);
     final tag = spec == null ? null : HitTag.ofAmmo(spec.ammo);
@@ -99,12 +96,8 @@ class BattleCues {
     emote(cues, weight, quiet: landsQuietly(spec));
     var jolted = false;
     Vector2? hitAt;
-    // 착탄마다 블록 피해를 모아 숫자 하나로 띄운다 (§10.4, A33). 보스 방패가
-    // 서 있으면 숫자에 ‘방패’ 이름표를 붙인다 (§5.4, A57).
+    // 착탄마다 블록 피해를 모아 숫자 하나로 띄운다 (§10.4, A33).
     var hull = 0;
-    final shields = shieldsOf(cues);
-    // 방패가 선 쪽 블록 피해에만 붙인다(묶음에서 처음 맞은 배 기준).
-    String? shieldTag;
     final collapsed = <int, List<int>>{};
     void joltOnce(double scale) {
       if (jolted) return;
@@ -122,13 +115,13 @@ class BattleCues {
           fx.muzzle(Coords.point(e.x, e.y), facingOf(e.side));
           playSfx(Sfx.cannon);
         case SimEventKind.impact when landsQuietly(spec):
-          // 수리·설치 연출은 뒤따르는 repaired·mineAttached 이벤트가 그린다.
+          // 설치 연출은 뒤따르는 mineAttached 이벤트가 그린다.
           director.impact(Coords.point(e.x, e.y));
         case SimEventKind.impact:
           final at = Coords.point(e.x, e.y);
           // 첫 착탄 전 피해(그물·돛 통과)는 이 착탄 숫자에 합친다.
           if (hitAt != null) {
-            hullNumber(hitAt, hull, weight, tag: shieldTag);
+            hullNumber(hitAt, hull, weight);
             hull = 0;
           }
           hitAt = at;
@@ -177,18 +170,21 @@ class BattleCues {
           if (!woodPlayed) playSfx(Sfx.wood);
           woodPlayed = true;
         case SimEventKind.blockHit:
-          // 턴 끝 화재처럼 착탄 없이 깎인 칸은 번쩍이지 않는다(불 연출이 따로 있다).
+          // 촉수처럼 착탄 없이 깎인 칸은 번쩍이지 않는다.
           if (hitAt != null || spec != null) flashCell(e);
           hull += e.value;
-          shieldTag ??= shieldTagFor(shields, e.side);
         case SimEventKind.blockCollapsed:
           // 끊긴 칸은 묶음이 끝난 뒤 덩어리로 묶어 떨어뜨린다 (§10.4, A32).
           (collapsed[e.side] ??= []).add(e.cell);
           ships[e.side].gone.add(e.cell);
-        case SimEventKind.move:
-          // 한계선에 닿으면 물살이 튄다 (설계서 §2.6).
+        case SimEventKind.move || SimEventKind.pushed:
+          // 한계(최소 간격·바다 끝)에 닿으면 물살이 튄다 (설계서 §2.5).
           final side = session.state.sides[e.side];
-          final (lo, hi) = moveLimits(session.state.rules, session.state.turn);
+          final (lo, hi) = moveLimits(
+            side,
+            session.state.otherOf(e.side),
+            session.state.rules,
+          );
           if (side.offset == hi) fx.splash(Coords.point(e.x, 0), limit: true);
           if (side.offset == lo) {
             // 후퇴 한계에는 고물이 닿는다.
@@ -219,35 +215,11 @@ class BattleCues {
         // 착탄 이벤트가 그린다.
         case SimEventKind.mineAttached || SimEventKind.effectFired:
           hitAt = effectCue(e, weight) ?? hitAt;
-        case SimEventKind.repaired:
-          final at = cellWorld(e.side, e.cell);
-          fx.repair(at, tier: tier);
-          if (!repairTagged) fx.tag(at, tagText(HitTag.repair));
-          repairTagged = true;
         case SimEventKind.turnStart ||
             SimEventKind.turnEnd ||
-            SimEventKind.pirateReturned ||
-            SimEventKind.stormStart ||
-            SimEventKind.divide:
+            SimEventKind.divide ||
+            SimEventKind.moduleDestroyed:
           break;
-
-        case SimEventKind.flood:
-          // 턴 끝 침수가 늘면 배 둘레 수면에 물방울이 튄다 (설계서 §10.4). 펌프로
-          // 줄면(음수) 튀지 않는다.
-          if (floodRose(e.value)) {
-            fx.droplets(Vector2(ships[e.side].position.x, 0));
-          }
-        case SimEventKind.moduleDestroyed:
-          // 화약고·연료통 유폭: 일반 명중보다 큰 폭발·긴 흔들림·폭발음 (§10.4).
-          final radius = blastRadius(e.value);
-          if (radius == 0) break;
-          final at = cellWorld(e.side, e.cell);
-          fx.explosion(at, radius: radius, heavy: true);
-          director.impact(at, punch: weight.punch, ship: shipSpan(e.side));
-          ships[e.side].rock(facingOf(1 - e.side));
-          joltOnce(1);
-          playSfx(Sfx.boom);
-          playSfx(Sfx.rumble);
         // 해적이 바다로 떨어지면 첨벙, 쓰러지면 띵 (§10.3, A32).
         case SimEventKind.pirateFell:
           boarderFell(e);
@@ -260,9 +232,7 @@ class BattleCues {
           dispatchUnique(e, shown);
       }
     }
-    hullNumber(hitAt, hull, weight, tag: shieldTag);
-    supplyTag(spec, hitAt, cues);
-    shieldBroken(shields);
+    hullNumber(hitAt, hull, weight);
     for (final MapEntry(key: side, value: cells) in collapsed.entries) {
       fx.collapseCells(
         cells,
@@ -274,15 +244,4 @@ class BattleCues {
       playSfx(Sfx.creak);
     }
   }
-
-  /// 침수 이벤트 값 [value](0.1%p)가 늘어난 것인가. 펌프는 음수를 낸다.
-  static bool floodRose(int value) => value > 0;
-
-  /// 모듈 [kindIndex] 가 부서질 때의 유폭 반경(칸). 터지지 않는 모듈은 0.
-  static int blastRadius(int kindIndex) =>
-      switch (ModuleKind.values[kindIndex]) {
-        ModuleKind.magazine => ModuleNumbers.magazineRadius,
-        ModuleKind.fuelTank => ModuleNumbers.fuelTankRadius,
-        _ => 0,
-      };
 }

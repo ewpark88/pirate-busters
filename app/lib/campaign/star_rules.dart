@@ -7,7 +7,6 @@ class MatchSummary {
     required this.won,
     required this.outcome,
     required this.turns,
-    required this.floodPercent,
     required this.hullPercent,
     required this.piratesDown,
     required this.shotsFired,
@@ -32,11 +31,10 @@ class MatchSummary {
     final crew = me.crew.pirates;
     return MatchSummary(
       won: state.winner == side,
-      // 무승부는 pb_sim 이 정한다(승자 −1). 앱이 침수 % 로 다시 재지 않는다 (§2.4).
+      // 무승부는 pb_sim 이 정한다(승자 −1). 앱이 다시 재지 않는다 (§2.7).
       draw: state.outcome != MatchOutcome.ongoing && state.winner < 0,
       outcome: state.outcome,
       turns: lastTurnOf(state),
-      floodPercent: me.flood * 100 ~/ fullFlood,
       hullPercent: me.grid.initialTotalHp == 0
           ? 0
           : me.grid.totalHp * 100 ~/ me.grid.initialTotalHp,
@@ -84,7 +82,6 @@ class MatchSummary {
     return side == state.firstSide ? (last + 1) ~/ 2 : last ~/ 2;
   }
 
-  final int floodPercent;
   final int hullPercent;
   final int piratesDown;
   final int shotsFired;
@@ -129,10 +126,7 @@ class StarRules {
 
   bool missionDone(MissionSpec m, MatchSummary s) => switch (m.type) {
     'no_pirate_down' => s.piratesDown == 0,
-    'flood_below' => s.floodPercent <= m.param('percent'),
     'hull_above' => s.hullPercent >= m.param('percent'),
-    'win_by_sink' =>
-      s.outcome == MatchOutcome.sunk || s.outcome == MatchOutcome.floodSunk,
     'turns_within' => s.ownTurns <= m.param('turns'),
     _ => false,
   };

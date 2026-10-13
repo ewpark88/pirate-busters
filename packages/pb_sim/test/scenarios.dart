@@ -20,7 +20,7 @@ Iterable<SimEvent> eventsOf(
   int side,
 ) => events.where((e) => e.kind == kind && e.side == side);
 
-/// 쏠 수 있는 해적 2명까지 [target] 이 고른 칸을 노린다. 노릴 칸이 없으면 턴을 넘긴다.
+/// 쏠 수 있는 첫 해적이 [target] 이 고른 칸을 노린다(한 턴 한 발). 노릴 칸이 없으면 턴을 넘긴다.
 Controller shooter(
   (int, int)? Function(MatchState s) target, {
   bool highArc = false,
@@ -29,7 +29,7 @@ Controller shooter(
   final cell = target(s);
   final out = <Command>[];
   for (var slot = 0; slot < crew.size && cell != null; slot++) {
-    if (!s.sides[s.activeSide].canFire(slot) || out.length == 2) continue;
+    if (!s.sides[s.activeSide].canFire(slot) || out.isNotEmpty) continue;
     out.add(
       aimAt(
         s,
@@ -59,7 +59,10 @@ Blueprint towerBlueprint() => Blueprint(
     CabinCell(9, 0),
     CabinCell(10, 0),
   ],
-  modules: const [ModuleCell(0, 0, ModuleKind.captain)],
+  modules: const [
+    ModuleCell(0, 0, ModuleKind.captain),
+    ModuleCell(11, 4, ModuleKind.mast),
+  ],
 );
 
 /// 시나리오용 해적: 역할(gun·killer·wrecker·sapper)마다 4명, 오른쪽 기본 r0~r3.
@@ -75,12 +78,11 @@ final List<PirateSpec> scenarioPirates = [
 
 final PirateCatalog scenarioCatalog = PirateCatalog(scenarioPirates);
 
-/// 타격 시나리오는 파도 없이 돌린다(파도는 wave_test). 한 턴 두 발을 미리 조준하므로
-/// 첫 발의 비행 정지 시간을 몰라 파도 위상이 어긋난다.
+/// 타격 시나리오는 파도 없이 돌린다(파도는 따로 시험한다).
 Match startScenario(
   String kind,
   Blueprint right, {
-  MatchRules rules = const MatchRules(waveLevel: 0),
+  MatchRules rules = const MatchRules(calmSea: true),
 }) => Match.start(
   seed: 11,
   rules: rules,

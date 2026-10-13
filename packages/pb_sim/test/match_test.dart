@@ -35,51 +35,44 @@ void main() {
       expect(m.state.activeSide, first);
     });
 
-    test('한 턴에 서로 다른 해적 2명까지 쏘고, 2발을 쏴도 턴은 END_TURN 으로만 끝난다 (ADR-042)', () {
+    test('한 턴에 한 발만 쏘고, 쏴도 턴은 END_TURN 으로만 끝난다 (설계서 §2.3, ADR-042)', () {
       final m = newSampleMatch(1);
       final side = m.state.activeSide;
       m
         ..apply(_fire(100, 0))
-        ..apply(_fire(200, 0)); // 같은 해적은 같은 턴에 다시 못 쏜다
-      expect(m.state.sides[side].shotsFired, 1);
-      expect(m.state.turn, 1);
-      m.apply(_fire(300, 1));
-      expect(m.state.sides[side].shotsFired, 2);
+        ..apply(_fire(200, 0))
+        ..apply(_fire(300, 1));
+      expect(m.state.sides[side].shotsFired, 1, reason: '두 번째 발은 무시');
       expect(m.state.turn, 1, reason: '유예 동안 이동할 수 있다');
-      m
-        ..apply(_fire(400, 2))
-        ..apply(const MoveCommand(t: 500, dx: 5));
-      expect(m.state.sides[side].shotsFired, 2, reason: '세 번째 발은 무시');
+      m.apply(const MoveCommand(t: 500, dx: 5));
       expect(m.state.sides[side].offset, 500);
       m.apply(const EndTurnCommand(t: 600));
       expect(m.state.turn, 2);
       expect(_endReasons(m.state), [TurnEndReason.endTurn]);
     });
 
-    test('쿨다운 0턴은 다음 내 턴에, 1턴은 내 턴 하나를 건너뛴 뒤에 다시 쏜다', () {
-      final m = newSampleMatch(1); // 슬롯 0 = p01 (0턴), 슬롯 1 = p06 (1턴)
+    test('쿨다운은 없다: 쏜 해적은 다음 내 턴에 다시 쏜다', () {
+      final m = newSampleMatch(1);
       final me = m.state.activeSide;
       final crew = m.state.sides[me].crew;
-      _play(m, [_fire(100, 0), _fire(200, 1)]);
+      _play(m, [_fire(100, 0)]);
       _play(m, const [EndTurnCommand(t: 100)]); // 상대
-      expect([crew.canFire(0), crew.canFire(1)], [true, false]);
-      _play(m, const [EndTurnCommand(t: 100)]);
-      _play(m, const [EndTurnCommand(t: 100)]);
-      expect(crew.canFire(1), isTrue);
+      expect(crew.canFire(0), isTrue);
     });
 
     test('턴 제한 시간(탄 비행 시간 제외)이 지난 커맨드는 버리고 턴을 넘긴다', () {
       final m = newSampleMatch(1);
       final side = m.state.activeSide;
       _play(m, [
-        _fire(24000, 0),
-        // 탄이 날아간 시간만큼 타이머가 멈췄으므로 25초를 조금 넘어도 유효하다.
-        _fire(25500, 1),
+        _fire(19000, 0),
+        // 탄이 날아간 시간만큼 타이머가 멈췄으므로 20초를 조금 넘어도 유효하다.
+        const MoveCommand(t: 20500, dx: 5),
       ]);
-      expect(m.state.sides[side].shotsFired, 2);
+      expect(m.state.sides[side].shotsFired, 1);
+      expect(m.state.sides[side].offset, 500);
 
       final m2 = newSampleMatch(1);
-      _play(m2, [_fire(25001, 0)]);
+      _play(m2, [_fire(20001, 0)]);
       expect(m2.state.sides[side].shotsFired, 0);
       expect(_endReasons(m2.state), [TurnEndReason.timeout]);
     });
@@ -105,22 +98,6 @@ void main() {
       );
     });
 
-    test('상대 턴에 바다에 빠진 해적은 내 턴이 시작될 때 배로 돌아온다', () {
-      final m = newSampleMatch(1);
-      final me = m.state.activeSide;
-      _play(m, const [EndTurnCommand(t: 100)]);
-      // 상대 턴 중 내 해적이 바다에 빠졌다.
-      final crew = m.state.sides[me].crew..fall(0, me, m.state.events);
-      _play(m, const [EndTurnCommand(t: 100)]);
-      expect(crew.pirates[0].status, PirateStatus.swimming);
-      m.apply(const EndTurnCommand(t: 100)); // 내 턴 시작 → 복귀
-      expect(crew.pirates[0].status, PirateStatus.aboard);
-      expect(
-        m.state.events.map((e) => e.kind),
-        contains(SimEventKind.pirateReturned),
-      );
-    });
-
     test('각도·힘이 범위를 벗어난 발사는 무시한다', () {
       final m = newSampleMatch(1);
       final side = m.state.activeSide;
@@ -133,15 +110,11 @@ void main() {
       expect(m.state.sides[side].shotsFired, 0);
     });
 
-    test('바람은 시드와 턴 번호로만 정해지고 −3~+3, 폭풍 타임에는 2배다', () {
-      const rules = MatchRules(maxTurns: 1000, stormTurns: 100);
+    test('바람은 시드와 턴 번호로만 정해지고 −3~+3 이다 (BALANCE.md A2.3)', () {
+      const rules = MatchRules(maxTurns: 1000);
       final winds = [for (var t = 1; t <= 200; t++) rules.windForTurn(99, t)];
       expect(winds.every((w) => w >= -3 && w <= 3), isTrue);
       expect(winds.toSet(), hasLength(7));
-      final storm = [
-        for (var t = 901; t <= 1000; t++) rules.windForTurn(99, t),
-      ];
-      expect(storm.every((w) => w.isEven && w >= -6 && w <= 6), isTrue);
       final m = newSampleMatch(99);
       expect(m.state.wind, rules.windForTurn(99, 1));
       _play(m, const [EndTurnCommand(t: 1)]);
@@ -166,8 +139,8 @@ void main() {
       runMatch(m, passController, passController);
       expect(m.state.outcome, MatchOutcome.timeDecision);
       expect(m.state.winner, -1);
-      expect(m.turnLog, hasLength(30));
-      expect(m.turnLog.where((b) => b.side == 0), hasLength(15));
+      expect(m.turnLog, hasLength(24));
+      expect(m.turnLog.where((b) => b.side == 0), hasLength(12));
 
       final short = newSampleMatch(1, rules: const MatchRules(maxTurns: 6));
       runMatch(short, passController, passController);
@@ -199,9 +172,19 @@ void main() {
       expect(start(['m', 'h', 'c0'], limit: 16).state.sides[0].crew.size, 3);
     });
 
-    test('선실 수보다 많거나 같은 해적이 둘이면 출전할 수 없다', () {
+    test('자리(선실 4 + 망대 1)보다 많거나 같은 해적이 둘이면 출전할 수 없다', () {
       expect(
-        () => start(['c0', 'c1', 'c2', 'c3', 'c4'], limit: 40),
+        start([
+          'c0',
+          'c1',
+          'c2',
+          'c3',
+          'c4',
+        ], limit: 40).state.sides[0].crew.size,
+        5,
+      );
+      expect(
+        () => start(['c0', 'c1', 'c2', 'c3', 'c4', 'c5'], limit: 40),
         throwsArgumentError,
       );
       expect(() => start(['c0', 'c0']), throwsArgumentError);
@@ -219,7 +202,7 @@ void main() {
         ],
       );
       expect(crew.pirateAt(2), isNull);
-      expect(maxLineup, 7);
+      expect(maxLineup, 5);
     });
   });
 }

@@ -89,14 +89,11 @@ class GameFactory {
     List<BlueprintPreset> presets, {
     List<String>? pirates,
     List<String>? blueprints,
-    int stage = HullSpec.maxStage,
   }) : catalog = data.catalog,
-       hull = HullSpec.byId('sloop', stage: stage),
+       hull = HullSpec.sloop,
        presets = [
          for (final p in presets)
-           if (p.stage == stage &&
-               (blueprints == null || blueprints.contains(p.id)))
-             p,
+           if (blueprints == null || blueprints.contains(p.id)) p,
        ],
        pirateIds = [
          for (final p in data.pirates)
@@ -118,14 +115,14 @@ class GameFactory {
   final List<String> pirateIds;
   final PirateCatalog catalog;
 
-  /// [seed] 로 덱(덱 풀에서 코스트 한도 안 4명)·설계도(설계도 풀)·성격을 고른다.
+  /// [seed] 로 덱(덱 풀에서 코스트 한도 안 5명)·설계도(설계도 풀)·성격을 고른다.
   /// 난이도는 [levels].
   GameSetup setupFor(int seed, List<AiLevel> levels) {
     final rng = XorShift32(seed * 2654435761);
     List<String> deck() {
       final ids = pirateIds;
-      // 선실 4칸을 코스트 한도 안에서 채운다(덱 크기가 승률을 흐리지 않게).
-      final slots = hull.cabinSlots;
+      // 선실 4칸 + 망대를 코스트 한도 안에서 채운다(덱 크기가 승률을 흐리지 않게).
+      final slots = hull.crewSlots;
       final size = ids.length < slots ? ids.length : slots;
       final out = <String>[];
       var guard = 0;

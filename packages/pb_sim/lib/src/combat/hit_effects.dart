@@ -1,11 +1,8 @@
-import 'package:pb_sim/src/combat/ability_effects.dart';
-import 'package:pb_sim/src/combat/barrier_effects.dart';
 import 'package:pb_sim/src/combat/boarding.dart';
-import 'package:pb_sim/src/combat/fire.dart';
+import 'package:pb_sim/src/combat/chain.dart';
+import 'package:pb_sim/src/combat/hit_helpers.dart';
 import 'package:pb_sim/src/combat/impact.dart';
-import 'package:pb_sim/src/combat/support_effects.dart';
-import 'package:pb_sim/src/combat/unique_effects.dart';
-import 'package:pb_sim/src/combat/unique_turns.dart';
+import 'package:pb_sim/src/combat/legend_effects.dart';
 import 'package:pb_sim/src/match/match_state.dart';
 import 'package:pb_sim/src/match/sim_event.dart';
 import 'package:pb_sim/src/match/turn_effects.dart';
@@ -14,23 +11,11 @@ import 'package:pb_sim/src/pirate/ammo.dart';
 import 'package:pb_sim/src/projectile/projectile.dart';
 import 'package:pb_sim/src/world/world.dart';
 
-/// 관통탄 두 번째 칸부터의 피해 비율(%) (BALANCE.md A4.8, 임시값 ADR-050).
+/// 관통탄 두 번째 칸부터의 피해 비율(%) (BALANCE.md A4.8).
 const int pierceFalloffPercent = 40;
 
-/// 두 배 사이 거리 구분 (설계서 §2.6 거리에 따른 계열 상성).
-enum Reach { near, mid, far }
-
-/// 가까울 때 간격 16칸 이하, 멀 때 36칸 이상 (설계서 §2.6).
-Reach reachOf(MatchState state) {
-  final gap = (state.sides[0].bowX - state.sides[1].bowX).abs();
-  if (gap <= 16 * cellUnit) return Reach.near;
-  if (gap >= 36 * cellUnit) return Reach.far;
-  return Reach.mid;
-}
-
 /// 탄 [p] 가 [target] 배 로컬 칸 ([cx], [cy]), 월드 ([x], [y]) 에 닿았다 (설계서 §4.8).
-/// 탄이 계속 날아가면(관통) false, 끝나면 true. 상대 배면 고유 능력 효과를 더한다
-/// (ADR-075).
+/// 탄이 계속 날아가면(관통) false, 끝나면 true. 상대 배면 고유 능력 효과를 더한다.
 bool onHullHit(
   MatchState state,
   Projectile p,
@@ -41,11 +26,11 @@ bool onHullHit(
   required int y,
 }) {
   final done =
-      uniqueHullHit(state, p, target, cx: cx, cy: cy, x: x, y: y) ??
+      legendHullHit(state, p, target, cx: cx, cy: cy, x: x, y: y) ??
       _ammoHit(state, p, target, cx: cx, cy: cy, x: x, y: y);
   if (target.side != p.side) {
-    applyHitAbility(state, p, target, cx: cx, cy: cy);
-    // 강습 해적은 착지한 적 배 위에 선다 (설계서 §4.8, ADR-110).
+    applyHitAbility(state, p, target);
+    // 강습 해적은 착지한 적 배 위에 선다 (설계서 §2.3, ADR-110).
     settleBoarder(state, p, target, cx);
   }
   return done;
@@ -71,14 +56,12 @@ bool _ammoHit(
         x: x,
         y: y,
         events: events,
-        rng: state.rng,
         blockPercent: blockPercent,
         centerPiratePercent: piratePercent,
       );
   switch (spec.ammo) {
     case AmmoType.pierce:
-      // 칸마다 피해를 주며 뚫는다. 두 번째 칸부터는 피해 40% (§4.8, ADR-050·083).
-      // 블록이 버티면(철판 등) 멈춘다.
+      // 칸마다 피해를 주며 뚫는다. 두 번째 칸부터는 피해 40%. 블록이 버티면 멈춘다.
       final percent = p.piercedCells == 0 ? 100 : pierceFalloffPercent;
       impact(blockPercent: percent, piratePercent: percent);
       p.piercedCells++;
@@ -91,42 +74,30 @@ bool _ammoHit(
       _attachMine(state, p, target, target.grid.indexOf(cx, cy));
       return true;
     case AmmoType.assault:
-      // 착지 반경의 해적을 물어뜯고, 살아남으면 다음 상대 턴 시작에 또 문다.
+      // 착지 반경의 해적을 물고, 살아남으면 다음 상대 턴 시작에 한 번 더 문다.
       impact();
-      for (var i = 0; i < spec.ammoValue; i++) {
-        state.effects.add(
-          TurnEffect(
-            kind: EffectKind.biteAgain,
-            owner: p.side,
-            ownerSlot: p.slot,
-            target: target.side,
-            trigger: target.side,
-            turnsLeft: i + 1,
-            spec: spec,
-            cell: target.grid.indexOf(cx, cy),
-          ),
-        );
-      }
-      return true;
-    case AmmoType.support:
-      // 보급탄: 상대 배에 약한 피해, 효과는 내 배에 (설계서 §4.8 보급탄, ADR-090).
-      impact();
-      final mine = state.sides[p.side];
-      // 코리 방벽은 내 뱃머리 앞에 선다.
-      onSupportHit(state, p, mine, x: mine.bowX);
-      return true;
-    case AmmoType.fire:
-      // 착탄 피해 + 화상 지대(착탄 칸 둘레)에 불 (설계서 §2.5, §4.8).
-      impact();
-      igniteAround(
-        target,
-        cx,
-        cy,
-        radius: fireZoneRadius,
-        turns: spec.ammoValue,
-        extraPercent: spec.ammoValue2,
-        events: events,
+      state.effects.add(
+        TurnEffect(
+          kind: EffectKind.biteAgain,
+          owner: p.side,
+          ownerSlot: p.slot,
+          target: target.side,
+          trigger: target.side,
+          turnsLeft: 1,
+          spec: spec,
+          cell: target.grid.indexOf(cx, cy),
+        ),
       );
+      return true;
+    case AmmoType.shock:
+      // 넓고 약하게 터지고 상대 배를 민다. 램프는 더 멀리 민다 (BALANCE.md A4.2).
+      impact();
+      if (target.side != p.side) {
+        final cells = spec.ability == Ability.shove
+            ? spec.abilityValue
+            : spec.ammoValue;
+        pushShip(state, target, cells);
+      }
       return true;
     case AmmoType.chain:
       final struck = chainStruckCandidates(target, spec, cx: cx, cy: cy);
@@ -142,12 +113,8 @@ bool _ammoHit(
         candidates: struck,
       );
       return true;
-    case AmmoType.flock when spec.ammoParam == 1 && !p.divided:
-      _markDrop(state, p, target, x);
-      return true;
     case AmmoType.skip:
-      // 수면에서 튕긴 뒤 흘수선 줄(물이 닿는 줄과 그 아래) 칸에 맞으면 ×1.5
-      // (설계서 §4.3·§4.8, BALANCE.md A4.3, ADR-102).
+      // 수면에서 튕긴 뒤 물에 잠긴 줄 칸에 맞으면 ×1.5 (BALANCE.md A4.3).
       final waterline = p.bounced && cy <= target.draft ~/ cellUnit;
       impact(blockPercent: waterline ? 150 : 100);
       return true;
@@ -155,6 +122,7 @@ bool _ammoHit(
       impact(piratePercent: spec.ammoValue);
       return true;
     case AmmoType.explosive ||
+        AmmoType.fire ||
         AmmoType.split ||
         AmmoType.burst ||
         AmmoType.flock ||
@@ -165,7 +133,7 @@ bool _ammoHit(
 }
 
 /// 탄 [p] 가 [target] 쪽 바다 ([x], 0) 에 닿았다. 물수제비는 튕기고, 설치탄은 배 밑에
-/// 붙고, 투하 표시는 그 자리를 표시한다. 탄이 계속 날면 false.
+/// 붙는다. 탄이 계속 날면 false.
 bool onSeaHit(
   MatchState state,
   Projectile p,
@@ -173,44 +141,30 @@ bool onSeaHit(
   int x,
   int tick,
 ) {
-  final spec = p.spec;
   if (bounceOffSea(p, x)) {
     state.events.add(
       SimEvent(SimEventKind.bounce, side: target.side, x: x, value: tick),
     );
     return false;
   }
-  if (spec.ammo == AmmoType.mine) {
+  if (p.spec.ammo == AmmoType.mine) {
     final cell = _hullCellBelow(target, x);
     if (cell >= 0) {
       _attachMine(state, p, target, cell);
       return true;
     }
-    if (spec.ability == Ability.floatMine) {
-      placeFloatMine(state, p, target, x);
-      return true;
-    }
-  }
-  if (spec.ammo == AmmoType.flock && spec.ammoParam == 1 && !p.divided) {
-    _markDrop(state, p, target, x);
-    return true;
-  }
-  if (spec.ability == Ability.coral) {
-    placeCoral(state, p, x);
-    return true;
   }
   state.events.add(
     SimEvent(SimEventKind.splash, side: target.side, x: x, value: tick),
   );
-  resolveSplash(target, spec: spec, x: x, events: state.events);
   return true;
 }
 
 /// 물수제비 튕김 입사각 상한: 세로 속도 ≤ 가로 속도 × 이 값 / 1000 (25°의 tan,
-/// BALANCE.md A4.8 임시값, ADR-102).
+/// BALANCE.md A4.8).
 const int skipMaxSlopePermille = 466;
 
-/// 물수제비 튕김 감쇠(%): 세로·가로 (BALANCE.md A4.8 임시값, ADR-102).
+/// 물수제비 튕김 감쇠(%): 세로·가로 (BALANCE.md A4.8).
 const int skipBounceVyPercent = 45;
 const int skipBounceVxPercent = 70;
 
@@ -229,11 +183,9 @@ bool bounceOffSea(Projectile p, int x) {
   return true;
 }
 
-/// 설치탄: 붙은 칸에서 `ammoValue` 턴 뒤 내 턴 시작에 터진다. 멀 때는 도달에
-/// 1턴 더 걸린다 (설계서 §2.6).
+/// 설치탄: 붙은 칸에서 다음 내 턴 시작에 터진다 (설계서 §4.8).
 void _attachMine(MatchState state, Projectile p, SideState target, int cell) {
-  if (attachUnique(state, p, target, cell)) return;
-  final delay = p.spec.ammoValue + (reachOf(state) == Reach.far ? 1 : 0);
+  if (attachTentacle(state, p, target, cell)) return;
   state.effects.add(
     TurnEffect(
       kind: EffectKind.mineBlast,
@@ -241,29 +193,13 @@ void _attachMine(MatchState state, Projectile p, SideState target, int cell) {
       ownerSlot: p.slot,
       target: target.side,
       trigger: p.side,
-      turnsLeft: delay,
+      turnsLeft: 1,
       spec: p.spec,
       cell: cell,
     ),
   );
   state.events.add(
     SimEvent(SimEventKind.mineAttached, side: target.side, cell: cell),
-  );
-}
-
-/// 펠리: 떨어진 곳을 표시하고 다음 내 턴 시작에 소형 폭탄을 떨군다 (설계서 §4.2).
-void _markDrop(MatchState state, Projectile p, SideState target, int x) {
-  state.effects.add(
-    TurnEffect(
-      kind: EffectKind.flockDrop,
-      owner: p.side,
-      ownerSlot: p.slot,
-      target: target.side,
-      trigger: p.side,
-      turnsLeft: 1,
-      spec: p.spec,
-      x: x,
-    ),
   );
 }
 

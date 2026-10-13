@@ -10,7 +10,7 @@ import 'fixtures.dart';
 /// 커밋 메시지에 이유를 적는다 (개발 계획서 §2.4 DoD 2).
 /// R1a-1·R1a-2: 지속 상태·화재 칸·부활·방벽을 해시에 넣어 갱신했다(판 결과는 같다,
 /// ADR-075·ADR-078).
-const int _goldenHash = 2358855593;
+const int _goldenHash = 4011219793;
 
 int _hash(Match m) => hashMatchState(m.state);
 
@@ -125,15 +125,14 @@ void main() {
     expect(() => Replay.fromJson(json), throwsFormatException);
   });
 
-  test('규칙 값이 범위 밖인 리플레이는 거부한다(0 나눗셈·한계선 역전·음수 침수 방지)', () {
+  test('규칙 값이 범위 밖인 리플레이는 거부한다(0 나눗셈·한계 역전 방지)', () {
     const bad = {
       'wavePeriodMs': 0,
-      'waterlineDivisor': 0,
+      'waveZoneWidth': 0,
       'maxTurns': 0,
-      'stormRetreatPull': 25000,
-      'stormFloodPercent': -1,
-      'sinkAtFullFlood': -1,
-      'sunkHullPercent': 101,
+      'minGap': 30000,
+      'backRoom': -1,
+      'turnTimeMs': 0,
     };
     for (final key in bad.keys) {
       final json = _replayOf(newSampleMatch(1)).toJson();

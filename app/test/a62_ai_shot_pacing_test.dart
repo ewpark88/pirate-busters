@@ -10,15 +10,15 @@ import 'test_catalog.dart';
 
 const _ai = AiController(level: AiLevel.easy);
 
-/// AI(0 진영)가 선공이고 첫 턴에 두 발 이상 쏘는 시드.
-int _multiShotSeed() {
+/// AI(0 진영)가 선공이고 첫 턴에 쏘는 시드.
+int _shotSeed() {
   for (var seed = 1; seed < 200; seed++) {
     final m = testSetup.newMatch(seed);
     if (m.state.activeSide != 0) continue;
     final fires = _ai.turnFor(m.state).commands.whereType<FireCommand>();
-    if (fires.length >= 2) return seed;
+    if (fires.isNotEmpty) return seed;
   }
-  throw StateError('두 발 쏘는 시드가 없다');
+  throw StateError('쏘는 시드가 없다');
 }
 
 /// 상대 턴 재생 한 판의 기록.
@@ -63,7 +63,7 @@ void main() {
     late _Trace trace;
 
     setUpAll(() {
-      seed = _multiShotSeed();
+      seed = _shotSeed();
       s = BattleSession(
         testSetup.newMatch(seed),
         humanSides: const {1},
@@ -73,12 +73,8 @@ void main() {
       trace = _playAiTurn(s);
     });
 
-    test('앞 탄 연출이 끝나고 쉼이 지나야 다음 해적이 쏜다', () {
-      expect(trace.shots.length, greaterThanOrEqualTo(2));
-      for (var i = 1; i < trace.shots.length; i++) {
-        final gap = trace.shots[i].firedAt - trace.shots[i - 1].endedAt;
-        expect(gap, greaterThanOrEqualTo(ScriptPlayer.settleMs));
-      }
+    test('상대는 한 턴에 한 발만 쏜다 (설계서 §2.3)', () {
+      expect(trace.shots, hasLength(1));
     });
 
     test('쏘기 직전에 그 해적의 조준이 끝까지 차 있다', () {

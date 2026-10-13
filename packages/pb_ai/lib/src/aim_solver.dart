@@ -10,18 +10,14 @@ class ShotPlan {
     required this.tapTick,
     required this.value,
     required this.landings,
-    this.tapDir = 0,
   });
 
   final int slot;
   final int angle;
   final int power;
 
-  /// 분열탄·방향 전환 탭 틱(없으면 −1).
+  /// 분열탄 탭 틱(없으면 −1).
   final int tapTick;
-
-  /// 방향 전환 탭 방향(알바: +1 위, −1 아래, ADR-075).
-  final int tapDir;
   final ShotValue value;
   final List<ShotLanding> landings;
 }
@@ -57,7 +53,7 @@ ShotPlan evaluateShot(
   try {
     final side = state.activeSide;
     final spec = state.sides[side].crew.pirates[slot].spec;
-    ShotPlan plan(int tap, [int dir = 0]) {
+    ShotPlan plan(int tap) {
       final landings = previewShot(
         state,
         slot: slot,
@@ -65,39 +61,26 @@ ShotPlan evaluateShot(
         power: power,
         ms: ms,
         tapTick: tap,
-        tapDir: dir,
       );
       return ShotPlan(
         slot: slot,
         angle: angle,
         power: power,
         tapTick: tap,
-        tapDir: dir,
         value: scoreLandings(state, side, landings),
         landings: landings,
       );
     }
 
+    int raw(ShotPlan p) => p.value.block + p.value.pirate + p.value.captain;
     var best = plan(-1);
-    final steer = spec.ability == Ability.steer;
-    if ((spec.ammo != AmmoType.split && !steer) || best.landings.isEmpty) {
-      return best;
-    }
+    if (spec.ammo != AmmoType.split || best.landings.isEmpty) return best;
     final flight = best.landings.first.tick;
-    for (final (pct, dir) in [
-      for (final pct in tapPercents)
-        for (final dir in steer ? const [1, -1] : const [0]) (pct, dir),
-    ]) {
+    for (final pct in tapPercents) {
       final tick = flight * pct ~/ 100;
       if (tick < 1) continue;
-      final p = plan(tick, dir);
-      if (p.value.block + p.value.pirate + p.value.flood + p.value.module >
-          best.value.block +
-              best.value.pirate +
-              best.value.flood +
-              best.value.module) {
-        best = p;
-      }
+      final p = plan(tick);
+      if (raw(p) > raw(best)) best = p;
     }
     return best;
   } finally {

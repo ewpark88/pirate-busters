@@ -9,7 +9,6 @@ class BlueprintPreview extends StatelessWidget {
   const BlueprintPreview({
     required this.blueprint,
     this.bare = false,
-    this.markBow = false,
     super.key,
   });
 
@@ -17,13 +16,6 @@ class BlueprintPreview extends StatelessWidget {
 
   /// 격자선·흘수선·선실 번호 없이 배만 그린다.
   final bool bare;
-
-  /// 뱃머리 방패 칸(블록이 있는 가장 앞 세로줄)에 금색 테를 두른다 (§5.4, A57).
-  final bool markBow;
-
-  /// 판 시작 때 방패가 되는 칸. 규칙은 pb_sim `bowShieldCells` 하나만 쓴다.
-  static Set<int> bowCells(Blueprint blueprint) =>
-      bowShieldCells(ShipGrid.fromBlueprint(blueprint)).toSet();
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +31,6 @@ class BlueprintPreview extends StatelessWidget {
             model: model,
             cell: cell,
             bare: bare,
-            marked: markBow ? bowCells(blueprint) : const {},
           ),
         );
       },

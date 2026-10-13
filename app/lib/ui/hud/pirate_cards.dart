@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:pb_sim/pb_sim.dart';
 import 'package:pirate_busters/battle/battle_session.dart';
-import 'package:pirate_busters/battle/rest_turns.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
 import 'package:pirate_busters/ui/cards/rarity_card.dart';
 import 'package:pirate_busters/ui/cards/rarity_stars.dart';
 import 'package:pirate_busters/ui/hud/ammo_label.dart';
 import 'package:pirate_busters/ui/hud/hud_style.dart';
-import 'package:pirate_busters/ui/meta_icons.dart';
 
 /// 아래 가운데: 선실 해적 카드 (설계서 §13.4). 카드를 누르면 그 해적을 고르고
 /// 카메라가 줌인한다(설계서 §2.2). 쿨다운·잠긴 선실·쓰러진 해적은 흐리게 보인다.
@@ -23,9 +21,8 @@ class PirateCards extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final state = session.state;
-    final firesLeft = state.activeSide == side
-        ? state.rules.firesPerTurn - state.firesThisTurn
-        : state.rules.firesPerTurn;
+    // 한 턴 한 발 (설계서 §2.3).
+    final firesLeft = state.activeSide == side ? 1 - state.firesThisTurn : 1;
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -77,34 +74,14 @@ class _PirateCardState extends State<_PirateCard> {
     final pirate = side.crew.pirates[widget.slot];
     final species = _s.speciesOf(pirate.spec.id);
     final team = widget.side == 0 ? 'blue' : 'red';
-    final rest = restTurnsOf(side, widget.slot);
     final note = switch (pirate.status) {
       PirateStatus.down => l10n.pirateDown,
-      PirateStatus.swimming => l10n.pirateSwimming,
       PirateStatus.boarding => l10n.pirateBoarding,
-      PirateStatus.aboard when side.isCabinFlooded(widget.slot) =>
-        l10n.cabinFlooded,
-      // 킹에게 봉쇄된 선실 (설계서 §4.8, ADR-075).
-      PirateStatus.aboard when side.isSealed(widget.slot) => l10n.cabinSealed,
-      // 이번 턴에 쏜 해적: 쉬는 턴과 헷갈리지 않게 ‘발사 완료’, 다음 턴도 쉬면 남은
-      // 쉬는 턴을 적는다 (A39 점검, ADR-092).
       PirateStatus.aboard when side.crew.firedThisTurn[widget.slot] =>
-        rest > 0 ? l10n.cooldown(rest) : l10n.firedDone,
-      PirateStatus.aboard when rest > 0 => l10n.cooldown(rest),
+        l10n.firedDone,
       PirateStatus.aboard => null,
     };
     final locale = Localizations.localeOf(context).toLanguageTag();
-    final far =
-        pirate.status == PirateStatus.aboard &&
-        isOutOfRange(_s.state, widget.side, widget.slot);
-    // 아래 줄: 상태 > 사거리 밖 > 사거리 등급 (설계서 §2.8, §13.4).
-    final foot =
-        note ?? (far ? l10n.outOfRange : rangeLabel(l10n, pirate.spec.range));
-    final footColor = note != null
-        ? HudColors.text
-        : far
-        ? HudColors.danger
-        : HudColors.mute;
     final aiming = _s.aim?.slot == widget.slot;
     final picked = _s.selected == widget.slot && _s.selectedSide == widget.side;
     return GestureDetector(
@@ -152,11 +129,8 @@ class _PirateCardState extends State<_PirateCard> {
                 bottom: 16,
                 child: RarityStars(rarity: pirate.spec.rarity),
               ),
-              _strip(
-                foot,
-                footColor,
-                icon: note == null && far ? MetaIcons.outOfRange : null,
-              ),
+              // 아래 줄: 해적 상태 (설계서 §13.4).
+              if (note != null) _strip(note, HudColors.text),
             ],
           ),
         ),

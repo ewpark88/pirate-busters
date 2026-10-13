@@ -1,4 +1,3 @@
-import 'package:pb_sim/pb_sim.dart';
 import 'package:pirate_busters/meta/progress.dart';
 import 'package:pirate_busters/meta/ship_upgrades.dart';
 
@@ -7,17 +6,9 @@ abstract final class OperatorActions {
   /// 한 번에 더하는 골드.
   static const int gold = 10000;
 
-  /// 배 업그레이드를 모두 끝낸 상태: 마지막 확장 단계, 선형 최고 레벨,
-  /// 모든 재질·모듈, 모든 돛대 최고 레벨 (설계서 §3.1·§3.3·§13.6).
+  /// 배 해금을 모두 끝낸 상태: 모든 재질 (설계서 §13.6).
   static final ShipUpgrades maxedShip = ShipUpgrades(
-    stage: HullSpec.maxStage,
-    hullLevel: HullSpec.maxLevel,
     materials: [for (final m in ShipUpgrades.materialGold.keys) m.name],
-    modules: [for (final k in ShipUpgrades.moduleGold.keys) k.jsonName],
-    mastLevels: {
-      for (final k in ModuleKind.values)
-        if (k.isMast) k.jsonName: BlockMaterial.maxRigLevel,
-    },
   );
 
   static PlayerProgress maxShip(PlayerProgress p) =>

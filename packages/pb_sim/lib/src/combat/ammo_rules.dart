@@ -1,11 +1,9 @@
-import 'package:pb_sim/src/combat/hit_effects.dart';
 import 'package:pb_sim/src/combat/launch.dart';
-import 'package:pb_sim/src/combat/unique_turns.dart';
+import 'package:pb_sim/src/combat/legend_effects.dart';
 import 'package:pb_sim/src/match/match_state.dart';
 import 'package:pb_sim/src/match/rules.dart';
 import 'package:pb_sim/src/math/fx.dart';
 import 'package:pb_sim/src/math/trig.dart';
-import 'package:pb_sim/src/pirate/ability.dart';
 import 'package:pb_sim/src/pirate/ammo.dart';
 import 'package:pb_sim/src/pirate/crew.dart';
 import 'package:pb_sim/src/pirate/pirate_spec.dart';
@@ -18,18 +16,11 @@ const int burstIntervalTicks = 3;
 /// 산발 연사의 세기 흔들림 절반 폭(‰). 임시값 (BALANCE.md A4.8, ADR-102).
 const int scatterPowerPermille = 80;
 
-/// 직사 계열이 멀 때 흔들리는 각도의 절반 폭(밀리도). 임시값 (ADR-035).
-const int directFarJitterMdeg = 2000;
-
-/// 펠리 투하 폭탄이 떨어지기 시작하는 높이(1/1000칸).
-const int flockDropHeight = 14 * cellUnit;
-
 /// 지금 턴 진영의 [slot] 해적이 쏜 한 번의 발사 (설계서 §4.8 탄종 행동 모듈).
 ///
 /// 연사탄은 [PirateSpec.ammoValue] 발을 [burstIntervalTicks] 간격으로 쏜다. 집중은
 /// 모든 발이 같은 각도·세기, 산발은 발마다 매치 난수로 흔들린다 ([_scatter], ADR-102).
-/// 직사 계열은 가까우면 피해 +20%, 멀면 −20% 에 각도가 흔들린다 (설계서 §2.6).
-/// 투사체 id 는 [MatchState.nextProjectileId] 에서 차례로 받는다.
+/// 망대 해적은 피해가 커진다(설계서 §3.3). 투사체 id 는 [MatchState.nextProjectileId] 에서 차례로 받는다.
 List<Projectile> launchVolley(
   MatchState state, {
   required int slot,
@@ -39,24 +30,10 @@ List<Projectile> launchVolley(
 }) {
   final side = state.sides[state.activeSide];
   final spec = side.crew.pirates[slot].spec;
-  final reach = reachOf(state);
-  var aim = angle;
-  var dmgPercent = 100 + side.damageBonusPercent(slot);
-  if (spec.family == Family.direct) {
-    if (reach == Reach.near) dmgPercent = dmgPercent * 120 ~/ 100;
-    if (reach == Reach.far) {
-      dmgPercent = dmgPercent * 80 ~/ 100;
-      aim +=
-          state.rng.nextInt(2 * directFarJitterMdeg + 1) - directFarJitterMdeg;
-    }
-  }
-  // 꽃게 형제는 같은 궤적으로 두 발 (ADR-078).
-  final count = spec.ammo == AmmoType.burst
-      ? spec.ammoValue
-      : (spec.ability == Ability.twin ? 2 : 1);
-  final shotSpec = spec.ability == Ability.twin
-      ? _twin(spec, dmgPercent)
-      : _scaled(spec, count, dmgPercent);
+  final aim = angle;
+  final dmgPercent = 100 + side.damageBonusPercent(slot);
+  final count = spec.ammo == AmmoType.burst ? spec.ammoValue : 1;
+  final shotSpec = _scaled(spec, count, dmgPercent);
   final shots = <Projectile>[];
   final burst = spec.ammo == AmmoType.burst;
   for (var i = 0; i < count; i++) {
@@ -72,7 +49,7 @@ List<Projectile> launchVolley(
       id: state.nextProjectileId++,
       spec: shotSpec,
     )..startTick = i * burstIntervalTicks;
-    armShot(p, reach);
+    armShot(p);
     shots.add(p);
   }
   return shots;
@@ -92,15 +69,6 @@ PirateSpec _scaled(PirateSpec spec, int count, int percent) {
     pirateDamage: pirate * percent ~/ 100,
   );
 }
-
-/// 꽃게 형제 두 발의 합계 피해 비율(%) (BALANCE.md A4.2, R1d).
-const int twinTotalPercent = 120;
-
-/// 꽃게 형제 한 발: 합계 [twinTotalPercent]% 를 두 발에 나누고 [percent]% 를 곱한다.
-PirateSpec _twin(PirateSpec spec, int percent) => spec.withDamage(
-  blockDamage: spec.blockDamage * twinTotalPercent ~/ 200 * percent ~/ 100,
-  pirateDamage: spec.pirateDamage * twinTotalPercent ~/ 200 * percent ~/ 100,
-);
 
 /// 연사 한 발의 각도·세기 (설계서 §4.8 연사 패턴). 집중은 그대로, 산발은 각도
 /// ±spread/2·세기 ±[scatterPowerPermille]‰ 를 매치 난수로 흔든다(발 순서대로 뽑는다).
@@ -122,27 +90,19 @@ int _fanOffset(int spread, int i, int count) =>
     count <= 1 ? 0 : -spread ~/ 2 + spread * i ~/ (count - 1);
 
 /// 탄종별 비행 상태를 준비한다. 궤적 미리보기도 같은 준비를 거친다 (A33).
-void armShot(Projectile p, Reach reach) {
+void armShot(Projectile p) {
   final spec = p.spec;
   switch (spec.ammo) {
     case AmmoType.pierce:
-      final bonus = switch (reach) {
-        Reach.near => 1,
-        Reach.far => -1,
-        Reach.mid => 0,
-      };
-      final n = spec.ammoValue + bonus;
-      p.pierceLeft = n < 1 ? 1 : n;
+      p.pierceLeft = spec.ammoValue < 1 ? 1 : spec.ammoValue;
     case AmmoType.skip:
-      // 멀면 튕김이 하나 준다(최소 1) (설계서 §2.6, BALANCE.md A2.6, ADR-102).
-      final n = spec.ammoValue - (reach == Reach.far ? 1 : 0);
-      p.bouncesLeft = n < 1 ? 1 : n;
+      p.bouncesLeft = spec.ammoValue < 1 ? 1 : spec.ammoValue;
     case AmmoType.homing:
       p.gravity = false;
     case _:
       break;
   }
-  armUnique(p);
+  armLegend(p);
 }
 
 /// 속도 ([vx], [vy]) 를 [mdeg] 만큼 반시계로 돌린다.
@@ -188,31 +148,6 @@ List<Projectile> flockBombs(MatchState state, Projectile p, int tick) {
         tick,
         (p.vx * (50 + (n <= 1 ? 50 : 100 * i ~/ (n - 1))) ~/ 100, 0),
       ),
-  ];
-}
-
-/// 펠리 투하: 표시한 [x] 위 높은 곳에서 1칸 간격으로 폭탄을 떨군다.
-List<Projectile> dropBombs(
-  MatchState state, {
-  required int side,
-  required int slot,
-  required PirateSpec spec,
-  required int x,
-}) {
-  final n = spec.ammoValue;
-  final bomb = _scaled(spec, n, 100);
-  return [
-    for (var i = 0; i < n; i++)
-      Projectile(
-        id: state.nextProjectileId++,
-        side: side,
-        slot: slot,
-        spec: bomb,
-        x: x + (2 * i - (n - 1)) * cellUnit ~/ 2,
-        y: flockDropHeight,
-        vx: 0,
-        vy: 0,
-      )..divided = true,
   ];
 }
 

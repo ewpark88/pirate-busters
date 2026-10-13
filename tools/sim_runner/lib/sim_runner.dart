@@ -10,7 +10,6 @@ import 'dart:isolate';
 
 import 'package:pb_ai/pb_ai.dart';
 import 'package:pb_data/pb_data.dart';
-import 'package:pb_sim/pb_sim.dart';
 import 'package:sim_runner/src/game.dart';
 import 'package:sim_runner/src/report.dart';
 
@@ -28,8 +27,7 @@ const String usage = '''
   --csv PATH       CSV 로도 쓴다
   --data DIR       게임 데이터 폴더 (기본 app/assets/game)
   --pirates IDS    덱 풀: 쉼표로 나눈 해적 id (기본 전체)
-  --blueprints IDS 설계도 풀: 쉼표로 나눈 추천 설계도 id (기본 전체)
-  --stage N        슬루프 확장 단계 1~4 (기본 4, 설계서 §3.1)''';
+  --blueprints IDS 설계도 풀: 쉼표로 나눈 추천 설계도 id (기본 전체)''';
 
 /// 인자.
 class SimOptions {
@@ -43,7 +41,6 @@ class SimOptions {
     this.dataDir = 'app/assets/game',
     this.pirates,
     this.blueprints,
-    this.stage = HullSpec.maxStage,
   }) : right = right ?? left,
        jobs = jobs ?? Platform.numberOfProcessors;
 
@@ -72,7 +69,6 @@ class SimOptions {
       dataDir: m['data'] ?? 'app/assets/game',
       pirates: m['pirates']?.split(','),
       blueprints: m['blueprints']?.split(','),
-      stage: int.parse(m['stage'] ?? '${HullSpec.maxStage}'),
     );
   }
 
@@ -87,9 +83,6 @@ class SimOptions {
   /// 덱 풀·설계도 풀(없으면 전체).
   final List<String>? pirates;
   final List<String>? blueprints;
-
-  /// 슬루프 확장 단계 (설계서 §3.1). 설계도 풀과 덱 크기(선실 수)가 이 단계를 따른다.
-  final int stage;
 
   /// 판 [i] 의 [좌, 우] 난이도. 난이도가 다르면 판마다 좌우를 바꾼다.
   List<AiLevel> levelsFor(int i) =>
@@ -109,13 +102,11 @@ GameFactory factoryFrom(
   DataTexts t, {
   List<String>? pirates,
   List<String>? blueprints,
-  int stage = HullSpec.maxStage,
 }) => GameFactory(
   GameData.parse(ammoJson: t.ammo, piratesJson: t.pirates),
   parsePresets(jsonDecode(t.blueprints)),
   pirates: pirates,
   blueprints: blueprints,
-  stage: stage,
 );
 
 /// 판 [from] 부터 [to] 전까지 둔다.
@@ -124,7 +115,6 @@ List<GameResult> runRange(DataTexts data, SimOptions o, int from, int to) {
     data,
     pirates: o.pirates,
     blueprints: o.blueprints,
-    stage: o.stage,
   );
   return [
     for (var i = from; i < to; i++)

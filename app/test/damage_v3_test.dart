@@ -104,15 +104,13 @@ void main() {
       );
     });
 
-    test('흘수선 아래 참나무·소나무는 젖은 색, 코르크는 소나무, 망사는 참나무 색이다', () {
+    test('흘수선 아래 참나무·소나무는 젖은 색이다', () {
       expect(DamageStyle.woodOf(BlockMaterial.oak, wet: true), DamageStyle.bot);
       expect(
         DamageStyle.woodOf(BlockMaterial.pine, wet: true),
         DamageStyle.bot,
       );
       expect(DamageStyle.woodOf(BlockMaterial.pine), DamageStyle.pine);
-      expect(DamageStyle.woodOf(BlockMaterial.cork), DamageStyle.pine);
-      expect(DamageStyle.woodOf(BlockMaterial.net), DamageStyle.oak);
     });
 
     test('이어진 구멍·파괴 칸은 한 덩어리, 떨어진 칸은 다른 덩어리로 그을린다', () {

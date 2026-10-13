@@ -89,40 +89,25 @@ class AiPlanner {
     return _bundle!;
   }
 
-  /// 쏠 수 있는 해적. 지원 해적은 난이도 규칙을 따른다 (A5.2).
+  /// 쏠 수 있는 해적.
   List<int> _shooters() => [
     for (var slot = 0; slot < _me.crew.size; slot++)
-      if (_me.canFire(slot) && _supportAllowed(slot)) slot,
+      if (_me.canFire(slot)) slot,
   ];
 
-  bool _supportAllowed(int slot) {
-    if (_spec(slot).ammo != AmmoType.support) return true;
-    return switch (dials.support) {
-      SupportUse.never => false,
-      SupportUse.fromHalfFlood => _me.flood * 2 >= fullFlood,
-      SupportUse.timely => true,
-    };
-  }
-
-  /// 위치 후보(시작 위치 기준 오프셋): 지금 자리 + 2칸 간격 앞뒤. 연료·한계선 안,
-  /// 어려움 이상은 연료 비축량을 남긴다 (A5.5).
+  /// 위치 후보(시작 위치 기준 오프셋): 지금 자리 + 1칸 간격 앞뒤. 연료·한계 안
+  /// (BALANCE.md A5.5). 연료는 내 턴마다 가득 차므로 아껴 두지 않는다.
   List<int> _positionCandidates() {
     final now = _me.offset;
     final out = [now];
     final n = dials.positions;
+    final other = state.otherOf(side);
     for (var k = 1; out.length < n && k <= n; k++) {
       for (final sign in const [1, -1]) {
         if (out.length >= n) break;
         final dx = sign * k * AiDials.positionStepCells * 10;
-        final reach = moveReach(_me, state.rules, state.turn, dx, 20000);
+        final reach = moveReach(_me, other, state.rules, dx, 20000);
         if (reach != dx * moveStep) continue;
-        // 내 배에 선 강습 해적을 흔들어 떨어뜨릴 때는 비축 연료를 쓴다 (A5.5, ADR-110).
-        if (level.index >= AiLevel.hard.index && !hasBoarders(_me)) {
-          final cost = reach.abs() * _me.fuelPerCell ~/ cellUnit;
-          if (_me.fuel - cost < AiDials.fuelReserve * SideState.fuelUnit) {
-            continue;
-          }
-        }
         out.add(now + reach);
       }
     }

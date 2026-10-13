@@ -54,9 +54,8 @@ void main() {
   ).reward;
   const summary = MatchSummary(
     won: true,
-    outcome: MatchOutcome.sunk,
+    outcome: MatchOutcome.captainLost,
     turns: 9,
-    floodPercent: 12,
     hullPercent: 71,
     piratesDown: 0,
     shotsFired: 14,
@@ -132,7 +131,6 @@ void main() {
     'result': StageResultScreen(
       stage: stage,
       summary: summary,
-      enemyFloodPercent: 40,
       reward: reward,
     ),
     'cutscene': CutsceneScreen(cuts: StoryData.of(StoryData.prologue)!),

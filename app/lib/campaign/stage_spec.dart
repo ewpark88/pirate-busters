@@ -35,12 +35,10 @@ class MissionSpec {
     );
   }
 
-  /// MVP 미션 5종. 판정은 `StarRules`.
+  /// 미션 3종. 판정은 `StarRules`. 침수·격침 미션은 없다 (ADR-111).
   static const Set<String> knownTypes = {
     'no_pirate_down',
-    'flood_below',
     'hull_above',
-    'win_by_sink',
     'turns_within',
   };
 
@@ -68,7 +66,6 @@ class StageSpec {
     required this.enemyDeck,
     required this.aiLevel,
     required this.personality,
-    required this.waveLevel,
     required this.maxWind,
     required this.starTurns,
     required this.mission,
@@ -76,9 +73,7 @@ class StageSpec {
     required this.rewardGold,
     required this.rewardPirate,
     required this.tutorialStep,
-    this.gimmick,
-    this.enemyStage = HullSpec.maxStage,
-    this.enemyMastLevel = 1,
+    this.calmSea = false,
     this.enemyBlueprint,
   });
 
@@ -109,7 +104,7 @@ class StageSpec {
         r.string('personality'),
         '${r.path}.personality',
       ),
-      waveLevel: r.integerOr('waveLevel', 1),
+      calmSea: r.has('calmSea') && r.raw('calmSea') == true,
       maxWind: r.integerOr('maxWind', 3),
       starTurns: r.integer('starTurns'),
       mission: MissionSpec.fromJson(r.object('mission')),
@@ -117,9 +112,6 @@ class StageSpec {
       rewardGold: reward.integerOr('gold', 0),
       rewardPirate: reward.stringOrNull('pirate'),
       tutorialStep: r.integerOr('tutorialStep', 0),
-      gimmick: r.stringOrNull('gimmick'),
-      enemyStage: r.integerOr('enemyStage', HullSpec.maxStage),
-      enemyMastLevel: r.integerOr('enemyMastLevel', 1),
       enemyBlueprint: _blueprintOrNull(r),
     );
   }
@@ -157,18 +149,15 @@ class StageSpec {
   /// 적 설계도(추천 설계도 id)와 덱.
   final String enemyPreset;
 
-  /// 적 배 확장 단계(설계서 §3.1, BALANCE.md A3.1)와 돛대 레벨(A3.2).
-  final int enemyStage;
-  final int enemyMastLevel;
-
   /// 스테이지 전용 적 설계도. 있으면 [enemyPreset] 대신 쓴다 (설계서 §13.1 첫 판).
   final Blueprint? enemyBlueprint;
   final List<String> enemyDeck;
   final AiLevel aiLevel;
   final Personality personality;
 
-  /// 파도 세기와 바람 최대 단계 (설계서 §2.1 스테이지 파라미터).
-  final int waveLevel;
+  /// 파도 구간 없이 잔잔한 바다인가(튜토리얼 첫 판)와 바람 최대 단계
+  /// (설계서 §2.4·§2.6, `MatchRules.calmSea`·`maxWind`).
+  final bool calmSea;
   final int maxWind;
 
   /// 별 2개째: 이 턴 수 이내 승리 (BALANCE.md A6.1).
@@ -188,15 +177,15 @@ class StageSpec {
   /// 튜토리얼 판 번호 1~3 (§13.1). 캠페인 스테이지는 0.
   final int tutorialStep;
 
-  /// 보스 기믹 id (§5.4). 글자는 ARB `gimmick_<id>`, 판정은 `BossGimmick`(해역 1 은 A29).
-  final String? gimmick;
+  /// 보스 기믹: 없어졌다 (ADR-111). 전투 화면 호환을 위해 늘 null.
+  String? get gimmick => null;
 
   bool get isBoss => kind == StageKind.boss || kind == StageKind.midBoss;
 
   /// 원격 설정으로 바꿀 수 있는 값만 바꾼 스테이지 (설계서 §7.4 `campaign_*`).
   StageSpec copyWith({
     AiLevel? aiLevel,
-    int? waveLevel,
+    bool? calmSea,
     int? maxWind,
     int? starTurns,
     int? rewardGold,
@@ -207,12 +196,10 @@ class StageSpec {
     kind: kind,
     enemyPreset: enemyPreset,
     enemyDeck: enemyDeck,
-    enemyStage: enemyStage,
-    enemyMastLevel: enemyMastLevel,
     enemyBlueprint: enemyBlueprint,
     aiLevel: aiLevel ?? this.aiLevel,
     personality: personality,
-    waveLevel: waveLevel ?? this.waveLevel,
+    calmSea: calmSea ?? this.calmSea,
     maxWind: maxWind ?? this.maxWind,
     starTurns: starTurns ?? this.starTurns,
     mission: mission,
@@ -220,7 +207,6 @@ class StageSpec {
     rewardGold: rewardGold ?? this.rewardGold,
     rewardPirate: rewardPirate,
     tutorialStep: tutorialStep,
-    gimmick: gimmick,
   );
 }
 
@@ -270,21 +256,17 @@ class SeaSpec {
   /// 데이터가 게임 데이터와 맞는지 검사한다. 문제가 없으면 빈 목록(개발자용 메시지).
   List<String> problems({
     required bool Function(String pirateId) hasPirate,
-    required bool Function(String presetId, int stage) hasPreset,
+    required bool Function(String presetId) hasPreset,
   }) => [
     for (final s in stages) ...[
-      if (!hasPreset(s.enemyPreset, s.enemyStage))
-        '${s.id}: unknown preset ${s.enemyPreset} stage ${s.enemyStage}',
+      if (!hasPreset(s.enemyPreset)) '${s.id}: unknown preset ${s.enemyPreset}',
       for (final p in s.enemyDeck)
         if (!hasPirate(p)) '${s.id}: unknown enemy pirate $p',
       if (s.rewardPirate != null && !hasPirate(s.rewardPirate!))
         '${s.id}: unknown reward pirate ${s.rewardPirate}',
       if (s.enemyDeck.isEmpty) '${s.id}: empty enemy deck',
-      if (s.enemyDeck.length >
-          (s.enemyBlueprint?.hull ??
-                  HullSpec.byId('sloop', stage: s.enemyStage))
-              .cabinSlots)
-        '${s.id}: enemy deck larger than stage ${s.enemyStage} cabins',
+      if (s.enemyDeck.length > HullSpec.sloop.crewSlots)
+        '${s.id}: enemy deck larger than ${HullSpec.sloop.crewSlots} seats',
       if (s.kind == StageKind.tutorial &&
           (s.tutorialStep < 1 || s.tutorialStep > 3))
         '${s.id}: tutorial step ${s.tutorialStep} out of range',

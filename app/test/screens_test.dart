@@ -9,7 +9,6 @@ import 'package:pirate_busters/l10n/app_localizations.dart';
 import 'package:pirate_busters/l10n/data_text.dart';
 import 'package:pirate_busters/meta/progress.dart';
 import 'package:pirate_busters/meta/progress_store.dart';
-import 'package:pirate_busters/meta/ship_upgrades.dart';
 import 'package:pirate_busters/port/settings_screen.dart';
 import 'package:pirate_busters/settings/language.dart';
 import 'package:pirate_busters/settings/settings_store.dart';
@@ -102,7 +101,6 @@ void main() {
       tester,
       const CrewScreen(showAll: true),
       const Locale('ko'),
-      progress: const PlayerProgress(ship: ShipUpgrades(stage: 4)),
     );
     final name = dataText(
       AppLocalizations.of(tester.element(find.byType(CrewScreen))),

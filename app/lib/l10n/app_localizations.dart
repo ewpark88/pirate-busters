@@ -113,7 +113,7 @@ abstract class AppLocalizations {
   /// No description provided for @timeVerdict.
   ///
   /// In en, this message translates to:
-  /// **'{count, plural, =1{1 turn to time decision} other{{count} turns to time decision}} · less flooding wins'**
+  /// **'{count, plural, =1{1 turn to turn limit} other{{count} turns to turn limit}} · most crew HP wins'**
   String timeVerdict(int count);
 
   /// No description provided for @timeVerdictFlood.
@@ -125,7 +125,7 @@ abstract class AppLocalizations {
   /// No description provided for @timeVerdictByHull.
   ///
   /// In en, this message translates to:
-  /// **'Flooding close: hull decides'**
+  /// **'HP tied: cabin decides'**
   String get timeVerdictByHull;
 
   /// No description provided for @yourTurn.
@@ -362,17 +362,11 @@ abstract class AppLocalizations {
   /// **'Draw'**
   String get resultDraw;
 
-  /// No description provided for @outcomeSunk.
+  /// No description provided for @outcomeCaptainLost.
   ///
   /// In en, this message translates to:
-  /// **'Ship wrecked'**
-  String get outcomeSunk;
-
-  /// No description provided for @outcomeFloodSunk.
-  ///
-  /// In en, this message translates to:
-  /// **'Sunk by flooding'**
-  String get outcomeFloodSunk;
+  /// **'Captain\'s cabin lost'**
+  String get outcomeCaptainLost;
 
   /// No description provided for @outcomeAnnihilation.
   ///
@@ -434,11 +428,11 @@ abstract class AppLocalizations {
   /// **'Cabin hit!'**
   String get emphasisCabin;
 
-  /// No description provided for @sunkBanner.
+  /// No description provided for @bannerCaptainLost.
   ///
   /// In en, this message translates to:
-  /// **'Sunk!'**
-  String get sunkBanner;
+  /// **'Cabin down!'**
+  String get bannerCaptainLost;
 
   /// No description provided for @bannerMyTurn.
   ///
@@ -533,7 +527,7 @@ abstract class AppLocalizations {
   /// No description provided for @pirate_p07_desc.
   ///
   /// In en, this message translates to:
-  /// **'Short-range focused triple shot that hammers one spot'**
+  /// **'Focused 3-shot burst on one spot'**
   String get pirate_p07_desc;
 
   /// No description provided for @pirate_p07_lore.
@@ -569,7 +563,7 @@ abstract class AppLocalizations {
   /// No description provided for @pirate_p16_desc.
   ///
   /// In en, this message translates to:
-  /// **'Stone skips twice and hits the waterline'**
+  /// **'Stone skips off the water into the lower hull'**
   String get pirate_p16_desc;
 
   /// No description provided for @pirate_p16_lore.
@@ -587,7 +581,7 @@ abstract class AppLocalizations {
   /// No description provided for @pirate_p21_desc.
   ///
   /// In en, this message translates to:
-  /// **'Clings below the waterline, bursts next turn'**
+  /// **'Sticks under the hull, blows at my next turn'**
   String get pirate_p21_desc;
 
   /// No description provided for @pirate_p21_lore.
@@ -641,7 +635,7 @@ abstract class AppLocalizations {
   /// No description provided for @pirate_p28_desc.
   ///
   /// In en, this message translates to:
-  /// **'Drops 4 small bombs from her pouch next turn'**
+  /// **'Drops 4 small bombs from the top'**
   String get pirate_p28_desc;
 
   /// No description provided for @pirate_p28_lore.
@@ -659,7 +653,7 @@ abstract class AppLocalizations {
   /// No description provided for @pirate_p31_desc.
   ///
   /// In en, this message translates to:
-  /// **'Leaps onto the deck and bites pirates within 1 cell'**
+  /// **'Leaps onto the enemy deck and bites nearby pirates'**
   String get pirate_p31_desc;
 
   /// No description provided for @pirate_p31_lore.
@@ -677,7 +671,7 @@ abstract class AppLocalizations {
   /// No description provided for @pirate_p36_desc.
   ///
   /// In en, this message translates to:
-  /// **'Hit the enemy to patch 3 holes on your ship'**
+  /// **'Shell cannon shockwave pushes the ship 1 cell'**
   String get pirate_p36_desc;
 
   /// No description provided for @pirate_p36_lore.
@@ -695,7 +689,7 @@ abstract class AppLocalizations {
   /// No description provided for @pirate_p02_desc.
   ///
   /// In en, this message translates to:
-  /// **'Spinning fire star that leaves a burning zone'**
+  /// **'Spinning fire star bursts wide'**
   String get pirate_p02_desc;
 
   /// No description provided for @pirate_p02_lore.
@@ -713,7 +707,7 @@ abstract class AppLocalizations {
   /// No description provided for @pirate_p03_desc.
   ///
   /// In en, this message translates to:
-  /// **'Two bombs on the same arc, one after the other'**
+  /// **'Big claw bomb, bursts on impact'**
   String get pirate_p03_desc;
 
   /// No description provided for @pirate_p03_lore.
@@ -731,7 +725,7 @@ abstract class AppLocalizations {
   /// No description provided for @pirate_p05_desc.
   ///
   /// In en, this message translates to:
-  /// **'Steep lob that drills 3 layers, then a big blast'**
+  /// **'★ Sky-high lob, drills 2 layers then blows'**
   String get pirate_p05_desc;
 
   /// No description provided for @pirate_p05_lore.
@@ -749,7 +743,7 @@ abstract class AppLocalizations {
   /// No description provided for @pirate_p08_desc.
   ///
   /// In en, this message translates to:
-  /// **'Lightning-fast shot with a glowing-eye scope'**
+  /// **'Lightning-fast snipe, crits on pirates'**
   String get pirate_p08_desc;
 
   /// No description provided for @pirate_p08_lore.
@@ -767,7 +761,7 @@ abstract class AppLocalizations {
   /// No description provided for @pirate_p09_desc.
   ///
   /// In en, this message translates to:
-  /// **'Scattered spines that spray wide and shred nets'**
+  /// **'Scatter burst, sprays wide'**
   String get pirate_p09_desc;
 
   /// No description provided for @pirate_p09_lore.
@@ -785,7 +779,7 @@ abstract class AppLocalizations {
   /// No description provided for @pirate_p10_desc.
   ///
   /// In en, this message translates to:
-  /// **'Chain lightning that jumps between pirates'**
+  /// **'Chain lightning jumps from the hit pirate'**
   String get pirate_p10_desc;
 
   /// No description provided for @pirate_p10_lore.
@@ -803,7 +797,7 @@ abstract class AppLocalizations {
   /// No description provided for @pirate_p12_desc.
   ///
   /// In en, this message translates to:
-  /// **'Horn lance skewers up to 3 pirates in a row'**
+  /// **'Horn spear pierces blocks'**
   String get pirate_p12_desc;
 
   /// No description provided for @pirate_p12_lore.
@@ -821,7 +815,7 @@ abstract class AppLocalizations {
   /// No description provided for @pirate_p13_desc.
   ///
   /// In en, this message translates to:
-  /// **'Heavy anchor that rips blocks out'**
+  /// **'Heavy anchor pierces blocks'**
   String get pirate_p13_desc;
 
   /// No description provided for @pirate_p13_lore.
@@ -839,7 +833,7 @@ abstract class AppLocalizations {
   /// No description provided for @pirate_p14_desc.
   ///
   /// In en, this message translates to:
-  /// **'Saw nose cuts a whole column'**
+  /// **'Saw nose pierces blocks'**
   String get pirate_p14_desc;
 
   /// No description provided for @pirate_p14_lore.
@@ -857,7 +851,7 @@ abstract class AppLocalizations {
   /// No description provided for @pirate_p15_desc.
   ///
   /// In en, this message translates to:
-  /// **'Drags the enemy ship 3 cells and pins it'**
+  /// **'★ Drags the enemy ship 3 cells on a hull hit'**
   String get pirate_p15_desc;
 
   /// No description provided for @pirate_p15_lore.
@@ -875,7 +869,7 @@ abstract class AppLocalizations {
   /// No description provided for @pirate_p17_desc.
   ///
   /// In en, this message translates to:
-  /// **'Bounces, then belly-slides across the deck'**
+  /// **'Belly-slides off the water into the hull'**
   String get pirate_p17_desc;
 
   /// No description provided for @pirate_p17_lore.
@@ -893,7 +887,7 @@ abstract class AppLocalizations {
   /// No description provided for @pirate_p18_desc.
   ///
   /// In en, this message translates to:
-  /// **'Ricochets off walls for repeat hits'**
+  /// **'Shell skips into the hull'**
   String get pirate_p18_desc;
 
   /// No description provided for @pirate_p18_lore.
@@ -911,7 +905,7 @@ abstract class AppLocalizations {
   /// No description provided for @pirate_p19_desc.
   ///
   /// In en, this message translates to:
-  /// **'Clings to the hull and pounds the waterline'**
+  /// **'Surfs a wave into the hull'**
   String get pirate_p19_desc;
 
   /// No description provided for @pirate_p19_lore.
@@ -929,7 +923,7 @@ abstract class AppLocalizations {
   /// No description provided for @pirate_p20_desc.
   ///
   /// In en, this message translates to:
-  /// **'Huge wave sweeps the deck, flooding +8%p'**
+  /// **'★ Big wave sweeps the deck and pushes the ship 2 cells'**
   String get pirate_p20_desc;
 
   /// No description provided for @pirate_p20_lore.
@@ -947,7 +941,7 @@ abstract class AppLocalizations {
   /// No description provided for @pirate_p22_desc.
   ///
   /// In en, this message translates to:
-  /// **'Floating mine that blows when a ship passes'**
+  /// **'Sticks under the hull, blows at my next turn'**
   String get pirate_p22_desc;
 
   /// No description provided for @pirate_p22_lore.
@@ -983,7 +977,7 @@ abstract class AppLocalizations {
   /// No description provided for @pirate_p24_desc.
   ///
   /// In en, this message translates to:
-  /// **'Latches on, gnaws blocks and jams pumps'**
+  /// **'Sticks under the hull, blows at my next turn'**
   String get pirate_p24_desc;
 
   /// No description provided for @pirate_p24_lore.
@@ -1001,7 +995,7 @@ abstract class AppLocalizations {
   /// No description provided for @pirate_p25_desc.
   ///
   /// In en, this message translates to:
-  /// **'Tentacles cling on and keep the water rising'**
+  /// **'★ Blows on contact, tentacles smash nearby blocks for 2 turns'**
   String get pirate_p25_desc;
 
   /// No description provided for @pirate_p25_lore.
@@ -1019,7 +1013,7 @@ abstract class AppLocalizations {
   /// No description provided for @pirate_p29_desc.
   ///
   /// In en, this message translates to:
-  /// **'Tap to change course; reverses the wind on hit'**
+  /// **'Curves toward the nearest pirate'**
   String get pirate_p29_desc;
 
   /// No description provided for @pirate_p29_lore.
@@ -1037,7 +1031,7 @@ abstract class AppLocalizations {
   /// No description provided for @pirate_p30_desc.
   ///
   /// In en, this message translates to:
-  /// **'Blinds the enemy aim line and strikes at random'**
+  /// **'★ Hides the foe\'s aim line next turn'**
   String get pirate_p30_desc;
 
   /// No description provided for @pirate_p30_lore.
@@ -1055,7 +1049,7 @@ abstract class AppLocalizations {
   /// No description provided for @pirate_p32_desc.
   ///
   /// In en, this message translates to:
-  /// **'Swings over and drags a pirate into the sea'**
+  /// **'Swings over on a rope and bites nearby pirates'**
   String get pirate_p32_desc;
 
   /// No description provided for @pirate_p32_lore.
@@ -1073,7 +1067,7 @@ abstract class AppLocalizations {
   /// No description provided for @pirate_p33_desc.
   ///
   /// In en, this message translates to:
-  /// **'Lands and seals a cabin for a turn'**
+  /// **'Jumps aboard and bites nearby pirates'**
   String get pirate_p33_desc;
 
   /// No description provided for @pirate_p33_lore.
@@ -1091,7 +1085,7 @@ abstract class AppLocalizations {
   /// No description provided for @pirate_p34_desc.
   ///
   /// In en, this message translates to:
-  /// **'Leaps to the next pirate after a knockout'**
+  /// **'Spinning claws slash nearby pirates'**
   String get pirate_p34_desc;
 
   /// No description provided for @pirate_p34_lore.
@@ -1109,7 +1103,7 @@ abstract class AppLocalizations {
   /// No description provided for @pirate_p35_desc.
   ///
   /// In en, this message translates to:
-  /// **'Summons 3 skeleton crew and revives once'**
+  /// **'★ Three skeleton crew bite along'**
   String get pirate_p35_desc;
 
   /// No description provided for @pirate_p35_lore.
@@ -1127,7 +1121,7 @@ abstract class AppLocalizations {
   /// No description provided for @pirate_p37_desc.
   ///
   /// In en, this message translates to:
-  /// **'Hit the enemy to cut your flooding at once'**
+  /// **'Water-jet shockwave pushes the ship 1 cell'**
   String get pirate_p37_desc;
 
   /// No description provided for @pirate_p37_lore.
@@ -1145,7 +1139,7 @@ abstract class AppLocalizations {
   /// No description provided for @pirate_p38_desc.
   ///
   /// In en, this message translates to:
-  /// **'Hit the enemy to heal crew and cut cooldowns by 1'**
+  /// **'Pot-bomb shockwave pushes the ship 1 cell'**
   String get pirate_p38_desc;
 
   /// No description provided for @pirate_p38_lore.
@@ -1163,7 +1157,7 @@ abstract class AppLocalizations {
   /// No description provided for @pirate_p39_desc.
   ///
   /// In en, this message translates to:
-  /// **'Hit to raise a coral wall at your bow for 2 turns'**
+  /// **'Coral-chunk shockwave pushes the ship 1 cell'**
   String get pirate_p39_desc;
 
   /// No description provided for @pirate_p39_lore.
@@ -1181,7 +1175,7 @@ abstract class AppLocalizations {
   /// No description provided for @pirate_p40_desc.
   ///
   /// In en, this message translates to:
-  /// **'Hit for next turn: full aim line, no wind, +30 fuel'**
+  /// **'★ Huge shockwave pushes the ship 2 cells'**
   String get pirate_p40_desc;
 
   /// No description provided for @pirate_p40_lore.
@@ -1199,7 +1193,7 @@ abstract class AppLocalizations {
   /// No description provided for @blueprint_balanced_desc.
   ///
   /// In en, this message translates to:
-  /// **'Oak keel with a pump and a workshop. A gun port and a lookout back one star pirate.'**
+  /// **'Oak keel with an iron-clad captain\'s cabin. Oak guards the bow, and a mast midship holds the crow\'s nest.'**
   String get blueprint_balanced_desc;
 
   /// No description provided for @blueprint_armored_name.
@@ -1211,7 +1205,7 @@ abstract class AppLocalizations {
   /// No description provided for @blueprint_armored_desc.
   ///
   /// In en, this message translates to:
-  /// **'Iron walls guard both sides of the cabins, and a magazine adds firepower. Heavy and low in the water, so watch the flooding.'**
+  /// **'Iron plates the bow for a tough front. The cabin roofs stay thin.'**
   String get blueprint_armored_desc;
 
   /// No description provided for @blueprint_fast_name.
@@ -1223,7 +1217,7 @@ abstract class AppLocalizations {
   /// No description provided for @blueprint_fast_desc.
   ///
   /// In en, this message translates to:
-  /// **'Pine and cork keep it light, and two fuel tanks let it roam far. It breaks easily.'**
+  /// **'A low ship that hides the captain\'s cabin in a mid oak deck. Fewer blocks, fewer points spent.'**
   String get blueprint_fast_desc;
 
   /// No description provided for @ammoExplosive.
@@ -1235,7 +1229,7 @@ abstract class AppLocalizations {
   /// No description provided for @ammoFire.
   ///
   /// In en, this message translates to:
-  /// **'Fire {n}T'**
+  /// **'Fire r{n}'**
   String ammoFire(int n);
 
   /// No description provided for @ammoSplit.
@@ -1277,7 +1271,7 @@ abstract class AppLocalizations {
   /// No description provided for @ammoMine.
   ///
   /// In en, this message translates to:
-  /// **'Mine {n}T'**
+  /// **'Mine r{n}'**
   String ammoMine(int n);
 
   /// No description provided for @ammoFlock.
@@ -1295,14 +1289,14 @@ abstract class AppLocalizations {
   /// No description provided for @ammoAssault.
   ///
   /// In en, this message translates to:
-  /// **'Raid +{n}'**
+  /// **'Raid r{n}'**
   String ammoAssault(int n);
 
-  /// No description provided for @ammoSupport.
+  /// No description provided for @ammoShock.
   ///
   /// In en, this message translates to:
-  /// **'Repair {n}%'**
-  String ammoSupport(int n);
+  /// **'Push {n}'**
+  String ammoShock(int n);
 
   /// No description provided for @rangeShort.
   ///
@@ -1694,11 +1688,11 @@ abstract class AppLocalizations {
   /// **'Assault'**
   String get familyAssault;
 
-  /// No description provided for @familySupport.
+  /// No description provided for @familyShock.
   ///
   /// In en, this message translates to:
-  /// **'Supply'**
-  String get familySupport;
+  /// **'Shock'**
+  String get familyShock;
 
   /// No description provided for @rarityCommon.
   ///
@@ -2051,8 +2045,8 @@ abstract class AppLocalizations {
   /// No description provided for @prepWeather.
   ///
   /// In en, this message translates to:
-  /// **'Waves {wave} · Wind up to {wind}'**
-  String prepWeather(Object wave, Object wind);
+  /// **'Wind up to {wind}'**
+  String prepWeather(Object wind);
 
   /// No description provided for @prepEditDeck.
   ///
@@ -2084,11 +2078,11 @@ abstract class AppLocalizations {
   /// **'Hunter'**
   String get personality_hunter;
 
-  /// No description provided for @personality_sinker.
+  /// No description provided for @personality_shover.
   ///
   /// In en, this message translates to:
-  /// **'Sinker'**
-  String get personality_sinker;
+  /// **'Shover'**
+  String get personality_shover;
 
   /// No description provided for @personality_rusher.
   ///
@@ -3224,11 +3218,11 @@ abstract class AppLocalizations {
   /// **'Assault'**
   String get ammoKindAssault;
 
-  /// No description provided for @ammoKindSupport.
+  /// No description provided for @ammoKindShock.
   ///
   /// In en, this message translates to:
-  /// **'Support'**
-  String get ammoKindSupport;
+  /// **'Shock shot'**
+  String get ammoKindShock;
 
   /// No description provided for @pirateCost.
   ///

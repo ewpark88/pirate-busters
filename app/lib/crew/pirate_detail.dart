@@ -110,14 +110,6 @@ class PirateDetail extends StatelessWidget {
                               PbChip(label: l10n.pirateCost(spec.cost)),
                               PbChip(label: l10n.pirateHp(spec.hp)),
                               PbChip(
-                                label: l10n.cooldown(spec.cooldownTurns),
-                              ),
-                              PbChip(
-                                label: l10n.pirateRange(
-                                  rangeLabel(l10n, spec.range),
-                                ),
-                              ),
-                              PbChip(
                                 label: ammoLabel(l10n, spec, locale),
                                 icon: ammoIconPath(spec.ammo),
                               ),

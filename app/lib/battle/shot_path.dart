@@ -19,7 +19,7 @@ class ShotPath {
   }) {
     final p = launchShot(state, slot: slot, angle: angle, power: power, ms: ms);
     // 실제 발사와 같은 탄종 준비(유도탄은 중력 없이 휘어 난다, A33).
-    armShot(p, reachOf(state));
+    armShot(p);
     final homing = p.spec.ammo == AmmoType.homing;
     final wind = state.wind * state.rules.windAccel;
     final xs = <int>[p.x];

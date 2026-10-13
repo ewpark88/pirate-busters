@@ -29,8 +29,7 @@ void main() {
     expect(text.indexOf('120'), lessThan(text.indexOf('300')));
   });
 
-  test('전투 준비 날씨는 파도 · 바람 순서로 나온다', () {
-    final text = en.prepWeather(1, 5);
-    expect(text.indexOf('1'), lessThan(text.indexOf('5')));
+  test('전투 준비 날씨에 최대 바람이 나온다', () {
+    expect(en.prepWeather(5), contains('5'));
   });
 }

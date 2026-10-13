@@ -59,14 +59,14 @@ void main() {
   ) async {
     await _pump(tester, const PlayerProgress());
     expect(find.text('소나무'), findsOneWidget);
-    expect(find.text('포문'), findsNothing);
+    expect(find.text('선장실'), findsNothing);
     expect(find.text('선실'), findsOneWidget);
     expect(find.text('지우기'), findsOneWidget);
     expect(tester.takeException(), isNull, reason: '640×360 에서 넘치지 않는다');
 
     await tester.tap(find.text('모듈').last);
     await tester.pump();
-    expect(find.text('포문'), findsOneWidget);
+    expect(find.text('선장실'), findsOneWidget);
     expect(find.text('소나무'), findsNothing);
     expect(find.text('선실'), findsOneWidget);
     expect(find.text('지우기'), findsOneWidget);
@@ -74,7 +74,7 @@ void main() {
     await tester.tap(find.text('돛대'));
     await tester.pump();
     expect(find.text('소나무 돛대'), findsOneWidget);
-    expect(find.text('포문'), findsNothing);
+    expect(find.text('선장실'), findsNothing);
   });
 
   testWidgets('골드가 없으면 빨간 점이 없다 (설계서 §13.6)', (tester) async {

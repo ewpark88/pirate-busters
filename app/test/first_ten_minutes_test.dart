@@ -7,7 +7,6 @@ import 'package:pirate_busters/battle/battle_setup.dart';
 import 'package:pirate_busters/game/camera_director.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
 import 'package:pirate_busters/meta/progress.dart';
-import 'package:pirate_busters/meta/ship_upgrades.dart';
 import 'package:pirate_busters/port/port_goal_card.dart';
 import 'package:pirate_busters/ui/hud/tutorial_finger.dart';
 
@@ -38,7 +37,6 @@ void main() {
         x: 0,
         y: 0,
         events: events,
-        rng: XorShift32(1),
       );
       final collapsed = events.where(
         (e) => e.kind == SimEventKind.blockCollapsed,
@@ -79,27 +77,15 @@ void main() {
       expect(CameraDirector.anchorSide(s, 0), 0);
     });
 
-    test('다음 목표: 튜토리얼을 끝냈으면 안 깬 첫 지도 스테이지, 배 확장 안내', () async {
+    test('다음 목표: 튜토리얼을 끝냈으면 안 깬 첫 지도 스테이지, 배 확장은 없다', () async {
       final l10n = await AppLocalizations.delegate.load(const Locale('ko'));
       const fresh = PlayerProgress();
       expect(PortGoalCard.nextStage(testCampaign, fresh, 1)!.id, 't-1');
       const after = PlayerProgress(tutorialDone: 3, stars: {'1-1': 2});
       expect(PortGoalCard.nextStage(testCampaign, after, 1)!.id, '1-2');
+      // 슬루프 하나라 키울 배가 없다 (ADR-111).
       expect(
         PortGoalCard.shipLine(l10n, testCampaign, after),
-        l10n.goalShipNeed('1-4'),
-      );
-      const ready = PlayerProgress(
-        tutorialDone: 3,
-        stars: {'1-1': 1, '1-2': 1, '1-3': 1, '1-4': 1},
-      );
-      expect(
-        PortGoalCard.shipLine(l10n, testCampaign, ready),
-        l10n.shipGrowReady,
-      );
-      const grown = PlayerProgress(ship: ShipUpgrades(stage: 4));
-      expect(
-        PortGoalCard.shipLine(l10n, testCampaign, grown),
         l10n.goalShipDone,
       );
     });

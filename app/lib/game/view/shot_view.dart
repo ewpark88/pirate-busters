@@ -216,7 +216,6 @@ class ShotView extends Component {
     // 약하면 새총만 옅게(누르자마자 반응, A33). 취소 표시는 HUD 가 한다.
     final weak = aim.shot.power < PullAim.minPower;
     if (!weak) {
-      GuideMarks.rangeEnd(canvas, session, aim.slot, path.xs.first);
       AimPainter.flowing(
         canvas,
         [

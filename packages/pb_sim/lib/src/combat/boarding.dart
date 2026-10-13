@@ -1,7 +1,6 @@
 import 'package:pb_sim/src/match/match_state.dart';
 import 'package:pb_sim/src/match/sim_event.dart';
 import 'package:pb_sim/src/match/turn_effects.dart';
-import 'package:pb_sim/src/pirate/ability.dart';
 import 'package:pb_sim/src/pirate/ammo.dart';
 import 'package:pb_sim/src/pirate/crew.dart';
 import 'package:pb_sim/src/projectile/projectile.dart';
@@ -42,32 +41,13 @@ bool hasBoarders(SideState ship) =>
     ship.crew.foe?.pirates.any((p) => p.status == PirateStatus.boarding) ??
     false;
 
-/// 강습 추가 물기(데비 해골 선원은 빼고)인가. 쏜 해적이 적 배 위에 있을 때만 문다.
-bool isBoarderBite(TurnEffect e) =>
-    e.kind == EffectKind.biteAgain && e.spec.ability != Ability.summon;
+/// 강습 추가 물기인가. 쏜 해적이 적 배 위에 있을 때만 문다.
+bool isBoarderBite(TurnEffect e) => e.kind == EffectKind.biteAgain;
 
 /// 강습탄 [p] 가 [target] 배 세로줄 [cx] 에 착지했다: 쏜 해적이 적 배 위에 선다.
-/// 크래비는 문 해적과 함께 바다에 빠지고, 데비는 서지 않고 돌아온다. 킹은 막은
-/// 선실 위에 선다. 랍은 이미 마지막에 벤 자리에 섰다([boardShooter]).
 void settleBoarder(MatchState state, Projectile p, SideState target, int cx) {
-  final spec = p.spec;
-  if (spec.ammo != AmmoType.assault || target.side == p.side) return;
-  var column = cx;
-  switch (spec.ability) {
-    case Ability.summon:
-      return;
-    case Ability.grab when p.abilityDone:
-      state.effects.removeWhere(
-        (e) => isBoarderBite(e) && e.owner == p.side && e.ownerSlot == p.slot,
-      );
-      state.sides[p.side].crew.fall(p.slot, p.side, state.events);
-      return;
-    case Ability.sealCabin when p.abilityDone:
-      column = target.cabins[target.status.sealedSlot].x;
-    case _:
-      break;
-  }
-  boardShooter(state, p, target, column);
+  if (p.spec.ammo != AmmoType.assault || target.side == p.side) return;
+  boardShooter(state, p, target, cx);
 }
 
 /// [p] 를 쏜 해적을 [target] 배 세로줄 [cx] 맨 위 블록 위에 세운다. 그 줄에 블록이

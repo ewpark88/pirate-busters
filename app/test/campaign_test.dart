@@ -13,16 +13,14 @@ import 'test_catalog.dart';
 
 MatchSummary summary({
   bool won = true,
-  MatchOutcome outcome = MatchOutcome.sunk,
+  MatchOutcome outcome = MatchOutcome.captainLost,
   int turns = 10,
-  int flood = 10,
   int hull = 80,
   int down = 0,
 }) => MatchSummary(
   won: won,
   outcome: outcome,
   turns: turns,
-  floodPercent: flood,
   hullPercent: hull,
   piratesDown: down,
   shotsFired: 12,
@@ -60,9 +58,7 @@ void main() {
       expect(
         sea1.problems(
           hasPirate: testCatalog.pirates.has,
-          hasPreset: (id, stage) => testCatalog.presets.any(
-            (p) => p.id == id && p.stage == stage,
-          ),
+          hasPreset: (id) => testCatalog.presets.any((p) => p.id == id),
         ),
         isEmpty,
       );
@@ -149,50 +145,22 @@ void main() {
 
   group('별 판정 (설계서 §6.1)', () {
     const rules = StarRules();
-    final s11 = sea1.byId('1-1'); // 미션: 해적 KO 없음, 내 턴 12번 이내 (ADR-105)
+    final s11 = sea1.byId('1-1'); // 미션: 해적 KO 없음, 내 턴 8번 이내 (BALANCE.md A6.1)
 
     test('지면 별이 없고, 이기면 1개, 턴 안이면 2개, 미션까지 하면 3개', () {
       expect(rules.evaluate(s11, summary(won: false)).count, 0);
-      // 별 턴은 내 턴 수로 센다: 양쪽 합산 24턴 = 내 턴 12번 (BALANCE.md A6.1).
-      expect(rules.evaluate(s11, summary(turns: 26, down: 1)).count, 1);
-      expect(rules.evaluate(s11, summary(turns: 24, down: 1)).count, 2);
+      // 별 턴은 내 턴 수로 센다: 양쪽 합산 16턴 = 내 턴 8번 (BALANCE.md A6.1).
+      expect(rules.evaluate(s11, summary(turns: 18, down: 1)).count, 1);
+      expect(rules.evaluate(s11, summary(turns: 16, down: 1)).count, 2);
       expect(rules.evaluate(s11, summary(turns: 8)).count, 3);
-      expect(rules.evaluate(s11, summary(turns: 26)).count, 2);
+      expect(rules.evaluate(s11, summary(turns: 18)).count, 2);
     });
 
-    test('미션 5종이 요약 값으로 판정된다', () {
+    test('미션 3종이 요약 값으로 판정된다', () {
       MissionSpec m(String type, [Map<String, int> p = const {}]) =>
           MissionSpec(type: type, params: p);
       expect(
-        rules.missionDone(
-          m('flood_below', {'percent': 30}),
-          summary(flood: 30),
-        ),
-        isTrue,
-      );
-      expect(
-        rules.missionDone(
-          m('flood_below', {'percent': 30}),
-          summary(flood: 31),
-        ),
-        isFalse,
-      );
-      expect(
         rules.missionDone(m('hull_above', {'percent': 60}), summary(hull: 59)),
-        isFalse,
-      );
-      expect(
-        rules.missionDone(
-          m('win_by_sink'),
-          summary(outcome: MatchOutcome.floodSunk),
-        ),
-        isTrue,
-      );
-      expect(
-        rules.missionDone(
-          m('win_by_sink'),
-          summary(outcome: MatchOutcome.annihilation),
-        ),
         isFalse,
       );
       expect(
@@ -207,7 +175,6 @@ void main() {
       final me = MatchSummary.fromState(state, 0);
       expect(me.won, isFalse);
       expect(me.turns, 1);
-      expect(me.floodPercent, 0);
       expect(me.hullPercent, 100);
       expect(me.piratesDown, 0);
     });

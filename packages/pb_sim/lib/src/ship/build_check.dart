@@ -35,12 +35,7 @@ String? buildProblem(
     return '용골과 이어지지 않은 블록: (${c.x}, ${c.y})';
   }
   bool hasBlock(int x, int y) => cells.any((b) => b.x == x && b.y == y);
-  final seats = mastSeats(hull, modules);
-  final cabinProblem = _cabinProblem(
-    hull,
-    cabins,
-    (x, y) => hasBlock(x, y) || seats.contains((x, y)),
-  );
+  final cabinProblem = _cabinProblem(hull, cabins, hasBlock);
   if (cabinProblem != null) return cabinProblem;
   final moduleProblemText = moduleProblem(
     hull,
@@ -106,7 +101,7 @@ String? _cabinProblem(
   for (var i = 0; i < cabins.length; i++) {
     final c = cabins[i];
     if (!hasBlock(c.x, c.y)) {
-      return '선실은 블록 위나 돛 자리에 있어야 한다: (${c.x}, ${c.y})';
+      return '선실은 블록 위에 있어야 한다: (${c.x}, ${c.y})';
     }
     for (var j = 0; j < i; j++) {
       if (cabins[j].x == c.x && cabins[j].y == c.y) {

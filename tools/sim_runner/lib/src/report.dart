@@ -34,7 +34,6 @@ class Report {
 
   final Map<String, Tally> pirates = {};
   final Map<String, Tally> families = {};
-  final Map<String, Tally> ranges = {};
   final Map<String, Tally> levels = {};
   final Map<MatchOutcome, int> outcomes = {};
   final Map<String, int> comboGames = {};
@@ -79,7 +78,6 @@ class Report {
             win: win,
             draw: draw,
           );
-          (ranges[spec.range.name] ??= Tally()).add(win: win, draw: draw);
         }
       }
     }
@@ -156,7 +154,6 @@ class Report {
     table('level', levels);
     table('pirate', pirates);
     table('family', families);
-    table('range', ranges);
     b.writeln('-- family hit% (hits / shots)');
     for (final e in _sorted(familyShots)) {
       final hit = familyHits[e.key] ?? 0;
@@ -184,7 +181,6 @@ class Report {
     rows('level', levels);
     rows('pirate', pirates);
     rows('family', families);
-    rows('range', ranges);
     for (final o in MatchOutcome.values) {
       if (o == MatchOutcome.ongoing) continue;
       b.writeln(

@@ -9,28 +9,12 @@ abstract final class Labels {
     BlockMaterial.pine => l10n.materialPine,
     BlockMaterial.oak => l10n.materialOak,
     BlockMaterial.iron => l10n.materialIron,
-    BlockMaterial.cork => l10n.materialCork,
-    BlockMaterial.net => l10n.materialNet,
-    BlockMaterial.rigBamboo => l10n.moduleMastBamboo,
     BlockMaterial.rigPine => l10n.moduleMast,
-    BlockMaterial.rigOak => l10n.moduleMastOak,
-    BlockMaterial.rigIron => l10n.moduleMastIron,
-    BlockMaterial.rigCrow => l10n.moduleMastCrow,
   };
 
   static String module(AppLocalizations l10n, ModuleKind k) => switch (k) {
-    ModuleKind.gunPort => l10n.moduleGunPort,
-    ModuleKind.magazine => l10n.moduleMagazine,
-    ModuleKind.pump => l10n.modulePump,
-    ModuleKind.workshop => l10n.moduleWorkshop,
     ModuleKind.mast => l10n.moduleMast,
-    ModuleKind.lookout => l10n.moduleLookout,
     ModuleKind.captain => l10n.moduleCaptain,
-    ModuleKind.fuelTank => l10n.moduleFuelTank,
-    ModuleKind.mastBamboo => l10n.moduleMastBamboo,
-    ModuleKind.mastOak => l10n.moduleMastOak,
-    ModuleKind.mastIron => l10n.moduleMastIron,
-    ModuleKind.mastCrow => l10n.moduleMastCrow,
   };
 
   /// 조선소 격자에서 재질 색 (에셋 타일 색에 맞춤).
@@ -38,13 +22,7 @@ abstract final class Labels {
     BlockMaterial.pine => const Color(0xFFD9A441),
     BlockMaterial.oak => const Color(0xFF8B5A2B),
     BlockMaterial.iron => const Color(0xFF7D8590),
-    BlockMaterial.cork => const Color(0xFFC9B38A),
-    BlockMaterial.net => const Color(0xFFE8E2D0),
-    BlockMaterial.rigBamboo ||
-    BlockMaterial.rigPine ||
-    BlockMaterial.rigOak ||
-    BlockMaterial.rigIron ||
-    BlockMaterial.rigCrow => const Color(0xFF6B4528),
+    BlockMaterial.rigPine => const Color(0xFF6B4528),
   };
 
   static String family(AppLocalizations l10n, Family f) => switch (f) {
@@ -55,7 +33,8 @@ abstract final class Labels {
     Family.underwater => l10n.familyUnderwater,
     Family.air => l10n.familyAir,
     Family.assault => l10n.familyAssault,
-    Family.support => l10n.familySupport,
+    // 충격 계열 키(familyShock)는 ARB 추가 전까지 옛 보급 키를 빌린다 (ADR-111).
+    Family.shock => l10n.familyShock,
   };
 
   static String aiLevel(AppLocalizations l10n, AiLevel l) => switch (l) {
@@ -87,6 +66,7 @@ abstract final class Labels {
     AmmoType.flock => l10n.ammoKindFlock,
     AmmoType.homing => l10n.ammoKindHoming,
     AmmoType.assault => l10n.ammoKindAssault,
-    AmmoType.support => l10n.ammoKindSupport,
+    // 충격탄 키(ammoKindShock)는 ARB 추가 전까지 옛 보급탄 키를 빌린다 (ADR-111).
+    AmmoType.shock => l10n.ammoKindShock,
   };
 }

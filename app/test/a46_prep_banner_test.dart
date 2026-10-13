@@ -25,29 +25,28 @@ Widget _app(Widget child) => MaterialApp(
 
 void main() {
   group('A41 점검 남은 앱 버그 (A46, ADR-097)', () {
-    test('출전 덱은 선실 수만큼 자르고, 준비 화면과 전투가 같은 덱을 쓴다', () {
+    test('출전 덱은 자리 수만큼 자르고, 준비 화면과 전투가 같은 덱을 쓴다', () {
       final setup = BattleSetup(testCatalog);
-      final small = HullSpec.sloopStages.first; // 선실 2칸
       const saved = ['p26_polly', 'p16_suri', 'p36_tok', 'p01_octo'];
-      final deck = setup.sailDeck(saved, small, 99);
+      final deck = setup.sailDeck(saved, HullSpec.sloop, 99, seats: 2);
       expect(deck, ['p26_polly', 'p16_suri']);
       final match = setup.newStageMatch(
         1,
         testCampaign.sea(1).stages.first,
-        blueprint: testCatalog.preset('balanced', stage: 1).blueprint,
+        blueprint: testCatalog.preset('balanced').blueprint,
         deck: saved,
         costLimit: 99,
       );
       expect(
         [for (final p in match.state.sides[0].crew.pirates) p.spec.id],
-        deck,
-        reason: '시작 덱으로 바뀌지 않는다',
+        setup.sailDeck(saved, HullSpec.sloop, 99),
+        reason: '자리 5칸에 맞춘 덱 그대로, 시작 덱으로 바뀌지 않는다',
       );
     });
 
     test('코스트 한도를 넘으면 뒤에서 빼고, 아무것도 안 맞으면 시작 덱', () {
       final setup = BattleSetup(testCatalog);
-      final hull = HullSpec.sloopStages[1]; // 선실 3칸
+      const hull = HullSpec.sloop;
       final cost = testCatalog.pirates.byId('p26_polly').cost;
       final deck = setup.sailDeck(
         ['p26_polly', 'p16_suri', 'p36_tok'],

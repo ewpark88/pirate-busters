@@ -7,7 +7,8 @@ import 'package:pirate_busters/game/coords.dart';
 import 'package:pirate_busters/game/sprites.dart';
 import 'package:pirate_busters/game/view/shot_view.dart';
 
-/// 이동 한계 표식 (설계서 §2.6): 전진 한계는 암초와 부표 줄, 후퇴 한계는 불빛 부표.
+/// 이동 한계 표식 (설계서 §2.5): 바다 끝(후퇴 한계)의 불빛 부표. 앞쪽은 상대
+/// 배가 막으므로 표식이 없다.
 ///
 /// 물 위 소품이라 배보다 뒤에 그린다. 탄과 같은 겹에 그리면 확대했을 때 등대가
 /// 배를 덮는다(docs/quality/2026-10-02-gap-analysis.md).
@@ -25,23 +26,18 @@ class LimitMarks extends Component {
   @override
   void render(Canvas canvas) {
     final state = session.state;
-    final (lo, hi) = moveLimits(state.rules, state.turn);
     for (final side in state.sides) {
       final facing = facingOf(side.side);
       final start = startBowX(side.side);
       _limit(
         canvas,
-        BattleSprites.limitForward,
-        // 초계선 보스는 전진 한계가 턴마다 다가온다 (설계서 §5.4).
-        Coords.x(start + facing * (hi + side.forwardBonus)),
-        facing,
-        forwardAnchor,
-      );
-      _limit(
-        canvas,
         BattleSprites.limitBack,
         Coords.x(
-          ShotView.sternAt(start + facing * lo, facing, side.grid.width),
+          ShotView.sternAt(
+            start - facing * state.rules.backRoom,
+            facing,
+            side.grid.width,
+          ),
         ),
         facing,
         backAnchor,

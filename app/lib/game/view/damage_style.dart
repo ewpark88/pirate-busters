@@ -49,11 +49,11 @@ abstract final class DamageStyle {
   static const Color ironDark = Color(0xFF353C45);
   static const Color ironHot = Color(0xFFFF8A3A);
 
-  /// 재질 [m] 의 나무 색. 흘수선 아래([wet]) 참나무·소나무는 젖은 `bot` 이고,
-  /// 패치에 없는 코르크는 소나무, 망사는 참나무 색을 쓴다 (ADR-070).
+  /// 재질 [m] 의 나무 색. 흘수선 아래([wet]) 참나무·소나무는 젖은 `bot` 이다
+  /// (ADR-070).
   static WoodPalette woodOf(BlockMaterial m, {bool wet = false}) => switch (m) {
     BlockMaterial.oak || BlockMaterial.pine when wet => bot,
-    BlockMaterial.pine || BlockMaterial.cork => pine,
+    BlockMaterial.pine => pine,
     _ => oak,
   };
 

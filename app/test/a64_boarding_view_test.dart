@@ -22,7 +22,7 @@ Future<BattleGame> _game(WidgetTester tester) async {
       1,
       deck: const ['p31_sharky'],
       enemyDeck: const ['p01_octo'],
-      rules: const MatchRules(waveLevel: 0),
+      rules: const MatchRules(calmSea: true),
       costLimit: 20,
       enemyCostLimit: 20,
     );
@@ -53,7 +53,6 @@ void main() {
     expect(PirateStatus.boarding.showsAtHome, isFalse);
     expect(PirateStatus.down.showsAtHome, isFalse);
     expect(PirateStatus.aboard.showsAtHome, isTrue);
-    expect(PirateStatus.swimming.showsAtHome, isTrue);
   });
 
   testWidgets('선 강습 해적을 적 배 위에 그리고, 올라탐·반격·물기·떨어짐 연출이 돈다', (
@@ -102,9 +101,9 @@ void main() {
       game.update(1 / 30);
     }
     _render(game);
-    // 흔들려 바다에 빠졌다: ‘털어냄’ 이름표, 떨어지며 사라진다.
+    // 흔들려 바다에 빠졌다(KO): ‘털어냄’ 이름표, 떨어지며 사라진다.
     sharky
-      ..status = PirateStatus.swimming
+      ..status = PirateStatus.down
       ..boardCell = -1;
     game.cues.dispatch([
       const SimEvent(SimEventKind.pirateFell, side: 0, slot: 0),

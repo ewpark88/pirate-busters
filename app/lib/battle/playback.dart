@@ -121,9 +121,6 @@ class ShotPlayback extends Playback {
     SimEventKind.splash,
     SimEventKind.bounce,
     SimEventKind.divide,
-    SimEventKind.steered,
-    SimEventKind.barrierHit,
-    SimEventKind.intercepted,
   };
 
   /// 탄 비행 시간. 그 뒤 [durationMs] 까지는 부서지는 연출(턴 타이머 정지, §2.3).
@@ -210,12 +207,12 @@ class GridSnapshot {
   int get totalHp => hp.fold(0, (a, b) => a + b);
 
   /// 시뮬레이션 이벤트 [e] 가 이 격자에 남긴 변화를 더한다 (A33). 칸 피해·파괴·
-  /// 붕괴·수리만 본다.
+  /// 붕괴만 본다.
   void apply(SimEvent e) {
     final i = e.cell;
     if (i < 0 || i >= hp.length) return;
     switch (e.kind) {
-      case SimEventKind.blockHit || SimEventKind.repaired:
+      case SimEventKind.blockHit:
         hp[i] = e.y;
       case SimEventKind.blockDestroyed || SimEventKind.blockCollapsed:
         hp[i] = 0;

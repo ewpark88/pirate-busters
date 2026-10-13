@@ -50,15 +50,7 @@ class PlayerProgress {
       seenStories: seen is List
           ? seen.whereType<String>().toList(growable: false)
           : const [],
-      // 배 업그레이드 전 저장: 깬 스테이지만큼 확장 단계를 골드 없이 준다 (A28).
-      ship: json['ship'] == null
-          ? ShipUpgrades(
-              stage: ShipUpgrades.openedStage(
-                (id) => starsRaw is Map && starsRaw.containsKey(id),
-                (id) => id != '1-8',
-              ),
-            )
-          : ShipUpgrades.fromJson(json['ship']),
+      ship: ShipUpgrades.fromJson(json['ship']),
       lossStreak: readInt('lossStreak', 0).clamp(0, 1 << 20),
     );
   }

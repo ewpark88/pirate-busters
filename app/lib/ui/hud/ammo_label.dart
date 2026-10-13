@@ -20,18 +20,11 @@ String ammoLabel(AppLocalizations l10n, PirateSpec spec, String locale) {
     AmmoType.flock => l10n.ammoFlock(v),
     AmmoType.homing => l10n.ammoHoming(v),
     AmmoType.assault => l10n.ammoAssault(v),
-    AmmoType.support => l10n.ammoSupport(v),
+    // 충격탄 전용 키(ammoShock)가 생기기 전까지 임시로 같은 꼴의 키를 쓴다 (S1).
+    AmmoType.shock => l10n.ammoShock(v),
   };
 }
 
 /// 탄종 아이콘 (에셋 v0.22 `ammo/icons`, 설계서 §13.4 카드 칩). 파일 이름은 탄종 키다.
 String ammoIconPath(AmmoType ammo) =>
     'assets/images/ammo/icons/${ammo.jsonName}.png';
-
-/// 사거리 등급 이름 (설계서 §2.8).
-String rangeLabel(AppLocalizations l10n, RangeGrade range) => switch (range) {
-  RangeGrade.short => l10n.rangeShort,
-  RangeGrade.medium => l10n.rangeMedium,
-  RangeGrade.long => l10n.rangeLong,
-  RangeGrade.veryLong => l10n.rangeVeryLong,
-};

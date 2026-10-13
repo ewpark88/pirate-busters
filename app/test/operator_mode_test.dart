@@ -177,20 +177,14 @@ void main() {
       expect(p.gold, OperatorActions.gold);
       expect(p.level, PlayerProgress.maxLevel);
       expect(p.ownedPirates, hasLength(testCatalog.data.pirates.length));
-      expect(p.ship.stage, HullSpec.maxStage);
+      expect(p.ship.hasMaterial(BlockMaterial.iron), isTrue);
       await tester.pump(const Duration(seconds: 5));
     });
 
-    test('배 전부 최대로는 모든 재질·모듈·돛대 최고 레벨을 연다', () {
+    test('배 전부 최대로는 모든 재질을 연다', () {
       final ship = OperatorActions.maxShip(const PlayerProgress()).ship;
-      expect(ship.hullLevel, HullSpec.maxLevel);
       for (final m in ShipUpgrades.materialGold.keys) {
         expect(ship.hasMaterial(m), isTrue, reason: m.name);
-      }
-      for (final k in ModuleKind.values.where((k) => k.isMast)) {
-        if (ship.hasModule(k)) {
-          expect(ship.mastLevel(k), BlockMaterial.maxRigLevel);
-        }
       }
       expect(
         OperatorActions.reset(const PlayerProgress(gold: 5)).gold,

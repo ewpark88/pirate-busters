@@ -28,16 +28,16 @@ class ShipGrid {
     for (final c in blueprint.cells) {
       final i = c.y * hull.width + c.x;
       materials[i] = c.material.index;
-      hp[i] = c.material.durability * hull.hpPermille ~/ 1000;
+      hp[i] = c.material.durability;
     }
-    // 돛대 칸 (설계서 §3.3): 돛대 레벨만큼 내구도가 오른다.
+    // 돛대 칸 (설계서 §3.3).
     for (final m in blueprint.modules) {
       final rig = m.kind.rig;
       if (rig == null) continue;
       for (final (x, y) in m.rigCells(hull.height)) {
         final i = y * hull.width + x;
         materials[i] = rig.index;
-        hp[i] = rig.durabilityAt(m.level) * hull.hpPermille ~/ 1000;
+        hp[i] = rig.durability;
       }
     }
     return ShipGrid._(

@@ -54,8 +54,7 @@ class _Fall {
 
 /// 강습 체류 (설계서 §2.3, ADR-110).
 extension HomeShown on PirateStatus {
-  /// 자기 배 쪽(선실·뱃머리 앞 바다)에 그리는가. 쓰러졌거나 적 배 위에 선 해적은
-  /// 자기 배에 그리지 않는다(적 배 위 해적은 상대 배가 그린다).
-  bool get showsAtHome =>
-      this == PirateStatus.aboard || this == PirateStatus.swimming;
+  /// 자기 배 선실에 그리는가. 쓰러졌거나 적 배 위에 선 해적은 자기 배에 그리지
+  /// 않는다(적 배 위 해적은 상대 배가 그린다).
+  bool get showsAtHome => this == PirateStatus.aboard;
 }

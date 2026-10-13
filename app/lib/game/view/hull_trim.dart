@@ -37,31 +37,12 @@ abstract final class HullTrim {
     ..strokeCap = StrokeCap.round;
 
   /// 틀 계단 하나: 줄 `y` 의 가장자리 칸 `low` 와 한 줄 위 가장자리 칸 `high`.
-  /// `left` 면 선미 쪽(x 작은 쪽) 계단이다.
+  /// `left` 면 선미 쪽(x 작은 쪽) 계단이다. 선체 틀이 없어져(ADR-111) 지금은 계단이
+  /// 없다. 배 모양 다듬기는 S4 에서 다시 정한다.
   static List<({int y, int low, int high, bool left})> steps(
     HullSpec hull,
     bool Function(int x, int y) filled,
-  ) => [
-    for (var y = 0; y < hull.height - 1; y++)
-      if (hull.frameInset(y) > hull.frameInset(y + 1)) ...[
-        if (filled(hull.frameInset(y), y) &&
-            filled(hull.frameInset(y + 1), y + 1))
-          (
-            y: y,
-            low: hull.frameInset(y),
-            high: hull.frameInset(y + 1),
-            left: true,
-          ),
-        if (filled(hull.width - 1 - hull.frameInset(y), y) &&
-            filled(hull.width - 1 - hull.frameInset(y + 1), y + 1))
-          (
-            y: y,
-            low: hull.width - 1 - hull.frameInset(y),
-            high: hull.width - 1 - hull.frameInset(y + 1),
-            left: false,
-          ),
-      ],
-  ];
+  ) => const [];
 
   /// 비스듬한 선체 판 [step] 의 삼각형: 아래 줄 가장자리 바닥 → 위 줄 가장자리 바닥
   /// → 아래 줄 가장자리 위.
@@ -206,8 +187,11 @@ abstract final class HullTrim {
     HullSpec hull,
     Rect Function(int x, int y) cellRect,
   ) {
-    final x = hull.frameInset(0);
-    if (!filled(x, 0)) return;
+    var x = 0;
+    while (x < hull.width && !filled(x, 0)) {
+      x++;
+    }
+    if (x >= hull.width) return;
     final r = cellRect(x, 0);
     final rudder = Path()
       ..moveTo(r.left + 2, r.top + 6)

@@ -39,15 +39,22 @@ class SpeechDirector {
   /// 상대 선체가 이 비율(%) 아래로 내려가면 한 번 말한다.
   static const int lowHullPercent = 60;
 
-  List<(int hp, PirateStatus status, int cooldown)>? _last;
+  List<(int hp, PirateStatus status, int fired)>? _last;
   int _spokenTurn = -1;
   bool _startDone = false;
   bool _lowDone = false;
 
   /// [state] 를 지난번과 견줘 이번에 띄울 말풍선을 돌려준다. 없으면 null.
   Bark? observe(MatchState state) {
-    final crew = state.sides[me].crew.pirates;
-    final now = [for (final p in crew) (p.hp, p.status, p.cooldown)];
+    final crew = state.sides[me].crew;
+    final now = [
+      for (var s = 0; s < crew.size; s++)
+        (
+          crew.pirates[s].hp,
+          crew.pirates[s].status,
+          crew.firedThisTurn[s] ? 1 : 0,
+        ),
+    ];
     final last = _last;
     _last = now;
     if (last == null || last.length != now.length) return null;

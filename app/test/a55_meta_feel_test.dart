@@ -121,7 +121,6 @@ void main() {
           won: false,
           outcome: MatchOutcome.timeDecision,
           turns: 30,
-          floodPercent: 18,
           hullPercent: 52,
           piratesDown: 1,
           shotsFired: 13,
@@ -142,7 +141,6 @@ void main() {
           won: true,
           outcome: MatchOutcome.annihilation,
           turns: 18,
-          floodPercent: 4,
           hullPercent: 88,
           piratesDown: 0,
           shotsFired: 11,
@@ -198,7 +196,6 @@ void main() {
                   home: StageResultScreen(
                     stage: stage,
                     summary: summary,
-                    enemyFloodPercent: 26,
                     reward: reward,
                   ),
                 ),

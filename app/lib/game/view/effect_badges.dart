@@ -22,8 +22,6 @@ class EffectBadges extends Component {
   /// 남은 턴 수 글자. 화면이 로케일 숫자 형식으로 바꿔 넣는다 (설계서 §14.2).
   String Function(int turns) turnsText = (turns) => '$turns';
 
-  /// 투하 예약 배지의 높이(월드 px, 해수면 위).
-  static const double dropHeight = 96;
   static const double radius = 7;
 
   static final Paint _fill = Paint()..color = const Color(0xE614161C);
@@ -41,9 +39,7 @@ class EffectBadges extends Component {
 
   /// 효과 [e] 가 터질 자리(월드 px).
   Vector2 positionOf(TurnEffect e) {
-    if (e.kind == EffectKind.flockDrop || e.cell < 0) {
-      return Vector2(Coords.x(e.x), -dropHeight);
-    }
+    if (e.cell < 0) return Vector2(Coords.x(e.x), 0);
     final ship = session.state.sides[e.target];
     // 강습 물기는 적 배 위에 선 해적의 머리 위에 단다 (ADR-110).
     final boarder = isBoarderBite(e)
@@ -63,17 +59,11 @@ class EffectBadges extends Component {
 
   /// 붙어서 기다리는 효과: 그 해적의 무기 그림 옆에 배지를 단다.
   static bool _attached(EffectKind k) =>
-      k == EffectKind.mineBlast ||
-      k == EffectKind.gnawBite ||
-      k == EffectKind.tentacle;
+      k == EffectKind.mineBlast || k == EffectKind.tentacle;
 
   @override
   void render(Canvas canvas) {
     for (final e in session.state.effects) {
-      // 떠 있는 기뢰는 WorldMarks 가 수면에 그리고, 펌프 정지는 물어뜯기와 같은 칸이다.
-      if (e.kind == EffectKind.floatMine || e.kind == EffectKind.pumpOff) {
-        continue;
-      }
       // 떨어지거나 쓰러진 강습 해적의 남은 물기는 터지지 않는다.
       if (isBoarderBite(e) &&
           session.state.sides[e.owner].crew.pirates[e.ownerSlot].status !=

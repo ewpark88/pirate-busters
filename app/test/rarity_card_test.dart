@@ -27,19 +27,12 @@ void main() {
       }
     });
 
-    test('탄종 칩·사거리·코스트·세트 아이콘 그림이 모두 있다', () {
+    test('탄종 칩·코스트·세트 아이콘 그림이 모두 있다', () {
       for (final ammo in AmmoType.values) {
         expect(
           File(ammoIconPath(ammo)).existsSync(),
           isTrue,
           reason: ammo.name,
-        );
-      }
-      for (final range in RangeGrade.values) {
-        expect(
-          File(CardIcons.range(range)).existsSync(),
-          isTrue,
-          reason: range.name,
         );
       }
       for (final rarity in Rarity.values) {

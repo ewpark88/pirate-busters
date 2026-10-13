@@ -1,7 +1,6 @@
 import 'package:pb_sim/pb_sim.dart';
 
-/// 선체 틀(§3.4)이 없는 직사각형 슬루프. 틀과 무관한 규칙(피해·모듈·침수 등)을
-/// 칸 위치 그대로 확인하는 테스트용이다. JSON 으로는 읽을 수 없다.
+/// 테스트용 슬루프 (슬루프와 같은 수치, id 만 다르다). JSON 으로는 읽을 수 없다.
 const HullSpec boxSloop = HullSpec(
   id: 'test_box',
   width: 12,
@@ -9,50 +8,33 @@ const HullSpec boxSloop = HullSpec(
   cabinSlots: 4,
   buildPoints: 60,
   moveSpeed: 2800,
-  fuelTank: 80,
-  fuelPerCell: 8,
-  moduleLimit: 4,
-  framed: false,
+  fuelTank: 60,
+  fuelPerCell: 10,
 );
 
-/// 테스트용 슬루프 설계도 (비용 57/60). 선체 틀(§3.4)에 맞춰 용골 줄은 x 2~9,
-/// 그 위 줄은 x 1~10. 선실은 2층(y = 2)에 4개, 선장실은 (10, 1).
-Blueprint sampleBlueprint() => Blueprint(
-  HullSpec.sloop,
-  [
-    for (var x = 2; x < 10; x++) BlockCell(x, 0, BlockMaterial.oak),
-    for (var x = 1; x < 11; x++) BlockCell(x, 1, BlockMaterial.pine),
-    const BlockCell(1, 2, BlockMaterial.cork),
-    const BlockCell(2, 2, BlockMaterial.iron),
-    for (var x = 3; x < 9; x++) BlockCell(x, 2, BlockMaterial.pine),
-    const BlockCell(9, 2, BlockMaterial.iron),
-    for (var x = 4; x < 8; x++) BlockCell(x, 3, BlockMaterial.net),
-    // 틀(§3.4)로 빠진 용골 양끝 몫: 같은 비용·무게·내구도를 위쪽 양끝에 둔다.
-    const BlockCell(0, 2, BlockMaterial.oak),
-    const BlockCell(10, 2, BlockMaterial.oak),
-    const BlockCell(11, 2, BlockMaterial.oak),
-    const BlockCell(9, 3, BlockMaterial.oak),
-    const BlockCell(10, 3, BlockMaterial.pine),
-    const BlockCell(11, 3, BlockMaterial.pine),
-  ],
-  cabins: sampleCabins,
-  modules: const [ModuleCell(10, 1, ModuleKind.captain)],
-);
+/// 테스트용 슬루프 설계도 (비용 56/60). 용골 참나무, 1층 소나무, 2층에 선실 4개와
+/// 철판 둘, 선장실 (1, 1)(고물 쪽), 돛대 (0, 2) → 망대 (0, 5).
+Blueprint sampleBlueprint() => _sample(HullSpec.sloop);
 
-/// 틀이 없는 직사각형 샘플 배([boxSloop]). 모서리 칸 이웃처럼 칸 위치에 기대는 테스트용.
-Blueprint boxSampleBlueprint() => Blueprint(
-  boxSloop,
+/// [boxSloop] 로 지은 같은 배.
+Blueprint boxSampleBlueprint() => _sample(boxSloop);
+
+Blueprint _sample(HullSpec hull) => Blueprint(
+  hull,
   [
     for (var x = 0; x < 12; x++) BlockCell(x, 0, BlockMaterial.oak),
     for (var x = 0; x < 12; x++) BlockCell(x, 1, BlockMaterial.pine),
-    const BlockCell(1, 2, BlockMaterial.cork),
+    const BlockCell(0, 2, BlockMaterial.oak),
     const BlockCell(2, 2, BlockMaterial.iron),
     for (var x = 3; x < 9; x++) BlockCell(x, 2, BlockMaterial.pine),
     const BlockCell(9, 2, BlockMaterial.iron),
-    for (var x = 4; x < 8; x++) BlockCell(x, 3, BlockMaterial.net),
+    for (var x = 4; x < 8; x++) BlockCell(x, 3, BlockMaterial.pine),
   ],
   cabins: sampleCabins,
-  modules: const [ModuleCell(11, 1, ModuleKind.captain)],
+  modules: const [
+    ModuleCell(1, 1, ModuleKind.captain),
+    ModuleCell(0, 2, ModuleKind.mast),
+  ],
 );
 
 const List<CabinCell> sampleCabins = [
@@ -62,13 +44,11 @@ const List<CabinCell> sampleCabins = [
   CabinCell(8, 2),
 ];
 
-/// 테스트용 해적. 일반 등급 투척(반경 1칸 폭발, 사거리 긺) 계열 기본값 (설계서 §2.8).
+/// 테스트용 해적. 일반 등급 투척(반경 1칸 폭발) 계열 기본값.
 PirateSpec testPirate(
   String id, {
   Rarity rarity = Rarity.common,
-  RangeGrade range = RangeGrade.long,
   int hp = 300,
-  int cooldownTurns = 0,
   int blockDamage = 60,
   int pirateDamage = 80,
   int blastRadius = 1,
@@ -76,21 +56,19 @@ PirateSpec testPirate(
   id: id,
   rarity: rarity,
   hp: hp,
-  cooldownTurns: cooldownTurns,
   blockDamage: blockDamage,
   pirateDamage: pirateDamage,
   blastRadius: blastRadius,
-  range: range,
 );
 
-/// 샘플 덱에 나오는 해적. 쿨다운·피해를 조금씩 다르게 둔다.
+/// 샘플 덱에 나오는 해적. 체력·피해를 조금씩 다르게 둔다.
 final List<PirateSpec> samplePirates = [
   testPirate('p01'),
-  testPirate('p06', blastRadius: 0, pirateDamage: 150, cooldownTurns: 1),
+  testPirate('p06', blastRadius: 0, pirateDamage: 150),
   testPirate('p11', blastRadius: 0, blockDamage: 100),
   testPirate('p16', hp: 200),
   testPirate('p26', hp: 150, blastRadius: 0),
-  testPirate('p31', hp: 400, cooldownTurns: 2, rarity: Rarity.rare),
+  testPirate('p31', hp: 400, rarity: Rarity.rare),
   testPirate('p36', blockDamage: 20, pirateDamage: 20),
 ];
 
@@ -114,7 +92,7 @@ Match newSampleMatch(int seed, {MatchRules rules = const MatchRules()}) =>
       pirates: sampleCatalog,
     );
 
-/// 턴마다 스크립트 시드와 턴 번호로 커맨드를 섞어 내는 컨트롤러. 이동, 쿨다운 중
+/// 턴마다 스크립트 시드와 턴 번호로 커맨드를 섞어 내는 컨트롤러. 이동, 두 번째
 /// 발사, 범위 밖 값, 시간 초과, 빈 턴도 섞는다.
 class RandomController implements Controller {
   RandomController(this.scriptSeed);

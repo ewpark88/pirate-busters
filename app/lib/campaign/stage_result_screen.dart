@@ -14,20 +14,18 @@ import 'package:pirate_busters/campaign/stage_spec.dart';
 import 'package:pirate_busters/campaign/star_rules.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
 import 'package:pirate_busters/l10n/data_text.dart';
-import 'package:pirate_busters/meta/my_ship.dart';
 import 'package:pirate_busters/ui/kit/kit_art.dart';
 import 'package:pirate_busters/ui/kit/kit_motion.dart';
 import 'package:pirate_busters/ui/kit/pb_panel.dart';
 import 'package:pirate_busters/ui/kit/pb_scaffold.dart';
 import 'package:pirate_busters/ui/meta_icons.dart';
 
-/// 결과 화면 (설계서 §13.5, §13 공통): 해역 그림 위에 승패·승리 방식(시간 판정이면 침수량 막대), 별 3개, 보상,
+/// 결과 화면 (설계서 §13.5, §13 공통): 해역 그림 위에 승패·승리 방식, 별 3개, 보상,
 /// 전투 통계, 다시 하기·항구로. ‘광고 보고 2배’·리플레이 저장은 플랫폼 묶음에서 켠다.
 class StageResultScreen extends ConsumerWidget {
   const StageResultScreen({
     required this.stage,
     required this.summary,
-    required this.enemyFloodPercent,
     required this.reward,
     this.replay,
     super.key,
@@ -35,7 +33,6 @@ class StageResultScreen extends ConsumerWidget {
 
   final StageSpec stage;
   final MatchSummary summary;
-  final int enemyFloodPercent;
   final StageReward reward;
 
   /// 저장할 수 있는 리플레이 (설계서 §7.2). 없으면 버튼이 안 보인다.
@@ -44,13 +41,6 @@ class StageResultScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
-    final growReady =
-        reward.firstClear &&
-        growOpenedBy(
-          stage.id,
-          ref.watch(progressProvider),
-          ref.watch(campaignProvider),
-        );
     // 승패·무승부는 pb_sim 의 판정을 그대로 쓴다 (설계서 §2.4, §13.5).
     final title = summary.won
         ? l10n.resultWin
@@ -58,8 +48,8 @@ class StageResultScreen extends ConsumerWidget {
         ? l10n.resultDraw
         : l10n.resultLose;
     final how = switch (summary.outcome) {
-      MatchOutcome.sunk => l10n.outcomeSunk,
-      MatchOutcome.floodSunk => l10n.outcomeFloodSunk,
+      // 선장실 파괴 문구(outcomeCaptainLost)는 ARB 추가 전까지 격침 키를 빌린다.
+      MatchOutcome.captainLost => l10n.outcomeCaptainLost,
       MatchOutcome.annihilation => l10n.outcomeAnnihilation,
       MatchOutcome.timeDecision => l10n.outcomeTimeDecision,
       MatchOutcome.surrender => l10n.outcomeSurrender,
@@ -115,10 +105,6 @@ class StageResultScreen extends ConsumerWidget {
                       ),
                     ),
                     OutlinedText(how, size: 18),
-                    if (summary.outcome == MatchOutcome.timeDecision) ...[
-                      const SizedBox(height: 6),
-                      _floodBars(l10n),
-                    ],
                     const SizedBox(height: 12),
                     _stars(l10n, missionText),
                   ],
@@ -136,7 +122,7 @@ class StageResultScreen extends ConsumerWidget {
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            ResultRewards(reward: reward, growReady: growReady),
+                            ResultRewards(reward: reward),
                             const SizedBox(height: 6),
                             Text(
                               '${l10n.statTurns(summary.turns)} · '
@@ -181,32 +167,10 @@ class StageResultScreen extends ConsumerWidget {
 
   static String _missionText(AppLocalizations l10n, MissionSpec m) =>
       switch (m.type) {
-        'flood_below' => l10n.mission_flood_below(m.param('percent')),
         'hull_above' => l10n.mission_hull_above(m.param('percent')),
         'turns_within' => l10n.mission_turns_within(m.param('turns')),
         _ => dataText(l10n, m.textKey),
       };
-
-  Widget _floodBars(AppLocalizations l10n) {
-    return ConstrainedBox(
-      constraints: const BoxConstraints(maxWidth: 260),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          FittedBox(
-            child: OutlinedText(
-              l10n.statFlood(summary.floodPercent, enemyFloodPercent),
-              size: 13,
-            ),
-          ),
-          const SizedBox(height: 3),
-          FloodBar(percent: summary.floodPercent, color: AppColors.blue),
-          const SizedBox(height: 3),
-          FloodBar(percent: enemyFloodPercent, color: const Color(0xFFB3302B)),
-        ],
-      ),
-    );
-  }
 
   Widget _stars(AppLocalizations l10n, String missionText) {
     final s = reward.stars;

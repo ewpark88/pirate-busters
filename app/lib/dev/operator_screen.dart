@@ -13,7 +13,6 @@ import 'package:pirate_busters/dev/operator_entry.dart';
 import 'package:pirate_busters/dev/test_battle_screen.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
 import 'package:pirate_busters/meta/progress.dart';
-import 'package:pirate_busters/shipyard/ship_upgrade_sheet.dart';
 import 'package:pirate_busters/ui/kit/pb_button.dart';
 import 'package:pirate_busters/ui/kit/pb_dialog.dart';
 import 'package:pirate_busters/ui/kit/pb_panel.dart';
@@ -80,11 +79,6 @@ class OperatorScreen extends ConsumerWidget {
                 _Section(
                   title: l10n.operatorShip,
                   children: [
-                    PbButton.small(
-                      label: l10n.operatorShipUpgrades,
-                      kind: PbButtonKind.primary,
-                      onPressed: () => unawaited(showShipUpgrades(context)),
-                    ),
                     PbButton.small(
                       key: const ValueKey('operator_ship_max'),
                       label: l10n.operatorShipMax,

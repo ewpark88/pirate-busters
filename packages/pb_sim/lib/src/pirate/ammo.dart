@@ -1,23 +1,20 @@
-import 'package:pb_sim/src/pirate/range_grade.dart';
-
 /// 공격 계열 8개 (설계서 §4.1). 순서는 바꾸지 않는다(새 값은 뒤에 붙인다).
 enum Family {
-  lob('lob', RangeGrade.long),
-  direct('direct', RangeGrade.medium),
-  pierce('pierce', RangeGrade.medium),
-  skip('skip', RangeGrade.long),
-  underwater('underwater', RangeGrade.medium),
-  air('air', RangeGrade.veryLong),
-  assault('assault', RangeGrade.short),
-  support('support', RangeGrade.long);
+  lob('lob'),
+  direct('direct'),
+  pierce('pierce'),
+  skip('skip'),
+  underwater('underwater'),
+  air('air'),
+  assault('assault'),
 
-  const Family(this.jsonName, this.defaultRange);
+  /// 충격: 넓고 약한 폭발로 상대 배를 밀어낸다 (보급을 대신함, ADR-111).
+  shock('shock');
+
+  const Family(this.jsonName);
 
   /// 데이터 이름.
   final String jsonName;
-
-  /// 데이터에 `range` 가 없을 때 쓰는 사거리 등급 (설계서 §2.8 계열 기본 등급).
-  final RangeGrade defaultRange;
 
   /// 데이터 이름으로 찾는다. 없으면 [FormatException].
   static Family byName(String name) {
@@ -34,7 +31,7 @@ enum AmmoType {
   /// 폭발탄: 반경 1칸 안 바깥 칸 피해 비율(%).
   explosive('explosive', multiShot: false),
 
-  /// 화염탄: 화상 지대 지속 턴 / 나무 추가 피해(%). R1.
+  /// 화염탄: 폭발탄보다 넓고 약하게 터진다(불은 붙지 않는다). 둘레 칸 비율(%).
   fire('fire', multiShot: false),
 
   /// 분열탄: 비행 중 탭 → 조각 수.
@@ -55,7 +52,7 @@ enum AmmoType {
   /// 물수제비탄: 튕김·연타 횟수.
   skip('skip', multiShot: false),
 
-  /// 설치탄: 지속 턴 / 폭발 때 침수(0.1%p).
+  /// 설치탄: 선체에 붙어 다음 내 턴 시작에 터진다. 폭발 반경(칸).
   mine('mine', multiShot: false),
 
   /// 다중투하: 급강하 소형 폭탄 수.
@@ -64,11 +61,11 @@ enum AmmoType {
   /// 유도탄: 선회력(°/초).
   homing('homing', multiShot: false),
 
-  /// 강습탄: 착지 뒤 추가 행동 횟수.
+  /// 강습탄: 착지 뒤 무는 반경(칸). 다음 상대 턴 시작에 한 번 더 문다.
   assault('assault', multiShot: false),
 
-  /// 지원탄: 효과량 배율(%).
-  support('support', multiShot: false);
+  /// 충격탄: 넓고 약하게 터지고 상대 배를 미는 칸 수 (ADR-111).
+  shock('shock', multiShot: false);
 
   const AmmoType(this.jsonName, {required this.multiShot});
 
@@ -96,12 +93,5 @@ int perShotDamage(int baseDamage, int rarityStep, int count) => count <= 0
     ? 0
     : baseDamage * multiShotTotalPercent(rarityStep) ~/ 100 ~/ count;
 
-/// 특성·세트로 개수형 수치에 더할 때의 상한: 사다리 값 + 2 (설계서 §4.8).
-/// MVP 는 Lv1·세트 없음이라 [bonus] 는 0 이다.
-int cappedCount(int ladderValue, int bonus) {
-  final b = bonus > 2 ? 2 : (bonus < 0 ? 0 : bonus);
-  return ladderValue + b;
-}
-
-/// 폭발 반경은 특성·세트를 합쳐도 최대 2칸 (설계서 §4.8).
+/// 폭발 반경은 최대 2칸 (설계서 §4.8).
 int cappedBlastRadius(int radius) => radius > 2 ? 2 : radius;
