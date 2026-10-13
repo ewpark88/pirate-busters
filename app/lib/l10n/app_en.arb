@@ -707,6 +707,7 @@
   "hitTagChain": "CHAIN",
   "hitTagBurn": "BURN",
   "hitTagMine": "MINE",
+  "hitTagMineBlast": "MINE BLAST!",
   "hitTagBite": "BITE",
   "hitTagRepair": "REPAIR",
   "hitTagNoRepair": "NOTHING TO FIX",

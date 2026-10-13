@@ -422,6 +422,7 @@
   "hitTagChain": "연쇄",
   "hitTagBurn": "화상",
   "hitTagMine": "기뢰",
+  "hitTagMineBlast": "기뢰 폭발!",
   "hitTagBite": "물어뜯기",
   "hitTagRepair": "수리",
   "hitTagNoRepair": "고칠 곳 없음",

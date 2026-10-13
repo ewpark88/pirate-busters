@@ -53,3 +53,4 @@
 | [2026-10-12-quality-6-finale-meta-sound.md](2026-10-12-quality-6-finale-meta-sound.md) | 퀄리티 6차: 전투 마무리·턴 리듬, 메타 화면 손맛, 소리·진동, 읽기 쉬움·성능(A54~A57)과 점검 후속 규칙(A59), ADR-105 |
 | [2026-10-12-A58-transition-ghost.md](2026-10-12-A58-transition-ghost.md) | 화면 전환 잔상 2차: 컷신 fullscreenDialog 제거·컷 fade-through·루트 바탕색 (A58, A42 후속) |
 | [2026-10-12-A60-camera-pan-aim-cancel.md](2026-10-12-A60-camera-pan-aim-cancel.md) | 전투 카메라 손질: 탄 추적 스프링·빈 바다 끌어 보기·당김 취소 버그 (A60) |
+| [2026-10-13-A61-mine-blast-fx.md](2026-10-13-A61-mine-blast-fx.md) | 기뢰·설치탄 폭발 연출: 턴 효과 폭발에 물기둥·폭발·흔들림·카메라 당김·이름표, 크라키 붙는 순간 폭발 (A61) |

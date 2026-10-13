@@ -2630,6 +2630,12 @@ abstract class AppLocalizations {
   /// **'MINE'**
   String get hitTagMine;
 
+  /// No description provided for @hitTagMineBlast.
+  ///
+  /// In en, this message translates to:
+  /// **'MINE BLAST!'**
+  String get hitTagMineBlast;
+
   /// No description provided for @hitTagBite.
   ///
   /// In en, this message translates to:

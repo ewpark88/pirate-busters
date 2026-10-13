@@ -82,9 +82,9 @@ class BattleCues {
 
   /// 조용히 내려앉는 탄인가: 설치탄은 붙어서 턴을 기다린다. 선체에 닿아도 명중
   /// 연출(폭발·흔들림·히트스톱)을 내지 않는다 (설계서 §10.4 탄종별 전달). 보급탄은
-  /// 상대에 맞는 공격이라 명중 연출을 낸다(ADR-090).
+  /// 상대에 맞는 공격이라, 크라키는 붙는 순간 터져서 명중 연출을 낸다(ADR-090, R1d).
   static bool landsQuietly(PirateSpec? spec) =>
-      spec != null && spec.ammo == AmmoType.mine;
+      spec?.ammo == AmmoType.mine && spec!.ability != Ability.tentacle;
 
   void dispatch(List<SimEvent> cues) {
     var woodPlayed = false;
@@ -215,9 +215,10 @@ class BattleCues {
               style: DamageStyle.of(weight, crit: tag == HitTag.crit),
             );
           }
-        case SimEventKind.mineAttached:
-          // 설치탄이 붙었다: 남은 턴 배지는 EffectBadges 가 그린다.
-          fx.tag(cellWorld(e.side, e.cell), tagText(HitTag.mine));
+        // 설치탄이 붙거나 기뢰가 터졌다(cues_unique.dart). 다른 턴 효과는 뒤따르는
+        // 착탄 이벤트가 그린다.
+        case SimEventKind.mineAttached || SimEventKind.effectFired:
+          hitAt = mineCue(e, weight) ?? hitAt;
         case SimEventKind.repaired:
           final at = cellWorld(e.side, e.cell);
           fx.repair(at, tier: tier);
@@ -227,9 +228,7 @@ class BattleCues {
             SimEventKind.turnEnd ||
             SimEventKind.pirateReturned ||
             SimEventKind.stormStart ||
-            // 터진 턴 효과는 뒤따르는 착탄 이벤트가 그린다.
-            SimEventKind.divide ||
-            SimEventKind.effectFired:
+            SimEventKind.divide:
           break;
         // 고유 효과 연출 (설계서 §4.8, ADR-075·078).
         case SimEventKind.ignited ||

@@ -1489,6 +1489,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get hitTagMine => 'MINE';
 
   @override
+  String get hitTagMineBlast => 'MINE BLAST!';
+
+  @override
   String get hitTagBite => 'BITE';
 
   @override

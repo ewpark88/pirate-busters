@@ -1402,6 +1402,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get hitTagMine => '기뢰';
 
   @override
+  String get hitTagMineBlast => '기뢰 폭발!';
+
+  @override
   String get hitTagBite => '물어뜯기';
 
   @override

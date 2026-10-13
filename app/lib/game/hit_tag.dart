@@ -9,6 +9,9 @@ enum HitTag {
   chain,
   burn,
   mine,
+
+  /// 붙은 설치탄·떠 있는 기뢰가 터졌다 (설계서 §4.8).
+  mineBlast,
   bite,
   repair,
 
