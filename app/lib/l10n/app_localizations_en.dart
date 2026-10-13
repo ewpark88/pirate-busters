@@ -943,6 +943,54 @@ class AppLocalizationsEn extends AppLocalizations {
       'Tok: If the front is hard, hit from above or below.';
 
   @override
+  String get story_s1_6_enemy =>
+      'Patrol shocker: One hammer blow and your ship drifts into rough water!';
+
+  @override
+  String get story_s1_6_ally =>
+      'Tok: If we get pushed, we sail back to calm water. Fuel refills every turn.';
+
+  @override
+  String get story_s1_7_enemy =>
+      'Patrol sniper: From the masthead I can see right into your cabins.';
+
+  @override
+  String get story_s1_7_ally =>
+      'Octo: Bring down that lookout and the sniper falls with it. Aim for the mast!';
+
+  @override
+  String get story_s1_8_enemy =>
+      'Crab bosun: The waves out here are wild. Good luck aiming!';
+
+  @override
+  String get story_s1_8_ally =>
+      'Suri: When the ship rocks, release at the top where it pauses.';
+
+  @override
+  String get story_s1_9_enemy =>
+      'Crab raiders: We\'ll leap onto your deck and finish you with our claws!';
+
+  @override
+  String get story_s1_9_ally =>
+      'Pang: If they board, blast the planks they stand on. No footing, and into the sea they go!';
+
+  @override
+  String get story_s1_10_enemy =>
+      'Patrol gull scout: The wind is on our side today. Your shots will all miss!';
+
+  @override
+  String get story_s1_10_ally =>
+      'Polly: Watch which way the clouds drift. Ride the wind and fly farther!';
+
+  @override
+  String get story_s1_11_enemy =>
+      'Patrol first mate: You won\'t reach the captain. I\'ll sink you all right here.';
+
+  @override
+  String get story_s1_11_ally =>
+      'Octo: Wind, waves, lookout… let\'s use everything we learned. The first shard is close!';
+
+  @override
   String get story_s1_12_enemy =>
       'Patrol captain: You\'ll never take the heart shard. The cutter is closing in!';
 

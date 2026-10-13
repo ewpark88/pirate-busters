@@ -881,6 +881,42 @@ class AppLocalizationsKo extends AppLocalizations {
   String get story_s1_5_ally => '톡: 정면이 단단하면 위에서, 아래에서 치면 되지.';
 
   @override
+  String get story_s1_6_enemy => '초계대 충격수: 이 망치 한 방이면 너희 배는 거친 물로 밀려난다!';
+
+  @override
+  String get story_s1_6_ally => '톡: 밀려나면 다시 잔잔한 곳으로 돌아오면 돼. 연료는 턴마다 가득 차니까.';
+
+  @override
+  String get story_s1_7_enemy => '초계대 저격수: 돛대 꼭대기에서 내려다보면 너희 선실이 훤히 보이지.';
+
+  @override
+  String get story_s1_7_ally => '옥토: 저 망대만 무너뜨리면 저격수도 같이 떨어진다. 돛대를 노려!';
+
+  @override
+  String get story_s1_8_enemy => '꽃게 갑판장: 이 앞바다는 파도가 사납다. 조준이나 제대로 해 보시지!';
+
+  @override
+  String get story_s1_8_ally => '수리: 배가 흔들리면 꼭대기에서 멈추는 순간에 놓으면 돼.';
+
+  @override
+  String get story_s1_9_enemy => '꽃게 돌격대: 갑판으로 뛰어들어 집게로 끝장내 주마!';
+
+  @override
+  String get story_s1_9_ally => '팡: 올라오면 그 녀석이 선 자리를 부숴. 발판이 무너지면 바다로 떨어진다!';
+
+  @override
+  String get story_s1_10_enemy => '초계대 갈매기 정찰병: 오늘 바람은 우리 편이다. 너희 탄은 다 빗나갈걸!';
+
+  @override
+  String get story_s1_10_ally => '폴리: 구름이 흐르는 쪽을 봐. 바람을 타면 더 멀리 날아가!';
+
+  @override
+  String get story_s1_11_enemy => '초계대 부함장: 함장님 앞까지는 못 간다. 여기서 전부 가라앉혀 주마.';
+
+  @override
+  String get story_s1_11_ally => '옥토: 바람, 파도, 망대… 배운 걸 다 쓰자. 첫 조각이 코앞이야!';
+
+  @override
   String get story_s1_12_enemy => '초계선 함장: 심장 조각은 넘길 수 없다. 초계선이 다가간다, 각오해라!';
 
   @override

@@ -69,6 +69,54 @@
       "reward": { "gold": 300, "pirate": "p06_pang" }
     },
     {
+      "id": "1-6", "kind": "normal",
+      "enemyPreset": "balanced", "enemyDeck": ["p37_pumpum", "p11_finn", "p06_pang"],
+      "aiLevel": "easy", "personality": "shover", "maxWind": 3,
+      "starTurns": 8, "mission": { "type": "hull_above", "percent": 50 },
+      "dialogueKeys": ["story_s1_6_enemy", "story_s1_6_ally"],
+      "reward": { "gold": 180 }
+    },
+    {
+      "id": "1-7", "kind": "normal",
+      "enemyPreset": "fast", "enemyDeck": ["p07_hippo", "p11_finn", "p16_suri", "p26_polly", "p06_pang"],
+      "aiLevel": "easy", "personality": "hunter", "maxWind": 3,
+      "starTurns": 8, "mission": { "type": "no_pirate_down" },
+      "dialogueKeys": ["story_s1_7_enemy", "story_s1_7_ally"],
+      "reward": { "gold": 200, "pirate": "p11_finn" }
+    },
+    {
+      "id": "1-8", "kind": "normal",
+      "enemyPreset": "armored", "enemyDeck": ["p37_pumpum", "p03_crabs", "p11_finn"],
+      "aiLevel": "easy", "personality": "shover", "maxWind": 3,
+      "starTurns": 8, "mission": { "type": "hull_above", "percent": 50 },
+      "dialogueKeys": ["story_s1_8_enemy", "story_s1_8_ally"],
+      "reward": { "gold": 220 }
+    },
+    {
+      "id": "1-9", "kind": "normal",
+      "enemyPreset": "balanced", "enemyDeck": ["p31_sharky", "p32_crabby", "p07_hippo"],
+      "aiLevel": "easy", "personality": "rusher", "maxWind": 3,
+      "starTurns": 8, "mission": { "type": "no_pirate_down" },
+      "dialogueKeys": ["story_s1_9_enemy", "story_s1_9_ally"],
+      "reward": { "gold": 240 }
+    },
+    {
+      "id": "1-10", "kind": "normal",
+      "enemyPreset": "fast", "enemyDeck": ["p26_polly", "p27_wing", "p16_suri", "p06_pang"],
+      "aiLevel": "easy", "personality": "bombard", "maxWind": 3,
+      "starTurns": 8, "mission": { "type": "turns_within", "turns": 7 },
+      "dialogueKeys": ["story_s1_10_enemy", "story_s1_10_ally"],
+      "reward": { "gold": 260, "pirate": "p21_puffy" }
+    },
+    {
+      "id": "1-11", "kind": "normal",
+      "enemyPreset": "armored", "enemyDeck": ["p03_crabs", "p07_hippo", "p37_pumpum", "p06_pang"],
+      "aiLevel": "easy", "personality": "hunter", "maxWind": 3,
+      "starTurns": 8, "mission": { "type": "hull_above", "percent": 60 },
+      "dialogueKeys": ["story_s1_11_enemy", "story_s1_11_ally"],
+      "reward": { "gold": 280 }
+    },
+    {
       "id": "1-12", "kind": "boss",
       "enemyPreset": "armored", "enemyDeck": ["p04_uni", "p11_finn", "p31_sharky"],
       "aiLevel": "easy", "personality": "bombard", "maxWind": 3,

@@ -32,27 +32,88 @@ void main() {
   final sea1 = campaign.sea(1);
 
   group('캠페인 데이터 (설계서 §6.1, §13.1, §4.6)', () {
-    test('해역 1 은 튜토리얼 3판과 캠페인 6판(1-1~1-5, 1-12)이다', () {
+    test('해역 1 은 튜토리얼 3판과 캠페인 12판(1~4 일반, 5 중간 보스, 6~11 일반, 12 보스)이다', () {
       expect(sea1.tutorial.map((s) => s.tutorialStep), [1, 2, 3]);
       expect(sea1.campaign.map((s) => s.id), [
-        '1-1',
-        '1-2',
-        '1-3',
-        '1-4',
-        '1-5',
-        '1-12',
+        for (var i = 1; i <= 12; i++) '1-$i',
       ]);
-      expect(sea1.byId('1-5').kind, StageKind.midBoss);
-      expect(sea1.byId('1-12').kind, StageKind.boss);
+      for (final s in sea1.campaign) {
+        final want = switch (s.id) {
+          '1-5' => StageKind.midBoss,
+          '1-12' => StageKind.boss,
+          _ => StageKind.normal,
+        };
+        expect(s.kind, want, reason: s.id);
+      }
     });
 
-    test('확정 보상 해적은 1-2 수리, 1-4 폴리, 1-5 팡, 1-12 샤키다 (§4.6)', () {
-      expect(sea1.byId('1-2').rewardPirate, 'p16_suri');
-      expect(sea1.byId('1-4').rewardPirate, 'p26_polly');
-      expect(sea1.byId('1-5').rewardPirate, 'p06_pang');
-      expect(sea1.byId('1-12').rewardPirate, 'p31_sharky');
-      expect(sea1.byId('1-1').rewardPirate, isNull);
+    test('스테이지 첫 클리어 골드와 별 턴 수가 BALANCE.md A6.1 과 같다', () {
+      const gold = {
+        '1-1': 100,
+        '1-2': 120,
+        '1-3': 150,
+        '1-4': 200,
+        '1-5': 300,
+        '1-6': 180,
+        '1-7': 200,
+        '1-8': 220,
+        '1-9': 240,
+        '1-10': 260,
+        '1-11': 280,
+        '1-12': 500,
+      };
+      for (final s in sea1.campaign) {
+        expect(s.rewardGold, gold[s.id], reason: s.id);
+        expect(s.starTurns, 8, reason: s.id);
+      }
+      for (final s in sea1.tutorial) {
+        expect(s.rewardGold, 50, reason: s.id);
+      }
     });
+
+    test('적 덱은 적 배 자리 수와 코스트 한도 15 안에 들고 규칙 검사를 통과한다 (§4.5)', () {
+      for (final s in sea1.stages) {
+        final ship = testSetup.enemyBlueprintOf(s);
+        expect(
+          s.enemyDeck.length,
+          lessThanOrEqualTo(ship.seatCount),
+          reason: s.id,
+        );
+        expect(
+          deckProblem(ship.hull, testCatalog.pirates, s.enemyDeck, 15),
+          isNull,
+          reason: s.id,
+        );
+      }
+    });
+
+    test('1-6~1-11 은 새 규칙을 하나씩 익히도록 상대가 다르다 (S6)', () {
+      final byId = {for (final s in sea1.campaign) s.id: s};
+      // 1-6 충격탄 밀치기, 1-7 망대 저격(다섯째 자리 = 망대에 팡), 1-8 거친 파도 밀치기,
+      // 1-9 강습, 1-10 바람 타는 공중·물수제비, 1-11 보스 전 종합.
+      expect(byId['1-6']!.personality, Personality.shover);
+      expect(byId['1-6']!.enemyDeck, contains('p37_pumpum'));
+      expect(byId['1-7']!.enemyDeck.length, 5);
+      expect(byId['1-7']!.enemyDeck.last, 'p06_pang');
+      expect(byId['1-8']!.personality, Personality.shover);
+      expect(byId['1-9']!.personality, Personality.rusher);
+      expect(byId['1-9']!.enemyDeck, containsAll(['p31_sharky', 'p32_crabby']));
+      expect(byId['1-10']!.enemyDeck, containsAll(['p26_polly', 'p27_wing']));
+      expect(byId['1-11']!.enemyDeck.length, 4);
+    });
+
+    test(
+      '확정 보상 해적은 1-2 수리, 1-4 폴리, 1-5 팡, 1-7 핀, 1-10 퍼피, 1-12 샤키다 (§4.6)',
+      () {
+        expect(sea1.byId('1-2').rewardPirate, 'p16_suri');
+        expect(sea1.byId('1-4').rewardPirate, 'p26_polly');
+        expect(sea1.byId('1-5').rewardPirate, 'p06_pang');
+        expect(sea1.byId('1-7').rewardPirate, 'p11_finn');
+        expect(sea1.byId('1-10').rewardPirate, 'p21_puffy');
+        expect(sea1.byId('1-12').rewardPirate, 'p31_sharky');
+        expect(sea1.byId('1-1').rewardPirate, isNull);
+      },
+    );
 
     test('적 덱·설계도·보상 해적이 모두 게임 데이터에 있다', () {
       expect(

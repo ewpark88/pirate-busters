@@ -102,6 +102,8 @@ void main() {
       () {
         final (:progress, :matches, :log) = _playSea1(base);
         final sea = testCampaign.sea(1);
+        // 튜토리얼 3판 + 캠페인 12판 (설계서 §6.1).
+        expect(sea.stages.length, 15);
         for (final s in sea.stages) {
           expect(progress.hasCleared(s.id), isTrue, reason: s.id);
         }
