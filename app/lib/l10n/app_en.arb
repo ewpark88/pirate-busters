@@ -734,6 +734,16 @@
   "moveLocked": "Pinned",
   "windReversed": "Flipped",
   "windCalm": "Calm",
+  "windSemantics": "Wind {direction}, level {level}",
+  "@windSemantics": {
+    "description": "Screen-reader label for the wind arrow and level pips",
+    "placeholders": {
+      "direction": {"type": "String"},
+      "level": {"type": "int"}
+    }
+  },
+  "windLeft": "left",
+  "windRight": "right",
   "aimAngle": "{deg}°",
   "@aimAngle": {
     "description": "조준 각도 라벨 (설계서 §10.4)",

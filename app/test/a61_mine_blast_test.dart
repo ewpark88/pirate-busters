@@ -5,7 +5,7 @@ import 'package:pb_sim/pb_sim.dart';
 import 'package:pirate_busters/battle/battle_session.dart';
 import 'package:pirate_busters/game/battle_cues.dart';
 import 'package:pirate_busters/game/battle_game.dart';
-import 'package:pirate_busters/game/camera_director.dart';
+import 'package:pirate_busters/game/camera_motion.dart';
 import 'package:pirate_busters/game/cues_unique.dart';
 import 'package:pirate_busters/game/hit_tag.dart';
 import 'package:pirate_busters/game/view/hit_weight.dart';
@@ -102,7 +102,7 @@ void main() {
       ]);
       expect(game.cues.fx.trauma.value, greaterThan(0), reason: '흔들림');
       expect(tags, contains(HitTag.mineBlast));
-      game.director.update(CameraDirector.punchIn, (Vector2.zero(), 900));
+      game.director.update(PunchZoom.punchIn, (Vector2.zero(), 900));
       expect(game.director.punchScale, lessThan(1), reason: '카메라 당김');
       // 띄운 효과는 다음 프레임에 붙는다.
       game.update(1 / 60);

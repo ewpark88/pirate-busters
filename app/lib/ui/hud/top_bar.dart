@@ -105,23 +105,83 @@ class _TurnInfo extends StatelessWidget {
   }
 }
 
+/// 바람 화살표와 단계 칸 3개 (설계서 §2.4 “HUD 에는 화살표와 단계를 둔다”). 숫자 없이
+/// 채운 칸 수가 세기다. 무풍이면 칸이 모두 비고 화살표 대신 흐린 점이다.
 class _Wind extends StatelessWidget {
   const _Wind({required this.wind});
 
   final int wind;
 
   @override
-  Widget build(BuildContext context) => Row(
-    mainAxisSize: MainAxisSize.min,
-    children: [
-      Text(AppLocalizations.of(context).wind),
-      const SizedBox(width: 4),
-      Icon(
-        wind >= 0 ? Icons.arrow_forward : Icons.arrow_back,
-        size: 16,
-        color: wind == 0 ? HudColors.mute : HudColors.text,
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final level = wind.abs();
+    final label = wind == 0
+        ? l10n.windCalm
+        : l10n.windSemantics(wind > 0 ? l10n.windRight : l10n.windLeft, level);
+    return Semantics(
+      label: label,
+      excludeSemantics: true,
+      child: Row(
+        key: ValueKey('wind-$wind'),
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(l10n.wind),
+          const SizedBox(width: 4),
+          if (wind == 0)
+            Container(
+              width: 7,
+              height: 7,
+              decoration: const BoxDecoration(
+                color: HudColors.mute,
+                shape: BoxShape.circle,
+              ),
+            )
+          else
+            CustomPaint(
+              size: const Size(16, 12),
+              painter: WindArrow(dir: wind.sign),
+            ),
+          const SizedBox(width: 3),
+          for (var i = 0; i < 3; i++)
+            Container(
+              width: 5,
+              height: 8 + i * 3,
+              margin: const EdgeInsets.only(left: 2),
+              decoration: BoxDecoration(
+                color: i < level ? HudColors.text : null,
+                border: Border.all(color: HudColors.mute),
+                borderRadius: BorderRadius.circular(1.5),
+              ),
+            ),
+        ],
       ),
-      Text('${wind.abs()}'),
-    ],
-  );
+    );
+  }
+}
+
+/// 바람 화살표: 바람이 부는 쪽(+1 오른쪽)을 가리킨다. 글꼴 아이콘 없이 그린다.
+class WindArrow extends CustomPainter {
+  const WindArrow({required this.dir});
+
+  final int dir;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = HudColors.text
+      ..strokeWidth = 2.2
+      ..strokeCap = StrokeCap.round;
+    final y = size.height / 2;
+    final tip = dir > 0 ? size.width - 1 : 1.0;
+    final tail = dir > 0 ? 1.0 : size.width - 1;
+    final back = tip - dir * size.height * .45;
+    canvas
+      ..drawLine(Offset(tail, y), Offset(tip, y), paint)
+      ..drawLine(Offset(tip, y), Offset(back, y - size.height * .4), paint)
+      ..drawLine(Offset(tip, y), Offset(back, y + size.height * .4), paint);
+  }
+
+  @override
+  bool shouldRepaint(WindArrow old) => old.dir != dir;
 }

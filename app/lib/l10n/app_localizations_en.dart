@@ -1566,6 +1566,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get windCalm => 'Calm';
 
   @override
+  String windSemantics(String direction, int level) {
+    return 'Wind $direction, level $level';
+  }
+
+  @override
+  String get windLeft => 'left';
+
+  @override
+  String get windRight => 'right';
+
+  @override
   String aimAngle(String deg) {
     return '$deg°';
   }

@@ -7,6 +7,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_soloud/flutter_soloud.dart';
 import 'package:pirate_busters/audio/sound_library.dart';
+import 'package:pirate_busters/audio/wind_voice.dart';
 
 /// 효과음 (설계서 §10.3): 포성, 나무 부서짐, 물보라, 철판 튕김, 유폭, 격침, 승리·패배
 /// 악구, 버튼 누름. A32: 착탄 쾅(작은·큰)과 잔향, 붕괴 우지끈, 해적 피격·바다 추락
@@ -64,6 +65,10 @@ abstract interface class SoundService {
 
   /// 전투 중 낮은 바다·바람 환경음 (§10.3, A56). 효과음 설정을 따른다.
   void ambience({required bool on});
+
+  /// 지금 바람 단계(−3~+3, 설계서 §2.4). 셀수록 바람 소리가 커지고 무풍이면 사라진다.
+  /// 환경음이 켜져 있을 때만 들린다.
+  void windLevel(int level);
 }
 
 /// 소리를 내지 않는다. 테스트와 소리 초기화 실패 때 쓴다.
@@ -87,6 +92,9 @@ class SilentSoundService implements SoundService {
 
   @override
   void ambience({required bool on}) {}
+
+  @override
+  void windLevel(int level) {}
 }
 
 /// flutter_soloud 저지연 재생. 소리마다 변형을 돌려 쓰고 음높이를 조금씩 흔든다.
@@ -210,8 +218,17 @@ class SoloudSoundService implements SoundService {
     }
   }
 
+  /// 바람 소리 (설계서 §2.4). 환경음이 켜져 있을 때만 들린다.
+  late final WindLoop _wind = WindLoop(_soloud);
+
+  Future<void> loadWind(Uint8List wav) => _wind.load(wav);
+
+  @override
+  void windLevel(int level) => _wind.level = level;
+
   @override
   void ambience({required bool on}) {
+    _wind.on = on;
     final h = _seaHandle;
     if (!on) {
       if (h != null) {

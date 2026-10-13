@@ -11,7 +11,6 @@ import 'package:pirate_busters/game/coords.dart';
 import 'package:pirate_busters/game/sprites.dart';
 import 'package:pirate_busters/game/view/aim_labels.dart';
 import 'package:pirate_busters/game/view/aim_painter.dart';
-import 'package:pirate_busters/game/view/guide_marks.dart';
 import 'package:pirate_busters/game/view/trail_painter.dart';
 import 'package:pirate_busters/game/weapon_styles.dart';
 import 'package:pirate_busters/input/aim_mode.dart';
@@ -188,7 +187,6 @@ class ShotView extends Component {
 
   @override
   void render(Canvas canvas) {
-    GuideMarks.movePreview(canvas, session);
     _renderAim(canvas);
     _renderShots(canvas);
   }

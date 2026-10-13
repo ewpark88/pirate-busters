@@ -14,7 +14,7 @@ import 'package:pirate_busters/game/coords.dart';
 /// 배에 가까워지면 목표 배가 들어오고, 착탄·파괴 연출이 끝날 때까지 착탄 지점에 머문 뒤
 /// 천천히 돌아간다. 상대 턴에는 상대 배와 그 앞바다를 같은 방식으로 보여 준다
 /// ([anchorSide], 설계서 §2.1·§10.4, ADR-043·ADR-069). 핀치 줌은 1.5배 확대부터
-/// 간격 42칸까지.
+/// 최대 간격 30칸까지.
 class CameraDirector {
   /// 기본 화면이 기준으로 삼는 배: 지금 턴 진영. 판이 끝나면 보는 사람 쪽 [viewSide].
   static int anchorSide(MatchState state, int viewSide) =>
@@ -49,8 +49,18 @@ class CameraDirector {
     return math.max(idleY, math.min(low, fit));
   }
 
-  /// 가장 멀리 본 화면 폭: 간격 42칸 + 배 두 척 + 여백 (ADR-048).
-  static const double maxWidth = 2528;
+  /// 가장 멀리 본 화면 폭: 최대 간격 30칸(시작 22칸 + 바다 끝 4칸 × 2, BALANCE.md
+  /// A2.6) + 슬루프 두 척(12칸 × 2) + 여백 (설계서 §2.1).
+  static const double maxWidth = 2200;
+
+  /// 탄을 따라갈 때 가장 넓은 폭: 아주 높이 올린 탄도 해수면과 함께 들어온다.
+  static const double shotMaxWidth = 2600;
+
+  /// 전체 보기의 가장 좁은 폭: 가운데 파도 구간 셋(±10칸)과 여백이 다 보인다 (§2.6).
+  static const double overviewMinWidth = 900;
+
+  /// 두 배가 이 간격(8칸) 안이면 기본 화면을 두 배 가운데로 옮긴다.
+  static const double closeGap = 8 * Coords.cell;
   static const double minWidth = baseWidth / 1.5;
   static const double impactWidth = 700;
   static const double impactHoldSec = 0.8;
@@ -130,22 +140,11 @@ class CameraDirector {
   /// 착탄 화면에서 배 양옆에 남길 여백(월드 px).
   static const double impactShipMargin = 90;
 
-  /// 명중 때 당기는 줌 (설계서 §10.4, A32): 화면 폭을 한 방 크기에 비례하는 비율
-  /// (4~12%, `HitWeight.punch`)만큼 [punchIn] 초에 빠르게 좁혔다가 [punchOut] 초에
-  /// 걸쳐 부드럽게 푼다.
-  static const double punchIn = 0.05;
-  static const double punchOut = 0.3;
-  double _punchZoom = 0;
-  double _punchT = punchIn + punchOut;
+  /// 명중 때 당기는 줌 (설계서 §10.4, A32).
+  final PunchZoom _punch = PunchZoom();
 
   /// 지금 화면 폭에 곱할 배율(1 이하).
-  double get punchScale {
-    if (_punchT >= punchIn + punchOut) return 1;
-    final k = _punchT < punchIn
-        ? _punchT / punchIn
-        : math.pow(1 - (_punchT - punchIn) / punchOut, 2).toDouble();
-    return 1 - _punchZoom * k;
-  }
+  double get punchScale => _punch.scale;
 
   /// 착탄 지점을 잠깐 보여준다. [punch] 가 0 보다 크면 그 비율로 당기는 줌도 건다.
   /// 이미 당긴 줌보다 약하면 덮어쓰지 않는다.
@@ -153,10 +152,7 @@ class CameraDirector {
     _impact = at.clone();
     _impactShip = ship;
     _impactLeft = impactHoldSec;
-    if (punch > 0 && punch >= 1 - punchScale) {
-      _punchZoom = punch;
-      _punchT = 0;
-    }
+    _punch.hit(punch);
   }
 
   /// 핀치 배율을 범위 안으로 맞춘다.
@@ -195,7 +191,7 @@ class CameraDirector {
         : followRate;
     _rateY = projectile != null ? _rate * shotYLoose : _rate;
     if (overview) {
-      final w = ((myX - enemyX).abs() + 800).clamp(baseWidth, maxWidth);
+      final w = ((myX - enemyX).abs() + 800).clamp(overviewMinWidth, maxWidth);
       return (Vector2((myX + enemyX) / 2, -150), w);
     }
     if (holding) {
@@ -225,7 +221,7 @@ class CameraDirector {
       const bottom = shotMarginBottom;
       final follow = math.max(shotWidth, (bottom - top) / aspect);
       final both = math.max(follow, dist + 500);
-      final w = (follow + (both - follow) * near).clamp(minWidth, maxWidth);
+      final w = (follow + (both - follow) * near).clamp(minWidth, shotMaxWidth);
       final halfH = w * aspect / 2;
       final double y = math.min(
         math.max((top + bottom) / 2, top + halfH),
@@ -259,15 +255,19 @@ class CameraDirector {
       maxWidth,
     );
     final ahead = idleAhead + 300 * aimStretch;
-    // 줌아웃할수록 두 배 가운데로 옮겨, 최대 축소에서는 간격 42칸이어도 두 배가
+    // 줌아웃할수록 두 배 가운데로 옮겨, 최대 축소에서는 간격 30칸이어도 두 배가
     // 모두 보인다 (설계서 §2.1).
-    final t = ((w - baseWidth) / (maxWidth - baseWidth)).clamp(0.0, 1.0);
+    final zoomT = ((w - baseWidth) / (maxWidth - baseWidth)).clamp(0.0, 1.0);
+    // 상대가 가까이 오면 두 배 가운데로 옮긴다(배 가운데 거리 − 배 폭 ≈ 간격).
+    final gap = (myX - enemyX).abs() - 12 * Coords.cell;
+    final t = math.max(zoomT, 1 - smooth01(gap / closeGap));
     final near = myX + facing * ahead;
     final mid = (myX + enemyX) / 2;
+    // 끌기는 두 배 뒤쪽 바다 끝(4칸)과 여백까지 (§2.1, §2.5).
     final x = pan.apply(
       near + (mid - near) * t,
-      math.min(myX, enemyX),
-      math.max(myX, enemyX),
+      math.min(myX, enemyX) - 6 * Coords.cell,
+      math.max(myX, enemyX) + 6 * Coords.cell,
     );
     return (Vector2(x, idleYFor(w, aspect)), w);
   }
@@ -286,7 +286,7 @@ class CameraDirector {
     // 착탄 지점은 다음 착탄까지 남겨 둔다: 부서지는 연출이 길면 계속 머문다.
     _impactLeft = math.max(0, _impactLeft - dt);
     _returnLeft = math.max(0, _returnLeft - dt);
-    _punchT += dt;
+    _punch.update(dt);
     _track.update(dt);
     pan.update(dt);
     final k = _rate * springBoost;

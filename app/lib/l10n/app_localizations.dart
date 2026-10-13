@@ -2792,6 +2792,24 @@ abstract class AppLocalizations {
   /// **'Calm'**
   String get windCalm;
 
+  /// Screen-reader label for the wind arrow and level pips
+  ///
+  /// In en, this message translates to:
+  /// **'Wind {direction}, level {level}'**
+  String windSemantics(String direction, int level);
+
+  /// No description provided for @windLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'left'**
+  String get windLeft;
+
+  /// No description provided for @windRight.
+  ///
+  /// In en, this message translates to:
+  /// **'right'**
+  String get windRight;
+
   /// 조준 각도 라벨 (설계서 §10.4)
   ///
   /// In en, this message translates to:

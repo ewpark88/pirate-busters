@@ -182,3 +182,10 @@
 - `packages/pb_sim/lib/src/world/world.dart:17` `moveRange = 10칸` 과 주석(“§2.6, 이동은 M3”)·`startGap` 주석(“범위 2~42칸”)이 옛 규칙이다. 앱 `gap_bar.dart:21` 이 이 값을 쓴다 → S1 에서 지우거나 `backRoom` 으로 바꾸면 S2 Z7 이 받는다.
 - `camera_director.dart` `maxWidth` 주석·값이 42칸 기준이다(S2 C1 에서 고친다).
 - `SeaShape.scale`(폭풍 배율)은 폭풍 규칙이 사라졌으니 S1 의 ‘컴파일만 맞춤’ 범위에서 1 고정으로 두고, 인자 삭제는 S2 Z2 에서 한다.
+
+## 12. 구현 결과 (2026-10-13)
+
+- 구현: W1~W7·W9·W10, Z1~Z5(Dart 띠 경로)·Z7, M1~M3·M5, C1~C3·C5. 기록은 `docs/PROGRESS.md` S2 절, 전후 캡처는 `docs/quality/s2/`
+- 바뀐 것: 구간 물빛은 앞 바다 대신 **뒤 바다 위(배 뒤)** 에 얹었다(셰이더·저사양 모두 같은 그림). 배 둘레 잔잔 폭을 140px 로 줄여 거친 구간 너울이 배 가까이에서도 보인다. 바람 소리는 `SoundService.windLevel` 로 넣었다. 카메라 탄 추적 폭은 2600 까지 따로 둔다
+- 뺀 것: M4·C4·Z5 셰이더·Z6·W8 부드럽게 (S5 손맛 확인 뒤)
+

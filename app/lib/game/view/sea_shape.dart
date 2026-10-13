@@ -4,6 +4,7 @@ import 'package:flame/components.dart';
 import 'package:pb_sim/pb_sim.dart';
 import 'package:pirate_busters/battle/playback.dart';
 import 'package:pirate_busters/game/coords.dart';
+import 'package:pirate_busters/game/view/sea_zones.dart';
 import 'package:pirate_busters/game/view/ship_view.dart';
 
 /// 배 한 척이 수면에 주는 값: 가운데 x·반폭·파도 높이(월드 px), 뱃머리 쪽
@@ -16,40 +17,46 @@ typedef ShipOnSea = ({
   bool moving,
 });
 
-/// 수면 모양 (설계서 §10.2 “큰 너울과 물마루”): 두 배의 파도 위아래(시뮬레이션
-/// heave)를 잇고, 배에서 먼 바다에만 긴 너울을 더한다. 배 자리에서는 너울이 0이라
-/// 배와 물이 어긋나지 않는다. 너울은 [scale] 배로 그린다.
+/// 수면 모양 (설계서 §10.2 “큰 너울과 물마루”, §2.6 파도 구간): 두 배의 파도 위아래
+/// (시뮬레이션 heave)를 잇고, 배에서 먼 바다에만 긴 너울을 더한다. 너울 높이는 그
+/// 자리 파도 구간 세기([zones])를 따른다: 잔잔한 구간은 거의 평평하고 거친 구간은
+/// 높다. 배 자리에서는 너울이 0이라 배와 물이 어긋나지 않는다.
 /// 그리기 전용이라 판정과 무관하다.
 class SeaShape extends Component {
-  SeaShape({required this.ships, required this.scale});
+  SeaShape({required this.ships, this.zones});
 
   /// 지금 두 배 (진영 0, 1 순).
   final List<ShipOnSea> Function() ships;
 
-  /// 너울 배율 (평소 1, 폭풍 타임이면 `stormWavePercent / 100`).
-  final double Function() scale;
+  /// 파도 구간. 없으면 바다 전체를 보통 세기(1)로 그린다.
+  final SeaZones? zones;
 
-  /// 너울 높이(월드 px), 파장(월드 px), 흐르는 속도(라디안/초), 배 둘레 잔잔한 폭.
-  static const double amp = 9;
+  /// 구간 세기 1 의 너울 높이(월드 px), 파장(월드 px), 흐르는 속도(라디안/초),
+  /// 배 둘레 잔잔한 폭.
+  static const double amp = 6;
   static const double length = 560;
   static const double speed = 0.6;
-  static const double calmMargin = 260;
+  static const double calmMargin = 140;
 
   double t = 0;
 
-  /// 이번 프레임의 두 배와 너울 배율 ([update] 때 한 번 읽는다).
+  /// 이번 프레임의 두 배 ([update] 때 한 번 읽는다).
   List<ShipOnSea> current = const [];
-  double _scale = 1;
 
   @override
   void update(double dt) {
     t += dt;
     current = ships();
-    _scale = scale();
   }
 
   /// 수면 높이(월드 px, 아래가 +).
-  double call(double x) => lerp(current, x) + swell(x, t, current, _scale);
+  double call(double x) => lerp(current, x) + swell(x, t, current, zones);
+
+  /// [x] 의 섞인 구간 세기(0~3). 구간이 없으면 1.
+  double levelAt(double x) => zones?.smoothLevelAt(x) ?? 1;
+
+  /// 세기 [level] 의 너울 높이(월드 px): 잔잔 0.8 · 보통 6 · 거침 16.
+  static double ampFor(double level) => 0.8 + (amp - 0.8) * level;
 
   /// 두 배의 파도 높이를 x 로 잇는다. 배 바깥은 가까운 배 높이.
   static double lerp(List<ShipOnSea> s, double x) {
@@ -70,8 +77,15 @@ class SeaShape extends Component {
   }
 
   /// 긴 너울 높이(월드 px).
-  static double swell(double x, double t, List<ShipOnSea> s, double scale) =>
-      amp * scale * calm(s, x) * math.sin(x / length * 2 * math.pi - t * speed);
+  static double swell(
+    double x,
+    double t,
+    List<ShipOnSea> s,
+    SeaZones? zones,
+  ) =>
+      ampFor(zones?.smoothLevelAt(x) ?? 1) *
+      calm(s, x) *
+      math.sin(x / length * 2 * math.pi - t * speed);
 
   /// [from]~[to] 안의 물마루(너울 꼭대기, 수면이 가장 높은 곳) x 목록.
   Iterable<double> crests(double from, double to) sync* {

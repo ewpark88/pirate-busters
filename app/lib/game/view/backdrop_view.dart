@@ -17,10 +17,17 @@ class BackdropView extends Component with HasGameReference<FlameGame> {
     required this.region,
     this.mode = SeaMode.normal,
     this.lowEnd,
+    this.wind,
     super.priority,
   });
 
   final Backdrop data;
+
+  /// 지금 느끼는 바람(−3~+3). 있으면 구름 겹이 바람 쪽으로 흐른다 (설계서 §2.4).
+  double Function()? wind;
+
+  /// 구름이 바람에 흘러간 거리(월드 px).
+  double drift = 0;
   final String region;
   final SeaMode mode;
   final ValueListenable<bool>? lowEnd;
@@ -50,6 +57,13 @@ class BackdropView extends Component with HasGameReference<FlameGame> {
       lowEnd: lowEnd,
       priority: priority,
     );
+  }
+
+  @override
+  void update(double dt) {
+    final w = wind;
+    if (w == null) return;
+    drift = (drift + Backdrop.cloudSpeed(w()) * dt) % (data.width * 64);
   }
 
   /// 지금 그리는 겹 (테스트용).
@@ -90,7 +104,12 @@ class BackdropView extends Component with HasGameReference<FlameGame> {
       final haze = Backdrop.hazeOf(layer.id);
       if (haze > 0) canvas.saveLayer(null, Paint());
       for (
-        var x = data.tileStart(layer, cameraX, view.left);
+        var x = data.tileStart(
+          layer,
+          cameraX,
+          view.left,
+          drift: Backdrop.drifts(layer.id) ? drift : 0,
+        );
         x < view.right;
         x += data.width
       ) {

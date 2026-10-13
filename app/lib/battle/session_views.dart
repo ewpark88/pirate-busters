@@ -46,6 +46,19 @@ extension BattleSessionViews on BattleSession {
     );
   }
 
+  /// [dir](+1 전진·−1 후퇴)로 끝까지 가면 무엇에 막혀 멈추는가 (설계서 §2.5). 이동 끝
+  /// 점선의 표식만 고른다. 거리는 [reach] 와 같은 pb_sim 값이다.
+  MoveStop moveStopFor(int dir) {
+    final side = state.activeSide;
+    final me = state.sides[side];
+    final (lo, hi) = moveLimits(me, state.otherOf(side), state.rules);
+    final got = reach(dir * 1000).abs();
+    final room = dir > 0 ? hi - me.offset : me.offset - lo;
+    if (got + moveStep >= room) return dir > 0 ? MoveStop.foe : MoveStop.seaEnd;
+    final byFuel = me.fuel * cellUnit ~/ me.fuelPerCell;
+    return byFuel <= got + moveStep ? MoveStop.fuel : MoveStop.time;
+  }
+
   /// 상대가 쏘기 전 조준 자세를 보여주는 시간: AI 는 난이도별 생각 연출 시간
   /// (BALANCE.md A5.2), 그 밖에는 1.2초.
   int get aimShowMs {
@@ -74,3 +87,6 @@ extension BattleSessionViews on BattleSession {
     return left < 0 ? 0 : left;
   }
 }
+
+/// 이동이 멈추는 까닭 (설계서 §2.5): 상대 배 앞 최소 간격, 바다 끝, 연료, 남은 시간.
+enum MoveStop { foe, seaEnd, fuel, time }

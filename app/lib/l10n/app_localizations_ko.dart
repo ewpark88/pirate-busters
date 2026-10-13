@@ -1484,6 +1484,17 @@ class AppLocalizationsKo extends AppLocalizations {
   String get windCalm => '무풍';
 
   @override
+  String windSemantics(String direction, int level) {
+    return '바람 $direction $level단계';
+  }
+
+  @override
+  String get windLeft => '왼쪽';
+
+  @override
+  String get windRight => '오른쪽';
+
+  @override
   String aimAngle(String deg) {
     return '$deg°';
   }

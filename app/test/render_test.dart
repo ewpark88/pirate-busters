@@ -334,6 +334,9 @@ void main() {
 }
 
 class _RecordingSound implements SoundService {
+  @override
+  void windLevel(int level) {}
+
   final List<Sfx> played = [];
 
   @override
