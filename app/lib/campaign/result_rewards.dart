@@ -13,16 +13,9 @@ import 'package:pirate_busters/ui/meta_icons.dart';
 /// 결과 화면 보상 (설계서 §13.5): 골드·경험치가 세어 올라가고, 새 해적은 등급
 /// 카드가 뒤집히며, 레벨업은 빛 배너로 나온다 (§10.5, §13.8, A55).
 class ResultRewards extends ConsumerWidget {
-  const ResultRewards({
-    required this.reward,
-    this.growReady = false,
-    super.key,
-  });
+  const ResultRewards({required this.reward, super.key});
 
   final StageReward reward;
-
-  /// 배 키우기가 열렸다 (첫 클리어).
-  final bool growReady;
 
   /// 새 해적·레벨업이 나오는 차례(별 3개 뒤).
   static const int revealOrder = 14;
@@ -57,7 +50,6 @@ class ResultRewards extends ConsumerWidget {
           builder: (context, v) => OutlinedText(l10n.rewardXp(v), size: 17),
         ),
         if (reward.firstClear) Text(l10n.rewardFirstClear, style: accent),
-        if (growReady) Text(l10n.shipGrowReady, style: accent),
         if (pirate != null)
           // 작은 등급 카드가 뒤집히며 나오고 옆에 이름 (버튼을 밀어내지 않게 한 줄).
           Row(

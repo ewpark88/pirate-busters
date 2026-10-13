@@ -115,15 +115,17 @@ void main() {
     final stage = testCampaign.stage('1-2');
     const progress = PlayerProgress(level: 3, gold: 850, tutorialDone: 3);
     final cases = <String, (MatchSummary, StageReward)>{
-      // 시간 판정 패배: 양쪽 침수 막대.
+      // 턴 제한 패배: 양쪽 남은 해적 체력 막대.
       'result_defeat': (
         const MatchSummary(
           won: false,
           outcome: MatchOutcome.timeDecision,
-          turns: 30,
+          turns: 24,
           hullPercent: 52,
           piratesDown: 1,
           shotsFired: 13,
+          crewPercent: 38,
+          foeCrewPercent: 61,
         ),
         const StageReward(
           gold: 0,

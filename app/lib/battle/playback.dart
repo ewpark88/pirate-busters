@@ -161,6 +161,17 @@ class ShotPlayback extends Playback {
     return land != null && tick >= land;
   }
 
+  /// 아직 화면에 나오지 않은 [side] 해적 피해 합. HUD 가 탄이 닿기 전 체력을 그대로
+  /// 보여 주는 데 쓴다 (설계서 §13.4).
+  int pendingCrewDamage(int side) {
+    var sum = 0;
+    for (var i = _released; i < _timed.length; i++) {
+      final e = _timed[i].$2;
+      if (e.kind == SimEventKind.pirateHit && e.side == side) sum += e.value;
+    }
+    return sum;
+  }
+
   /// 지금 틱까지 온 효과 이벤트를 꺼낸다. [all] 이면 남은 것을 모두.
   List<SimEvent> takeDue({bool all = false}) {
     final out = <SimEvent>[];

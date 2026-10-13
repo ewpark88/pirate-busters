@@ -16,20 +16,8 @@ Blueprint myBlueprint(
   int? slot,
 }) {
   final saved = fleet.blueprint(slot ?? fleet.activeSlot);
-  final base =
-      saved ??
+  return saved ??
       ship.unlockedOnly(catalog.preset(BattleSetup.defaultPreset).blueprint);
-  return ship.stamp(base);
-}
-
-/// 스테이지로 열린 가장 큰 확장 단계. 슬루프 하나라 늘 1이다 (ADR-111).
-int openedStageOf(PlayerProgress p, CampaignCatalog campaign) => 1;
-
-/// 확장 단계 [stage] 를 여는 스테이지 id. 확장 단계가 없어 빈 글이다 (ADR-111).
-String stageClearFor(int stage, CampaignCatalog campaign) {
-  final ids = ShipUpgrades.stageClears[stage];
-  if (ids == null || ids.isEmpty) return '';
-  return ids.firstWhere(campaign.hasStage, orElse: () => ids.last);
 }
 
 /// 지금 골드로 열 수 있는 재질이 있는가 (항구 빨간 점, 설계서 §13.2).

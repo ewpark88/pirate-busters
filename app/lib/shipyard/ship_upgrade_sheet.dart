@@ -22,7 +22,6 @@ Future<bool> unlockTool(
   final dev = ref.read(devToolsProvider);
   final name = switch (tool) {
     MaterialTool(:final material) => Labels.material(l10n, material),
-    ModuleTool(:final kind) => Labels.module(l10n, kind),
     _ => '',
   };
   final ok = await showPbConfirm(
@@ -40,7 +39,6 @@ Future<bool> unlockTool(
       material,
       free: dev,
     ),
-    ModuleTool(:final kind) => ShipShop.unlockModule(p, kind, free: dev),
     _ => null,
   };
   if (next == null) {

@@ -12,8 +12,9 @@ import 'package:pirate_busters/ui/kit/kit_art.dart';
 import 'package:pirate_busters/ui/kit/kit_motion.dart';
 import 'package:pirate_busters/ui/kit/kit_sound.dart';
 
-/// 선원 화면 왼쪽의 내 배 (설계서 §13.7, A63): 지은 배 옆모습 위 선실 칸마다 탄 해적
-/// 얼굴과 선실 번호를 겹쳐 그린다. 덱 순서가 곧 선실 순서다(`blueprint.cabins[i]`).
+/// 선원 화면 왼쪽의 내 배 (설계서 §13.7, A63): 지은 배 옆모습 위 선실 칸과 망대마다 탄
+/// 해적 얼굴과 자리 번호를 겹쳐 그린다. 덱 순서가 곧 자리 순서다(선실 다음이 망대,
+/// [seatsOf]).
 /// 배지에 해적을 끌어다 놓으면 타고, 이미 있던 해적과는 자리가 바뀐다. 찬 배지는
 /// 끌어서 다른 선실로 옮기고, 누르면 [onTapSlot] 으로 상세를 연다.
 class CrewShip extends StatelessWidget {
@@ -41,14 +42,20 @@ class CrewShip extends StatelessWidget {
   static double badgeSize(double cell, {double gap = double.infinity}) =>
       math.min(math.max(cell * 1.15, 40), gap * cell - 2);
 
-  /// 선실끼리 가장 가까운 거리(칸, 가로·세로 중 큰 쪽).
-  static double cabinGap(List<CabinCell> cabins) {
+  /// 해적이 타는 자리 칸: 선실 순서, 끝에 망대 (설계서 §3.3, 전투와 같은 순서).
+  static List<(int, int)> seatsOf(Blueprint b) => [
+    for (final c in b.cabins) (c.x, c.y),
+    ...mastSeats(b.hull, b.modules),
+  ];
+
+  /// 자리끼리 가장 가까운 거리(칸, 가로·세로 중 큰 쪽).
+  static double cabinGap(List<(int, int)> seats) {
     var gap = double.infinity;
-    for (var i = 0; i < cabins.length; i++) {
-      for (var j = i + 1; j < cabins.length; j++) {
+    for (var i = 0; i < seats.length; i++) {
+      for (var j = i + 1; j < seats.length; j++) {
         final d = math.max(
-          (cabins[i].x - cabins[j].x).abs(),
-          (cabins[i].y - cabins[j].y).abs(),
+          (seats[i].$1 - seats[j].$1).abs(),
+          (seats[i].$2 - seats[j].$2).abs(),
         );
         gap = math.min(gap, d.toDouble());
       }
@@ -59,7 +66,7 @@ class CrewShip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final model = ShipyardModel(hull: blueprint.hull)..load(blueprint);
-    final cabins = blueprint.cabins;
+    final cabins = seatsOf(blueprint);
     return LayoutBuilder(
       builder: (context, box) {
         final cell = math.min(
@@ -81,8 +88,8 @@ class CrewShip extends StatelessWidget {
                       center: ShipGridView.cellRect(
                         model.height,
                         cell,
-                        cabins[i].x,
-                        cabins[i].y,
+                        cabins[i].$1,
+                        cabins[i].$2,
                       ).center,
                       width: b,
                       height: b,

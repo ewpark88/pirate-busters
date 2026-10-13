@@ -56,7 +56,7 @@ abstract interface class SoundService {
   Future<void> loadMusic(Map<Music, Uint8List> wavs);
 
   /// [track] 을 되풀이해 튼다(null 이면 멈춘다). 같은 곡이면 [speed] 만 바꾼다
-  /// (폭풍 타임에 빠르게, §10.3). 곡이 바뀌면 짧게 겹쳐 넘긴다(A56).
+  /// (§10.3). 곡이 바뀌면 짧게 겹쳐 넘긴다(A56).
   void playMusic(Music? track, {double speed = 1});
 
   /// 승패 악구·격침 배너 동안 음악을 줄인다(덕킹, §10.3, A56). 곡이 바뀌면 풀린다.
@@ -155,7 +155,7 @@ class SoloudSoundService implements SoundService {
     }
   }
 
-  /// 곡을 겹쳐 넘기는 시간, 폭풍 빠르기가 바뀌는 시간, 덕킹 배율 (§10.3, A56).
+  /// 곡을 겹쳐 넘기는 시간, 빠르기가 바뀌는 시간, 덕킹 배율 (§10.3, A56).
   static const Duration crossfade = Duration(milliseconds: 600);
   static const Duration speedRamp = Duration(seconds: 1);
   static const double duckLevel = .35;

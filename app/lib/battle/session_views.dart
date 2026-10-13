@@ -23,14 +23,32 @@ extension BattleSessionViews on BattleSession {
     realMs(state, effectiveMs(state, turnMs)),
   );
 
-  /// 화면에 보이는 [side] 배의 선체 내구도 비율(0~1, 설계서 §13.4). 탄 연출 중에는
+  /// 화면에 보이는 [side] 해적 체력 합 비율(0~1, 설계서 §13.4). 탄 연출 중에는
   /// 탄이 닿은 만큼만 줄어 있다 (A33).
-  double visibleHull(int side) {
-    final grid = state.sides[side].grid;
-    if (grid.initialTotalHp == 0) return 0;
+  double visibleCrewHp(int side) {
+    final crew = state.sides[side].crew;
+    if (crew.hpStart == 0) return 0;
     final shot = playback;
-    final hp = shot is ShotPlayback ? shot.live[side].totalHp : grid.totalHp;
-    return hp / grid.initialTotalHp;
+    final pending = shot is ShotPlayback ? shot.pendingCrewDamage(side) : 0;
+    final hp = (crew.hpLeft + pending).clamp(0, crew.hpStart);
+    return hp / crew.hpStart;
+  }
+
+  /// 화면에 보이는 [side] 선장실 블록 내구도 비율(0~1, 설계서 §13.4). 탄 연출
+  /// 중에는 탄이 닿은 만큼만 줄어 있다.
+  double visibleCaptain(int side) {
+    final s = state.sides[side];
+    final max = captainMaxHp(s);
+    final shot = playback;
+    if (shot is! ShotPlayback || max <= 0) {
+      return max <= 0 ? 0 : captainHp(s) / max;
+    }
+    for (final m in s.modules.list) {
+      if (m.kind != ModuleKind.captain) continue;
+      final hp = shot.live[side].hp[s.grid.indexOf(m.x, m.y)];
+      return (hp / max).clamp(0, 1).toDouble();
+    }
+    return 0;
   }
 
   /// 지금 [dx](1/10칸)를 누르면 실제로 갈 거리(1/1000칸). 시뮬레이션의 [moveReach].

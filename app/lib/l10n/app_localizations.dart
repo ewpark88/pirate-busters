@@ -116,11 +116,11 @@ abstract class AppLocalizations {
   /// **'{count, plural, =1{1 turn to turn limit} other{{count} turns to turn limit}} · most crew HP wins'**
   String timeVerdict(int count);
 
-  /// No description provided for @timeVerdictFlood.
+  /// No description provided for @timeVerdictHp.
   ///
   /// In en, this message translates to:
   /// **'You {mine}% : Foe {theirs}%'**
-  String timeVerdictFlood(String mine, String theirs);
+  String timeVerdictHp(String mine, String theirs);
 
   /// No description provided for @timeVerdictByHull.
   ///
@@ -151,12 +151,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Hull'**
   String get hull;
-
-  /// No description provided for @flood.
-  ///
-  /// In en, this message translates to:
-  /// **'Flood {percent}%'**
-  String flood(String percent);
 
   /// No description provided for @crewAlive.
   ///
@@ -194,12 +188,6 @@ abstract class AppLocalizations {
   /// **'{count, plural, =1{1 shot left} other{{count} shots left}}'**
   String firesLeft(int count);
 
-  /// No description provided for @cooldown.
-  ///
-  /// In en, this message translates to:
-  /// **'{count, plural, =1{Rest 1 turn} other{Rest {count} turns}}'**
-  String cooldown(int count);
-
   /// No description provided for @firedDone.
   ///
   /// In en, this message translates to:
@@ -218,23 +206,11 @@ abstract class AppLocalizations {
   /// **'Ready!'**
   String get pirateReady;
 
-  /// No description provided for @cabinFlooded.
-  ///
-  /// In en, this message translates to:
-  /// **'Flooded'**
-  String get cabinFlooded;
-
   /// No description provided for @pirateDown.
   ///
   /// In en, this message translates to:
   /// **'Down'**
   String get pirateDown;
-
-  /// No description provided for @pirateSwimming.
-  ///
-  /// In en, this message translates to:
-  /// **'Swimming'**
-  String get pirateSwimming;
 
   /// No description provided for @pirateBoarding.
   ///
@@ -247,12 +223,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Wind'**
   String get wind;
-
-  /// No description provided for @stormTime.
-  ///
-  /// In en, this message translates to:
-  /// **'Storm!'**
-  String get stormTime;
 
   /// No description provided for @overview.
   ///
@@ -440,23 +410,11 @@ abstract class AppLocalizations {
   /// **'Your turn!'**
   String get bannerMyTurn;
 
-  /// No description provided for @bannerStorm.
-  ///
-  /// In en, this message translates to:
-  /// **'Storm time!'**
-  String get bannerStorm;
-
   /// No description provided for @bannerAnnihilation.
   ///
   /// In en, this message translates to:
   /// **'Wiped out!'**
   String get bannerAnnihilation;
-
-  /// Time decision banner comparing flood, viewer first (A54).
-  ///
-  /// In en, this message translates to:
-  /// **'Flood {mine}% : {foe}%'**
-  String bannerFloodCompare(String mine, String foe);
 
   /// No description provided for @surrenderQueued.
   ///
@@ -1298,36 +1256,6 @@ abstract class AppLocalizations {
   /// **'Push {n}'**
   String ammoShock(int n);
 
-  /// No description provided for @rangeShort.
-  ///
-  /// In en, this message translates to:
-  /// **'Short'**
-  String get rangeShort;
-
-  /// No description provided for @rangeMedium.
-  ///
-  /// In en, this message translates to:
-  /// **'Mid'**
-  String get rangeMedium;
-
-  /// No description provided for @rangeLong.
-  ///
-  /// In en, this message translates to:
-  /// **'Long'**
-  String get rangeLong;
-
-  /// No description provided for @rangeVeryLong.
-  ///
-  /// In en, this message translates to:
-  /// **'Far'**
-  String get rangeVeryLong;
-
-  /// No description provided for @outOfRange.
-  ///
-  /// In en, this message translates to:
-  /// **'Out of range'**
-  String get outOfRange;
-
   /// No description provided for @tapToSplit.
   ///
   /// In en, this message translates to:
@@ -1376,12 +1304,6 @@ abstract class AppLocalizations {
   /// **'Points {used}/{max}'**
   String statPoints(int used, int max);
 
-  /// No description provided for @statWaterline.
-  ///
-  /// In en, this message translates to:
-  /// **'Draft {cells}'**
-  String statWaterline(String cells);
-
   /// No description provided for @statFuelPerCell.
   ///
   /// In en, this message translates to:
@@ -1406,12 +1328,6 @@ abstract class AppLocalizations {
   /// **'Cabins {n}/{max}'**
   String statCabins(int n, int max);
 
-  /// No description provided for @statModules.
-  ///
-  /// In en, this message translates to:
-  /// **'Modules {n}/{max}'**
-  String statModules(int n, int max);
-
   /// No description provided for @statCaptain.
   ///
   /// In en, this message translates to:
@@ -1435,18 +1351,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Iron'**
   String get materialIron;
-
-  /// No description provided for @materialCork.
-  ///
-  /// In en, this message translates to:
-  /// **'Cork'**
-  String get materialCork;
-
-  /// No description provided for @materialNet.
-  ///
-  /// In en, this message translates to:
-  /// **'Net'**
-  String get materialNet;
 
   /// No description provided for @toolCabin.
   ///
@@ -1484,77 +1388,17 @@ abstract class AppLocalizations {
   /// **'{n} pt'**
   String toolPoints(int n);
 
-  /// No description provided for @moduleGunPort.
-  ///
-  /// In en, this message translates to:
-  /// **'Gun port'**
-  String get moduleGunPort;
-
-  /// No description provided for @moduleMagazine.
-  ///
-  /// In en, this message translates to:
-  /// **'Magazine'**
-  String get moduleMagazine;
-
-  /// No description provided for @modulePump.
-  ///
-  /// In en, this message translates to:
-  /// **'Pump'**
-  String get modulePump;
-
-  /// No description provided for @moduleWorkshop.
-  ///
-  /// In en, this message translates to:
-  /// **'Workshop'**
-  String get moduleWorkshop;
-
   /// No description provided for @moduleMast.
   ///
   /// In en, this message translates to:
   /// **'Pine mast'**
   String get moduleMast;
 
-  /// No description provided for @moduleMastBamboo.
-  ///
-  /// In en, this message translates to:
-  /// **'Bamboo mast'**
-  String get moduleMastBamboo;
-
-  /// No description provided for @moduleMastOak.
-  ///
-  /// In en, this message translates to:
-  /// **'Oak mast'**
-  String get moduleMastOak;
-
-  /// No description provided for @moduleMastIron.
-  ///
-  /// In en, this message translates to:
-  /// **'Iron mast'**
-  String get moduleMastIron;
-
-  /// No description provided for @moduleMastCrow.
-  ///
-  /// In en, this message translates to:
-  /// **'Crow mast'**
-  String get moduleMastCrow;
-
-  /// No description provided for @moduleLookout.
-  ///
-  /// In en, this message translates to:
-  /// **'Lookout'**
-  String get moduleLookout;
-
   /// No description provided for @moduleCaptain.
   ///
   /// In en, this message translates to:
   /// **'Captain'**
   String get moduleCaptain;
-
-  /// No description provided for @moduleFuelTank.
-  ///
-  /// In en, this message translates to:
-  /// **'Fuel tank'**
-  String get moduleFuelTank;
 
   /// No description provided for @undo.
   ///
@@ -1621,30 +1465,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Types'**
   String get deckFamilies;
-
-  /// No description provided for @deckRanges.
-  ///
-  /// In en, this message translates to:
-  /// **'Range'**
-  String get deckRanges;
-
-  /// No description provided for @preferNear.
-  ///
-  /// In en, this message translates to:
-  /// **'Fights close'**
-  String get preferNear;
-
-  /// No description provided for @preferFar.
-  ///
-  /// In en, this message translates to:
-  /// **'Fights far'**
-  String get preferFar;
-
-  /// No description provided for @preferMixed.
-  ///
-  /// In en, this message translates to:
-  /// **'Any distance'**
-  String get preferMixed;
 
   /// No description provided for @familyLob.
   ///
@@ -1730,18 +1550,6 @@ abstract class AppLocalizations {
   /// **'Computer (AI)'**
   String get opponentAi;
 
-  /// No description provided for @menuBattleAi.
-  ///
-  /// In en, this message translates to:
-  /// **'Battle the AI'**
-  String get menuBattleAi;
-
-  /// No description provided for @chooseLevel.
-  ///
-  /// In en, this message translates to:
-  /// **'Difficulty'**
-  String get chooseLevel;
-
   /// No description provided for @levelEasy.
   ///
   /// In en, this message translates to:
@@ -1790,23 +1598,11 @@ abstract class AppLocalizations {
   /// **'Win with no pirate knocked out'**
   String get mission_no_pirate_down;
 
-  /// No description provided for @mission_flood_below.
-  ///
-  /// In en, this message translates to:
-  /// **'Win with flooding at {percent}% or less'**
-  String mission_flood_below(Object percent);
-
   /// No description provided for @mission_hull_above.
   ///
   /// In en, this message translates to:
   /// **'Win with hull at {percent}% or more'**
   String mission_hull_above(Object percent);
-
-  /// No description provided for @mission_win_by_sink.
-  ///
-  /// In en, this message translates to:
-  /// **'Win by sinking (not by wipeout or time)'**
-  String get mission_win_by_sink;
 
   /// No description provided for @mission_turns_within.
   ///
@@ -1835,19 +1631,19 @@ abstract class AppLocalizations {
   /// No description provided for @story_t2_ally.
   ///
   /// In en, this message translates to:
-  /// **'Tok: Save your fuel. Choose when to close in and when to fall back.'**
+  /// **'Tok: The wind pushes your shots. Read it, then choose when to close in or fall back.'**
   String get story_t2_ally;
 
   /// No description provided for @story_t3_enemy.
   ///
   /// In en, this message translates to:
-  /// **'Patrol diver: Punch a hole below the waterline and any ship goes down.'**
+  /// **'Patrol diver: Good luck aiming on these rough waves!'**
   String get story_t3_enemy;
 
   /// No description provided for @story_t3_ally.
   ///
   /// In en, this message translates to:
-  /// **'Tok: I\'ll patch the holes. Run the pump before the water rises!'**
+  /// **'Tok: Let\'s move to calm water. Our lookout hits hard, but falls if the mast breaks!'**
   String get story_t3_ally;
 
   /// No description provided for @story_s1_1_enemy.
@@ -2018,12 +1814,6 @@ abstract class AppLocalizations {
   /// **'Empty (Balanced preset)'**
   String get prepBlueprintEmpty;
 
-  /// No description provided for @prepDeck.
-  ///
-  /// In en, this message translates to:
-  /// **'Crew'**
-  String get prepDeck;
-
   /// No description provided for @prepCost.
   ///
   /// In en, this message translates to:
@@ -2047,6 +1837,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Wind up to {wind}'**
   String prepWeather(Object wind);
+
+  /// No description provided for @prepWaves.
+  ///
+  /// In en, this message translates to:
+  /// **'Wave zones'**
+  String get prepWaves;
+
+  /// No description provided for @prepWavesCalm.
+  ///
+  /// In en, this message translates to:
+  /// **'Calm sea'**
+  String get prepWavesCalm;
 
   /// No description provided for @prepEditDeck.
   ///
@@ -2089,18 +1891,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Rusher'**
   String get personality_rusher;
-
-  /// No description provided for @gimmick_bow_iron_shield.
-  ///
-  /// In en, this message translates to:
-  /// **'Iron bow shield: all block damage is halved while it stands. Break the bow first'**
-  String get gimmick_bow_iron_shield;
-
-  /// No description provided for @gimmick_patrol_closing_in.
-  ///
-  /// In en, this message translates to:
-  /// **'The cutter closes in one cell each turn and its cooldowns drop twice as fast'**
-  String get gimmick_patrol_closing_in;
 
   /// No description provided for @resultMission.
   ///
@@ -2161,12 +1951,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{shots} shots'**
   String statShots(Object shots);
-
-  /// No description provided for @statFlood.
-  ///
-  /// In en, this message translates to:
-  /// **'Flooding you {mine}% : enemy {enemy}%'**
-  String statFlood(Object mine, Object enemy);
 
   /// No description provided for @resultDouble.
   ///
@@ -2279,13 +2063,13 @@ abstract class AppLocalizations {
   /// No description provided for @tutorial_hint_2.
   ///
   /// In en, this message translates to:
-  /// **'Press and hold ◀ ▶ to move. You only go as far as your fuel allows'**
+  /// **'Hold ◀ ▶ to sail as far as your fuel allows. The wind (arrow at the top) pushes your shots'**
   String get tutorial_hint_2;
 
   /// No description provided for @tutorial_hint_3.
   ///
   /// In en, this message translates to:
-  /// **'Holes below the waterline mean flooding! Hit the enemy with Tok to patch your ship'**
+  /// **'Rough wave zones rock your ship. Move to calm water and fire from the crow\'s nest for big hits'**
   String get tutorial_hint_3;
 
   /// No description provided for @resultDoubleDone.
@@ -2449,12 +2233,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Pirate motions'**
   String get operatorMotions;
-
-  /// No description provided for @operatorShipUpgrades.
-  ///
-  /// In en, this message translates to:
-  /// **'Ship upgrades (free)'**
-  String get operatorShipUpgrades;
 
   /// No description provided for @operatorShipMax.
   ///
@@ -2768,12 +2546,6 @@ abstract class AppLocalizations {
   /// **'INTERCEPT'**
   String get hitTagIntercept;
 
-  /// No description provided for @cabinSealed.
-  ///
-  /// In en, this message translates to:
-  /// **'Sealed'**
-  String get cabinSealed;
-
   /// No description provided for @moveLocked.
   ///
   /// In en, this message translates to:
@@ -2810,72 +2582,6 @@ abstract class AppLocalizations {
   /// **'Music'**
   String get musicOn;
 
-  /// No description provided for @shipUpgrades.
-  ///
-  /// In en, this message translates to:
-  /// **'Ship upgrades'**
-  String get shipUpgrades;
-
-  /// No description provided for @shipStage1.
-  ///
-  /// In en, this message translates to:
-  /// **'Dinghy'**
-  String get shipStage1;
-
-  /// No description provided for @shipStage2.
-  ///
-  /// In en, this message translates to:
-  /// **'Small sloop'**
-  String get shipStage2;
-
-  /// No description provided for @shipStage3.
-  ///
-  /// In en, this message translates to:
-  /// **'Sloop'**
-  String get shipStage3;
-
-  /// No description provided for @shipStage4.
-  ///
-  /// In en, this message translates to:
-  /// **'Large sloop'**
-  String get shipStage4;
-
-  /// No description provided for @shipGrowRow.
-  ///
-  /// In en, this message translates to:
-  /// **'Grow ship'**
-  String get shipGrowRow;
-
-  /// No description provided for @shipGrowNeed.
-  ///
-  /// In en, this message translates to:
-  /// **'Clear {stage} to unlock'**
-  String shipGrowNeed(Object stage);
-
-  /// No description provided for @shipMaxed.
-  ///
-  /// In en, this message translates to:
-  /// **'Max'**
-  String get shipMaxed;
-
-  /// No description provided for @hullLevelRow.
-  ///
-  /// In en, this message translates to:
-  /// **'Hull Lv {level}'**
-  String hullLevelRow(Object level);
-
-  /// 조선소 배 업그레이드 (설계서 §3.1·§13.6, A28)
-  ///
-  /// In en, this message translates to:
-  /// **'{name} Lv {level}'**
-  String mastLevelRow(Object name, Object level);
-
-  /// No description provided for @goldCost.
-  ///
-  /// In en, this message translates to:
-  /// **'{gold} gold'**
-  String goldCost(Object gold);
-
   /// 조선소 배 업그레이드 (설계서 §3.1·§13.6, A28)
   ///
   /// In en, this message translates to:
@@ -2894,47 +2600,35 @@ abstract class AppLocalizations {
   /// **'Buy'**
   String get buy;
 
-  /// No description provided for @shipGrown.
-  ///
-  /// In en, this message translates to:
-  /// **'Your ship grew!'**
-  String get shipGrown;
-
-  /// 조선소 배 업그레이드 (설계서 §3.1·§13.6, A28)
-  ///
-  /// In en, this message translates to:
-  /// **'{width}×{height} cells · {cabins} cabins'**
-  String shipGrownBody(Object width, Object height, Object cabins);
-
-  /// No description provided for @shipGrowReady.
-  ///
-  /// In en, this message translates to:
-  /// **'You can grow your ship! Visit the shipyard'**
-  String get shipGrowReady;
-
-  /// No description provided for @devStagePick.
-  ///
-  /// In en, this message translates to:
-  /// **'Pick stage (dev)'**
-  String get devStagePick;
-
   /// No description provided for @ok.
   ///
   /// In en, this message translates to:
   /// **'OK'**
   String get ok;
 
-  /// No description provided for @hullPercent.
+  /// No description provided for @crewHpPercent.
   ///
   /// In en, this message translates to:
-  /// **'Hull {percent}%'**
-  String hullPercent(int percent);
+  /// **'Crew HP {percent}%'**
+  String crewHpPercent(int percent);
 
-  /// Hull gauge popup when repair raises the hull percent (A57).
+  /// Battle HUD: captain cabin block durability (design §13.4).
   ///
   /// In en, this message translates to:
-  /// **'+{percent}%'**
-  String hullGain(int percent);
+  /// **'Cabin {percent}%'**
+  String captainPercent(int percent);
+
+  /// Crew screen: crow's nest guide (design §13.7, §3.3).
+  ///
+  /// In en, this message translates to:
+  /// **'Seat {seat} is the crow\'s nest: hits harder, but falls overboard (KO) if the mast breaks'**
+  String crewNestHint(int seat);
+
+  /// No description provided for @prepNest.
+  ///
+  /// In en, this message translates to:
+  /// **'Crow\'s nest'**
+  String get prepNest;
 
   /// No description provided for @fuelPercent.
   ///
@@ -3086,18 +2780,6 @@ abstract class AppLocalizations {
   /// **'Stars {have} / {total}'**
   String goalStars(Object have, Object total);
 
-  /// No description provided for @goalShipNeed.
-  ///
-  /// In en, this message translates to:
-  /// **'Grow ship: clear {stage}'**
-  String goalShipNeed(Object stage);
-
-  /// No description provided for @goalShipDone.
-  ///
-  /// In en, this message translates to:
-  /// **'Ship fully grown'**
-  String get goalShipDone;
-
   /// No description provided for @goalAllClear.
   ///
   /// In en, this message translates to:
@@ -3235,12 +2917,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'HP {n}'**
   String pirateHp(int n);
-
-  /// No description provided for @pirateRange.
-  ///
-  /// In en, this message translates to:
-  /// **'Range {range}'**
-  String pirateRange(String range);
 
   /// No description provided for @pirateBoard.
   ///

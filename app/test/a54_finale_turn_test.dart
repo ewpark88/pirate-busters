@@ -69,7 +69,7 @@ void main() {
       expect(kind(MatchOutcome.surrender, 1), isNull);
     });
 
-    testWidgets('턴 제한 판정 배너가 뜬다', (tester) async {
+    testWidgets('턴 제한 판정 배너가 뜨고 양쪽 남은 해적 체력을 나란히 보여 준다', (tester) async {
       final session = _session();
       session.state
         ..outcome = MatchOutcome.timeDecision
@@ -82,6 +82,8 @@ void main() {
       );
       await tester.pump(const Duration(milliseconds: 400));
       expect(find.text('시간 판정'), findsOneWidget);
+      expect(find.byKey(const ValueKey('end-hp-compare')), findsOneWidget);
+      expect(find.text('나 100% : 상대 100%'), findsOneWidget);
     });
   });
 
@@ -114,6 +116,7 @@ void main() {
     for (final locale in supportedLocales) {
       for (final (name, kind) in const [
         ('captain', BattleBannerKind.captainLost),
+        ('time', BattleBannerKind.timeDecision),
         ('myturn', BattleBannerKind.myTurn),
       ]) {
         testWidgets(
@@ -126,6 +129,10 @@ void main() {
             if (kind == BattleBannerKind.captainLost) {
               session.state
                 ..outcome = MatchOutcome.captainLost
+                ..winner = 0;
+            } else if (kind == BattleBannerKind.timeDecision) {
+              session.state
+                ..outcome = MatchOutcome.timeDecision
                 ..winner = 0;
             }
             final banner = ValueNotifier<BattleBanner?>(null);

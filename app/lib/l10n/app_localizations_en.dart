@@ -34,7 +34,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String timeVerdictFlood(String mine, String theirs) {
+  String timeVerdictHp(String mine, String theirs) {
     return 'You $mine% : Foe $theirs%';
   }
 
@@ -54,11 +54,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get hull => 'Hull';
-
-  @override
-  String flood(String percent) {
-    return 'Flood $percent%';
-  }
 
   @override
   String crewAlive(int alive, int total) {
@@ -89,17 +84,6 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String cooldown(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: 'Rest $count turns',
-      one: 'Rest 1 turn',
-    );
-    return '$_temp0';
-  }
-
-  @override
   String get firedDone => 'Fired';
 
   @override
@@ -110,22 +94,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pirateReady => 'Ready!';
 
   @override
-  String get cabinFlooded => 'Flooded';
-
-  @override
   String get pirateDown => 'Down';
-
-  @override
-  String get pirateSwimming => 'Swimming';
 
   @override
   String get pirateBoarding => 'On enemy ship';
 
   @override
   String get wind => 'Wind';
-
-  @override
-  String get stormTime => 'Storm!';
 
   @override
   String get overview => 'Overview';
@@ -227,15 +202,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bannerMyTurn => 'Your turn!';
 
   @override
-  String get bannerStorm => 'Storm time!';
-
-  @override
   String get bannerAnnihilation => 'Wiped out!';
-
-  @override
-  String bannerFloodCompare(String mine, String foe) {
-    return 'Flood $mine% : $foe%';
-  }
 
   @override
   String get surrenderQueued => 'You will surrender at the start of your turn';
@@ -713,21 +680,6 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get rangeShort => 'Short';
-
-  @override
-  String get rangeMedium => 'Mid';
-
-  @override
-  String get rangeLong => 'Long';
-
-  @override
-  String get rangeVeryLong => 'Far';
-
-  @override
-  String get outOfRange => 'Out of range';
-
-  @override
   String get tapToSplit => 'Tap to split!';
 
   @override
@@ -754,11 +706,6 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String statWaterline(String cells) {
-    return 'Draft $cells';
-  }
-
-  @override
   String statFuelPerCell(String fuel) {
     return 'Fuel/cell $fuel';
   }
@@ -779,11 +726,6 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String statModules(int n, int max) {
-    return 'Modules $n/$max';
-  }
-
-  @override
   String statCaptain(int n) {
     return 'Captain $n/1';
   }
@@ -796,12 +738,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get materialIron => 'Iron';
-
-  @override
-  String get materialCork => 'Cork';
-
-  @override
-  String get materialNet => 'Net';
 
   @override
   String get toolCabin => 'Cabin';
@@ -824,40 +760,10 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get moduleGunPort => 'Gun port';
-
-  @override
-  String get moduleMagazine => 'Magazine';
-
-  @override
-  String get modulePump => 'Pump';
-
-  @override
-  String get moduleWorkshop => 'Workshop';
-
-  @override
   String get moduleMast => 'Pine mast';
 
   @override
-  String get moduleMastBamboo => 'Bamboo mast';
-
-  @override
-  String get moduleMastOak => 'Oak mast';
-
-  @override
-  String get moduleMastIron => 'Iron mast';
-
-  @override
-  String get moduleMastCrow => 'Crow mast';
-
-  @override
-  String get moduleLookout => 'Lookout';
-
-  @override
   String get moduleCaptain => 'Captain';
-
-  @override
-  String get moduleFuelTank => 'Fuel tank';
 
   @override
   String get undo => 'Undo';
@@ -895,18 +801,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get deckFamilies => 'Types';
-
-  @override
-  String get deckRanges => 'Range';
-
-  @override
-  String get preferNear => 'Fights close';
-
-  @override
-  String get preferFar => 'Fights far';
-
-  @override
-  String get preferMixed => 'Any distance';
 
   @override
   String get familyLob => 'Lob';
@@ -951,12 +845,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get opponentAi => 'Computer (AI)';
 
   @override
-  String get menuBattleAi => 'Battle the AI';
-
-  @override
-  String get chooseLevel => 'Difficulty';
-
-  @override
   String get levelEasy => 'Easy';
 
   @override
@@ -981,17 +869,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mission_no_pirate_down => 'Win with no pirate knocked out';
 
   @override
-  String mission_flood_below(Object percent) {
-    return 'Win with flooding at $percent% or less';
-  }
-
-  @override
   String mission_hull_above(Object percent) {
     return 'Win with hull at $percent% or more';
   }
-
-  @override
-  String get mission_win_by_sink => 'Win by sinking (not by wipeout or time)';
 
   @override
   String mission_turns_within(Object turns) {
@@ -1012,15 +892,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get story_t2_ally =>
-      'Tok: Save your fuel. Choose when to close in and when to fall back.';
+      'Tok: The wind pushes your shots. Read it, then choose when to close in or fall back.';
 
   @override
   String get story_t3_enemy =>
-      'Patrol diver: Punch a hole below the waterline and any ship goes down.';
+      'Patrol diver: Good luck aiming on these rough waves!';
 
   @override
   String get story_t3_ally =>
-      'Tok: I\'ll patch the holes. Run the pump before the water rises!';
+      'Tok: Let\'s move to calm water. Our lookout hits hard, but falls if the mast breaks!';
 
   @override
   String get story_s1_1_enemy =>
@@ -1129,9 +1009,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get prepBlueprintEmpty => 'Empty (Balanced preset)';
 
   @override
-  String get prepDeck => 'Crew';
-
-  @override
   String prepCost(Object used, Object limit) {
     return 'Cost $used / $limit';
   }
@@ -1148,6 +1025,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String prepWeather(Object wind) {
     return 'Wind up to $wind';
   }
+
+  @override
+  String get prepWaves => 'Wave zones';
+
+  @override
+  String get prepWavesCalm => 'Calm sea';
 
   @override
   String get prepEditDeck => 'Edit crew';
@@ -1169,14 +1052,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get personality_rusher => 'Rusher';
-
-  @override
-  String get gimmick_bow_iron_shield =>
-      'Iron bow shield: all block damage is halved while it stands. Break the bow first';
-
-  @override
-  String get gimmick_patrol_closing_in =>
-      'The cutter closes in one cell each turn and its cooldowns drop twice as fast';
 
   @override
   String resultMission(Object text) {
@@ -1220,11 +1095,6 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String statShots(Object shots) {
     return '$shots shots';
-  }
-
-  @override
-  String statFlood(Object mine, Object enemy) {
-    return 'Flooding you $mine% : enemy $enemy%';
   }
 
   @override
@@ -1300,11 +1170,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tutorial_hint_2 =>
-      'Press and hold ◀ ▶ to move. You only go as far as your fuel allows';
+      'Hold ◀ ▶ to sail as far as your fuel allows. The wind (arrow at the top) pushes your shots';
 
   @override
   String get tutorial_hint_3 =>
-      'Holes below the waterline mean flooding! Hit the enemy with Tok to patch your ship';
+      'Rough wave zones rock your ship. Move to calm water and fire from the crow\'s nest for big hits';
 
   @override
   String get resultDoubleDone => 'Reward doubled';
@@ -1390,9 +1260,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get operatorMotions => 'Pirate motions';
-
-  @override
-  String get operatorShipUpgrades => 'Ship upgrades (free)';
 
   @override
   String get operatorShipMax => 'Max out ship';
@@ -1554,9 +1421,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get hitTagIntercept => 'INTERCEPT';
 
   @override
-  String get cabinSealed => 'Sealed';
-
-  @override
   String get moveLocked => 'Pinned';
 
   @override
@@ -1579,47 +1443,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get musicOn => 'Music';
 
   @override
-  String get shipUpgrades => 'Ship upgrades';
-
-  @override
-  String get shipStage1 => 'Dinghy';
-
-  @override
-  String get shipStage2 => 'Small sloop';
-
-  @override
-  String get shipStage3 => 'Sloop';
-
-  @override
-  String get shipStage4 => 'Large sloop';
-
-  @override
-  String get shipGrowRow => 'Grow ship';
-
-  @override
-  String shipGrowNeed(Object stage) {
-    return 'Clear $stage to unlock';
-  }
-
-  @override
-  String get shipMaxed => 'Max';
-
-  @override
-  String hullLevelRow(Object level) {
-    return 'Hull Lv $level';
-  }
-
-  @override
-  String mastLevelRow(Object name, Object level) {
-    return '$name Lv $level';
-  }
-
-  @override
-  String goldCost(Object gold) {
-    return '$gold gold';
-  }
-
-  @override
   String buyAsk(Object name, Object gold) {
     return 'Spend $gold gold on $name?';
   }
@@ -1631,31 +1454,25 @@ class AppLocalizationsEn extends AppLocalizations {
   String get buy => 'Buy';
 
   @override
-  String get shipGrown => 'Your ship grew!';
-
-  @override
-  String shipGrownBody(Object width, Object height, Object cabins) {
-    return '$width×$height cells · $cabins cabins';
-  }
-
-  @override
-  String get shipGrowReady => 'You can grow your ship! Visit the shipyard';
-
-  @override
-  String get devStagePick => 'Pick stage (dev)';
-
-  @override
   String get ok => 'OK';
 
   @override
-  String hullPercent(int percent) {
-    return 'Hull $percent%';
+  String crewHpPercent(int percent) {
+    return 'Crew HP $percent%';
   }
 
   @override
-  String hullGain(int percent) {
-    return '+$percent%';
+  String captainPercent(int percent) {
+    return 'Cabin $percent%';
   }
+
+  @override
+  String crewNestHint(int seat) {
+    return 'Seat $seat is the crow\'s nest: hits harder, but falls overboard (KO) if the mast breaks';
+  }
+
+  @override
+  String get prepNest => 'Crow\'s nest';
 
   @override
   String fuelPercent(int percent) {
@@ -1737,14 +1554,6 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String goalShipNeed(Object stage) {
-    return 'Grow ship: clear $stage';
-  }
-
-  @override
-  String get goalShipDone => 'Ship fully grown';
-
-  @override
   String get goalAllClear => 'Every stage here is cleared!';
 
   @override
@@ -1817,11 +1626,6 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String pirateHp(int n) {
     return 'HP $n';
-  }
-
-  @override
-  String pirateRange(String range) {
-    return 'Range $range';
   }
 
   @override

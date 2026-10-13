@@ -48,7 +48,6 @@ class StageResultScreen extends ConsumerWidget {
         ? l10n.resultDraw
         : l10n.resultLose;
     final how = switch (summary.outcome) {
-      // 선장실 파괴 문구(outcomeCaptainLost)는 ARB 추가 전까지 격침 키를 빌린다.
       MatchOutcome.captainLost => l10n.outcomeCaptainLost,
       MatchOutcome.annihilation => l10n.outcomeAnnihilation,
       MatchOutcome.timeDecision => l10n.outcomeTimeDecision,
@@ -105,6 +104,8 @@ class StageResultScreen extends ConsumerWidget {
                       ),
                     ),
                     OutlinedText(how, size: 18),
+                    if (summary.outcome == MatchOutcome.timeDecision)
+                      _hpCompare(l10n),
                     const SizedBox(height: 12),
                     _stars(l10n, missionText),
                   ],
@@ -171,6 +172,33 @@ class StageResultScreen extends ConsumerWidget {
         'turns_within' => l10n.mission_turns_within(m.param('turns')),
         _ => dataText(l10n, m.textKey),
       };
+
+  /// 턴 제한으로 끝나면 양쪽 남은 해적 체력을 막대로 나란히 (설계서 §13.5).
+  Widget _hpCompare(AppLocalizations l10n) => Padding(
+    key: const ValueKey('result-hp-compare'),
+    padding: const EdgeInsets.only(top: 8),
+    child: SizedBox(
+      width: 220,
+      child: Column(
+        children: [
+          Text(
+            l10n.timeVerdictHp(
+              '${summary.crewPercent}',
+              '${summary.foeCrewPercent}',
+            ),
+            style: const TextStyle(color: AppColors.text, fontSize: 14),
+          ),
+          const SizedBox(height: 4),
+          HpBar(percent: summary.crewPercent, color: const Color(0xFF6F97E6)),
+          const SizedBox(height: 4),
+          HpBar(
+            percent: summary.foeCrewPercent,
+            color: const Color(0xFFE06A5A),
+          ),
+        ],
+      ),
+    ),
+  );
 
   Widget _stars(AppLocalizations l10n, String missionText) {
     final s = reward.stars;
