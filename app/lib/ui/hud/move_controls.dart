@@ -7,8 +7,9 @@ import 'package:pirate_busters/battle/battle_session.dart';
 import 'package:pirate_busters/battle/playback.dart';
 import 'package:pirate_busters/battle/session_views.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
-import 'package:pirate_busters/ui/hud/hud_gauge.dart';
+import 'package:pirate_busters/ui/hud/fuel_gauge.dart';
 import 'package:pirate_busters/ui/hud/hud_style.dart';
+import 'package:pirate_busters/ui/hud/move_parts.dart';
 import 'package:pirate_busters/ui/meta_icons.dart';
 
 /// 아래 왼쪽: ◀ 후퇴 · 연료 게이지 · 전진 ▶ (설계서 §2.2, §2.6, §2.7, §13.4).
@@ -110,7 +111,7 @@ class _MoveControlsState extends State<MoveControls>
         mainAxisSize: MainAxisSize.min,
         children: [
           // 왼쪽 버튼은 화면 왼쪽으로 간다: 왼쪽 배는 후퇴, 오른쪽 배는 전진.
-          _HoldButton(
+          HoldButton(
             label: _facing > 0 ? l10n.retreat : l10n.advance,
             icon: MetaIcons.moveBack,
             color: team,
@@ -127,15 +128,14 @@ class _MoveControlsState extends State<MoveControls>
               const SizedBox(height: 3),
               SizedBox(
                 width: 96,
-                child: _Blink(
+                child: Blink(
                   on: empty,
-                  child: HudGauge(
+                  child: FuelGauge(
                     key: ValueKey('fuel-${widget.side}'),
                     value: ratio,
-                    color: HudColors.warn,
                     preview: preview,
+                    cells: _me.fuelPerCell == 0 ? 0 : tank ~/ _me.fuelPerCell,
                     warnAt: lowFuel,
-                    jolts: false,
                     label: l10n.fuelPercent((ratio * 100).round()),
                   ),
                 ),
@@ -143,7 +143,7 @@ class _MoveControlsState extends State<MoveControls>
             ],
           ),
           const SizedBox(width: 8),
-          _HoldButton(
+          HoldButton(
             label: _facing > 0 ? l10n.advance : l10n.retreat,
             icon: MetaIcons.moveForward,
             color: team,
@@ -159,130 +159,4 @@ class _MoveControlsState extends State<MoveControls>
 
   /// 이 비율 이하면 연료 게이지가 경고색이 된다 (A33).
   static const double lowFuel = .2;
-}
-
-/// 누르고 있는 동안 움직이는 둥근 버튼 (A33): 진영색 테, 누르면 작아지며 안쪽이
-/// 밝게 빛난다. 잠기면 흐려진다.
-class _HoldButton extends StatelessWidget {
-  const _HoldButton({
-    required this.label,
-    required this.icon,
-    required this.color,
-    required this.enabled,
-    required this.held,
-    required this.onDown,
-    required this.onUp,
-  });
-
-  final String label;
-
-  /// 화면 방향 화살표 그림 (`MetaIcons.moveBack` ← · `moveForward` →).
-  final String icon;
-  final Color color;
-  final bool enabled;
-
-  /// 지금 누르고 있다.
-  final bool held;
-  final VoidCallback onDown;
-  final VoidCallback onUp;
-
-  static const double size = 50;
-
-  @override
-  Widget build(BuildContext context) => Listener(
-    onPointerDown: (_) => onDown(),
-    onPointerUp: (_) => onUp(),
-    onPointerCancel: (_) => onUp(),
-    child: Opacity(
-      opacity: enabled ? 1 : 0.4,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          AnimatedScale(
-            scale: held ? .9 : 1,
-            duration: const Duration(milliseconds: 80),
-            child: Container(
-              width: size,
-              height: size,
-              padding: const EdgeInsets.all(9),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: RadialGradient(
-                  center: const Alignment(0, -.35),
-                  colors: held
-                      ? [Color.lerp(color, Colors.white, .45)!, color]
-                      : [HudColors.panelHi, const Color(0xFF101217)],
-                ),
-                border: Border.all(color: color, width: 2.5),
-                boxShadow: [
-                  if (held)
-                    BoxShadow(
-                      color: color.withValues(alpha: .7),
-                      blurRadius: 10,
-                    )
-                  else
-                    const BoxShadow(
-                      color: Color(0x99000000),
-                      offset: Offset(0, 2),
-                      blurRadius: 2,
-                    ),
-                ],
-              ),
-              child: MetaIcons.image(icon, size: 30),
-            ),
-          ),
-          const SizedBox(height: 2),
-          Text(label, style: const TextStyle(fontSize: 11)),
-        ],
-      ),
-    ),
-  );
-}
-
-/// 켜져 있으면 깜빡인다.
-class _Blink extends StatefulWidget {
-  const _Blink({required this.on, required this.child});
-
-  final bool on;
-  final Widget child;
-
-  @override
-  State<_Blink> createState() => _BlinkState();
-}
-
-class _BlinkState extends State<_Blink> with SingleTickerProviderStateMixin {
-  late final AnimationController _c = AnimationController(
-    vsync: this,
-    duration: const Duration(milliseconds: 500),
-  );
-
-  @override
-  void initState() {
-    super.initState();
-    if (widget.on) unawaited(_c.repeat(reverse: true));
-  }
-
-  @override
-  void didUpdateWidget(_Blink old) {
-    super.didUpdateWidget(old);
-    if (widget.on && !_c.isAnimating) {
-      unawaited(_c.repeat(reverse: true));
-    } else if (!widget.on && _c.isAnimating) {
-      _c
-        ..stop()
-        ..value = 0;
-    }
-  }
-
-  @override
-  void dispose() {
-    _c.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) => FadeTransition(
-    opacity: Tween<double>(begin: 1, end: 0.2).animate(_c),
-    child: widget.child,
-  );
 }

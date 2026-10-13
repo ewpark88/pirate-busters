@@ -10,6 +10,7 @@ import 'package:pirate_busters/game/anim/rarity_fx.dart';
 import 'package:pirate_busters/game/battle_cues.dart';
 import 'package:pirate_busters/game/battle_game.dart';
 import 'package:pirate_busters/game/camera_director.dart';
+import 'package:pirate_busters/game/camera_motion.dart';
 import 'package:pirate_busters/game/coords.dart';
 import 'package:pirate_busters/game/hit_stop.dart';
 import 'package:pirate_busters/game/hit_tag.dart';
@@ -59,12 +60,12 @@ void main() {
       expect(c.punchScale, 1);
       c
         ..impact(Vector2(300, -40), punch: 0.1)
-        ..update(CameraDirector.punchIn, (Vector2.zero(), 900));
+        ..update(PunchZoom.punchIn, (Vector2.zero(), 900));
       expect(c.punchScale, closeTo(0.9, 1e-9), reason: '가장 많이 당긴 순간');
-      c.update(CameraDirector.punchOut / 2, (Vector2.zero(), 900));
+      c.update(PunchZoom.punchOut / 2, (Vector2.zero(), 900));
       expect(c.punchScale, inExclusiveRange(0.9, 1));
       expect(c.punchScale, greaterThan(1 - 0.1 / 2), reason: '풀림은 처음에 빠르다');
-      c.update(CameraDirector.punchOut, (Vector2.zero(), 900));
+      c.update(PunchZoom.punchOut, (Vector2.zero(), 900));
       expect(c.punchScale, 1);
       // 물에 떨어진 탄은 줌을 당기지 않는다.
       c.impact(Vector2(300, 0));
@@ -74,7 +75,7 @@ void main() {
     test('약한 한 방은 이미 당긴 큰 줌을 덮어쓰지 않는다', () {
       final c = CameraDirector()
         ..impact(Vector2.zero(), punch: 0.12)
-        ..update(CameraDirector.punchIn, (Vector2.zero(), 900))
+        ..update(PunchZoom.punchIn, (Vector2.zero(), 900))
         ..impact(Vector2.zero(), punch: 0.04);
       expect(c.punchScale, closeTo(0.88, 1e-9));
     });

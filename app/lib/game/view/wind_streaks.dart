@@ -65,34 +65,42 @@ class WindStreaks extends Component {
     }
   }
 
+  // 바람 단계가 바뀔 때만 다시 만드는 줄 모양 (A57 방식, 매 프레임 할당 없음).
+  int? _shapeFor;
+  final Path _path = Path();
+  final Paint _paint = Paint()
+    ..style = PaintingStyle.stroke
+    ..strokeWidth = 2.6
+    ..strokeCap = StrokeCap.round;
+
+  /// 줄 한 개: 머리가 원점, 꼬리가 바람 반대쪽.
+  void _shape(int wind) {
+    if (_shapeFor == wind) return;
+    _shapeFor = wind;
+    final dir = wind.sign.toDouble();
+    final len = lengthFor(wind);
+    _path
+      ..reset()
+      ..moveTo(-dir * len, 0)
+      ..quadraticBezierTo(-dir * len / 2, -4, 0, 0);
+    _paint.shader = Gradient.linear(Offset(-dir * len, 0), Offset.zero, const [
+      Color(0x00FFFFFF),
+      Color(0xC0FFFFFF),
+    ]);
+  }
+
   @override
   void render(Canvas canvas) {
     if (_streaks.isEmpty) return;
-    final dir = _wind.sign.toDouble();
-    final len = lengthFor(_wind);
-    final paint = Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 2.6
-      ..strokeCap = StrokeCap.round;
+    _shape(_wind);
     for (final s in _streaks) {
       final wobble = math.sin(_t * 2 + s.phase) * 3;
-      final head = Offset(s.x, s.y + wobble);
-      final tail = head - Offset(dir * len * s.pace, 0);
-      paint.shader = Gradient.linear(tail, head, const [
-        Color(0x00FFFFFF),
-        Color(0xC0FFFFFF),
-      ]);
-      canvas.drawPath(
-        Path()
-          ..moveTo(tail.dx, tail.dy)
-          ..quadraticBezierTo(
-            (tail.dx + head.dx) / 2,
-            head.dy - 4,
-            head.dx,
-            head.dy,
-          ),
-        paint,
-      );
+      canvas
+        ..save()
+        ..translate(s.x, s.y + wobble)
+        ..scale(s.pace, 1)
+        ..drawPath(_path, _paint)
+        ..restore();
     }
   }
 }

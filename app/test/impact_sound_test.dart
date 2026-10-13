@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:pirate_busters/audio/sound_library.dart';
 import 'package:pirate_busters/audio/sound_service.dart';
 import 'package:pirate_busters/game/impact_sound.dart';
 import 'package:pirate_busters/game/view/hit_weight.dart';
@@ -38,6 +39,13 @@ void main() {
         }
       }
     });
+  });
+
+  test('내 배가 쏘면 가까운 포성, 상대가 쏘면 먼 포성이다 (설계서 §10.3, S4)', () {
+    expect(cannonSfx(mine: true), Sfx.cannon);
+    expect(cannonSfx(mine: false), Sfx.cannonFar);
+    expect(AudioAssets.variants[Sfx.cannonFar], 3);
+    expect(AudioAssets.synthOnly, isNot(contains(Sfx.cannonFar)));
   });
 
   group('한 프레임 효과음 묶음 (설계서 §10.3, A32)', () {

@@ -25,6 +25,9 @@ class _Bundle extends CachingAssetBundle {
 }
 
 class _MusicRecorder implements SoundService {
+  @override
+  void windLevel(int level) {}
+
   final List<Music?> tracks = [];
 
   @override

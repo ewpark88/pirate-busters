@@ -6,6 +6,7 @@ import 'package:pirate_busters/battle/battle_session.dart';
 import 'package:pirate_busters/game/battle_game.dart';
 import 'package:pirate_busters/game/camera_director.dart';
 import 'package:pirate_busters/game/camera_motion.dart';
+import 'package:pirate_busters/game/coords.dart';
 import 'package:pirate_busters/input/field_gestures.dart';
 
 import 'test_catalog.dart';
@@ -105,15 +106,15 @@ void main() {
   });
 
   group('빈 바다 끌어 보기 (설계서 §2.1, A60)', () {
-    test('끌면 기본 화면이 옮겨 가고 상대 배 가운데를 넘지 않는다', () {
+    test('끌면 기본 화면이 옮겨 가고 두 배 뒤 바다 끝(6칸 여백)을 넘지 않는다 (설계서 §2.5)', () {
       final c = CameraDirector();
       final (base, _) = _goal(c);
       c.panBy(600);
       expect(_goal(c).$1.x, base.x + 600);
       c.panBy(5000);
-      expect(_goal(c).$1.x, 900);
+      expect(_goal(c).$1.x, 900 + 6 * Coords.cell);
       c.panBy(-20000);
-      expect(_goal(c).$1.x, -900);
+      expect(_goal(c).$1.x, -900 - 6 * Coords.cell);
     });
 
     test('손을 떼고 잠시 지나면 내 배 화면으로 돌아온다', () {

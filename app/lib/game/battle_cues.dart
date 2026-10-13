@@ -113,7 +113,11 @@ class BattleCues {
           // 쏜 배는 쏜 쪽 반대로 살짝 밀린다 (A20).
           ships[e.side].recoil(-facingOf(e.side));
           fx.muzzle(Coords.point(e.x, e.y), facingOf(e.side));
-          playSfx(Sfx.cannon);
+          // 내 배 포는 가깝게, 상대 포는 멀게 (§10.3, S4). AI 끼리면 모두 가깝다.
+          final humans = session.humanSides;
+          playSfx(
+            cannonSfx(mine: humans.isEmpty || humans.contains(e.side)),
+          );
         case SimEventKind.impact when landsQuietly(spec):
           // 설치 연출은 뒤따르는 mineAttached 이벤트가 그린다.
           director.impact(Coords.point(e.x, e.y));

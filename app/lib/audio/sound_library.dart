@@ -18,6 +18,7 @@ abstract final class AudioAssets {
   /// 소리마다 변형 수.
   static const Map<Sfx, int> variants = {
     Sfx.cannon: 3,
+    Sfx.cannonFar: 3,
     Sfx.wood: 3,
     Sfx.splash: 3,
     Sfx.clang: 3,
@@ -33,6 +34,7 @@ abstract final class AudioAssets {
     Sfx.pirateHit: 3,
     Sfx.plunge: 3,
     Sfx.ko: 2,
+    Sfx.dent: 3,
   };
 
   /// 맞는 CC0 음원이 없어 코드 합성음만 쓰는 소리 (설계서 §10.3).
@@ -40,7 +42,6 @@ abstract final class AudioAssets {
     Sfx.whistle,
     Sfx.tick,
     // A56: CC0 음원을 아직 고르지 못해 합성음으로 둔다(docs/ASSETS.md).
-    Sfx.dent,
     Sfx.turn,
     Sfx.gurgle,
     Sfx.crackle,

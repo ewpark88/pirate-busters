@@ -234,6 +234,7 @@ class ShipView extends PositionComponent with HasGameReference {
       tileAt: (m, x, y) => sprites.tileOf(m, x, y, _state.draft),
       cellRect: cellRect,
       style: TrimStyle.ofSide(side),
+      breeze: MastPainter.breezeOf(this),
     );
     // 배 속·그을음·금·구멍·찢긴 변·파편은 타일을 모두 그린 뒤 한 장으로 얹는다.
     var wetRows = 0;

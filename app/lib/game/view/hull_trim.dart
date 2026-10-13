@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flame/components.dart';
 import 'package:pb_sim/pb_sim.dart';
+import 'package:pirate_busters/game/view/breeze.dart';
 import 'package:pirate_busters/game/view/plank_join.dart';
 
 /// 장식 색 (설계서 §10.2 배 장식, A24): 진영 색 뱃전 띠와 기움대 끝 깃발.
@@ -69,6 +70,7 @@ abstract final class HullTrim {
     required Sprite Function(int material, int x, int y) tileAt,
     required Rect Function(int x, int y) cellRect,
     TrimStyle style = TrimStyle.blue,
+    Breeze breeze = stillAir,
   }) {
     final width = hull.width;
     bool filled(int x, int y) =>
@@ -108,7 +110,7 @@ abstract final class HullTrim {
     PlankJoin.outline(canvas, materials, width, cellRect, hidden: hidden);
     _keelBand(canvas, filled, width, cellRect);
     _rail(canvas, filled, hull, cellRect, style);
-    _bowsprit(canvas, filled, hull, cellRect, style);
+    _bowsprit(canvas, filled, hull, cellRect, style, breeze);
     _rudder(canvas, filled, hull, cellRect);
   }
 
@@ -153,13 +155,15 @@ abstract final class HullTrim {
   }
 
   /// 뱃머리 맨 앞 칸 가장 높은 블록에서 앞으로 비스듬히 뻗는 기움대(bowsprit)와
-  /// 그 끝의 진영 색 삼각 깃발.
+  /// 그 끝의 진영 색 삼각 깃발. 깃발은 바람 쪽으로 펴져 펄럭이고 무풍이면 처진다
+  /// (설계서 §2.4): 돛대가 없는 배도 배 위에서 바람이 보인다.
   static void _bowsprit(
     Canvas canvas,
     bool Function(int x, int y) filled,
     HullSpec hull,
     Rect Function(int x, int y) cellRect,
     TrimStyle style,
+    Breeze breeze,
   ) {
     final x = hull.width - 1;
     for (var y = hull.height - 1; y >= 0; y--) {
@@ -167,15 +171,24 @@ abstract final class HullTrim {
       final r = cellRect(x, y);
       final from = Offset(r.right - 4, r.top + r.height * 0.35);
       final tip = from + Offset(r.width * 1.3, -r.height * 0.75);
+      canvas.drawLine(from, tip, _pole);
+      final s = breeze.strength;
+      final len = r.width * (.4 + .25 * s);
+      final half = r.height * .17;
+      final end = half * 6 * FlagWave.flutter(breeze);
       final flag = Path()
-        ..moveTo(tip.dx, tip.dy)
-        ..lineTo(tip.dx - r.width * 0.45, tip.dy - r.height * 0.12)
-        ..lineTo(tip.dx - r.width * 0.2, tip.dy + r.height * 0.22)
+        ..moveTo(0, -half)
+        ..quadraticBezierTo(len * .5, -half * .4 + end, len, end)
+        ..quadraticBezierTo(len * .5, half * .4 + end, 0, half)
         ..close();
       canvas
-        ..drawLine(from, tip, _pole)
+        ..save()
+        ..translate(tip.dx, tip.dy + half)
+        ..scale(breeze.dir < 0 ? -1 : 1, 1)
+        ..rotate(FlagWave.droop(breeze))
         ..drawPath(flag, Paint()..color = style.accent)
-        ..drawPath(flag, _dark);
+        ..drawPath(flag, _dark)
+        ..restore();
       return;
     }
   }

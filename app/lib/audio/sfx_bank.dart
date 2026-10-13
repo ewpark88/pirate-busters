@@ -18,6 +18,12 @@ abstract final class SfxBank {
             ..noise(.55, 420, 60, vol: .34, q: .7, seed: 3)
             ..noise(.09, 2400, 900, vol: .16, seed: 4))
           .toWav(gain: masterGain),
+    // 먼 포성: 높은 소리를 깎은 낮은 쿵과 긴 꼬리 (S4).
+    Sfx.cannonFar =>
+      (PcmSynth(durationSec: 1.1)
+            ..tone(80, 30, 1, vol: .34)
+            ..noise(.9, 260, 40, vol: .26, q: .6, seed: 31))
+          .toWav(gain: masterGain),
     // 나무 부서짐: 우지끈 세 번.
     Sfx.wood =>
       (PcmSynth(durationSec: .45)
@@ -199,6 +205,18 @@ abstract final class SfxBank {
       s.noise(1.2, 380, 200, vol: .08, q: .7, seed: 40 + i, delay: i * .7);
     }
     s.noise(3.6, 1400, 900, vol: .03, q: .5, seed: 50, delay: .2);
+    return s.toWav(gain: masterGain);
+  }
+
+  /// 바람 소리 4초 루프 (설계서 §2.4·§10.3): 높은 대역 바람결이 느리게 오르내린다.
+  /// 음량은 바람 단계로 `WindLoop` 가 정한다.
+  static Uint8List windLoop() {
+    final s = PcmSynth(durationSec: 4);
+    for (var i = 0; i < 4; i++) {
+      s
+        ..noise(1.6, 900, 1700, vol: .07, q: 1.6, seed: 60 + i, delay: i * .9)
+        ..noise(1.1, 2400, 1500, vol: .03, q: 2.4, seed: 70 + i, delay: .4 + i);
+    }
     return s.toWav(gain: masterGain);
   }
 

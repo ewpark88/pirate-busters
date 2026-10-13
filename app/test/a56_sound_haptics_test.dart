@@ -21,6 +21,9 @@ import 'package:pirate_busters/game/view/hit_weight.dart';
 import 'test_catalog.dart';
 
 class _Sound implements SoundService {
+  @override
+  void windLevel(int level) {}
+
   final List<Sfx> played = [];
   final List<bool> ducks = [];
   final List<bool> sea = [];
@@ -86,7 +89,13 @@ void main() {
       ];
       for (final s in added) {
         expect(SfxBank.wav(s).length, greaterThan(44 + 1000), reason: s.name);
-        expect(AudioAssets.synthOnly, contains(s));
+        // S4: 철판 찌그러짐은 CC0 녹음을 골라 음원으로 옮겼다(합성음은 대체용).
+        if (s == Sfx.dent) {
+          expect(AudioAssets.synthOnly, isNot(contains(s)));
+          expect(AudioAssets.variants[s], 3);
+        } else {
+          expect(AudioAssets.synthOnly, contains(s));
+        }
       }
       expect(SfxBank.seaLoop().length, greaterThan(44 + 100000));
     });
