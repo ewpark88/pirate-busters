@@ -102,8 +102,7 @@ int hashMatchState(MatchState state) {
       ..addInt(e.trigger)
       ..addInt(e.turnsLeft)
       ..addString(e.spec.id)
-      ..addInt(e.cell)
-      ..addInt(e.x);
+      ..addInt(e.cell);
   }
   h.addInts(state.waveZones);
   return h.value;

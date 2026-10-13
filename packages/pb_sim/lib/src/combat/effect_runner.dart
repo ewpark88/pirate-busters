@@ -39,7 +39,6 @@ void _fire(MatchState state, TurnEffect e) {
       side: e.target,
       slot: e.ownerSlot,
       cell: e.cell,
-      x: e.x,
       value: e.kind.index,
     ),
   );

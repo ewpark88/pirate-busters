@@ -24,8 +24,7 @@ class TurnEffect {
     required this.trigger,
     required this.turnsLeft,
     required this.spec,
-    this.cell = -1,
-    this.x = 0,
+    required this.cell,
   });
 
   final EffectKind kind;
@@ -45,9 +44,6 @@ class TurnEffect {
   /// 효과를 건 해적의 정의(피해·등급 수치).
   final PirateSpec spec;
 
-  /// 대상 배 로컬 칸 인덱스(설치탄·물기). 없으면 −1.
+  /// 대상 배 로컬 칸 인덱스(설치탄이 붙은 칸·물기 착지 칸·촉수가 붙은 칸).
   final int cell;
-
-  /// 월드 x(렌더용).
-  final int x;
 }

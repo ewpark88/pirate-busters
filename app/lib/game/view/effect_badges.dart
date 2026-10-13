@@ -39,7 +39,6 @@ class EffectBadges extends Component {
 
   /// 효과 [e] 가 터질 자리(월드 px).
   Vector2 positionOf(TurnEffect e) {
-    if (e.cell < 0) return Vector2(Coords.x(e.x), 0);
     final ship = session.state.sides[e.target];
     // 강습 물기는 적 배 위에 선 해적의 머리 위에 단다 (ADR-110).
     final boarder = isBoarderBite(e)
