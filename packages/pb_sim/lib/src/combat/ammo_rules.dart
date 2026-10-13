@@ -172,7 +172,7 @@ Projectile _child(
       ..startTick = tick;
 
 /// 유도탄: 가장 가까운 배 위 상대 해적 쪽으로 틱마다 [PirateSpec.ammoValue] °/초
-/// 만큼 돈다 (설계서 §4.2 폴리). 없으면 곧게 난다.
+/// 만큼 돈다 (설계서 §4.8 유도탄). 없으면 곧게 난다.
 void steerHoming(MatchState state, Projectile p, int atMs) {
   final target = state.sides[1 - p.side];
   var best = -1;
