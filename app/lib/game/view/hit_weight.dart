@@ -19,6 +19,11 @@ class HitWeight {
       switch (e.kind) {
         case SimEventKind.impact:
           hit = true;
+        // 터진 설치탄·떠 있는 기뢰는 비행 착탄 없이 블록을 깬다 (§4.8, A61).
+        case SimEventKind.effectFired
+            when e.value == EffectKind.mineBlast.index ||
+                e.value == EffectKind.floatMine.index:
+          hit = true;
         case SimEventKind.blockDestroyed:
           s += perDestroyed;
         case SimEventKind.blockCollapsed:
