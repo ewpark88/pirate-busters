@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pirate_busters/app/app_theme.dart';
 import 'package:pirate_busters/shipyard/shipyard_model.dart';
 import 'package:pirate_busters/ui/kit/kit_motion.dart';
+import 'package:pirate_busters/ui/kit/unlock_burst.dart';
 import 'package:pirate_busters/ui/meta_icons.dart';
 
 /// 같은 도구인지 (재질·모듈은 종류까지).
@@ -48,40 +49,44 @@ class ToolCard extends StatelessWidget {
       excludeSemantics: true,
       child: Pressable(
         onTap: onTap,
-        child: Stack(
-          clipBehavior: Clip.none,
-          children: [
-            Container(
-              height: 42,
-              padding: const EdgeInsets.symmetric(horizontal: 6),
-              decoration: BoxDecoration(
-                color: selected
-                    ? const Color(0xFF3A2F18)
-                    : const Color(0xFF262A33),
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(
-                  color: selected ? AppColors.gold : const Color(0xFF3A3F4A),
-                  width: selected ? 2 : 1,
+        // 골드로 열리는 순간 튀며 금빛 고리 (§13 공통, A55).
+        child: UnlockBurst(
+          locked: locked,
+          child: Stack(
+            clipBehavior: Clip.none,
+            children: [
+              Container(
+                height: 42,
+                padding: const EdgeInsets.symmetric(horizontal: 6),
+                decoration: BoxDecoration(
+                  color: selected
+                      ? const Color(0xFF3A2F18)
+                      : const Color(0xFF262A33),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color: selected ? AppColors.gold : const Color(0xFF3A3F4A),
+                    width: selected ? 2 : 1,
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Opacity(
+                      opacity: locked ? 0.45 : 1,
+                      child: Image.asset(image, width: 28, height: 28),
+                    ),
+                    const SizedBox(width: 6),
+                    Expanded(child: _text()),
+                  ],
                 ),
               ),
-              child: Row(
-                children: [
-                  Opacity(
-                    opacity: locked ? 0.45 : 1,
-                    child: Image.asset(image, width: 28, height: 28),
-                  ),
-                  const SizedBox(width: 6),
-                  Expanded(child: _text()),
-                ],
-              ),
-            ),
-            if (dot)
-              Positioned(
-                right: -2,
-                top: -2,
-                child: Image.asset(MetaIcons.redDot, width: 11, height: 11),
-              ),
-          ],
+              if (dot)
+                Positioned(
+                  right: -2,
+                  top: -2,
+                  child: Image.asset(MetaIcons.redDot, width: 11, height: 11),
+                ),
+            ],
+          ),
         ),
       ),
     );

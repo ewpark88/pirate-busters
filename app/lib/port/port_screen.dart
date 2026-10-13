@@ -24,6 +24,7 @@ import 'package:pirate_busters/shipyard/shipyard_screen.dart';
 import 'package:pirate_busters/story/cutscene_screen.dart';
 import 'package:pirate_busters/story/story_data.dart';
 import 'package:pirate_busters/ui/battle_screen.dart';
+import 'package:pirate_busters/ui/kit/kit_sound.dart';
 import 'package:pirate_busters/ui/kit/pb_dialog.dart';
 
 /// 항구(메인 화면, 설계서 §13.2). MVP 는 위쪽 프로필·재화·설정, 가운데 내 배,
@@ -120,7 +121,11 @@ class _PortScreenState extends ConsumerState<PortScreen> {
         children: [
           // 배를 누르면 조선소 (§13.2).
           GestureDetector(
-            onTap: () => _shipyard(progress),
+            onTap: () {
+              // 배를 누르면 누름 소리 (설계서 §10.3, A55).
+              KitSound.clickOf(context);
+              _shipyard(progress);
+            },
             child: GameWidget(game: _game),
           ),
           SafeArea(

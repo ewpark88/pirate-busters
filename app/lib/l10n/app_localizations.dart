@@ -2165,7 +2165,7 @@ abstract class AppLocalizations {
   /// No description provided for @statFlood.
   ///
   /// In en, this message translates to:
-  /// **'Flooding you {mine}% · enemy {enemy}%'**
+  /// **'Flooding you {mine}% : enemy {enemy}%'**
   String statFlood(Object mine, Object enemy);
 
   /// No description provided for @resultDouble.

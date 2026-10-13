@@ -1230,7 +1230,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String statFlood(Object mine, Object enemy) {
-    return 'Flooding you $mine% · enemy $enemy%';
+    return 'Flooding you $mine% : enemy $enemy%';
   }
 
   @override

@@ -617,7 +617,7 @@
   "resultMvp": "MVP",
   "statTurns": "Turns used {turns}",
   "statShots": "{shots} shots",
-  "statFlood": "Flooding you {mine}% · enemy {enemy}%",
+  "statFlood": "Flooding you {mine}% : enemy {enemy}%",
   "@statFlood": {
     "placeholders": {
       "mine": {},

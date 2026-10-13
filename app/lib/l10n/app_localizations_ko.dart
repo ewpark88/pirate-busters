@@ -1154,7 +1154,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String statFlood(Object mine, Object enemy) {
-    return '침수 나 $mine% · 상대 $enemy%';
+    return '침수 나 $mine% : 상대 $enemy%';
   }
 
   @override

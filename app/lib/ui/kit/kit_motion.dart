@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:pirate_busters/ui/kit/kit_sound.dart';
 
 /// 메타 화면 움직임 설정 (설계서 §13 공통 화면 규칙). 저사양 모드(§12)면 줄인다.
 class KitMotion extends InheritedWidget {
@@ -123,7 +124,8 @@ class _PopInState extends State<PopIn> with SingleTickerProviderStateMixin {
   );
 }
 
-/// 누르면 살짝 줄었다 돌아오는 감싸개 (설계서 §13 공통).
+/// 누르면 살짝 줄었다 돌아오고 누름 소리를 내는 감싸개 (설계서 §13 공통, §10.3).
+/// 소리는 위의 [KitSound] 가 낸다(A55).
 class Pressable extends StatefulWidget {
   const Pressable({required this.child, required this.onTap, super.key});
 
@@ -150,7 +152,12 @@ class _PressableState extends State<Pressable> {
     onTapDown: (_) => _set(true),
     onTapUp: (_) => _set(false),
     onTapCancel: () => _set(false),
-    onTap: widget.onTap,
+    onTap: widget.onTap == null
+        ? null
+        : () {
+            KitSound.clickOf(context);
+            widget.onTap!();
+          },
     child: AnimatedScale(
       scale: _down ? 0.93 : 1,
       duration: KitMotion.reducedOf(context)

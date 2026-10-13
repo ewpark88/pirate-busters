@@ -344,7 +344,7 @@
   "resultMvp": "MVP",
   "statTurns": "사용 턴 {turns}",
   "statShots": "발사 {shots}발",
-  "statFlood": "침수 나 {mine}% · 상대 {enemy}%",
+  "statFlood": "침수 나 {mine}% : 상대 {enemy}%",
   "resultDouble": "광고 보고 2배",
   "levelUpTo": "레벨 업! Lv {level}",
   "storySkip": "건너뛰기",

@@ -32,6 +32,8 @@ class FloodBar extends StatelessWidget {
     alignment: Alignment.centerLeft,
     child: FractionallySizedBox(
       widthFactor: (percent / 100).clamp(0, 1).toDouble(),
+      // 높이를 채워야 막대가 보인다(전에는 0 높이로 그려져 비어 보였다, A55).
+      heightFactor: 1,
       child: DecoratedBox(
         decoration: BoxDecoration(
           color: color,

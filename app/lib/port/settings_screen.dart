@@ -29,8 +29,8 @@ class SettingsScreen extends ConsumerWidget {
       String label, {
       required bool value,
       required ValueChanged<bool> set,
-    }) => GestureDetector(
-      behavior: HitTestBehavior.opaque,
+    }) => Pressable(
+      // 줄 전체가 눌림 반응·소리를 낸다 (설계서 §13 공통, §10.3, A55).
       onTap: () => set(!value),
       child: _Row(
         icon: icon,
