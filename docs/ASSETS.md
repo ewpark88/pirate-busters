@@ -216,7 +216,7 @@ S4 전에는 포성이 25 bang 폭죽 녹음(`cannon_01·03·04`), 착탄·잔�
 | `ui/meta/currency/` 6개, `ui/meta/meta/` 10개 | 진주·티켓·출석·광고 제거·약관 등 쓰는 화면이 없다 |
 | `audio/LICENSE_kenney_rpg.txt`·`LICENSE_kenney_scifi.txt` | S4 부터 그 팩 음원을 쓰지 않는다 |
 
-남긴 것: `weapons/icons/` 10개와 `fx/bomb`·`fx/stars`·`fx/explosion` 은 앱이 그리지 않지만 `weapons.json`·`anims.json` 이 가리키고 있어 둔다. `ui/portraits/*_red` 는 앱이 쓰지 않지만 `tool/test/import_assets_test.dart` 가 랍 초상 두 팀을 확인하고 패키지와 한 벌로 맞춰 둔다. `import_assets.dart --merge` 로 패키지를 다시 넣으면 지운 파일이 돌아오므로 그때 다시 뺀다.
+남긴 것: `weapons/icons/` 10개와 `fx/bomb`·`fx/stars`·`fx/explosion` 은 앱이 그리지 않지만 `weapons.json`·`anims.json` 이 가리키고 있어 둔다. `ui/portraits/*_red` 는 앱이 쓰지 않지만 `tool/test/import_assets_test.dart` 가 랍 초상 두 팀을 확인하고 패키지와 한 벌로 맞춰 둔다. 지운 그림은 제외 목록 `tool/import_assets_exclude.txt`(app/assets/images 기준, `/` 로 끝나면 폴더)에 있다. `import_assets.dart` 는 일반 가져오기와 `--merge` 모두 이 목록의 그림을 넣지 않고, `--check` 는 목록의 그림이 앱에 다시 들어와 있으면 실패한다(verify 의 `tool/test/import_assets_test.dart` 도 같은 검사를 한다). S3 에서 지운 HUD 아이콘 3장(`ui/meta/hud/hull`·`flood`·`out_of_range`)도 목록에 넣었다. 라이선스 파일 2개는 이 도구가 가져오지 않아 목록에 없다. 다시 쓰게 되면 목록에서 지운 뒤 가져온다.
 
 ## 소리 (설계서 §10.3, A13, ADR-068)
 

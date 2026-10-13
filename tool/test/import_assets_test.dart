@@ -246,4 +246,52 @@ flutter:
       ]);
     });
   });
+
+  group('제외 목록 (docs/ASSETS.md 「안 쓰는 에셋 정리」)', () {
+    test('빈 줄과 주석은 버리고 경로만 읽는다', () {
+      expect(
+        parseExcludes('# 머리\n\nship/tiles/\nfx/fire.png  # 불 규칙 없음\n'),
+        ['ship/tiles/', 'fx/fire.png'],
+      );
+    });
+
+    test('/ 로 끝나면 폴더 전체, 아니면 그 파일만 뺀다', () {
+      const ex = ['ship/tiles/', 'fx/fire.png'];
+      expect(isExcluded('ship/tiles/block_oak_0.png', ex), isTrue);
+      expect(isExcluded('ship/tiles_v2/oak_0.png', ex), isFalse);
+      expect(isExcluded('fx/fire.png', ex), isTrue);
+      expect(isExcluded('fx/fire_big.png', ex), isFalse);
+    });
+
+    test('가져오기는 제외 목록의 그림을 넣지 않는다 (--merge 포함)', () {
+      const ex = ['ship/tiles/', 'ui/icons/pearl.png'];
+      expect(imageTarget('tiles/block_oak_0@2x.png', excludes: ex), isNull);
+      expect(imageTarget('ui/icons/pearl@2x.png', excludes: ex), isNull);
+      expect(
+        imageTarget('ui/icons/gold@2x.png', excludes: ex),
+        'ui/icons/gold.png',
+      );
+    });
+
+    test('검사는 제외 목록의 그림이 다시 들어와 있으면 알린다', () {
+      expect(
+        returnedExcludes(
+          ['assets/images/fx/fire.png', 'assets/images/fx/bomb.png'],
+          const ['fx/fire.png'],
+        ),
+        ['제외 목록의 그림이 다시 들어왔다: assets/images/fx/fire.png'],
+      );
+    });
+
+    test('저장소의 제외 목록은 비어 있지 않고, 앱에 그 그림이 하나도 없다', () {
+      final ex = parseExcludes(File(excludePath).readAsStringSync());
+      expect(ex, contains('ship/tiles/'));
+      expect(ex.length, greaterThanOrEqualTo(79));
+      final images = Directory('app/assets/images')
+          .listSync(recursive: true)
+          .whereType<File>()
+          .map((f) => f.path.replaceAll(r'\', '/').substring(4));
+      expect(returnedExcludes(images, ex), isEmpty);
+    });
+  });
 }
