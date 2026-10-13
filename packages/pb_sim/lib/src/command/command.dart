@@ -89,7 +89,7 @@ final class TapCommand extends Command {
   };
 }
 
-/// 배를 [dx](1/10칸, 전진 +, 후퇴 −)만큼 움직인다 (설계서 §2.6, §7.2). 한계선·연료·
+/// 배를 [dx](1/10칸, 전진 +, 후퇴 −)만큼 움직인다 (설계서 §2.5, §7.2). 한계선·연료·
 /// 남은 턴 시간 검사는 시뮬레이션이 하고, 모자라면 갈 수 있는 데까지만 간다.
 final class MoveCommand extends Command {
   const MoveCommand({required super.t, required this.dx});

@@ -74,8 +74,10 @@ bool _ammoHit(
       _attachMine(state, p, target, target.grid.indexOf(cx, cy));
       return true;
     case AmmoType.assault:
-      // 착지 반경의 해적을 물고, 살아남으면 다음 상대 턴 시작에 한 번 더 문다.
+      // 착지 반경의 해적을 물고(데비는 해골 선원도), 살아남으면 다음 상대 턴
+      // 시작에 한 번 더 문다.
       impact();
+      summonSkeletons(state, p, target, cx, cy);
       state.effects.add(
         TurnEffect(
           kind: EffectKind.biteAgain,

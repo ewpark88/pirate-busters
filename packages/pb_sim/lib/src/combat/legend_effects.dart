@@ -24,7 +24,7 @@ const int skeletonReach = 2;
 /// 바라 어뢰가 이보다 깊이 내려가면 사라진다(1/1000칸).
 const int torpedoDepthLimit = 8 * cellUnit;
 
-/// 볼케·오르카·데비의 선체 명중. 처리했으면 탄이 끝났는지(true)·계속 나는지(false),
+/// 볼케·오르카의 선체 명중. 처리했으면 탄이 끝났는지(true)·계속 나는지(false),
 /// 고유 동작이 없으면 null.
 bool? legendHullHit(
   MatchState state,
@@ -79,10 +79,6 @@ bool? legendHullHit(
         pushShip(state, target, spec.abilityValue);
       }
       return true;
-    case Ability.summon:
-      impact(spec);
-      if (target.side != p.side) _skeletons(state, target, spec, cx, cy);
-      return true;
     case _:
       return null;
   }
@@ -104,13 +100,16 @@ void _sweepDeck(MatchState state, SideState target, PirateSpec spec) {
 }
 
 /// 데비: 해골 선원 인자 명이 착지 칸에서 가까운 배 위 해적을 한 명씩 문다(50%).
-void _skeletons(
+/// 강습탄 착지 처리(추가 물기 예약 포함)에 더한다. 데비가 아니면 아무 일도 없다.
+void summonSkeletons(
   MatchState state,
+  Projectile p,
   SideState target,
-  PirateSpec spec,
   int cx,
   int cy,
 ) {
+  final spec = p.spec;
+  if (spec.ability != Ability.summon) return;
   final dmg = spec.pirateDamage * legendHalfPercent ~/ 100;
   var n = 0;
   for (final slot in aboardByDistance(target, cx, cy)) {

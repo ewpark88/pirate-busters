@@ -1,17 +1,11 @@
 import 'package:pb_sim/src/combat/hit_effects.dart';
 import 'package:pb_sim/src/combat/launch.dart';
 import 'package:pb_sim/src/combat/legend_effects.dart';
-import 'package:pb_sim/src/combat/volley.dart';
 import 'package:pb_sim/src/match/match_state.dart';
 import 'package:pb_sim/src/match/sim_event.dart';
 import 'package:pb_sim/src/math/fx.dart';
 import 'package:pb_sim/src/projectile/grid_trace.dart';
 import 'package:pb_sim/src/projectile/projectile.dart';
-
-/// 탄 하나를 떨어질 때까지 틱 단위로 진행하고 날아간 틱 수를 돌려준다.
-/// 여러 발·갈라지는 탄종도 [runVolley] 로 함께 계산한다.
-int resolveShot(MatchState state, Projectile p, int ms) =>
-    runVolley(state, [p], ms);
 
 /// 탄이 맞는 배의 진영: 모든 탄은 상대 배로 간다. 내 탄은 내 배에 닿지 않는다
 /// (설계서 §2.7).

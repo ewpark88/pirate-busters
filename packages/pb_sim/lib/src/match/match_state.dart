@@ -130,7 +130,7 @@ class SideState {
   );
 
   /// 로컬 칸 ([cx], [cy]) 이 해적이 탄 선실인데 블록이 없어 해적이 드러나 있는가.
-  /// 망대는 늘 드러나 있다.
+  /// 망대 해적은 꼭대기 돛대 칸 블록에 맞을 때 착탄 칸 피해를 받는다.
   bool isExposedPirateAt(int cx, int cy) {
     for (var slot = 0; slot < crew.size; slot++) {
       final c = cabins[slot];

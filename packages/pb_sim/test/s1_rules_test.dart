@@ -254,4 +254,78 @@ void main() {
       );
     });
   });
+
+  group('경계 (설계서 §2.5, §3.3, §4.5, §4.8)', () {
+    test('돛대 없는 배는 선실 4명만 타고, 5명이면 출전을 막는다', () {
+      final base = sampleBlueprint();
+      final noMast = Blueprint(
+        base.hull,
+        base.cells,
+        cabins: base.cabins,
+        modules: const [ModuleCell(1, 1, ModuleKind.captain)],
+      );
+      expect(noMast.seatCount, 4);
+      Match start(int n) => Match.start(
+        seed: 3,
+        blueprints: [noMast, sampleBlueprint()],
+        decks: [
+          [for (var i = 0; i < n; i++) 'e$i'],
+          ['e0'],
+        ],
+        costLimits: const [40, 40],
+        pirates: PirateCatalog([
+          for (var i = 0; i < 5; i++) testPirate('e$i'),
+        ]),
+      );
+      expect(() => start(5), throwsArgumentError);
+      final side = start(4).state.sides[0];
+      expect(side.cabins, hasLength(4));
+      for (var slot = 0; slot < 4; slot++) {
+        expect(side.isOnCrowsNest(slot), isFalse);
+        expect(side.damageBonusPercent(slot), 0);
+      }
+    });
+
+    test('충격탄에 밀려도 바다 끝(시작 위치에서 뒤로 4칸)에서 멈춘다', () {
+      final m = _duel(
+        _legend('lamp', AmmoType.shock, Ability.shove, 2, blastRadius: 2),
+      );
+      for (var i = 0; i < 3; i++) {
+        _hit(m, 11, 1);
+      }
+      expect(m.state.sides[1].offset, -m.state.rules.backRoom);
+    });
+
+    test('모비에 끌려도 최소 간격(2칸)에서 멈춘다', () {
+      final m = _duel(
+        _legend('moby', AmmoType.pierce, Ability.pull, 3, ammoValue: 2),
+      );
+      for (var i = 0; i < 8; i++) {
+        _hit(m, 11, 1);
+      }
+      final s = m.state.sides;
+      expect((s[1].bowX - s[0].bowX).abs(), m.state.rules.minGap);
+    });
+
+    test('크라키 촉수가 격자 모서리 칸에 붙어도 둘레 안 칸만 친다', () {
+      final m = _duel(
+        _legend('kraki', AmmoType.mine, Ability.tentacle, 2, blastRadius: 0),
+      );
+      _hit(m, 0, 0);
+      expect(m.state.effects.single.kind, EffectKind.tentacle);
+      final grid = m.state.sides[1].grid;
+      final before = List.of(grid.rawHp);
+      // 오른쪽(대상) 턴이 끝날 때 친다.
+      m
+        ..apply(const EndTurnCommand(t: 1000))
+        ..apply(const EndTurnCommand(t: 1000));
+      final w = grid.width;
+      final changed = [
+        for (var i = 0; i < before.length; i++)
+          if (grid.rawHp[i] != before[i]) i,
+      ];
+      expect(changed, isNotEmpty);
+      expect(changed, everyElement(isIn([0, 1, w, w + 1])));
+    });
+  });
 }
