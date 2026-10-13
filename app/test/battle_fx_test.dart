@@ -264,18 +264,16 @@ void main() {
         final enemy = session.state.sides[1];
         final cell =
             enemy.cabins.first.y * enemy.grid.width + enemy.cabins.first.x;
-        TurnEffect effect(EffectKind kind, {int cell = -1, int x = 0}) =>
-            TurnEffect(
-              kind: kind,
-              owner: 0,
-              ownerSlot: 0,
-              target: 1,
-              trigger: 0,
-              turnsLeft: 2,
-              spec: spec,
-              cell: cell,
-              x: x,
-            );
+        TurnEffect effect(EffectKind kind, {required int cell}) => TurnEffect(
+          kind: kind,
+          owner: 0,
+          ownerSlot: 0,
+          target: 1,
+          trigger: 0,
+          turnsLeft: 2,
+          spec: spec,
+          cell: cell,
+        );
         final mine = effect(EffectKind.mineBlast, cell: cell);
         session.state.effects.add(mine);
         final badges = game.world.children.whereType<EffectBadges>().single;
