@@ -9,15 +9,36 @@
 // 4) app/pubspec.yaml 의 에셋 폴더 목록이 실제 폴더와 다르면 exit 1.
 // --merge 는 app/assets 를 지우지 않고 패키지에 있는 파일만 덮어쓴다. 캐릭터 몸
 // PNG 가 일부만 든 패키지(v0.22: 랍스터와 표정 부위뿐)를 넣을 때 쓴다.
+// 제외 목록(tool/import_assets_exclude.txt)의 그림은 어느 방식으로도 넣지 않고,
+// --check 는 그 그림이 앱에 다시 들어와 있으면 실패한다.
 import 'dart:convert';
 import 'dart:io';
 
 const assetsRoot = 'app/assets';
 const pubspecPath = 'app/pubspec.yaml';
 
+/// 앱에 넣지 않는 그림 목록 파일 (docs/ASSETS.md 「안 쓰는 에셋 정리」).
+const excludePath = 'tool/import_assets_exclude.txt';
+
+/// 제외 목록 본문을 경로 목록으로 읽는다. 빈 줄과 `#` 뒤 주석은 버린다.
+List<String> parseExcludes(String text) => [
+  for (final line in const LineSplitter().convert(text))
+    if (line.split('#').first.trim() case final p when p.isNotEmpty) p,
+];
+
+/// [target](app/assets/images 기준)이 제외 목록에 드는가. `/` 로 끝나는 항목은 폴더다.
+bool isExcluded(String target, List<String> excludes) => excludes.any(
+  (e) => e.endsWith('/') ? target.startsWith(e) : target == e,
+);
+
+List<String> _loadExcludes() {
+  final f = File(excludePath);
+  return f.existsSync() ? parseExcludes(f.readAsStringSync()) : const [];
+}
+
 /// png/ 아래 상대 경로를 app/assets/images/ 아래 상대 경로로 바꾼다.
-/// @2x 가 아니거나 앱에 넣지 않는 파일이면 null.
-String? imageTarget(String rel) {
+/// @2x 가 아니거나 앱에 넣지 않는 파일([excludes] 포함)이면 null.
+String? imageTarget(String rel, {List<String> excludes = const []}) {
   final path = rel.replaceAll(r'\', '/');
   if (!path.contains('@2x')) return null;
   final segs = path.split('/');
@@ -30,6 +51,7 @@ String? imageTarget(String rel) {
   }
   final target = segs.map((s) => s.replaceAll('@2x', '')).join('/');
   if (deferredImages.any(target.startsWith)) return null;
+  if (isExcluded(target, excludes)) return null;
   return target;
 }
 
@@ -141,6 +163,17 @@ List<String> charactersWithoutBody(Iterable<String> files) {
   return all.difference(withBody).toList()..sort();
 }
 
+/// 제외 목록에 든 그림이 앱(`assets/images/…`, app/ 기준)에 있으면 위반 목록으로.
+List<String> returnedExcludes(Iterable<String> files, List<String> excludes) {
+  const prefix = 'assets/images/';
+  return [
+    for (final f in files)
+      if (f.startsWith(prefix) &&
+          isExcluded(f.substring(prefix.length), excludes))
+        '제외 목록의 그림이 다시 들어왔다: $f',
+  ]..sort();
+}
+
 void main(List<String> args) {
   final parsed = parseArgs(args);
   if (parsed == null) {
@@ -172,9 +205,13 @@ void _import(Directory src, {required bool merge}) {
     }
   }
   final png = Directory('${src.path}/png');
+  final excludes = _loadExcludes();
   var count = 0;
   for (final f in png.listSync(recursive: true).whereType<File>()) {
-    final target = imageTarget(f.path.substring(png.path.length + 1));
+    final target = imageTarget(
+      f.path.substring(png.path.length + 1),
+      excludes: excludes,
+    );
     if (target == null) continue;
     _copyFile(f, '$assetsRoot/images/$target');
     count++;
@@ -225,6 +262,7 @@ void _check() {
       assetDirsOf(files),
     ),
     for (final id in charactersWithoutBody(files)) '몸 부위가 없다: characters/$id',
+    ...returnedExcludes(files, _loadExcludes()),
   ];
   if (errors.isEmpty) {
     stdout.writeln('assets OK');
