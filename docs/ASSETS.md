@@ -70,7 +70,7 @@ dart run tool/import_assets.dart --check                     # pubspec 폴더 �
 - 데이터 파일은 `anims.json`·`tokens.json`·`weapons.json` 세 가지만 넣는다. 패키지의 `ui/cards/cards.json`·`ui/icons/sets.json` 은 설명·세트 이름 글자가 들어 있어 앱에 넣지 않는다(절대 규칙 10). 카드 좌표는 `ui/cards/rarity_card.dart`, 세트 구성은 `ui/cards/card_icons.dart` 에 옮겨 적었다(패키지 값이 바뀌면 같이 고친다).
 - 탄종 아이콘 파일 이름은 탄종 키와 같다(`ammo/icons/<AmmoType.jsonName>.png`).
 - 표정 부위(`characters/<id>/expr_<team>/`, 머리·눈 × 6표정 + expr.json)가 약 1천 장 늘어 앱 이미지가 14MB → 25MB 가 됐다.
-- 전장 타일은 `ship/tiles_v2` 를 쓴다(`game/sprites.dart`). 예전 `ship/tiles`·`ship/rooms` 는 조선소 화면 등에서 아직 쓸 수 있어 남겨 두었다.
+- 전장 타일은 `ship/tiles_v2` 를 쓴다(`game/sprites.dart`). 예전 `ship/tiles` 는 게임 정리 때 지웠다(아래 「안 쓰는 에셋 정리」).
 - `tokens.json` 의 `character.battleScale 0.16`·`roomSlot "3x2칸"` 은 앱이 쓰지 않았다. 앱은 선실 한 칸에 맞춘 0.09 를 썼다(ADR-057). v0.24 에서 3/32 로 맞췄다(아래).
 
 ## v0.23 (2026-10-02, ADR-061)
@@ -90,7 +90,7 @@ dart run tool/import_assets.dart --merge art/pb_v0.24_main
 ```
 
   - 들어간 것: `bg/tropic`·`bg/gold`·`bg/storm`(프롤로그용), `bg/props`, `ship/modules`, `ui/meta/{hud,meta,currency,ai,faction}`, `ui/story`. 데이터는 `bg/regions.json`·`style/modes.json` 이고, 이름 글자 필드(`ko`·`en`·`faction`·`note`·`limits`)를 지우고 넣는다(절대 규칙 10).
-  - `ui/meta` 는 쓰는 묶음을 폴더째 넣어서, 아직 쓰지 않는 아이콘(약관·진주 등)도 함께 들어 있다.
+  - `ui/meta` 는 쓰는 묶음을 폴더째 넣었다. 쓰지 않는 아이콘(약관·진주 등)은 게임 정리 때 지웠다.
   - 넣지 않는 것: `tool/import_assets.dart` 의 `deferredImages` 목록이다. 해역 2·4·5 배경, `boss/`, `ui/meta` 의 상자·티어·심장·날씨·궤적, 특수 블록 타일(불·그을음·유령·얼음·금박·방패)이 여기 든다. 그 단계에서 목록에서 빼고 pubspec 에 더한다.
   - 전장은 `sea` 겹을 쓰지 않는다. 바다는 앱의 사인파 바다·셰이더가 그린다. 컷신 배경은 7장을 모두 쓴다.
   - 일반 모드가 아닐 때: 하늘·바다는 `regions.json` 의 모드 색 그라데이션으로, far·mid 는 행렬로, 구름은 모드 구름색을 곱해 그린다. 비·번개는 R3 에서 넣는다.
@@ -125,7 +125,7 @@ dart run tool/import_assets.dart --merge art/pb_v0.24_main
 - 원본: `art/pb_v0.26_patch/` 를 `art/pb_v0.24_main/` 위에 덮어썼다(`README_v0.26.md`, 지울 파일 없음).
 - 피해 표현 v3(비교 페이지 38단계): `fx/damage_v3/damage_v3.json`(그리는 순서·색·규칙), 규칙별 예시 SVG·PNG, 참고 구현 `tools/py/damage38.py`, 비교 캡처 `reference/stage38_damage_v3.png`·`reference/screens_v2/stage38_h0~h3.png`.
 - 앱은 예시 PNG 를 넣지 않고 규칙을 코드로 그린다(`app/lib/game/view/damage_*.dart`, A15). 색은 `damage_style.dart` 에 옮겨 두었다.
-- `fx/impact/scorch.png` 는 A15 부터 쓰지 않는다(그을음은 코드로 그림). 폴더째 가져오므로 다음 가져오기 정리 때 뺀다.
+- `fx/impact/scorch.png` 는 A15 부터 쓰지 않는다(그을음은 코드로 그림). 게임 정리 때 지웠다.
 
 ## 음원 (A19, CC0 — 게임 정리 S4 에서 다시 고름)
 
@@ -177,7 +177,7 @@ dart run tool/import_assets.dart --merge art/pb_v0.24_main
 | 항구 `port` (S4) | `music_port.ogg` (128초, 모노, 1.1MB) | Pirate's Orchestra (`Pirate's Orchestra.mp3`) |
 | 전투 `battle` (S4) | `music_battle.ogg` (14.5초 루프, 모노, 0.14MB) | Pirate Indenture 루프판 (`pirate_indenture_loop.wav`) |
 
-S4 전에는 포성이 25 bang 폭죽 녹음(`cannon_01·03·04`), 착탄·잔향이 Kenney Sci-fi Sounds(`explosionCrunch`·`lowFrequency_explosion`), 붕괴가 Kenney RPG Audio(`creak1·2`), 곡이 Pirate Game Tune(Tozan)·OPL2 Drunken Sailor(TheOuterLinux)였다. Sci-fi Sounds·RPG Audio 는 이제 쓰지 않는다(`LICENSE_kenney_scifi.txt`·`LICENSE_kenney_rpg.txt` 는 이전 판 기록으로 둔다).
+S4 전에는 포성이 25 bang 폭죽 녹음(`cannon_01·03·04`), 착탄·잔향이 Kenney Sci-fi Sounds(`explosionCrunch`·`lowFrequency_explosion`), 붕괴가 Kenney RPG Audio(`creak1·2`), 곡이 Pirate Game Tune(Tozan)·OPL2 Drunken Sailor(TheOuterLinux)였다. Sci-fi Sounds·RPG Audio 는 이제 쓰지 않아 라이선스 파일(`LICENSE_kenney_scifi.txt`·`LICENSE_kenney_rpg.txt`)도 게임 정리 때 지웠다.
 
 ## 폭발·연기 그림 (게임 정리 S4, CC0)
 
@@ -200,7 +200,24 @@ S4 전에는 포성이 25 bang 폭죽 녹음(`cannon_01·03·04`), 착탄·잔�
 
 앱 용량 증가: 그림 약 1.0MB(시트 4장 0.82MB + 연기 12장 0.18MB). 소리는 `app/assets/audio/` 전체가 3.1MB → 2.2MB 로 줄었다(곡을 모노로 바꾸고 전투 곡이 짧은 루프다).
 
-섬광(`GlowFlash`)과 충격파 고리(`ShockRing`)는 그림 대신 코드로 그린다(`app/lib/game/view/blast_glow.dart`). 파편은 CC0 스프라이트를 찾지 못해 지금처럼 칸 타일을 칸 위치로 정한 조각으로 잘라 튀기고(`collapse_fx.dart` `shardPlan`) 불티를 더했다. 물기둥 연속 프레임도 CC0 로는 없어 기존 그림에 물방울·물안개를 더했다. 예전 `fx/impact/fireball_0~4`·`fx/impact/smoke.png`·`fx/impact/puff_*` 는 폭발에 더 쓰지 않는다(그림 파일은 다음 정리 때 지운다).
+섬광(`GlowFlash`)과 충격파 고리(`ShockRing`)는 그림 대신 코드로 그린다(`app/lib/game/view/blast_glow.dart`). 파편은 CC0 스프라이트를 찾지 못해 지금처럼 칸 타일을 칸 위치로 정한 조각으로 잘라 튀기고(`collapse_fx.dart` `shardPlan`) 불티를 더했다. 물기둥 연속 프레임도 CC0 로는 없어 기존 그림에 물방울·물안개를 더했다. 예전 `fx/impact/fireball_0~4`·`fx/impact/smoke.png`·`fx/impact/puff_1~6` 은 게임 정리 때 지웠다. `fx/impact/puff_0` 은 강습 연출에 남아 있다.
+
+## 안 쓰는 에셋 정리 (게임 정리, 2026-10-13)
+
+규칙 단순화(ADR-111·112)·앱 정리(S3)·타격감 교체(S4) 뒤 코드·데이터 JSON·pubspec 어디에서도 쓰지 않는 그림·라이선스 113개(약 0.33MB)를 지웠다. 문자열 조합 경로(`ship/modules/${kind.name}`, `ammo/icons/${jsonName}`, `ship/tiles_v2/${재질}_$v`, `ui/cards/card_${등급}_*`, `cost_$n`·`set_$id`·`ai_$성격`·`faction_$세력`, `bg/$해역/*`, 효과음 변형 번호)는 지금 값 전부의 파일을 남겼다.
+
+| 지운 것 | 이유 |
+| --- | --- |
+| `ship/tiles/` 36개 (폴더째, pubspec 줄도) | 예전 타일. 조선소·전장 모두 `tiles_v2` |
+| `ship/tiles_v2/` 코르크·망사·불·그을음·`room_*` 14개 | 재질·불 규칙이 빠졌고 선실은 `rooms/room1_lantern_*` |
+| `ship/modules/` 목수·망대·연료·포문·화약·펌프 6개 | 모듈은 선장실·돛대만 남았다(`cabin_*` 은 조선소 선실 칸) |
+| `ship/rig/` 제1사장·이물·난간 3개, `ship/rooms/room1_dark_*` 2개 | 그리지 않는다 / 보스 기믹 없음 |
+| `fx/impact/` 불덩이 5·연기·`puff_1~6`·그을음·작은 물보라 14개, `fx/collapse/` 깨진 모서리·먼지, `fx/fire`·`fx/smoke`·`fx/trajectory_dot` | S4 폭발 시트·연기로 바뀌었거나 불 규칙이 빠졌다 |
+| `ui/icons/` 사거리 4·직사·곡사·관통·지원·동전·진주·조각·상점·우편·목재·트로피 15개 | 쓰는 화면이 없다 |
+| `ui/meta/currency/` 6개, `ui/meta/meta/` 10개 | 진주·티켓·출석·광고 제거·약관 등 쓰는 화면이 없다 |
+| `audio/LICENSE_kenney_rpg.txt`·`LICENSE_kenney_scifi.txt` | S4 부터 그 팩 음원을 쓰지 않는다 |
+
+남긴 것: `weapons/icons/` 10개와 `fx/bomb`·`fx/stars`·`fx/explosion` 은 앱이 그리지 않지만 `weapons.json`·`anims.json` 이 가리키고 있어 둔다. `ui/portraits/*_red` 는 앱이 쓰지 않지만 `tool/test/import_assets_test.dart` 가 랍 초상 두 팀을 확인하고 패키지와 한 벌로 맞춰 둔다. `import_assets.dart --merge` 로 패키지를 다시 넣으면 지운 파일이 돌아오므로 그때 다시 뺀다.
 
 ## 소리 (설계서 §10.3, A13, ADR-068)
 
@@ -239,7 +256,7 @@ S4 전에는 포성이 25 bang 폭죽 녹음(`cannon_01·03·04`), 착탄·잔�
 - 바뀐 것:
   - `style/tokens.json`: `character.battleScale` 0.16 → 3/32(0.09375), `roomSlotPx`(1칸 32×32, 발 16, 29), `battleHeightAtDesign` 29. 3×2칸 `room_*.svg` 와 `design` 18×12 좌표는 레거시.
   - 전투 PNG(`<id>_<team>_battle`)와 `parts_battle_<team>`(+ `battle.json` `outlinePad` 22)를 새 배율로 다시 구웠다. 외곽선은 1x 약 1px(설계서 §10.1).
-  - 1칸 등불 선실 타일 `ship/rooms/room1_lantern_{0,1}[_left]`, 꺼진 등불 `room1_dark_{0,1}`(아귀 등불선 기믹, 해역 5 — 그 단계에서 쓴다).
+  - 1칸 등불 선실 타일 `ship/rooms/room1_lantern_{0,1}[_left]`, 꺼진 등불 `room1_dark_{0,1}`(아귀 등불선 기믹, 보스 기믹을 없애 게임 정리 때 지웠다).
   - 랍 초상 `ui/portraits/lobster_*`.
 - 앱 적용: `game/coords.dart`(`pirateScale` 3/32, `pirateHeight` 29, `cabinFloor` 3), `character_rig.dart`(`outlinePad` 읽기), `sprites.dart`(선실 타일 → `room1_lantern_*` 네 가지, 칸 위치로 고정 선택). 예전 `ship/rooms/room_*.png`(3×2칸)는 `obsoleteImages` 로 지웠다.
 - **가져오기 주의:** `--merge art/pb_v0.24_main` 은 v0.23 의 아직 안 쓰는 폴더(`bg/`·`boss/`·`ship/modules`·`ui/meta`·`ui/story`·`tiles_v2` 새 타일)도 함께 넣는다. 이번에는 v0.24 몫만 남기고 지웠다. 그 폴더들은 A12·뒷 단계에서 넣는다.

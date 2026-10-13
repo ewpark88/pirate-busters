@@ -27,7 +27,6 @@ class BattleSprites {
     'fx/cannonball.png',
     'fx/explosion.png',
     'fx/splash.png',
-    'fx/smoke.png',
     'fx/impact/flash.png',
     'fx/impact/spark.png',
     'fx/impact/hole_burnt.png',
@@ -40,7 +39,7 @@ class BattleSprites {
     'fx/collapse/splash_big.png',
     'fx/impact/debris_plank.png',
     for (var i = 0; i < 6; i++) 'fx/impact/debris_$i.png',
-    for (var i = 0; i < 6; i++) 'fx/impact/puff_$i.png',
+    'fx/impact/puff_0.png',
   ];
 
   /// 모듈 그림 (설계서 §3.3, 에셋 v0.23 `ship/modules/`): 선장실·돛대.
