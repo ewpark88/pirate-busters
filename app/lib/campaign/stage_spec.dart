@@ -177,9 +177,6 @@ class StageSpec {
   /// 튜토리얼 판 번호 1~3 (§13.1). 캠페인 스테이지는 0.
   final int tutorialStep;
 
-  /// 보스 기믹: 없어졌다 (ADR-111). 전투 화면 호환을 위해 늘 null.
-  String? get gimmick => null;
-
   bool get isBoss => kind == StageKind.boss || kind == StageKind.midBoss;
 
   /// 원격 설정으로 바꿀 수 있는 값만 바꾼 스테이지 (설계서 §7.4 `campaign_*`).

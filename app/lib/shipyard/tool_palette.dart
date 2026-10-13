@@ -43,12 +43,10 @@ class _ToolPaletteState extends State<ToolPalette> {
     _ => ToolGroup.materials,
   };
 
-  /// 잠긴 도구면 여는 골드, 아니면 null (BALANCE.md A13.6·A3.2).
+  /// 잠긴 도구면 여는 골드, 아니면 null. 철판만 골드로 연다 (설계서 §13.6, BALANCE.md A3.2).
   int? _lockedGold(ShipTool tool) => switch (tool) {
     MaterialTool(:final material) when !widget.ship.hasMaterial(material) =>
       ShipUpgrades.materialGold[material],
-    ModuleTool(:final kind) when !widget.ship.hasModule(kind) =>
-      ShipUpgrades.moduleGold[kind],
     _ => null,
   };
 

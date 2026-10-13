@@ -175,7 +175,7 @@ dart run tool/import_assets.dart --merge art/pb_v0.24_main
 | 곡 (`Music`) | 앱 파일 | 원본 |
 | --- | --- | --- |
 | 항구 `port` (S4) | `music_port.ogg` (128초, 모노, 1.1MB) | Pirate's Orchestra (`Pirate's Orchestra.mp3`) |
-| 전투 `battle` (S4) | `music_battle.ogg` (14.5초 루프, 모노, 0.14MB) | Pirate Indenture 루프판 (`pirate_indenture_loop.wav`). 폭풍 타임에는 1.2배 |
+| 전투 `battle` (S4) | `music_battle.ogg` (14.5초 루프, 모노, 0.14MB) | Pirate Indenture 루프판 (`pirate_indenture_loop.wav`) |
 
 S4 전에는 포성이 25 bang 폭죽 녹음(`cannon_01·03·04`), 착탄·잔향이 Kenney Sci-fi Sounds(`explosionCrunch`·`lowFrequency_explosion`), 붕괴가 Kenney RPG Audio(`creak1·2`), 곡이 Pirate Game Tune(Tozan)·OPL2 Drunken Sailor(TheOuterLinux)였다. Sci-fi Sounds·RPG Audio 는 이제 쓰지 않는다(`LICENSE_kenney_scifi.txt`·`LICENSE_kenney_rpg.txt` 는 이전 판 기록으로 둔다).
 
@@ -200,7 +200,7 @@ S4 전에는 포성이 25 bang 폭죽 녹음(`cannon_01·03·04`), 착탄·잔�
 
 앱 용량 증가: 그림 약 1.0MB(시트 4장 0.82MB + 연기 12장 0.18MB). 소리는 `app/assets/audio/` 전체가 3.1MB → 2.2MB 로 줄었다(곡을 모노로 바꾸고 전투 곡이 짧은 루프다).
 
-섬광(`GlowFlash`)과 충격파 고리(`ShockRing`)는 그림 대신 코드로 그린다(`app/lib/game/view/blast_glow.dart`). 파편은 CC0 스프라이트를 찾지 못해 지금처럼 칸 타일을 칸 위치로 정한 조각으로 잘라 튀기고(`collapse_fx.dart` `shardPlan`) 불티를 더했다. 물기둥 연속 프레임도 CC0 로는 없어 기존 그림에 물방울·물안개를 더했다. 예전 `fx/impact/fireball_0~4`·`fx/impact/smoke.png`·`fx/impact/puff_*` 는 폭발에 더 쓰지 않는다(그림 파일 정리는 S3 의 쓰지 않는 그림 지우기와 함께).
+섬광(`GlowFlash`)과 충격파 고리(`ShockRing`)는 그림 대신 코드로 그린다(`app/lib/game/view/blast_glow.dart`). 파편은 CC0 스프라이트를 찾지 못해 지금처럼 칸 타일을 칸 위치로 정한 조각으로 잘라 튀기고(`collapse_fx.dart` `shardPlan`) 불티를 더했다. 물기둥 연속 프레임도 CC0 로는 없어 기존 그림에 물방울·물안개를 더했다. 예전 `fx/impact/fireball_0~4`·`fx/impact/smoke.png`·`fx/impact/puff_*` 는 폭발에 더 쓰지 않는다(그림 파일은 다음 정리 때 지운다).
 
 ## 소리 (설계서 §10.3, A13, ADR-068)
 

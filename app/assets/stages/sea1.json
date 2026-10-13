@@ -15,7 +15,7 @@
     {
       "id": "t-2", "kind": "tutorial", "tutorialStep": 2,
       "enemyPreset": "balanced", "enemyDeck": ["p16_suri"],
-      "aiLevel": "easy", "personality": "bombard", "maxWind": 1,
+      "aiLevel": "easy", "personality": "bombard", "calmSea": true, "maxWind": 2,
       "starTurns": 12, "mission": { "type": "no_pirate_down" },
       "dialogueKeys": ["story_t2_enemy", "story_t2_ally"],
       "reward": { "gold": 50 }

@@ -5,28 +5,35 @@ import 'package:pirate_busters/ui/hud/hud_gauge.dart';
 import 'package:pirate_busters/ui/hud/hud_style.dart';
 import 'package:pirate_busters/ui/meta_icons.dart';
 
-/// 한 배의 선체 내구도·생존 선원 (설계서 §13.4, A33 디자인).
+/// 한 배의 해적 체력 합·선장실 내구도·생존 해적 수 (설계서 §13.4, A33 디자인).
 ///
-/// 진영색 원형 배지(선체 아이콘)가 패널 바깥쪽에 겹쳐 붙고, 굵은 선체 게이지 아래에
-/// 선원 칸을 둔다. 오른쪽 배는 좌우 대칭이다. 선체 값 [hull] 은 화면에
-/// 보이는 값(탄이 닿은 만큼)이라 착탄 순간에 줄어든다.
+/// 진영색 원형 배지가 패널 바깥쪽에 겹쳐 붙고, 굵은 해적 체력 게이지 아래에 선장실
+/// 내구도 막대와 해적 칸을 둔다. 오른쪽 배는 좌우 대칭이다. 두 값은 화면에 보이는
+/// 값(탄이 닿은 만큼)이라 착탄 순간에 줄어든다.
 class ShipStatusPanel extends StatelessWidget {
   const ShipStatusPanel({
     required this.side,
-    required this.hull,
+    required this.crewHp,
+    required this.captain,
     this.calm = false,
     super.key,
   });
 
   final SideState side;
 
-  /// 0~1.
-  final double hull;
+  /// 남은 해적 체력 합 비율 0~1 (턴 제한 판정의 첫 기준, §2.7).
+  final double crewHp;
+
+  /// 선장실 블록 남은 내구도 비율 0~1 (0 이면 진다, §2.7).
+  final double captain;
 
   /// 화면 흔들림 줄이기 (설계서 §13.8).
   final bool calm;
 
   static const double width = 184;
+
+  /// 선장실 아이콘(조선소·배와 같은 모듈 그림).
+  static const String captainIcon = 'assets/images/ship/modules/captain.png';
   static const double badge = 34;
 
   @override
@@ -63,16 +70,35 @@ class ShipStatusPanel extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             HudGauge(
-              key: ValueKey('hull-${side.side}'),
-              value: hull,
+              key: ValueKey('crew-hp-${side.side}'),
+              value: crewHp,
               color: team,
               height: 16,
               calm: calm,
-              label: l10n.hullPercent((hull * 100).floor()),
-              // 수리로 오른 몫 (A41 제안 3, A57).
-              gainLabel: l10n.hullGain,
+              label: l10n.crewHpPercent((crewHp * 100).floor()),
             ),
-            const SizedBox(height: 4),
+            const SizedBox(height: 3),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              textDirection: mirror ? TextDirection.rtl : TextDirection.ltr,
+              children: [
+                Image.asset(captainIcon, width: 16, height: 16),
+                const SizedBox(width: 3),
+                SizedBox(
+                  width: 112,
+                  child: HudGauge(
+                    key: ValueKey('captain-${side.side}'),
+                    value: captain,
+                    color: HudColors.warn,
+                    height: 11,
+                    calm: calm,
+                    warnAt: .34,
+                    label: l10n.captainPercent((captain * 100).floor()),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 3),
             Align(
               alignment: mirror ? Alignment.centerRight : Alignment.centerLeft,
               child: _CrewPips(side: side),
@@ -93,7 +119,7 @@ class ShipStatusPanel extends StatelessWidget {
         border: Border.all(color: HudColors.border, width: 2),
         boxShadow: const [BoxShadow(color: Color(0x80000000), blurRadius: 3)],
       ),
-      child: MetaIcons.image(MetaIcons.hull, size: 22),
+      child: MetaIcons.image(MetaIcons.crew, size: 22),
     );
     return SizedBox(
       width: width,

@@ -21,34 +21,20 @@ class ShipUpgrades {
   /// 골드로 연 재질 이름(처음부터 쓰는 [freeMaterials] 는 빠진다).
   final List<String> materials;
 
-  /// 확장 단계: 슬루프 하나라 늘 1이다 (옛 화면 호환).
-  int get stage => 1;
-
   /// 처음부터 쓰는 재질 (BALANCE.md A3.2).
   static const Set<BlockMaterial> freeMaterials = {
     BlockMaterial.pine,
     BlockMaterial.oak,
   };
 
-  /// 확장 단계를 여는 스테이지. 확장 단계가 없어 비었다 (ADR-111).
-  static const Map<int, List<String>> stageClears = {};
-
   /// 재질을 여는 골드 (BALANCE.md A3.2).
   static const Map<BlockMaterial, int> materialGold = {BlockMaterial.iron: 300};
-
-  /// 모듈을 여는 골드: 선장실·돛대는 처음부터 쓴다.
-  static const Map<ModuleKind, int> moduleGold = {};
 
   bool hasMaterial(BlockMaterial m) =>
       freeMaterials.contains(m) || materials.contains(m.name);
 
-  bool hasModule(ModuleKind k) => true;
-
   /// 슬루프 (설계서 §3.1).
   HullSpec get hull => HullSpec.sloop;
-
-  /// 전투에 넘길 설계도. 찍을 레벨이 없어 그대로다.
-  Blueprint stamp(Blueprint b) => b;
 
   /// 아직 열지 않은 재질은 소나무로 바꾼 설계도 (추천 설계도를 열린 것만으로 쓸 때,
   /// 설계서 §13.6). 블록은 그대로 두므로 지지·선실은 그대로다.

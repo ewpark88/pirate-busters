@@ -12,7 +12,6 @@ import 'package:pirate_busters/game/view/ship_view.dart';
 enum BattleBannerKind {
   myTurn,
   foeTurn,
-  storm,
   captainLost,
   annihilation,
   timeDecision,

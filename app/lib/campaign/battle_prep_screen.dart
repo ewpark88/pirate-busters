@@ -29,7 +29,7 @@ import 'package:pirate_busters/ui/kit/pb_scaffold.dart';
 import 'package:pirate_busters/ui/meta_icons.dart';
 
 /// 전투 준비 (설계서 §13.3, §13 공통): 왼쪽 내 배 미리보기와 설계도 선택, 가운데 상대 정보(성격
-/// 아이콘·날씨·기믹)와 대사, 오른쪽 선실 배치와 코스트, 아래 덱 수정·출항. 세트 표시는 A3.
+/// 아이콘·바람·파도 예고)와 대사, 오른쪽 선실·망대 배치와 코스트, 아래 덱 수정·출항.
 class BattlePrepScreen extends ConsumerStatefulWidget {
   const BattlePrepScreen({required this.stage, super.key});
 
@@ -53,10 +53,14 @@ class _BattlePrepScreenState extends ConsumerState<BattlePrepScreen> {
     final catalog = ref.watch(gameCatalogProvider);
     final fleet = ref.watch(fleetStoreProvider);
     final progress = ref.watch(progressProvider);
-    // 전투가 쓰는 것과 같은 출전 덱(선실 수·코스트로 자름, A41 점검).
-    final deck = BattleSetup(
-      catalog,
-    ).sailDeck(fleet.deck, progress.ship.hull, progress.costLimit);
+    // 전투가 쓰는 것과 같은 출전 덱(설계도 자리 수·코스트로 자름, A41 점검).
+    final mine = myBlueprint(fleet, catalog, progress.ship);
+    final deck = BattleSetup(catalog).sailDeck(
+      fleet.deck,
+      mine.hull,
+      progress.costLimit,
+      seats: mine.seatCount,
+    );
     final used = deck.fold(
       0,
       (a, id) => a + catalog.pirates.byId(id).rarity.cost,
@@ -92,7 +96,8 @@ class _BattlePrepScreenState extends ConsumerState<BattlePrepScreen> {
                         deck: deck,
                         used: used,
                         limit: ref.watch(costLimitProvider),
-                        cabins: progress.ship.hull.crewSlots,
+                        seats: mine.seatCount,
+                        cabins: mine.cabins.length,
                       ),
                     ),
                   ),
@@ -222,9 +227,11 @@ class _BattlePrepScreenState extends ConsumerState<BattlePrepScreen> {
                     '${personalityLabel(l10n, stage.personality)} · '
                     '${l10n.prepEnemyCount(stage.enemyDeck.length)}',
               ),
-              // 파도 칸: 잔잔한 바다면 0, 아니면 구간마다 달라 1 로 둔다(ARB 문구 정리 전).
+              // 바람·파도 예고 (설계서 §13.3, §2.4·§2.6).
+              PbChip(label: l10n.prepWeather(stage.maxWind)),
               PbChip(
-                label: l10n.prepWeather(stage.maxWind),
+                key: const ValueKey('prep-waves'),
+                label: stage.calmSea ? l10n.prepWavesCalm : l10n.prepWaves,
               ),
             ],
           ),

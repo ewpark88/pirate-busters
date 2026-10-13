@@ -73,7 +73,7 @@ void main() {
     testWidgets('보스 배너는 시간이 다 되거나 누르면 한 번만 닫힘을 알린다', (tester) async {
       var done = 0;
       await tester.pumpWidget(
-        _app(BossBanner(gimmick: 'bow_iron_shield', onDone: () => done++)),
+        _app(BossBanner(onDone: () => done++)),
       );
       await tester.tap(find.byType(BossBanner));
       await tester.pump(BossBanner.shown + const Duration(seconds: 1));

@@ -22,7 +22,7 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
-  String timeVerdictFlood(String mine, String theirs) {
+  String timeVerdictHp(String mine, String theirs) {
     return '나 $mine% : 상대 $theirs%';
   }
 
@@ -42,11 +42,6 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get hull => '선체';
-
-  @override
-  String flood(String percent) {
-    return '침수 $percent%';
-  }
 
   @override
   String crewAlive(int alive, int total) {
@@ -71,11 +66,6 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
-  String cooldown(int count) {
-    return '쉬는 턴 $count';
-  }
-
-  @override
   String get firedDone => '발사 완료';
 
   @override
@@ -85,22 +75,13 @@ class AppLocalizationsKo extends AppLocalizations {
   String get pirateReady => '준비!';
 
   @override
-  String get cabinFlooded => '잠김';
-
-  @override
   String get pirateDown => '쓰러짐';
-
-  @override
-  String get pirateSwimming => '헤엄 중';
 
   @override
   String get pirateBoarding => '적 배 위';
 
   @override
   String get wind => '바람';
-
-  @override
-  String get stormTime => '폭풍 타임!';
 
   @override
   String get overview => '전체 보기';
@@ -202,15 +183,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get bannerMyTurn => '내 턴!';
 
   @override
-  String get bannerStorm => '폭풍 타임!';
-
-  @override
   String get bannerAnnihilation => '전멸!';
-
-  @override
-  String bannerFloodCompare(String mine, String foe) {
-    return '침수 $mine% : $foe%';
-  }
 
   @override
   String get surrenderQueued => '내 턴이 오면 항복합니다';
@@ -661,21 +634,6 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
-  String get rangeShort => '짧음';
-
-  @override
-  String get rangeMedium => '보통';
-
-  @override
-  String get rangeLong => '긺';
-
-  @override
-  String get rangeVeryLong => '매우 긺';
-
-  @override
-  String get outOfRange => '사거리 밖';
-
-  @override
   String get tapToSplit => '탭해서 분열!';
 
   @override
@@ -702,11 +660,6 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
-  String statWaterline(String cells) {
-    return '흘수선 $cells칸';
-  }
-
-  @override
   String statFuelPerCell(String fuel) {
     return '1칸 연료 $fuel';
   }
@@ -727,11 +680,6 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
-  String statModules(int n, int max) {
-    return '모듈 $n/$max';
-  }
-
-  @override
   String statCaptain(int n) {
     return '선장실 $n/1';
   }
@@ -744,12 +692,6 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get materialIron => '철판';
-
-  @override
-  String get materialCork => '코르크';
-
-  @override
-  String get materialNet => '망사';
 
   @override
   String get toolCabin => '선실';
@@ -772,40 +714,10 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
-  String get moduleGunPort => '포문';
-
-  @override
-  String get moduleMagazine => '화약고';
-
-  @override
-  String get modulePump => '펌프';
-
-  @override
-  String get moduleWorkshop => '목수 공방';
-
-  @override
   String get moduleMast => '소나무 돛대';
 
   @override
-  String get moduleMastBamboo => '대나무 돛대';
-
-  @override
-  String get moduleMastOak => '참나무 돛대';
-
-  @override
-  String get moduleMastIron => '철 돛대';
-
-  @override
-  String get moduleMastCrow => '망대 돛대';
-
-  @override
-  String get moduleLookout => '망루';
-
-  @override
   String get moduleCaptain => '선장실';
-
-  @override
-  String get moduleFuelTank => '연료통';
 
   @override
   String get undo => '되돌리기';
@@ -843,18 +755,6 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get deckFamilies => '계열';
-
-  @override
-  String get deckRanges => '사거리';
-
-  @override
-  String get preferNear => '가까이 싸움';
-
-  @override
-  String get preferFar => '멀리 싸움';
-
-  @override
-  String get preferMixed => '거리 균형';
 
   @override
   String get familyLob => '투척';
@@ -899,12 +799,6 @@ class AppLocalizationsKo extends AppLocalizations {
   String get opponentAi => '컴퓨터 (AI)';
 
   @override
-  String get menuBattleAi => 'AI 와 해전';
-
-  @override
-  String get chooseLevel => '난이도';
-
-  @override
   String get levelEasy => '쉬움';
 
   @override
@@ -929,17 +823,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get mission_no_pirate_down => '내 해적이 한 명도 쓰러지지 않고 승리';
 
   @override
-  String mission_flood_below(Object percent) {
-    return '내 침수량 $percent% 이하로 승리';
-  }
-
-  @override
   String mission_hull_above(Object percent) {
     return '내 선체 내구도 $percent% 이상으로 승리';
   }
-
-  @override
-  String get mission_win_by_sink => '격침으로 승리 (전멸·시간 판정 제외)';
 
   @override
   String mission_turns_within(Object turns) {
@@ -956,13 +842,13 @@ class AppLocalizationsKo extends AppLocalizations {
   String get story_t2_enemy => '초계대 신병: 거리를 벌려서 쏴 주지! 따라올 수 있으면 따라와 봐!';
 
   @override
-  String get story_t2_ally => '톡: 연료를 아껴 두렴. 다가갈 때와 물러날 때를 골라야 해.';
+  String get story_t2_ally => '톡: 바람이 탄을 밀어 준단다. 바람을 보고 다가갈 때와 물러날 때를 골라.';
 
   @override
-  String get story_t3_enemy => '초계대 잠수부: 흘수선 아래를 뚫으면 배는 가라앉는 법이지.';
+  String get story_t3_enemy => '초계대 잠수부: 거친 파도 위에서는 제대로 겨누지도 못할걸!';
 
   @override
-  String get story_t3_ally => '톡: 구멍은 내가 막을게. 물이 차기 전에 펌프를 돌려!';
+  String get story_t3_ally => '톡: 잔잔한 물로 옮기자. 망대 친구는 세게 쏘지만 돛대가 부러지면 떨어져!';
 
   @override
   String get story_s1_1_enemy => '초계대 순찰병: 해적 단속이다. 그 낡은 배로 어딜 가려고?';
@@ -1059,9 +945,6 @@ class AppLocalizationsKo extends AppLocalizations {
   String get prepBlueprintEmpty => '빈 칸 (추천 밸런스)';
 
   @override
-  String get prepDeck => '출전 해적';
-
-  @override
   String prepCost(Object used, Object limit) {
     return '코스트 $used / $limit';
   }
@@ -1078,6 +961,12 @@ class AppLocalizationsKo extends AppLocalizations {
   String prepWeather(Object wind) {
     return '바람 최대 $wind';
   }
+
+  @override
+  String get prepWaves => '파도 구간 있음';
+
+  @override
+  String get prepWavesCalm => '잔잔한 바다';
 
   @override
   String get prepEditDeck => '덱 수정';
@@ -1099,13 +988,6 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get personality_rusher => '돌격형';
-
-  @override
-  String get gimmick_bow_iron_shield =>
-      '뱃머리 철판 방패: 방패가 서 있는 동안 받는 블록 피해 절반. 뱃머리를 먼저 부숴라';
-
-  @override
-  String get gimmick_patrol_closing_in => '초계선이 턴마다 한 칸씩 다가오고 쿨다운이 두 배로 빨리 준다';
 
   @override
   String resultMission(Object text) {
@@ -1149,11 +1031,6 @@ class AppLocalizationsKo extends AppLocalizations {
   @override
   String statShots(Object shots) {
     return '발사 $shots발';
-  }
-
-  @override
-  String statFlood(Object mine, Object enemy) {
-    return '침수 나 $mine% : 상대 $enemy%';
   }
 
   @override
@@ -1220,10 +1097,11 @@ class AppLocalizationsKo extends AppLocalizations {
   String get tutorial_hint_1 => '해적 카드를 누르고, 배 위 해적을 뒤로 당겨서 쏘세요';
 
   @override
-  String get tutorial_hint_2 => '◀ ▶ 버튼을 꾹 누르고 있으면 배가 움직입니다. 연료가 남은 만큼만 갑니다';
+  String get tutorial_hint_2 => '◀ ▶ 를 꾹 누르면 연료만큼 배가 움직입니다. 바람(위쪽 화살표)이 탄을 밀어요';
 
   @override
-  String get tutorial_hint_3 => '흘수선 아래 구멍은 침수! 톡으로 상대 배를 맞히면 내 배가 고쳐져요';
+  String get tutorial_hint_3 =>
+      '거친 파도 구간에서는 배가 흔들려요. 잔잔한 곳으로 옮기고, 망대 해적으로 세게 쏘세요';
 
   @override
   String get resultDoubleDone => '2배로 받았어요';
@@ -1309,9 +1187,6 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get operatorMotions => '해적 모션 보기';
-
-  @override
-  String get operatorShipUpgrades => '배 업그레이드 (0골드)';
 
   @override
   String get operatorShipMax => '배 전부 최대로';
@@ -1472,9 +1347,6 @@ class AppLocalizationsKo extends AppLocalizations {
   String get hitTagIntercept => '요격';
 
   @override
-  String get cabinSealed => '봉쇄';
-
-  @override
   String get moveLocked => '묶임';
 
   @override
@@ -1497,47 +1369,6 @@ class AppLocalizationsKo extends AppLocalizations {
   String get musicOn => '배경음악';
 
   @override
-  String get shipUpgrades => '배 업그레이드';
-
-  @override
-  String get shipStage1 => '돛단배';
-
-  @override
-  String get shipStage2 => '작은 슬루프';
-
-  @override
-  String get shipStage3 => '슬루프';
-
-  @override
-  String get shipStage4 => '큰 슬루프';
-
-  @override
-  String get shipGrowRow => '배 키우기';
-
-  @override
-  String shipGrowNeed(Object stage) {
-    return '$stage 클리어하면 열린다';
-  }
-
-  @override
-  String get shipMaxed => '최고 단계';
-
-  @override
-  String hullLevelRow(Object level) {
-    return '선형 Lv $level';
-  }
-
-  @override
-  String mastLevelRow(Object name, Object level) {
-    return '$name Lv $level';
-  }
-
-  @override
-  String goldCost(Object gold) {
-    return '골드 $gold';
-  }
-
-  @override
   String buyAsk(Object name, Object gold) {
     return '$name: 골드 $gold를 쓸까요?';
   }
@@ -1549,31 +1380,25 @@ class AppLocalizationsKo extends AppLocalizations {
   String get buy => '사기';
 
   @override
-  String get shipGrown => '배가 커졌다!';
-
-  @override
-  String shipGrownBody(Object width, Object height, Object cabins) {
-    return '$width×$height칸 · 선실 $cabins칸';
-  }
-
-  @override
-  String get shipGrowReady => '배를 키울 수 있다! 조선소로 가자';
-
-  @override
-  String get devStagePick => '단계 고르기(개발)';
-
-  @override
   String get ok => '확인';
 
   @override
-  String hullPercent(int percent) {
-    return '선체 $percent%';
+  String crewHpPercent(int percent) {
+    return '해적 체력 $percent%';
   }
 
   @override
-  String hullGain(int percent) {
-    return '+$percent%';
+  String captainPercent(int percent) {
+    return '선장실 $percent%';
   }
+
+  @override
+  String crewNestHint(int seat) {
+    return '$seat번은 망대: 피해가 크지만 돛대가 부러지면 바다로 떨어져 쓰러진다';
+  }
+
+  @override
+  String get prepNest => '망대';
 
   @override
   String fuelPercent(int percent) {
@@ -1655,14 +1480,6 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
-  String goalShipNeed(Object stage) {
-    return '배 확장: $stage 클리어';
-  }
-
-  @override
-  String get goalShipDone => '배를 다 키웠다';
-
-  @override
   String get goalAllClear => '이 해역을 모두 깼다!';
 
   @override
@@ -1735,11 +1552,6 @@ class AppLocalizationsKo extends AppLocalizations {
   @override
   String pirateHp(int n) {
     return '체력 $n';
-  }
-
-  @override
-  String pirateRange(String range) {
-    return '사거리 $range';
   }
 
   @override

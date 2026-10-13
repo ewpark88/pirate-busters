@@ -32,7 +32,6 @@ class ResultOverlay extends StatelessWidget {
         ? l10n.playerWins(winner + 1)
         : (winner == viewer ? l10n.resultWin : l10n.resultLose);
     final how = switch (state.outcome) {
-      // 선장실 파괴 전용 문구(outcomeCaptainLost)는 S3 에서 붙인다.
       MatchOutcome.captainLost => l10n.outcomeCaptainLost,
       MatchOutcome.annihilation => l10n.outcomeAnnihilation,
       MatchOutcome.timeDecision => l10n.outcomeTimeDecision,

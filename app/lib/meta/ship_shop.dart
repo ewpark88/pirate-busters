@@ -21,13 +21,6 @@ abstract final class ShipShop {
     );
   }
 
-  /// 모듈을 연다. 선장실·돛대는 처음부터 쓰므로 열 것이 없다 (ADR-111).
-  static PlayerProgress? unlockModule(
-    PlayerProgress p,
-    ModuleKind k, {
-    bool free = false,
-  }) => null;
-
   static PlayerProgress? _pay(PlayerProgress p, int gold, ShipUpgrades next) {
     if (p.gold < gold) return null;
     return p.copyWith(gold: p.gold - gold, ship: next);

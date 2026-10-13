@@ -219,9 +219,9 @@ void main() {
       final to = tester.getCenter(find.byKey(const ValueKey('crew-cabin-3')));
       await _holdDrag(tester, from, to);
       expect(store.deck, ['p01_octo', 'p36_tok', 'p06_pang']);
-      // 3번 선실(인덱스 2)에 보이고 4번은 비었다: 저장·전투 자리와 같다.
+      // 3번 선실(인덱스 2)에 보이고 4번·망대는 비었다: 저장·전투 자리와 같다.
       final ship = tester.widget<CrewShip>(find.byType(CrewShip));
-      expect(ship.slots, ['p01_octo', 'p36_tok', 'p06_pang', null]);
+      expect(ship.slots, ['p01_octo', 'p36_tok', 'p06_pang', null, null]);
     });
 
     testWidgets('가운데 해적을 내리면 뒤 해적이 앞 선실로 당겨져 보인다', (tester) async {
@@ -236,7 +236,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(store.deck, ['p01_octo', 'p06_pang']);
       final ship = tester.widget<CrewShip>(find.byType(CrewShip));
-      expect(ship.slots, ['p01_octo', 'p06_pang', null, null]);
+      expect(ship.slots, ['p01_octo', 'p06_pang', null, null, null]);
     });
   });
 
@@ -266,14 +266,16 @@ void main() {
       expect(CrewShip.badgeSize(10), greaterThanOrEqualTo(40));
       expect(CrewShip.badgeSize(60), greaterThan(60));
       expect(CrewShip.badgeSize(30, gap: 1), lessThan(30));
-      const cabins = [CabinCell(2, 3), CabinCell(3, 3), CabinCell(6, 1)];
-      expect(CrewShip.cabinGap(cabins), 1);
+      expect(CrewShip.cabinGap(const [(2, 3), (3, 3), (6, 1)]), 1);
     });
 
-    test('선원 화면 배는 전투에 나가는 내 배와 같다', () {
+    test('선원 화면 배는 전투에 나가는 내 배와 같고, 망대가 마지막 자리다', () {
       final fleet = MemoryFleetStore();
       final bp = myBlueprint(fleet, testCatalog, _progress.ship);
       expect(bp.cabins, hasLength(_progress.ship.hull.cabinSlots));
+      final seats = CrewShip.seatsOf(bp);
+      expect(seats, hasLength(bp.seatCount));
+      expect(seats.last, mastSeats(bp.hull, bp.modules).last);
     });
   });
 }
