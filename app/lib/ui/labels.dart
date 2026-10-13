@@ -72,4 +72,21 @@ abstract final class Labels {
     Rarity.legend => l10n.rarityLegend,
     Rarity.myth => l10n.rarityMyth,
   };
+
+  /// 탄종 이름(수치 없이). 선원 목록 필터 칩 (설계서 §4.8, §13.7).
+  static String ammoKind(AppLocalizations l10n, AmmoType a) => switch (a) {
+    AmmoType.explosive => l10n.ammoKindExplosive,
+    AmmoType.fire => l10n.ammoKindFire,
+    AmmoType.split => l10n.ammoKindSplit,
+    AmmoType.burst => l10n.ammoKindBurst,
+    AmmoType.sniper => l10n.ammoKindSniper,
+    AmmoType.chain => l10n.ammoKindChain,
+    AmmoType.pierce => l10n.ammoKindPierce,
+    AmmoType.skip => l10n.ammoKindSkip,
+    AmmoType.mine => l10n.ammoKindMine,
+    AmmoType.flock => l10n.ammoKindFlock,
+    AmmoType.homing => l10n.ammoKindHoming,
+    AmmoType.assault => l10n.ammoKindAssault,
+    AmmoType.support => l10n.ammoKindSupport,
+  };
 }

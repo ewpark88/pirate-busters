@@ -897,7 +897,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get crewHint => 'Drag pirates into the cabins';
+  String get crewHint => 'Hold a pirate, then drag it into a cabin';
 
   @override
   String get deckFamilies => 'Types';
@@ -1230,7 +1230,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String statFlood(Object mine, Object enemy) {
-    return 'Flooding you $mine% · enemy $enemy%';
+    return 'Flooding you $mine% : enemy $enemy%';
   }
 
   @override
@@ -1746,4 +1746,87 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get emphasisMast => 'Mast down!';
+
+  @override
+  String get crewFilterRarity => 'Rarity';
+
+  @override
+  String get crewFilterFamily => 'Type';
+
+  @override
+  String get crewFilterAmmo => 'Shot';
+
+  @override
+  String get crewFilterReset => 'Reset';
+
+  @override
+  String crewFilterCount(int shown, int total) {
+    return '$shown/$total';
+  }
+
+  @override
+  String get crewFilterEmpty => 'No pirates match';
+
+  @override
+  String get ammoKindExplosive => 'Blast';
+
+  @override
+  String get ammoKindFire => 'Fire';
+
+  @override
+  String get ammoKindSplit => 'Split';
+
+  @override
+  String get ammoKindBurst => 'Burst';
+
+  @override
+  String get ammoKindSniper => 'Sniper';
+
+  @override
+  String get ammoKindChain => 'Chain';
+
+  @override
+  String get ammoKindPierce => 'Pierce';
+
+  @override
+  String get ammoKindSkip => 'Skip';
+
+  @override
+  String get ammoKindMine => 'Mine';
+
+  @override
+  String get ammoKindFlock => 'Drop';
+
+  @override
+  String get ammoKindHoming => 'Homing';
+
+  @override
+  String get ammoKindAssault => 'Assault';
+
+  @override
+  String get ammoKindSupport => 'Support';
+
+  @override
+  String pirateCost(int n) {
+    return 'Cost $n';
+  }
+
+  @override
+  String pirateHp(int n) {
+    return 'HP $n';
+  }
+
+  @override
+  String pirateRange(String range) {
+    return 'Range $range';
+  }
+
+  @override
+  String get pirateBoard => 'Board';
+
+  @override
+  String get pirateUnboard => 'Unboard';
+
+  @override
+  String get pirateClose => 'Close';
 }

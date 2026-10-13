@@ -1613,7 +1613,7 @@ abstract class AppLocalizations {
   /// No description provided for @crewHint.
   ///
   /// In en, this message translates to:
-  /// **'Drag pirates into the cabins'**
+  /// **'Hold a pirate, then drag it into a cabin'**
   String get crewHint;
 
   /// No description provided for @deckFamilies.
@@ -2165,7 +2165,7 @@ abstract class AppLocalizations {
   /// No description provided for @statFlood.
   ///
   /// In en, this message translates to:
-  /// **'Flooding you {mine}% · enemy {enemy}%'**
+  /// **'Flooding you {mine}% : enemy {enemy}%'**
   String statFlood(Object mine, Object enemy);
 
   /// No description provided for @resultDouble.
@@ -3091,6 +3091,156 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Mast down!'**
   String get emphasisMast;
+
+  /// No description provided for @crewFilterRarity.
+  ///
+  /// In en, this message translates to:
+  /// **'Rarity'**
+  String get crewFilterRarity;
+
+  /// No description provided for @crewFilterFamily.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get crewFilterFamily;
+
+  /// No description provided for @crewFilterAmmo.
+  ///
+  /// In en, this message translates to:
+  /// **'Shot'**
+  String get crewFilterAmmo;
+
+  /// No description provided for @crewFilterReset.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset'**
+  String get crewFilterReset;
+
+  /// No description provided for @crewFilterCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{shown}/{total}'**
+  String crewFilterCount(int shown, int total);
+
+  /// No description provided for @crewFilterEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No pirates match'**
+  String get crewFilterEmpty;
+
+  /// No description provided for @ammoKindExplosive.
+  ///
+  /// In en, this message translates to:
+  /// **'Blast'**
+  String get ammoKindExplosive;
+
+  /// No description provided for @ammoKindFire.
+  ///
+  /// In en, this message translates to:
+  /// **'Fire'**
+  String get ammoKindFire;
+
+  /// No description provided for @ammoKindSplit.
+  ///
+  /// In en, this message translates to:
+  /// **'Split'**
+  String get ammoKindSplit;
+
+  /// No description provided for @ammoKindBurst.
+  ///
+  /// In en, this message translates to:
+  /// **'Burst'**
+  String get ammoKindBurst;
+
+  /// No description provided for @ammoKindSniper.
+  ///
+  /// In en, this message translates to:
+  /// **'Sniper'**
+  String get ammoKindSniper;
+
+  /// No description provided for @ammoKindChain.
+  ///
+  /// In en, this message translates to:
+  /// **'Chain'**
+  String get ammoKindChain;
+
+  /// No description provided for @ammoKindPierce.
+  ///
+  /// In en, this message translates to:
+  /// **'Pierce'**
+  String get ammoKindPierce;
+
+  /// No description provided for @ammoKindSkip.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip'**
+  String get ammoKindSkip;
+
+  /// No description provided for @ammoKindMine.
+  ///
+  /// In en, this message translates to:
+  /// **'Mine'**
+  String get ammoKindMine;
+
+  /// No description provided for @ammoKindFlock.
+  ///
+  /// In en, this message translates to:
+  /// **'Drop'**
+  String get ammoKindFlock;
+
+  /// No description provided for @ammoKindHoming.
+  ///
+  /// In en, this message translates to:
+  /// **'Homing'**
+  String get ammoKindHoming;
+
+  /// No description provided for @ammoKindAssault.
+  ///
+  /// In en, this message translates to:
+  /// **'Assault'**
+  String get ammoKindAssault;
+
+  /// No description provided for @ammoKindSupport.
+  ///
+  /// In en, this message translates to:
+  /// **'Support'**
+  String get ammoKindSupport;
+
+  /// No description provided for @pirateCost.
+  ///
+  /// In en, this message translates to:
+  /// **'Cost {n}'**
+  String pirateCost(int n);
+
+  /// No description provided for @pirateHp.
+  ///
+  /// In en, this message translates to:
+  /// **'HP {n}'**
+  String pirateHp(int n);
+
+  /// No description provided for @pirateRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Range {range}'**
+  String pirateRange(String range);
+
+  /// No description provided for @pirateBoard.
+  ///
+  /// In en, this message translates to:
+  /// **'Board'**
+  String get pirateBoard;
+
+  /// No description provided for @pirateUnboard.
+  ///
+  /// In en, this message translates to:
+  /// **'Unboard'**
+  String get pirateUnboard;
+
+  /// No description provided for @pirateClose.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get pirateClose;
 }
 
 class _AppLocalizationsDelegate
