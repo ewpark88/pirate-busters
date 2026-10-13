@@ -146,7 +146,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get outcomeAnnihilation => '전멸';
 
   @override
-  String get outcomeTimeDecision => '시간 판정';
+  String get outcomeTimeDecision => '턴 제한 판정';
 
   @override
   String get outcomeSurrender => '항복';
@@ -273,7 +273,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get pirate_p28_name => '펠리컨 수송대 펠리';
 
   @override
-  String get pirate_p28_desc => '꼭대기에서 소형 폭탄 4개';
+  String get pirate_p28_desc => '궤적 꼭대기에서 소형 폭탄 4개';
 
   @override
   String get pirate_p28_lore => '부리 주머니에 무엇이 들었는지는 아무도 모른다.';
@@ -390,7 +390,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get pirate_p17_name => '펭귄 배썰매 핑구';
 
   @override
-  String get pirate_p17_desc => '배로 튕겨 선체 명중';
+  String get pirate_p17_desc => '배 썰매로 수면을 튕겨 선체 명중';
 
   @override
   String get pirate_p17_lore => '얼음이 없어도 어디서든 미끄러진다.';
@@ -751,7 +751,7 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
-  String get crewHint => '해적을 길게 눌러 선실로 끌어다 놓으세요';
+  String get crewHint => '해적을 길게 눌러 선실이나 망대로 끌어다 놓으세요';
 
   @override
   String get deckFamilies => '계열';
@@ -811,7 +811,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get levelHell => '지옥';
 
   @override
-  String get autoEndTurn => '2발 뒤 자동 턴 종료';
+  String get autoEndTurn => '쏜 뒤 자동 턴 종료';
 
   @override
   String get sea_1_name => '열대 만';
@@ -860,13 +860,13 @@ class AppLocalizationsKo extends AppLocalizations {
   String get story_s1_2_enemy => '초계대 순찰병: 작살꾼도 데려왔다. 벽 뒤에 숨어도 소용없어.';
 
   @override
-  String get story_s1_2_ally => '수리: 저 돌팔매 솜씨 좀 보라구. 흘수선을 노리면 되지?';
+  String get story_s1_2_ally => '수리: 저 돌팔매 솜씨 좀 보라구. 배 아래쪽을 노리면 되지?';
 
   @override
   String get story_s1_3_enemy => '초계대 척후병: 앵무새가 너희를 찾아낼 거다. 숨을 곳은 없어.';
 
   @override
-  String get story_s1_3_ally => '옥토: 그럼 물이 새기 전에 끝내자. 빠르게!';
+  String get story_s1_3_ally => '옥토: 그럼 찾아내기 전에 끝내자. 빠르게!';
 
   @override
   String get story_s1_4_enemy => '초계대 포수: 넷이 쏘면 너희 갑판은 남아나지 않는다.';
@@ -875,7 +875,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get story_s1_4_ally => '폴리: 하늘은 내 거야! 위에서 내리꽂아 줄게.';
 
   @override
-  String get story_s1_5_enemy => '꽃게 부대장: 뱃머리 철판을 봐라. 어떤 탄이든 반은 튕겨낸다!';
+  String get story_s1_5_enemy => '꽃게 부대장: 뱃머리 철판을 봐라. 너희 탄으로는 흠집도 안 난다!';
 
   @override
   String get story_s1_5_ally => '톡: 정면이 단단하면 위에서, 아래에서 치면 되지.';
@@ -911,7 +911,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get story_s1_10_ally => '폴리: 구름이 흐르는 쪽을 봐. 바람을 타면 더 멀리 날아가!';
 
   @override
-  String get story_s1_11_enemy => '초계대 부함장: 함장님 앞까지는 못 간다. 여기서 전부 가라앉혀 주마.';
+  String get story_s1_11_enemy => '초계대 부함장: 함장님 앞까지는 못 간다. 여기서 전부 쓰러뜨려 주마.';
 
   @override
   String get story_s1_11_ally => '옥토: 바람, 파도, 망대… 배운 걸 다 쓰자. 첫 조각이 코앞이야!';
@@ -1376,7 +1376,7 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
-  String get notEnoughGold => '골드가 모자라다';
+  String get notEnoughGold => '골드가 모자라요';
 
   @override
   String get buy => '사기';
@@ -1462,7 +1462,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get barkTauntLow1 => '이, 이럴 리가 없어!';
 
   @override
-  String get barkTauntLow2 => '물이 샌다! 펌프를 돌려!';
+  String get barkTauntLow2 => '선체가 버티질 못한다!';
 
   @override
   String get barkTauntLow3 => '제법이군… 하지만 아직이다!';

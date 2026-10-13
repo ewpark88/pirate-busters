@@ -39,7 +39,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get timeVerdictByHull => 'HP tied: cabin decides';
+  String get timeVerdictByHull => 'HP tied: captain\'s cabin decides';
 
   @override
   String get yourTurn => 'Your turn';
@@ -165,7 +165,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get outcomeAnnihilation => 'Crew wiped out';
 
   @override
-  String get outcomeTimeDecision => 'Time decision';
+  String get outcomeTimeDecision => 'Turn limit';
 
   @override
   String get outcomeSurrender => 'Surrender';
@@ -196,7 +196,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get emphasisCabin => 'Cabin hit!';
 
   @override
-  String get bannerCaptainLost => 'Cabin down!';
+  String get bannerCaptainLost => 'Captain down!';
 
   @override
   String get bannerMyTurn => 'Your turn!';
@@ -270,7 +270,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pirate_p21_name => 'Puffy the Blaster';
 
   @override
-  String get pirate_p21_desc => 'Sticks under the hull, blows at my next turn';
+  String get pirate_p21_desc =>
+      'Sticks under the hull and blows at the start of your next turn';
 
   @override
   String get pirate_p21_lore =>
@@ -299,7 +300,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pirate_p28_name => 'Pelly the Pelican';
 
   @override
-  String get pirate_p28_desc => 'Drops 4 small bombs from the top';
+  String get pirate_p28_desc => 'Drops 4 small bombs at the top of its arc';
 
   @override
   String get pirate_p28_lore =>
@@ -320,7 +321,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pirate_p36_name => 'Tok the Shipwright';
 
   @override
-  String get pirate_p36_desc => 'Shell cannon shockwave pushes the ship 1 cell';
+  String get pirate_p36_desc =>
+      'Shell-cannon shockwave pushes the enemy ship 1 cell';
 
   @override
   String get pirate_p36_lore => 'Slow but careful. He keeps the ship afloat.';
@@ -454,7 +456,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get pirate_p20_desc =>
-      '★ Big wave sweeps the deck and pushes the ship 2 cells';
+      '★ Big wave sweeps the deck and pushes the enemy ship 2 cells';
 
   @override
   String get pirate_p20_lore => 'When Orca passes, the whole sea tilts.';
@@ -463,7 +465,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pirate_p22_name => 'Jelly the Mine';
 
   @override
-  String get pirate_p22_desc => 'Sticks under the hull, blows at my next turn';
+  String get pirate_p22_desc =>
+      'Sticks under the hull and blows at the start of your next turn';
 
   @override
   String get pirate_p22_lore =>
@@ -473,8 +476,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pirate_p23_name => 'Bara the Torpedo';
 
   @override
-  String get pirate_p23_desc =>
-      'Straight torpedo that dives under the waterline';
+  String get pirate_p23_desc => 'Straight torpedo that dives into the water';
 
   @override
   String get pirate_p23_lore => 'Once Bara picks a heading, it never turns.';
@@ -483,7 +485,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pirate_p24_name => 'Moray the Eel';
 
   @override
-  String get pirate_p24_desc => 'Sticks under the hull, blows at my next turn';
+  String get pirate_p24_desc =>
+      'Sticks under the hull and blows at the start of your next turn';
 
   @override
   String get pirate_p24_lore => 'Sees a gap, sticks its teeth in first.';
@@ -559,7 +562,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pirate_p37_name => 'Pumpum the Baby Whale';
 
   @override
-  String get pirate_p37_desc => 'Water-jet shockwave pushes the ship 1 cell';
+  String get pirate_p37_desc =>
+      'Water-jet shockwave pushes the enemy ship 1 cell';
 
   @override
   String get pirate_p37_lore => 'Proud of the spout from its blowhole.';
@@ -568,7 +572,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pirate_p38_name => 'Cook the Hermit Crab';
 
   @override
-  String get pirate_p38_desc => 'Pot-bomb shockwave pushes the ship 1 cell';
+  String get pirate_p38_desc =>
+      'Pot-bomb shockwave pushes the enemy ship 1 cell';
 
   @override
   String get pirate_p38_lore => 'Believes a hungry crew cannot fight.';
@@ -577,7 +582,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pirate_p39_name => 'Corey the Coral Golem';
 
   @override
-  String get pirate_p39_desc => 'Coral-chunk shockwave pushes the ship 1 cell';
+  String get pirate_p39_desc =>
+      'Coral-chunk shockwave pushes the enemy ship 1 cell';
 
   @override
   String get pirate_p39_lore =>
@@ -587,7 +593,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pirate_p40_name => 'Lamp the Anglerfish';
 
   @override
-  String get pirate_p40_desc => '★ Huge shockwave pushes the ship 2 cells';
+  String get pirate_p40_desc =>
+      '★ Huge shockwave pushes the enemy ship 2 cells';
 
   @override
   String get pirate_p40_lore =>
@@ -797,7 +804,8 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get crewHint => 'Hold a pirate, then drag it into a cabin';
+  String get crewHint =>
+      'Hold a pirate, then drag it into a cabin or the crow\'s nest';
 
   @override
   String get deckFamilies => 'Types';
@@ -857,7 +865,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get levelHell => 'Hell';
 
   @override
-  String get autoEndTurn => 'Auto end turn after 2 shots';
+  String get autoEndTurn => 'Auto end turn after firing';
 
   @override
   String get sea_1_name => 'Tropic Bay';
@@ -900,7 +908,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get story_t3_ally =>
-      'Tok: Let\'s move to calm water. Our lookout hits hard, but falls if the mast breaks!';
+      'Tok: Let\'s move to calm water. Our crow\'s nest pirate hits hard, but falls if the mast breaks!';
 
   @override
   String get story_s1_1_enemy =>
@@ -916,7 +924,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get story_s1_2_ally =>
-      'Suri: Watch my stone skip. Aim for the waterline, right?';
+      'Suri: Watch my stone skip. Aim low on the hull, right?';
 
   @override
   String get story_s1_3_enemy =>
@@ -924,7 +932,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get story_s1_3_ally =>
-      'Octo: Then let\'s finish before we spring a leak. Fast!';
+      'Octo: Then let\'s finish this before it finds us. Fast!';
 
   @override
   String get story_s1_4_enemy =>
@@ -936,7 +944,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get story_s1_5_enemy =>
-      'Crab Lieutenant: See the iron bow? Half of every shot bounces right off!';
+      'Crab Lieutenant: See the iron bow? Your shots won\'t even scratch it!';
 
   @override
   String get story_s1_5_ally =>
@@ -956,7 +964,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get story_s1_7_ally =>
-      'Octo: Bring down that lookout and the sniper falls with it. Aim for the mast!';
+      'Octo: Bring down that crow\'s nest and the sniper falls with it. Aim for the mast!';
 
   @override
   String get story_s1_8_enemy =>
@@ -984,11 +992,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get story_s1_11_enemy =>
-      'Patrol first mate: You won\'t reach the captain. I\'ll sink you all right here.';
+      'Patrol first mate: You won\'t reach the captain. I\'ll take you all down right here.';
 
   @override
   String get story_s1_11_ally =>
-      'Octo: Wind, waves, lookout… let\'s use everything we learned. The first shard is close!';
+      'Octo: Wind, waves, crow\'s nest… let\'s use everything we learned. The first shard is close!';
 
   @override
   String get story_s1_12_enemy =>
@@ -1012,7 +1020,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get portSail => 'Set Sail';
 
   @override
-  String get portShipyardLocked => 'The shipyard opens from your 4th battle';
+  String get portShipyardLocked => 'The shipyard opens at your 4th battle';
 
   @override
   String get soundOn => 'Sound effects';
@@ -1477,7 +1485,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String captainPercent(int percent) {
-    return 'Cabin $percent%';
+    return 'Captain $percent%';
   }
 
   @override
@@ -1548,7 +1556,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get barkTauntLow1 => 'Th-this can\'t be!';
 
   @override
-  String get barkTauntLow2 => 'We\'re leaking! Man the pumps!';
+  String get barkTauntLow2 => 'The hull can\'t take much more!';
 
   @override
   String get barkTauntLow3 => 'Not bad… but not done yet!';

@@ -125,7 +125,7 @@ abstract class AppLocalizations {
   /// No description provided for @timeVerdictByHull.
   ///
   /// In en, this message translates to:
-  /// **'HP tied: cabin decides'**
+  /// **'HP tied: captain\'s cabin decides'**
   String get timeVerdictByHull;
 
   /// No description provided for @yourTurn.
@@ -347,7 +347,7 @@ abstract class AppLocalizations {
   /// No description provided for @outcomeTimeDecision.
   ///
   /// In en, this message translates to:
-  /// **'Time decision'**
+  /// **'Turn limit'**
   String get outcomeTimeDecision;
 
   /// No description provided for @outcomeSurrender.
@@ -401,7 +401,7 @@ abstract class AppLocalizations {
   /// No description provided for @bannerCaptainLost.
   ///
   /// In en, this message translates to:
-  /// **'Cabin down!'**
+  /// **'Captain down!'**
   String get bannerCaptainLost;
 
   /// No description provided for @bannerMyTurn.
@@ -539,7 +539,7 @@ abstract class AppLocalizations {
   /// No description provided for @pirate_p21_desc.
   ///
   /// In en, this message translates to:
-  /// **'Sticks under the hull, blows at my next turn'**
+  /// **'Sticks under the hull and blows at the start of your next turn'**
   String get pirate_p21_desc;
 
   /// No description provided for @pirate_p21_lore.
@@ -593,7 +593,7 @@ abstract class AppLocalizations {
   /// No description provided for @pirate_p28_desc.
   ///
   /// In en, this message translates to:
-  /// **'Drops 4 small bombs from the top'**
+  /// **'Drops 4 small bombs at the top of its arc'**
   String get pirate_p28_desc;
 
   /// No description provided for @pirate_p28_lore.
@@ -629,7 +629,7 @@ abstract class AppLocalizations {
   /// No description provided for @pirate_p36_desc.
   ///
   /// In en, this message translates to:
-  /// **'Shell cannon shockwave pushes the ship 1 cell'**
+  /// **'Shell-cannon shockwave pushes the enemy ship 1 cell'**
   String get pirate_p36_desc;
 
   /// No description provided for @pirate_p36_lore.
@@ -881,7 +881,7 @@ abstract class AppLocalizations {
   /// No description provided for @pirate_p20_desc.
   ///
   /// In en, this message translates to:
-  /// **'★ Big wave sweeps the deck and pushes the ship 2 cells'**
+  /// **'★ Big wave sweeps the deck and pushes the enemy ship 2 cells'**
   String get pirate_p20_desc;
 
   /// No description provided for @pirate_p20_lore.
@@ -899,7 +899,7 @@ abstract class AppLocalizations {
   /// No description provided for @pirate_p22_desc.
   ///
   /// In en, this message translates to:
-  /// **'Sticks under the hull, blows at my next turn'**
+  /// **'Sticks under the hull and blows at the start of your next turn'**
   String get pirate_p22_desc;
 
   /// No description provided for @pirate_p22_lore.
@@ -917,7 +917,7 @@ abstract class AppLocalizations {
   /// No description provided for @pirate_p23_desc.
   ///
   /// In en, this message translates to:
-  /// **'Straight torpedo that dives under the waterline'**
+  /// **'Straight torpedo that dives into the water'**
   String get pirate_p23_desc;
 
   /// No description provided for @pirate_p23_lore.
@@ -935,7 +935,7 @@ abstract class AppLocalizations {
   /// No description provided for @pirate_p24_desc.
   ///
   /// In en, this message translates to:
-  /// **'Sticks under the hull, blows at my next turn'**
+  /// **'Sticks under the hull and blows at the start of your next turn'**
   String get pirate_p24_desc;
 
   /// No description provided for @pirate_p24_lore.
@@ -1079,7 +1079,7 @@ abstract class AppLocalizations {
   /// No description provided for @pirate_p37_desc.
   ///
   /// In en, this message translates to:
-  /// **'Water-jet shockwave pushes the ship 1 cell'**
+  /// **'Water-jet shockwave pushes the enemy ship 1 cell'**
   String get pirate_p37_desc;
 
   /// No description provided for @pirate_p37_lore.
@@ -1097,7 +1097,7 @@ abstract class AppLocalizations {
   /// No description provided for @pirate_p38_desc.
   ///
   /// In en, this message translates to:
-  /// **'Pot-bomb shockwave pushes the ship 1 cell'**
+  /// **'Pot-bomb shockwave pushes the enemy ship 1 cell'**
   String get pirate_p38_desc;
 
   /// No description provided for @pirate_p38_lore.
@@ -1115,7 +1115,7 @@ abstract class AppLocalizations {
   /// No description provided for @pirate_p39_desc.
   ///
   /// In en, this message translates to:
-  /// **'Coral-chunk shockwave pushes the ship 1 cell'**
+  /// **'Coral-chunk shockwave pushes the enemy ship 1 cell'**
   String get pirate_p39_desc;
 
   /// No description provided for @pirate_p39_lore.
@@ -1133,7 +1133,7 @@ abstract class AppLocalizations {
   /// No description provided for @pirate_p40_desc.
   ///
   /// In en, this message translates to:
-  /// **'★ Huge shockwave pushes the ship 2 cells'**
+  /// **'★ Huge shockwave pushes the enemy ship 2 cells'**
   String get pirate_p40_desc;
 
   /// No description provided for @pirate_p40_lore.
@@ -1457,7 +1457,7 @@ abstract class AppLocalizations {
   /// No description provided for @crewHint.
   ///
   /// In en, this message translates to:
-  /// **'Hold a pirate, then drag it into a cabin'**
+  /// **'Hold a pirate, then drag it into a cabin or the crow\'s nest'**
   String get crewHint;
 
   /// No description provided for @deckFamilies.
@@ -1577,7 +1577,7 @@ abstract class AppLocalizations {
   /// No description provided for @autoEndTurn.
   ///
   /// In en, this message translates to:
-  /// **'Auto end turn after 2 shots'**
+  /// **'Auto end turn after firing'**
   String get autoEndTurn;
 
   /// No description provided for @sea_1_name.
@@ -1643,7 +1643,7 @@ abstract class AppLocalizations {
   /// No description provided for @story_t3_ally.
   ///
   /// In en, this message translates to:
-  /// **'Tok: Let\'s move to calm water. Our lookout hits hard, but falls if the mast breaks!'**
+  /// **'Tok: Let\'s move to calm water. Our crow\'s nest pirate hits hard, but falls if the mast breaks!'**
   String get story_t3_ally;
 
   /// No description provided for @story_s1_1_enemy.
@@ -1667,7 +1667,7 @@ abstract class AppLocalizations {
   /// No description provided for @story_s1_2_ally.
   ///
   /// In en, this message translates to:
-  /// **'Suri: Watch my stone skip. Aim for the waterline, right?'**
+  /// **'Suri: Watch my stone skip. Aim low on the hull, right?'**
   String get story_s1_2_ally;
 
   /// No description provided for @story_s1_3_enemy.
@@ -1679,7 +1679,7 @@ abstract class AppLocalizations {
   /// No description provided for @story_s1_3_ally.
   ///
   /// In en, this message translates to:
-  /// **'Octo: Then let\'s finish before we spring a leak. Fast!'**
+  /// **'Octo: Then let\'s finish this before it finds us. Fast!'**
   String get story_s1_3_ally;
 
   /// No description provided for @story_s1_4_enemy.
@@ -1697,7 +1697,7 @@ abstract class AppLocalizations {
   /// No description provided for @story_s1_5_enemy.
   ///
   /// In en, this message translates to:
-  /// **'Crab Lieutenant: See the iron bow? Half of every shot bounces right off!'**
+  /// **'Crab Lieutenant: See the iron bow? Your shots won\'t even scratch it!'**
   String get story_s1_5_enemy;
 
   /// No description provided for @story_s1_5_ally.
@@ -1727,7 +1727,7 @@ abstract class AppLocalizations {
   /// No description provided for @story_s1_7_ally.
   ///
   /// In en, this message translates to:
-  /// **'Octo: Bring down that lookout and the sniper falls with it. Aim for the mast!'**
+  /// **'Octo: Bring down that crow\'s nest and the sniper falls with it. Aim for the mast!'**
   String get story_s1_7_ally;
 
   /// No description provided for @story_s1_8_enemy.
@@ -1769,13 +1769,13 @@ abstract class AppLocalizations {
   /// No description provided for @story_s1_11_enemy.
   ///
   /// In en, this message translates to:
-  /// **'Patrol first mate: You won\'t reach the captain. I\'ll sink you all right here.'**
+  /// **'Patrol first mate: You won\'t reach the captain. I\'ll take you all down right here.'**
   String get story_s1_11_enemy;
 
   /// No description provided for @story_s1_11_ally.
   ///
   /// In en, this message translates to:
-  /// **'Octo: Wind, waves, lookout… let\'s use everything we learned. The first shard is close!'**
+  /// **'Octo: Wind, waves, crow\'s nest… let\'s use everything we learned. The first shard is close!'**
   String get story_s1_11_ally;
 
   /// No description provided for @story_s1_12_enemy.
@@ -1811,7 +1811,7 @@ abstract class AppLocalizations {
   /// No description provided for @portShipyardLocked.
   ///
   /// In en, this message translates to:
-  /// **'The shipyard opens from your 4th battle'**
+  /// **'The shipyard opens at your 4th battle'**
   String get portShipyardLocked;
 
   /// No description provided for @soundOn.
@@ -2615,7 +2615,7 @@ abstract class AppLocalizations {
   /// Battle HUD: captain cabin block durability (design §13.4).
   ///
   /// In en, this message translates to:
-  /// **'Cabin {percent}%'**
+  /// **'Captain {percent}%'**
   String captainPercent(int percent);
 
   /// Crew screen: crow's nest guide (design §13.7, §3.3).
@@ -2747,7 +2747,7 @@ abstract class AppLocalizations {
   /// No description provided for @barkTauntLow2.
   ///
   /// In en, this message translates to:
-  /// **'We\'re leaking! Man the pumps!'**
+  /// **'The hull can\'t take much more!'**
   String get barkTauntLow2;
 
   /// No description provided for @barkTauntLow3.

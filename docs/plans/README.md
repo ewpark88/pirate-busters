@@ -63,3 +63,4 @@
 | [2026-10-13-s4-asset-candidates.md](2026-10-13-s4-asset-candidates.md) | S4 준비: CC0 폭발·파편·효과음·음악 후보와 교체 작업 목록 |
 | [2026-10-13-s5-playtest-checklist.md](2026-10-13-s5-playtest-checklist.md) | S5 손맛 점검표: 10판 기록, 항목별 1~5점(재미·판 길이·바람·파도·이동·망대·충격탄·전설·타격감·소리), S2~S4 사람 확인 모음 |
 | [2026-10-13-s5-balance-proposal.md](2026-10-13-s5-balance-proposal.md) | S5 준비: AI 이동 목표(잔잔한 구간)·sim_runner 실험 옵션·전후 1,000판 측정과 BALANCE 변경안(턴 제한 30 등, 승인 대기) |
+| [2026-10-13-arb-glossary.md](2026-10-13-arb-glossary.md) | 문구 검수(ko·en ARB 전체): 옛 규칙·용어 섞임·번역투 고친 목록, 정리할 옛 키, ko·en 용어표 |
