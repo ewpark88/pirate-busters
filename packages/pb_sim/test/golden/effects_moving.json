@@ -3,8 +3,8 @@
  "expect": {
   "outcome": "annihilation",
   "winner": 0,
-  "turns": 20,
-  "hash": "de7b2da4"
+  "turns": 10,
+  "hash": "6b1ae767"
  },
  "replay": {
   "version": 7,
@@ -518,7 +518,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "0e981781"
+    "hash": "43d79737"
    },
    {
     "turn": 2,
@@ -541,7 +541,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "8857571c"
+    "hash": "8df73754"
    },
    {
     "turn": 3,
@@ -564,7 +564,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "71ae95c7"
+    "hash": "9498db0f"
    },
    {
     "turn": 4,
@@ -587,7 +587,7 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "574d084f"
+    "hash": "ca3d281a"
    },
    {
     "turn": 5,
@@ -601,8 +601,8 @@
      {
       "t": 2000,
       "type": "FIRE",
-      "slot": 2,
-      "angle": 19250,
+      "slot": 4,
+      "angle": 16250,
       "power": 10000
      },
      {
@@ -610,148 +610,10 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "34cb15d1"
+    "hash": "81c569d3"
    },
    {
     "turn": 6,
-    "side": 0,
-    "cmds": [
-     {
-      "t": 300,
-      "type": "MOVE",
-      "dx": 10
-     },
-     {
-      "t": 2000,
-      "type": "FIRE",
-      "slot": 3,
-      "angle": 23500,
-      "power": 10000
-     },
-     {
-      "t": 9000,
-      "type": "END_TURN"
-     }
-    ],
-    "hash": "c5afd923"
-   },
-   {
-    "turn": 7,
-    "side": 1,
-    "cmds": [
-     {
-      "t": 300,
-      "type": "MOVE",
-      "dx": -10
-     },
-     {
-      "t": 2000,
-      "type": "FIRE",
-      "slot": 4,
-      "angle": 23000,
-      "power": 10000
-     },
-     {
-      "t": 9000,
-      "type": "END_TURN"
-     }
-    ],
-    "hash": "695bfc28"
-   },
-   {
-    "turn": 8,
-    "side": 0,
-    "cmds": [
-     {
-      "t": 300,
-      "type": "MOVE",
-      "dx": 10
-     },
-     {
-      "t": 2000,
-      "type": "FIRE",
-      "slot": 0,
-      "angle": 27250,
-      "power": 10000
-     },
-     {
-      "t": 9000,
-      "type": "END_TURN"
-     }
-    ],
-    "hash": "632ee60f"
-   },
-   {
-    "turn": 9,
-    "side": 1,
-    "cmds": [
-     {
-      "t": 300,
-      "type": "MOVE",
-      "dx": -10
-     },
-     {
-      "t": 2000,
-      "type": "FIRE",
-      "slot": 4,
-      "angle": 20750,
-      "power": 10000
-     },
-     {
-      "t": 9000,
-      "type": "END_TURN"
-     }
-    ],
-    "hash": "3b4c2392"
-   },
-   {
-    "turn": 10,
-    "side": 0,
-    "cmds": [
-     {
-      "t": 300,
-      "type": "MOVE",
-      "dx": 10
-     },
-     {
-      "t": 2000,
-      "type": "FIRE",
-      "slot": 0,
-      "angle": 25250,
-      "power": 10000
-     },
-     {
-      "t": 9000,
-      "type": "END_TURN"
-     }
-    ],
-    "hash": "ccdd08e3"
-   },
-   {
-    "turn": 11,
-    "side": 1,
-    "cmds": [
-     {
-      "t": 300,
-      "type": "MOVE",
-      "dx": -10
-     },
-     {
-      "t": 2000,
-      "type": "FIRE",
-      "slot": 0,
-      "angle": 22250,
-      "power": 10000
-     },
-     {
-      "t": 9000,
-      "type": "END_TURN"
-     }
-    ],
-    "hash": "130f767a"
-   },
-   {
-    "turn": 12,
     "side": 0,
     "cmds": [
      {
@@ -771,10 +633,10 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "e9cbed7e"
+    "hash": "7bfd7bf5"
    },
    {
-    "turn": 13,
+    "turn": 7,
     "side": 1,
     "cmds": [
      {
@@ -786,7 +648,7 @@
       "t": 2000,
       "type": "FIRE",
       "slot": 4,
-      "angle": 19250,
+      "angle": 18000,
       "power": 10000
      },
      {
@@ -794,10 +656,10 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "54de5d9d"
+    "hash": "36893d31"
    },
    {
-    "turn": 14,
+    "turn": 8,
     "side": 0,
     "cmds": [
      {
@@ -808,8 +670,8 @@
      {
       "t": 2000,
       "type": "FIRE",
-      "slot": 3,
-      "angle": 17250,
+      "slot": 2,
+      "angle": 23000,
       "power": 10000
      },
      {
@@ -817,10 +679,10 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "7a832f5c"
+    "hash": "5a6c9143"
    },
    {
-    "turn": 15,
+    "turn": 9,
     "side": 1,
     "cmds": [
      {
@@ -832,7 +694,7 @@
       "t": 2000,
       "type": "FIRE",
       "slot": 4,
-      "angle": 17500,
+      "angle": 15250,
       "power": 10000
      },
      {
@@ -840,10 +702,10 @@
       "type": "END_TURN"
      }
     ],
-    "hash": "7e8f5759"
+    "hash": "b3defbbb"
    },
    {
-    "turn": 16,
+    "turn": 10,
     "side": 0,
     "cmds": [
      {
@@ -854,104 +716,12 @@
      {
       "t": 2000,
       "type": "FIRE",
-      "slot": 3,
-      "angle": 17250,
-      "power": 10000
-     },
-     {
-      "t": 9000,
-      "type": "END_TURN"
-     }
-    ],
-    "hash": "9aded936"
-   },
-   {
-    "turn": 17,
-    "side": 1,
-    "cmds": [
-     {
-      "t": 300,
-      "type": "MOVE",
-      "dx": -10
-     },
-     {
-      "t": 2000,
-      "type": "FIRE",
-      "slot": 4,
-      "angle": 12500,
-      "power": 10000
-     },
-     {
-      "t": 9000,
-      "type": "END_TURN"
-     }
-    ],
-    "hash": "566b3fca"
-   },
-   {
-    "turn": 18,
-    "side": 0,
-    "cmds": [
-     {
-      "t": 300,
-      "type": "MOVE",
-      "dx": 10
-     },
-     {
-      "t": 2000,
-      "type": "FIRE",
-      "slot": 3,
-      "angle": 25000,
-      "power": 10000
-     },
-     {
-      "t": 9000,
-      "type": "END_TURN"
-     }
-    ],
-    "hash": "e73567ed"
-   },
-   {
-    "turn": 19,
-    "side": 1,
-    "cmds": [
-     {
-      "t": 300,
-      "type": "MOVE",
-      "dx": -10
-     },
-     {
-      "t": 2000,
-      "type": "FIRE",
-      "slot": 4,
-      "angle": 11500,
-      "power": 10000
-     },
-     {
-      "t": 9000,
-      "type": "END_TURN"
-     }
-    ],
-    "hash": "461b46bf"
-   },
-   {
-    "turn": 20,
-    "side": 0,
-    "cmds": [
-     {
-      "t": 300,
-      "type": "MOVE",
-      "dx": 10
-     },
-     {
-      "t": 2000,
-      "type": "FIRE",
-      "slot": 3,
-      "angle": 23750,
+      "slot": 2,
+      "angle": 26750,
       "power": 10000
      }
     ],
-    "hash": "de7b2da4"
+    "hash": "6b1ae767"
    }
   ]
  }

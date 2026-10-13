@@ -52,7 +52,7 @@ void main() {
       );
       expect(
         [for (final r in Rarity.values) v(AmmoType.sniper, r).$1],
-        [150, 170, 190, 210, 230],
+        [120, 125, 130, 145, 145],
       );
       expect(
         [for (final r in Rarity.values) v(AmmoType.flock, r).$1],
@@ -130,7 +130,7 @@ void main() {
     test('체력·피해에 등급 배율을 곱한다: 영웅 우니 ×1.25, 희귀 펠리 ×1.10', () {
       final c = _load().catalog;
       expect(c.byId('p04_uni').hp, 300);
-      expect(c.byId('p04_uni').blockDamage, 50);
+      expect(c.byId('p04_uni').blockDamage, 75);
       expect(c.byId('p28_pelly').hp, 220);
       expect(c.byId('p01_octo').hp, 240);
     });

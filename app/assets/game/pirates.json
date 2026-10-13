@@ -14,8 +14,8 @@
       },
       "onHit": {
         "radiusCells": 1,
-        "blockDmg": 40,
-        "pirateDmg": 80
+        "blockDmg": 60,
+        "pirateDmg": 120
       },
       "growth": {},
       "render": {
@@ -37,8 +37,8 @@
       },
       "onHit": {
         "radiusCells": 1,
-        "blockDmg": 40,
-        "pirateDmg": 80
+        "blockDmg": 60,
+        "pirateDmg": 120
       },
       "growth": {},
       "render": {
@@ -60,8 +60,8 @@
       },
       "onHit": {
         "radiusCells": 1,
-        "blockDmg": 40,
-        "pirateDmg": 80
+        "blockDmg": 60,
+        "pirateDmg": 120
       },
       "growth": {},
       "render": {
@@ -84,8 +84,8 @@
       },
       "onHit": {
         "radiusCells": 1,
-        "blockDmg": 40,
-        "pirateDmg": 80
+        "blockDmg": 60,
+        "pirateDmg": 120
       },
       "growth": {},
       "render": {
@@ -107,8 +107,8 @@
       },
       "onHit": {
         "radiusCells": 1,
-        "blockDmg": 40,
-        "pirateDmg": 80
+        "blockDmg": 60,
+        "pirateDmg": 120
       },
       "growth": {},
       "render": {
@@ -134,8 +134,8 @@
       },
       "onHit": {
         "radiusCells": 0,
-        "blockDmg": 60,
-        "pirateDmg": 100
+        "blockDmg": 90,
+        "pirateDmg": 150
       },
       "growth": {},
       "render": {
@@ -159,8 +159,8 @@
       },
       "onHit": {
         "radiusCells": 0,
-        "blockDmg": 60,
-        "pirateDmg": 100
+        "blockDmg": 90,
+        "pirateDmg": 150
       },
       "growth": {},
       "render": {
@@ -182,8 +182,8 @@
       },
       "onHit": {
         "radiusCells": 0,
-        "blockDmg": 60,
-        "pirateDmg": 100
+        "blockDmg": 90,
+        "pirateDmg": 150
       },
       "growth": {},
       "render": {
@@ -207,8 +207,8 @@
       },
       "onHit": {
         "radiusCells": 0,
-        "blockDmg": 60,
-        "pirateDmg": 100
+        "blockDmg": 90,
+        "pirateDmg": 150
       },
       "growth": {},
       "render": {
@@ -230,8 +230,8 @@
       },
       "onHit": {
         "radiusCells": 0,
-        "blockDmg": 60,
-        "pirateDmg": 100
+        "blockDmg": 90,
+        "pirateDmg": 150
       },
       "growth": {},
       "render": {
@@ -253,8 +253,8 @@
       },
       "onHit": {
         "radiusCells": 0,
-        "blockDmg": 50,
-        "pirateDmg": 70
+        "blockDmg": 75,
+        "pirateDmg": 105
       },
       "growth": {},
       "render": {
@@ -276,8 +276,8 @@
       },
       "onHit": {
         "radiusCells": 0,
-        "blockDmg": 50,
-        "pirateDmg": 70
+        "blockDmg": 75,
+        "pirateDmg": 105
       },
       "growth": {},
       "render": {
@@ -299,8 +299,8 @@
       },
       "onHit": {
         "radiusCells": 0,
-        "blockDmg": 50,
-        "pirateDmg": 70
+        "blockDmg": 75,
+        "pirateDmg": 105
       },
       "growth": {},
       "render": {
@@ -322,8 +322,8 @@
       },
       "onHit": {
         "radiusCells": 0,
-        "blockDmg": 50,
-        "pirateDmg": 70
+        "blockDmg": 75,
+        "pirateDmg": 105
       },
       "growth": {},
       "render": {
@@ -345,8 +345,8 @@
       },
       "onHit": {
         "radiusCells": 0,
-        "blockDmg": 50,
-        "pirateDmg": 70
+        "blockDmg": 75,
+        "pirateDmg": 105
       },
       "growth": {},
       "render": {
@@ -372,8 +372,8 @@
       },
       "onHit": {
         "radiusCells": 0,
-        "blockDmg": 30,
-        "pirateDmg": 60
+        "blockDmg": 45,
+        "pirateDmg": 90
       },
       "growth": {},
       "render": {
@@ -395,8 +395,8 @@
       },
       "onHit": {
         "radiusCells": 0,
-        "blockDmg": 30,
-        "pirateDmg": 60
+        "blockDmg": 45,
+        "pirateDmg": 90
       },
       "growth": {},
       "render": {
@@ -418,8 +418,8 @@
       },
       "onHit": {
         "radiusCells": 0,
-        "blockDmg": 30,
-        "pirateDmg": 60
+        "blockDmg": 45,
+        "pirateDmg": 90
       },
       "growth": {},
       "render": {
@@ -441,8 +441,8 @@
       },
       "onHit": {
         "radiusCells": 0,
-        "blockDmg": 30,
-        "pirateDmg": 60
+        "blockDmg": 45,
+        "pirateDmg": 90
       },
       "growth": {},
       "render": {
@@ -464,8 +464,8 @@
       },
       "onHit": {
         "radiusCells": 0,
-        "blockDmg": 30,
-        "pirateDmg": 60
+        "blockDmg": 45,
+        "pirateDmg": 90
       },
       "growth": {},
       "render": {
@@ -491,8 +491,8 @@
       },
       "onHit": {
         "radiusCells": 0,
-        "blockDmg": 50,
-        "pirateDmg": 50
+        "blockDmg": 75,
+        "pirateDmg": 75
       },
       "growth": {},
       "render": {
@@ -514,8 +514,8 @@
       },
       "onHit": {
         "radiusCells": 0,
-        "blockDmg": 50,
-        "pirateDmg": 50
+        "blockDmg": 75,
+        "pirateDmg": 75
       },
       "growth": {},
       "render": {
@@ -537,8 +537,8 @@
       },
       "onHit": {
         "radiusCells": 0,
-        "blockDmg": 50,
-        "pirateDmg": 50
+        "blockDmg": 75,
+        "pirateDmg": 75
       },
       "growth": {},
       "render": {
@@ -563,8 +563,8 @@
       },
       "onHit": {
         "radiusCells": 0,
-        "blockDmg": 50,
-        "pirateDmg": 50
+        "blockDmg": 75,
+        "pirateDmg": 75
       },
       "growth": {},
       "render": {
@@ -586,8 +586,8 @@
       },
       "onHit": {
         "radiusCells": 0,
-        "blockDmg": 50,
-        "pirateDmg": 50
+        "blockDmg": 75,
+        "pirateDmg": 75
       },
       "growth": {},
       "render": {
@@ -613,8 +613,8 @@
       },
       "onHit": {
         "radiusCells": 0,
-        "blockDmg": 50,
-        "pirateDmg": 90
+        "blockDmg": 75,
+        "pirateDmg": 135
       },
       "growth": {},
       "render": {
@@ -636,8 +636,8 @@
       },
       "onHit": {
         "radiusCells": 0,
-        "blockDmg": 50,
-        "pirateDmg": 90
+        "blockDmg": 75,
+        "pirateDmg": 135
       },
       "growth": {},
       "render": {
@@ -659,8 +659,8 @@
       },
       "onHit": {
         "radiusCells": 0,
-        "blockDmg": 50,
-        "pirateDmg": 90
+        "blockDmg": 75,
+        "pirateDmg": 135
       },
       "growth": {},
       "render": {
@@ -682,8 +682,8 @@
       },
       "onHit": {
         "radiusCells": 0,
-        "blockDmg": 50,
-        "pirateDmg": 90
+        "blockDmg": 75,
+        "pirateDmg": 135
       },
       "growth": {},
       "render": {
@@ -705,8 +705,8 @@
       },
       "onHit": {
         "radiusCells": 0,
-        "blockDmg": 50,
-        "pirateDmg": 90
+        "blockDmg": 75,
+        "pirateDmg": 135
       },
       "growth": {},
       "render": {
@@ -731,8 +731,8 @@
       },
       "onHit": {
         "radiusCells": 0,
-        "blockDmg": 20,
-        "pirateDmg": 90
+        "blockDmg": 30,
+        "pirateDmg": 135
       },
       "growth": {},
       "render": {
@@ -754,8 +754,8 @@
       },
       "onHit": {
         "radiusCells": 0,
-        "blockDmg": 20,
-        "pirateDmg": 90
+        "blockDmg": 30,
+        "pirateDmg": 135
       },
       "growth": {},
       "render": {
@@ -777,8 +777,8 @@
       },
       "onHit": {
         "radiusCells": 0,
-        "blockDmg": 20,
-        "pirateDmg": 90
+        "blockDmg": 30,
+        "pirateDmg": 135
       },
       "growth": {},
       "render": {
@@ -800,8 +800,8 @@
       },
       "onHit": {
         "radiusCells": 0,
-        "blockDmg": 20,
-        "pirateDmg": 90
+        "blockDmg": 30,
+        "pirateDmg": 135
       },
       "growth": {},
       "render": {
@@ -823,8 +823,8 @@
       },
       "onHit": {
         "radiusCells": 0,
-        "blockDmg": 20,
-        "pirateDmg": 90
+        "blockDmg": 30,
+        "pirateDmg": 135
       },
       "growth": {},
       "render": {
@@ -850,8 +850,8 @@
       },
       "onHit": {
         "radiusCells": 2,
-        "blockDmg": 20,
-        "pirateDmg": 30
+        "blockDmg": 30,
+        "pirateDmg": 45
       },
       "growth": {},
       "render": {
@@ -873,8 +873,8 @@
       },
       "onHit": {
         "radiusCells": 2,
-        "blockDmg": 20,
-        "pirateDmg": 30
+        "blockDmg": 30,
+        "pirateDmg": 45
       },
       "growth": {},
       "render": {
@@ -896,8 +896,8 @@
       },
       "onHit": {
         "radiusCells": 2,
-        "blockDmg": 20,
-        "pirateDmg": 30
+        "blockDmg": 30,
+        "pirateDmg": 45
       },
       "growth": {},
       "render": {
@@ -919,8 +919,8 @@
       },
       "onHit": {
         "radiusCells": 2,
-        "blockDmg": 20,
-        "pirateDmg": 30
+        "blockDmg": 30,
+        "pirateDmg": 45
       },
       "growth": {},
       "render": {
@@ -942,8 +942,8 @@
       },
       "onHit": {
         "radiusCells": 2,
-        "blockDmg": 20,
-        "pirateDmg": 30
+        "blockDmg": 30,
+        "pirateDmg": 45
       },
       "growth": {},
       "render": {

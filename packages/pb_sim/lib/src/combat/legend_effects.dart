@@ -16,7 +16,7 @@ import 'package:pb_sim/src/world/world.dart';
 const int legendHalfPercent = 50;
 
 /// 크라키 촉수가 턴 끝마다 둘레 칸 블록에 주는 피해 (BALANCE.md A4.2).
-const int tentacleBlockDamage = 30;
+const int tentacleBlockDamage = 45;
 
 /// 데비 해골 선원이 무는 범위(칸): 착지 칸에서 이 안의 배 위 해적.
 const int skeletonReach = 2;

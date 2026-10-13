@@ -92,8 +92,8 @@ void main() {
       );
     });
 
-    test('팡(저격탄, 짧음): 간격 12칸에서 적 배에 맞는다, 치명 배율 ×1.5', () {
-      expect(_data.catalog.byId('p06_pang').ammoValue, 150);
+    test('팡(저격탄, 짧음): 간격 12칸에서 적 배에 맞는다, 치명 배율 ×1.2', () {
+      expect(_data.catalog.byId('p06_pang').ammoValue, 120);
       expect(
         _someShot(
           'p06_pang',

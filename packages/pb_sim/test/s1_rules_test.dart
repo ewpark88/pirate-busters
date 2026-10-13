@@ -324,19 +324,17 @@ void main() {
       );
       _hit(m, 0, 0);
       expect(m.state.effects.single.kind, EffectKind.tentacle);
-      final grid = m.state.sides[1].grid;
-      final before = List.of(grid.rawHp);
-      // 오른쪽(대상) 턴이 끝날 때 친다.
+      final w = m.state.sides[1].grid.width;
+      // 오른쪽(대상) 턴이 끝날 때 친다. 부서져 위가 무너지는 칸은 '맞은 칸'이 아니다.
       m
         ..apply(const EndTurnCommand(t: 1000))
         ..apply(const EndTurnCommand(t: 1000));
-      final w = grid.width;
-      final changed = [
-        for (var i = 0; i < before.length; i++)
-          if (grid.rawHp[i] != before[i]) i,
+      final hits = [
+        for (final e in m.state.events)
+          if (e.kind == SimEventKind.blockHit && e.side == 1) e.cell,
       ];
-      expect(changed, isNotEmpty);
-      expect(changed, everyElement(isIn([0, 1, w, w + 1])));
+      expect(hits, isNotEmpty);
+      expect(hits, everyElement(isIn([0, 1, w, w + 1])));
     });
   });
 }

@@ -16,7 +16,7 @@ import 'package:pb_sim/src/world/world.dart';
 const int boardDefenseRadius = 2;
 
 /// 근접 수비 해적 1명당 강습 해적이 받는 피해 (BALANCE.md A4.8, ADR-113).
-const int boardDefenseDamage = 30;
+const int boardDefenseDamage = 45;
 
 /// 흔들기: 배의 이번 턴 이동 합(밀림·끌림 포함)이 이 거리(1/1000칸) 이상이면 선
 /// 강습 해적이 바다에 빠진다 (BALANCE.md A4.8, ADR-113).

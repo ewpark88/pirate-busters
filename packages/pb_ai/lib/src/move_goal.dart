@@ -2,12 +2,12 @@ import 'package:pb_sim/pb_sim.dart';
 
 /// 이동 목표 (설계서 §5.5 위치 후보·파도 구간). 위치 후보는 지금 자리 둘레 몇 칸뿐이라
 /// (BALANCE.md A5.5), 멀리 있는 잔잔한 구간은 목표로 정해 두고 턴마다 그쪽으로 다가가는
-/// 자리에 점수를 더한다. 수치는 S5 준비 임시값이다(docs/plans/2026-10-13-s5-balance-proposal.md).
+/// 자리에 점수를 더한다. 수치는 BALANCE.md A5.5 '잔잔한 구간 이동 목표'(ADR-115).
 abstract final class MoveGoal {
-  /// 목표 쪽으로 1칸 다가간 위치에 더하는 점수 (임시값).
+  /// 목표 쪽으로 1칸 다가간 위치에 더하는 점수 (BALANCE.md A5.5).
   static const int progressPerCell = 15;
 
-  /// 목표를 찾을 때 살펴보는 거리(칸, 앞뒤 각각) (임시값).
+  /// 목표를 찾을 때 살펴보는 거리(칸, 앞뒤 각각) (BALANCE.md A5.5).
   static const int searchCells = 12;
 
   /// [side] 가 이번 턴 연료·한계 안에서 끝까지 갈 수 있는 자리 중 파도가 가장 잔잔한
