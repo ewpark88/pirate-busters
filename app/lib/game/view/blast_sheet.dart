@@ -90,6 +90,15 @@ class BlastSheet {
       srcSize: Vector2.all(frame.toDouble()),
     );
   }
+
+  /// 프레임 그림 전부. 그림 묶음([sprites])마다 한 번만 자른다: 착탄마다 시트 여러
+  /// 장을 띄우므로 폭발마다 다시 만들지 않는다.
+  List<Sprite> frames(BattleSprites sprites) =>
+      (_cache[sprites] ??= {})[this] ??= List.unmodifiable([
+        for (var i = 0; i < count; i++) sprite(sprites, i),
+      ]);
+
+  static final Expando<Map<BlastSheet, List<Sprite>>> _cache = Expando();
 }
 
 /// 시트 폭발 하나: 프레임을 차례로 넘기고, 식은 연기는 조금 떠오르며 퍼진다.
@@ -105,9 +114,7 @@ class SheetBlast extends PositionComponent {
     this.low = false,
     bool flipX = false,
     double turn = 0,
-  }) : _frames = [
-         for (var i = 0; i < sheet.count; i++) sheet.sprite(sprites, i),
-       ],
+  }) : _frames = sheet.frames(sprites),
        _size = body / sheet.core,
        super(position: at.clone(), anchor: Anchor.center, angle: turn) {
     if (flipX) scale.x = -1;
@@ -122,6 +129,7 @@ class SheetBlast extends PositionComponent {
   final bool low;
   double _age = 0;
   final Paint _paint = Paint();
+  final Vector2 _drawSize = Vector2.zero();
 
   /// [t] (0~1, 재생 비율)의 크기 배율: 뒤로 갈수록 연기가 조금 퍼진다.
   static double spreadAt(double t) => 1 + .18 * t.clamp(0, 1);
@@ -148,7 +156,7 @@ class SheetBlast extends PositionComponent {
     final f = low ? sheet.lowFrameAt(age) : sheet.frameAt(age);
     _frames[f].render(
       canvas,
-      size: Vector2.all(_size * spreadAt(t)),
+      size: _drawSize..setAll(_size * spreadAt(t)),
       anchor: Anchor.center,
       overridePaint: _paint,
     );

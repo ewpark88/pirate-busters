@@ -7,13 +7,11 @@ enum HitTag {
   crit,
   pierce,
   chain,
-  burn,
   mine,
 
-  /// 붙은 설치탄·떠 있는 기뢰가 터졌다 (설계서 §4.8).
+  /// 붙은 설치탄이 터졌다 (설계서 §4.8).
   mineBlast,
   bite,
-  repair,
 
   /// 강습 해적 적 갑판 체류 (설계서 §2.3, ADR-110): 올라탐, 근접 수비 반격, 흔들려
   /// 떨어짐.
@@ -21,25 +19,9 @@ enum HitTag {
   repel,
   shakenOff,
 
-  // 고유 효과 (설계서 §4.8, ADR-075·078).
-  seal,
+  // 전설 고유 능력 (설계서 §4.8): 모비 끌어당김, 만타 궤적 가림.
   pull,
-  wind,
-  blind,
-  bail,
-  boost,
-  heal,
-  wall,
-  revive,
-  intercept,
-
-  /// 보급탄(수리)이 맞았지만 내 배에 고칠 ‘구멍’이 없었다 (ADR-092).
-  noRepair,
-
-  /// 보스 뱃머리 방패가 서 있어 블록 피해가 줄었다 / 마지막 방패 칸이 깨졌다
-  /// (설계서 §5.4, A43 점검 제안 3, A57).
-  shield,
-  shieldBroken;
+  blind;
 
   /// 상대 배에 건 고유 능력 [ability] 의 이름표. 없으면 null.
   static HitTag? ofAbility(Ability ability) => switch (ability) {
@@ -48,12 +30,12 @@ enum HitTag {
     _ => null,
   };
 
-  /// 탄종 [ammo] 로 맞혔을 때 붙는 이름표. 없으면 null.
+  /// 탄종 [ammo] 로 맞혔을 때 붙는 이름표. 없으면 null. 화염탄은 불이 붙지 않아
+  /// 이름표가 없다 (설계서 §4.8).
   static HitTag? ofAmmo(AmmoType ammo) => switch (ammo) {
     AmmoType.sniper => crit,
     AmmoType.pierce => pierce,
     AmmoType.chain => chain,
-    AmmoType.fire => burn,
     AmmoType.mine => mine,
     AmmoType.assault => bite,
     _ => null,

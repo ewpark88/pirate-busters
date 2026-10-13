@@ -132,7 +132,11 @@ class BattleCues {
           // 맞은 배는 쏜 쪽 반대로 밀린다.
           final push = facingOf(1 - e.side);
           if (spec == null) {
-            fx.explosion(at, radius: weight.isHeavy ? 2 : 1);
+            fx.explosion(
+              at,
+              radius: weight.isHeavy ? 2 : 1,
+              heavy: weight.isHeavy,
+            );
           } else {
             final style = spec.family == Family.pierce
                 ? weapons?.of(session.speciesOf(spec.id))

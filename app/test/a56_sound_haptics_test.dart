@@ -77,12 +77,10 @@ BattleSession _session() => BattleSession(
 
 void main() {
   group('A56 새 효과음 (설계서 §10.3)', () {
-    test('새 소리 일곱 가지가 모두 합성되고, 음원 없이 합성음으로 둔다', () {
+    test('새 소리 다섯 가지가 모두 합성되고, 음원 없이 합성음으로 둔다', () {
       const added = [
         Sfx.dent,
         Sfx.turn,
-        Sfx.gurgle,
-        Sfx.crackle,
         Sfx.wake,
         Sfx.star,
         Sfx.levelUp,

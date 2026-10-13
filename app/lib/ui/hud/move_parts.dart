@@ -99,6 +99,10 @@ class _BlinkState extends State<Blink> with SingleTickerProviderStateMixin {
     vsync: this,
     duration: const Duration(milliseconds: 500),
   );
+  late final Animation<double> _opacity = Tween<double>(
+    begin: 1,
+    end: 0.2,
+  ).animate(_c);
 
   @override
   void initState() {
@@ -126,7 +130,7 @@ class _BlinkState extends State<Blink> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) => FadeTransition(
-    opacity: Tween<double>(begin: 1, end: 0.2).animate(_c),
+    opacity: _opacity,
     child: widget.child,
   );
 }

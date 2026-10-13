@@ -209,6 +209,7 @@ class SeaView extends Component {
     if (sea == null) return;
     final ships = sea.current;
     final lean = (wind?.value ?? 0) / 3;
+    final dots = SeaCrests.dots(lean);
     for (final x in sea.crests(-seaHalfWidth, seaHalfWidth)) {
       final w = SeaShape.calm(ships, x);
       final level = sea.levelAt(x);
@@ -216,7 +217,7 @@ class SeaView extends Component {
       foam.color = theme.foam.withValues(
         alpha: .55 * w * math.min(1, level / 1.5),
       );
-      for (final (dx, lift, r) in SeaCrests.dots(lean)) {
+      for (final (dx, lift, r) in dots) {
         final cx = x + dx;
         canvas.drawCircle(Offset(cx, surface(cx) + 1 - lift), r, foam);
       }

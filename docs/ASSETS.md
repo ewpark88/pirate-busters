@@ -157,7 +157,6 @@ dart run tool/import_assets.dart --merge art/pb_v0.24_main
 | 철판 튕김 `clang` | `sfx_clang_1.ogg` `sfx_clang_2.ogg` `sfx_clang_3.ogg` | Impact: `impactMetal_heavy_000` `001` `002` |
 | 철판 찌그러짐 `dent` (S4) | `sfx_dent_1.ogg` `sfx_dent_2.ogg` `sfx_dent_3.ogg` | 100 metal and wood: `metal_slam_01` `metal_sheet_03` `metal_sheet_06` |
 | 유폭 `boom` (S4) | `sfx_boom_1.ogg` `sfx_boom_2.ogg` `sfx_boom_3.ogg` | Battle at sea `ship_destroyed_short` 앞 3초, Chunky Explosion, Battle at sea `cannon_hit_1` 0.85배 |
-| 격침 `sink` | `sfx_sink_1.ogg` `sfx_sink_2.ogg` | water: `splash_01` `splash_07` |
 | 승리 악구 `win` | `sfx_win_1.ogg` `sfx_win_2.ogg` `sfx_win_3.ogg` | Jingles: `jingles_STEEL02` `STEEL15` `STEEL10` (음이 올라가는 스틸드럼) |
 | 패배 악구 `lose` | `sfx_lose_1.ogg` `sfx_lose_2.ogg` `sfx_lose_3.ogg` | Jingles: `jingles_STEEL14` `STEEL07` `STEEL16` (음이 내려가는 스틸드럼) |
 | 버튼 누름 `click` | `sfx_click_1.ogg` `sfx_click_2.ogg` `sfx_click_3.ogg` | Interface: `click_001` `select_001` `select_002` |
@@ -169,7 +168,7 @@ dart run tool/import_assets.dart --merge art/pb_v0.24_main
 | 바다 추락 첨벙 `plunge` (A32) | `sfx_plunge_1.ogg` `sfx_plunge_2.ogg` `sfx_plunge_3.ogg` | water: `splash_04` `splash_05` `splash_11` |
 | 쓰러짐 `ko` (A32) | `sfx_ko_1.ogg` `sfx_ko_2.ogg` | Impact: `impactBell_heavy_002` `003` |
 | 휘파람 `whistle` (A32) | 없음(코드 합성음만) | 맞는 CC0 음원이 없어 `sfx_bank.dart` 로 만든다 |
-| 턴 전환 `turn`·침수 `gurgle`·불 `crackle`·물살 `wake`·별 `star`·레벨업 `levelUp` (A56) | 없음(코드 합성음만) | CC0 음원을 아직 고르지 않아 `sfx_bank.dart` 로 만든다. 고르면 `AudioAssets.variants` 에 넣고 `synthOnly` 에서 뺀다 |
+| 턴 전환 `turn`·물살 `wake`·별 `star`·레벨업 `levelUp` (A56) | 없음(코드 합성음만) | CC0 음원을 아직 고르지 않아 `sfx_bank.dart` 로 만든다. 고르면 `AudioAssets.variants` 에 넣고 `synthOnly` 에서 뺀다 |
 | 바다·바람 환경음 루프 (A56) | 없음(코드 합성음만) | `SfxBank.seaLoop` 4초 루프, `SoloudSoundService.loadAmbience` |
 
 | 곡 (`Music`) | 앱 파일 | 원본 |

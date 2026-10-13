@@ -9,10 +9,10 @@ import 'package:flutter_soloud/flutter_soloud.dart';
 import 'package:pirate_busters/audio/sound_library.dart';
 import 'package:pirate_busters/audio/wind_voice.dart';
 
-/// 효과음 (설계서 §10.3): 포성, 나무 부서짐, 물보라, 철판 튕김, 유폭, 격침, 승리·패배
+/// 효과음 (설계서 §10.3): 포성, 나무 부서짐, 물보라, 철판 튕김, 유폭, 승리·패배
 /// 악구, 버튼 누름. A32: 착탄 쾅(작은·큰)과 잔향, 붕괴 우지끈, 해적 피격·바다 추락
 /// 첨벙·쓰러짐, 내려오는 탄의 휘파람. A34: 남은 5초 째깍. A56: 철판 찌그러짐, 턴 전환
-/// 알림음, 침수 꾸르륵, 불 타는 소리, 배 이동 물살, 별 찍힘, 레벨업.
+/// 알림음, 배 이동 물살, 별 찍힘, 레벨업.
 enum Sfx {
   cannon,
 
@@ -22,7 +22,6 @@ enum Sfx {
   splash,
   clang,
   boom,
-  sink,
   win,
   lose,
   click,
@@ -37,8 +36,6 @@ enum Sfx {
   tick,
   dent,
   turn,
-  gurgle,
-  crackle,
   wake,
   star,
   levelUp,

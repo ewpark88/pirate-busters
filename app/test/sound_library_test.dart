@@ -109,7 +109,7 @@ void main() {
         ],
       );
       expect(picker.next(Sfx.splash, 3), 0);
-      expect(picker.next(Sfx.sink, 1), 0);
+      expect(picker.next(Sfx.ko, 1), 0);
     });
 
     test('음높이는 조금만 흔들고 승리·패배 악구는 흔들지 않는다', () {

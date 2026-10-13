@@ -2420,12 +2420,6 @@ abstract class AppLocalizations {
   /// **'CHAIN'**
   String get hitTagChain;
 
-  /// No description provided for @hitTagBurn.
-  ///
-  /// In en, this message translates to:
-  /// **'BURN'**
-  String get hitTagBurn;
-
   /// No description provided for @hitTagMine.
   ///
   /// In en, this message translates to:
@@ -2462,101 +2456,17 @@ abstract class AppLocalizations {
   /// **'SHAKEN OFF!'**
   String get hitTagShakenOff;
 
-  /// No description provided for @hitTagRepair.
-  ///
-  /// In en, this message translates to:
-  /// **'REPAIR'**
-  String get hitTagRepair;
-
-  /// No description provided for @hitTagNoRepair.
-  ///
-  /// In en, this message translates to:
-  /// **'NOTHING TO FIX'**
-  String get hitTagNoRepair;
-
-  /// No description provided for @hitTagShield.
-  ///
-  /// In en, this message translates to:
-  /// **'SHIELD −50%'**
-  String get hitTagShield;
-
-  /// No description provided for @hitTagShieldBroken.
-  ///
-  /// In en, this message translates to:
-  /// **'SHIELD BROKEN!'**
-  String get hitTagShieldBroken;
-
-  /// No description provided for @hitTagSeal.
-  ///
-  /// In en, this message translates to:
-  /// **'SEALED'**
-  String get hitTagSeal;
-
   /// No description provided for @hitTagPull.
   ///
   /// In en, this message translates to:
   /// **'PULLED'**
   String get hitTagPull;
 
-  /// No description provided for @hitTagWind.
-  ///
-  /// In en, this message translates to:
-  /// **'WIND FLIP'**
-  String get hitTagWind;
-
   /// No description provided for @hitTagBlind.
   ///
   /// In en, this message translates to:
   /// **'BLINDED'**
   String get hitTagBlind;
-
-  /// No description provided for @hitTagBail.
-  ///
-  /// In en, this message translates to:
-  /// **'BAIL'**
-  String get hitTagBail;
-
-  /// No description provided for @hitTagBoost.
-  ///
-  /// In en, this message translates to:
-  /// **'LANTERN'**
-  String get hitTagBoost;
-
-  /// No description provided for @hitTagHeal.
-  ///
-  /// In en, this message translates to:
-  /// **'HEAL'**
-  String get hitTagHeal;
-
-  /// No description provided for @hitTagWall.
-  ///
-  /// In en, this message translates to:
-  /// **'WALL'**
-  String get hitTagWall;
-
-  /// No description provided for @hitTagRevive.
-  ///
-  /// In en, this message translates to:
-  /// **'REVIVE'**
-  String get hitTagRevive;
-
-  /// No description provided for @hitTagIntercept.
-  ///
-  /// In en, this message translates to:
-  /// **'INTERCEPT'**
-  String get hitTagIntercept;
-
-  /// No description provided for @moveLocked.
-  ///
-  /// In en, this message translates to:
-  /// **'Pinned'**
-  String get moveLocked;
-
-  /// No description provided for @windReversed.
-  ///
-  /// In en, this message translates to:
-  /// **'Flipped'**
-  String get windReversed;
 
   /// No description provided for @windCalm.
   ///

@@ -13,8 +13,7 @@ import 'package:pirate_busters/game/view/ship_view.dart';
 /// 무늬가 얹히며, 선체와 수면이 만나는 자리에 수면선 띠를 그린다”, A24).
 ///
 /// 배 로컬 좌표(원점 용골 바닥 가운데, 아래가 +)에서 그린다. 수면은 배의 기울기·
-/// 격침 깊이·흔들림을 되돌려 구한 직선이라 배가 기울어도 수면과 맞는다. 침수로
-/// 흘수가 깊어지면 수면선도 같이 오른다. 그리기만 하고 판정과 무관하다.
+/// 흔들림을 되돌려 구한 직선이라 배가 기울어도 수면과 맞는다. 그리기만 하고 판정과 무관하다.
 abstract final class HullWater {
   /// 배마다 선체 경로 캐시. 격자가 바뀔 때만 다시 만든다 (A57, 매 프레임 할당 줄이기).
   static final Expando<HullPathCache> _caches = Expando('hull-path');

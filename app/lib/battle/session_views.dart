@@ -15,7 +15,7 @@ extension BattleSessionViews on BattleSession {
     ms: realMs(state, effectiveMs(state, turnMs)),
   );
 
-  /// 지금 쏘면 조준 각도에 더해지는 배 기울기(밀리도, 파도 + 침수, 설계서 §2.5).
+  /// 지금 쏘면 조준 각도에 더해지는 배 기울기(밀리도, 파도, 설계서 §2.6).
   /// 조준 표시의 호·새총·각도 숫자를 실제 발사 방향에 맞추는 데 쓴다.
   int get launchTilt => tiltAtMs(
     state,
@@ -73,7 +73,14 @@ extension BattleSessionViews on BattleSession {
     final got = reach(dir * 1000).abs();
     final room = dir > 0 ? hi - me.offset : me.offset - lo;
     if (got + moveStep >= room) return dir > 0 ? MoveStop.foe : MoveStop.seaEnd;
-    final byFuel = me.fuel * cellUnit ~/ me.fuelPerCell;
+    // 시간 제한 없이 갈 수 있는 거리(한계·연료만)도 pb_sim moveReach 로 잰다.
+    final byFuel = moveReach(
+      me,
+      state.otherOf(side),
+      state.rules,
+      dir * 1000,
+      1 << 30,
+    ).abs();
     return byFuel <= got + moveStep ? MoveStop.fuel : MoveStop.time;
   }
 

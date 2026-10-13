@@ -118,7 +118,7 @@ class PirateTile extends StatelessWidget {
         padding: const EdgeInsets.all(3),
         child: Column(
           children: [
-            // 등급 프레임 카드 옆에 사거리·코스트·세트 아이콘 (설계서 §10.5, §13.7).
+            // 등급 프레임 카드 옆에 코스트·세트 아이콘 (설계서 §10.5, §13.7).
             Expanded(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,

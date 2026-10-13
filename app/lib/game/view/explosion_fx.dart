@@ -84,6 +84,7 @@ abstract final class ExplosionFx {
         final sprite = sprites.get((dark ? smokes : whitePuffs)[i % 6]);
         final s = size * (.8 + rnd.nextDouble() * .5);
         final paint = Paint();
+        final drawSize = Vector2.zero();
         return MovingParticle(
           to: Vector2((rnd.nextDouble() - 0.5) * 50, -36 - i * 8),
           curve: Curves.easeOutCubic,
@@ -95,7 +96,7 @@ abstract final class ExplosionFx {
               paint.color = Color.fromRGBO(255, 255, 255, .7 * fade * (1 - t));
               sprite.render(
                 canvas,
-                size: Vector2.all(s * (.6 + .9 * t)),
+                size: drawSize..setAll(s * (.6 + .9 * t)),
                 anchor: Anchor.center,
                 overridePaint: paint,
               );
