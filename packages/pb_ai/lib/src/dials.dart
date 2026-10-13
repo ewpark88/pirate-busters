@@ -11,6 +11,8 @@ class AiDials {
     required this.positions,
     required this.windCorrectionPercent,
     required this.waveZones,
+    this.goalMoves = false,
+    this.stepCells = positionStepCells,
   });
 
   /// BALANCE.md A5.2·A5.5 표.
@@ -87,6 +89,8 @@ class AiDials {
     int? positions,
     int? windCorrectionPercent,
     bool? waveZones,
+    bool? goalMoves,
+    int? stepCells,
   }) => AiDials(
     angleErrorMdeg: angleErrorMdeg ?? this.angleErrorMdeg,
     thinkMs: thinkMs ?? this.thinkMs,
@@ -95,6 +99,8 @@ class AiDials {
     positions: positions ?? this.positions,
     windCorrectionPercent: windCorrectionPercent ?? this.windCorrectionPercent,
     waveZones: waveZones ?? this.waveZones,
+    goalMoves: goalMoves ?? this.goalMoves,
+    stepCells: stepCells ?? this.stepCells,
   );
 
   /// 쏠 때 섞는 각도 오차(±).
@@ -109,7 +115,7 @@ class AiDials {
   /// 파도 타이밍을 계산해 쏘는 순간을 고르는가.
   final bool waveTiming;
 
-  /// 위치 후보 수(0 이면 이동하지 않는다). 간격은 [positionStepCells] 칸.
+  /// 위치 후보 수(0 이면 이동하지 않는다). 간격은 [stepCells] 칸.
   final int positions;
 
   /// 바람을 얼마나 계산에 넣는가.
@@ -117,6 +123,14 @@ class AiDials {
 
   /// 위치를 고를 때 파도 구간 세기를 보는가 (BALANCE.md A5.5 파도 구간 고려).
   final bool waveZones;
+
+  /// 실험: 위치 후보에 이동 목표(가장 잔잔한 구간, `MoveGoal`)를 하나 더 넣는다.
+  /// BALANCE.md A5.5 에 없는 값이라 기본은 끈다(S5 제안서에서 잰다).
+  final bool goalMoves;
+
+  /// 위치 후보 간격(칸). 기본은 BALANCE.md A5.5 의 [positionStepCells]. S5 제안서의
+  /// 실험에서만 바꾼다.
+  final int stepCells;
 
   /// 위치 후보 간격 (BALANCE.md A5.5).
   static const int positionStepCells = 1;

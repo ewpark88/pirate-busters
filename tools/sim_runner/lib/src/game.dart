@@ -89,6 +89,8 @@ class GameFactory {
     List<BlueprintPreset> presets, {
     List<String>? pirates,
     List<String>? blueprints,
+    this.rules = const MatchRules(),
+    this.dialsFor = AiDials.of,
   }) : catalog = data.catalog,
        hull = HullSpec.sloop,
        presets = [
@@ -104,6 +106,10 @@ class GameFactory {
   }
 
   final GameData data;
+
+  /// 매치 규칙과 난이도별 AI 다이얼 (실험값을 씌울 수 있다, S5 제안서).
+  final MatchRules rules;
+  final AiDials Function(AiLevel level) dialsFor;
 
   /// 이 공장의 선형(확장 단계, 설계서 §3.1). 덱 크기는 선실 수다.
   final HullSpec hull;
@@ -167,10 +173,15 @@ class GameFactory {
       decks: s.decks,
       costLimits: [costLimitForLevel(1), costLimitForLevel(1)],
       pirates: catalog,
+      rules: rules,
     );
     final ais = [
       for (var i = 0; i < 2; i++)
-        AiController(level: s.levels[i], personality: s.personalities[i]),
+        AiController(
+          level: s.levels[i],
+          personality: s.personalities[i],
+          dials: dialsFor(s.levels[i]),
+        ),
     ];
     var moved = 0;
     var gapSum = 0;
