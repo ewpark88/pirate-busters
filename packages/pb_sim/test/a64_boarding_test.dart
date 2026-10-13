@@ -17,11 +17,9 @@ PirateSpec _assault(
   id: id,
   rarity: Rarity.common,
   hp: hp,
-  cooldownTurns: 0,
   blockDamage: 20,
   pirateDamage: pirateDamage,
   blastRadius: 1,
-  range: RangeGrade.long,
   family: Family.assault,
   ammo: AmmoType.assault,
   ammoValue: value,
@@ -34,7 +32,7 @@ PirateSpec _assault(
 Match _duel(PirateSpec spec, {int enemyHp = 300}) {
   final m = Match.start(
     seed: 11,
-    rules: const MatchRules(waveLevel: 0),
+    rules: const MatchRules(calmSea: true),
     blueprints: [sampleBlueprint(), sampleBlueprint()],
     decks: [
       [spec.id, 'r0'],
@@ -90,7 +88,7 @@ void main() {
       _land(m, 5, 2);
       final grid = m.state.sides[1].grid;
       expect(_boarder(m).status, PirateStatus.boarding);
-      expect(_boarder(m).boardCell, grid.indexOf(5, 3), reason: '선실 위 망사');
+      expect(_boarder(m).boardCell, grid.indexOf(5, 3), reason: '선실 위 블록');
       expect(m.state.sides[0].canFire(0), isFalse);
       expect(_of(m, SimEventKind.boarded), hasLength(1));
     });
@@ -107,7 +105,6 @@ void main() {
       final mine = m.state.sides[0].crew..damage(1, 9999, 0, m.state.events);
       expect(mine.pirates[1].status, PirateStatus.down);
       expect(mine.allDown, isFalse);
-      expect(mine.attackersDown, isFalse);
     });
   });
 
@@ -124,42 +121,6 @@ void main() {
       expect(_boarder(m).hp, 300 - 2 * boardDefenseDamage);
       expect(_of(m, SimEventKind.effectFired), hasLength(1));
       expect(enemy.pirates[1].hp, lessThan(hp), reason: '(5,2) 를 문다');
-    });
-
-    test('추가 물기는 착지 반경이 커져도 1칸만 문다', () {
-      const wide = PirateSpec(
-        id: 'wide',
-        rarity: Rarity.common,
-        hp: 300,
-        cooldownTurns: 0,
-        blockDamage: 20,
-        pirateDamage: 90,
-        blastRadius: 2,
-        range: RangeGrade.long,
-        family: Family.assault,
-        ammo: AmmoType.assault,
-        ammoValue: 1,
-      );
-      final m = _duel(wide);
-      _land(m, 5, 2);
-      final enemy = m.state.sides[1].crew;
-      final hp = [for (final p in enemy.pirates) p.hp];
-      m.apply(const EndTurnCommand(t: 9000));
-      _passTo(m, 1);
-      // 밟은 칸에서 1칸 안의 선실만 물린다(√2 칸 이상은 그대로).
-      final target = m.state.sides[1];
-      final (bx, by) = boardPosOf(target.grid, _boarder(m).boardCell);
-      var bitten = 0;
-      for (var slot = 0; slot < enemy.size; slot++) {
-        final c = target.cabins[slot];
-        final d = (c.x - bx) * (c.x - bx) + (c.y - by) * (c.y - by);
-        if (d > 1) {
-          expect(enemy.pirates[slot].hp, hp[slot], reason: '슬롯 $slot');
-        } else if (enemy.pirates[slot].hp < hp[slot]) {
-          bitten++;
-        }
-      }
-      expect(bitten, greaterThan(0));
     });
 
     test('근접 수비에 쓰러지면 남은 물기는 터지지 않는다', () {
@@ -183,32 +144,20 @@ void main() {
       expect(_of(m, SimEventKind.boardReturned), hasLength(1));
       expect(m.state.sides[0].canFire(0), isTrue);
     });
-
-    test('물기가 남았으면 내 턴이 와도 적 배 위에 남는다', () {
-      final m = _duel(_assault('sharky', value: 2));
-      _land(m, 5, 2);
-      m.apply(const EndTurnCommand(t: 9000));
-      _passTo(m, 1);
-      m.apply(const EndTurnCommand(t: 9000));
-      _passTo(m, 0);
-      expect(_boarder(m).status, PirateStatus.boarding);
-      expect(m.state.sides[0].canFire(0), isFalse);
-    });
   });
 
   group('떨어뜨리기', () {
-    test('상대가 배를 한 번에 1칸 이상 움직이면 바다에 빠지고 남은 물기는 사라진다', () {
+    test('상대가 배를 한 번에 1칸 이상 움직이면 바다에 빠져 KO 되고 남은 물기는 사라진다', () {
       final m = _duel(_assault('sharky', value: 2));
       _land(m, 5, 2);
       m.apply(const EndTurnCommand(t: 9000));
       _passTo(m, 1);
       // dx 는 1/10칸: 1칸.
       m.apply(const MoveCommand(t: 2000, dx: -10));
-      expect(_boarder(m).status, PirateStatus.swimming);
+      expect(_boarder(m).status, PirateStatus.down);
       expect(_of(m, SimEventKind.pirateFell).single.side, 0);
       m.apply(const EndTurnCommand(t: 9000));
       _passTo(m, 0);
-      expect(_boarder(m).status, PirateStatus.aboard, reason: '헤엄 복귀');
       expect(
         m.state.effects.where(isBoarderBite),
         isEmpty,
@@ -236,7 +185,7 @@ void main() {
       }
       expect(_boarder(m).status, PirateStatus.boarding, reason: '0.9칸');
       m.apply(const MoveCommand(t: 4000, dx: -1));
-      expect(_boarder(m).status, PirateStatus.swimming, reason: '앞뒤 합 1칸');
+      expect(_boarder(m).status, PirateStatus.down, reason: '앞뒤 합 1칸');
     });
 
     test('적 배 위에 있는 동안 내 배 선실이 부서져도 떨어지지 않는다', () {
@@ -253,7 +202,6 @@ void main() {
         x: x,
         y: y,
         events: m.state.events,
-        rng: m.state.rng,
       );
       expect(mine.grid.hasBlock(cabin.x, cabin.y), isFalse);
       expect(_boarder(m).status, PirateStatus.boarding);
@@ -272,12 +220,11 @@ void main() {
         x: x,
         y: y,
         events: m.state.events,
-        rng: m.state.rng,
       );
       expect(_boarder(m).hp, lessThan(300));
     });
 
-    test('밟은 칸 블록이 부서지면 바다에 빠진다', () {
+    test('밟은 칸 블록이 부서지면 바다에 빠져 KO 다', () {
       final m = _duel(_assault('sharky'));
       _land(m, 3, 2);
       final target = m.state.sides[1];
@@ -290,81 +237,32 @@ void main() {
         x: x,
         y: y,
         events: m.state.events,
-        rng: m.state.rng,
       );
-      expect(_boarder(m).status, PirateStatus.swimming);
+      expect(_boarder(m).status, PirateStatus.down);
     });
   });
 
-  group('고유 해적', () {
-    test('킹은 막은 선실 줄 위에 선다', () {
-      final m = _duel(_assault('king', ability: Ability.sealCabin));
-      _land(m, 8, 1);
-      final target = m.state.sides[1];
-      final sealed = target.cabins[target.status.sealedSlot];
-      expect(sealed.x, 8);
-      expect(_boarder(m).boardCell, deckCellAt(target.grid, sealed.x));
-    });
-
-    test('크래비는 문 해적과 함께 바다에 빠지고 추가 물기가 없다', () {
-      final m = _duel(_assault('crabby', ability: Ability.grab));
-      _land(m, 5, 2);
-      expect(_boarder(m).status, PirateStatus.swimming);
-      expect(
-        m.state.sides[1].crew.pirates.where(
-          (p) => p.status == PirateStatus.swimming,
-        ),
-        hasLength(1),
-      );
-      expect(m.state.effects.where(isBoarderBite), isEmpty);
-    });
-
-    test('크래비는 물 해적이 없으면 샤키처럼 선다', () {
-      final m = _duel(_assault('crabby', ability: Ability.grab));
-      for (var slot = 0; slot < 4; slot++) {
-        m.state.sides[1].crew.damage(slot, 9999, 1, m.state.events);
-      }
+  test('데비는 착지 때 해골 선원이 둘레 해적을 함께 물고, 적 배 위에 선다', () {
+    int enemyHp(PirateSpec spec) {
+      final m = _duel(spec);
       _land(m, 5, 2);
       expect(_boarder(m).status, PirateStatus.boarding);
-    });
+      return m.state.sides[1].crew.hpLeft;
+    }
 
-    test('랍은 마지막에 벤 해적 줄 위에 서고, 다음 내 턴에 돌아온다', () {
-      final m = _duel(
-        _assault('lob', ability: Ability.leap, pirateDamage: 400),
-      );
-      _land(m, 3, 2);
-      final target = m.state.sides[1];
-      expect(_boarder(m).status, PirateStatus.boarding);
-      expect(
-        _boarder(m).boardCell,
-        deckCellAt(target.grid, 5),
-        reason: '(3,2) 를 쓰러뜨리고 가장 가까운 (5,2) 로 뛴다',
-      );
-      m.apply(const EndTurnCommand(t: 9000));
-      _passTo(m, 1);
-      m.apply(const EndTurnCommand(t: 9000));
-      _passTo(m, 0);
-      expect(_boarder(m).status, PirateStatus.aboard);
-    });
-
-    test('데비는 서지 않고 해골 선원만 남긴다', () {
-      final m = _duel(
-        _assault('davy', ability: Ability.summon, abilityValue: 3),
-      );
-      _land(m, 5, 2);
-      expect(_boarder(m).status, PirateStatus.aboard);
-      m.apply(const EndTurnCommand(t: 9000));
-      _passTo(m, 1);
-      expect(_of(m, SimEventKind.effectFired), hasLength(3), reason: '해골 물기');
-    });
+    final plain = enemyHp(_assault('sharky'));
+    final davy = enemyHp(
+      _assault('davy', ability: Ability.summon, abilityValue: 3),
+    );
+    expect(davy, lessThan(plain));
   });
 
   test('강습 해적이 섞인 판은 같은 커맨드·재생이면 같은 해시로 끝난다 (결정론)', () {
     final pirates = PirateCatalog([
       _assault('sharky', value: 2),
-      _assault('king', ability: Ability.sealCabin),
-      _assault('crabby', ability: Ability.grab),
-      _assault('lob', ability: Ability.leap),
+      _assault('king'),
+      _assault('crabby'),
+      _assault('davy', ability: Ability.summon, abilityValue: 3),
       testPirate('r0'),
       testPirate('r1'),
     ]);
@@ -373,7 +271,7 @@ void main() {
       blueprints: [sampleBlueprint(), sampleBlueprint()],
       decks: const [
         ['sharky', 'king', 'r0'],
-        ['crabby', 'lob', 'r1'],
+        ['crabby', 'davy', 'r1'],
       ],
       costLimits: const [15, 15],
       pirates: pirates,
@@ -391,4 +289,4 @@ void main() {
 }
 
 /// 강습 섞인 판(시드 4321, 스크립트 7·8)의 기대 해시. 의도한 규칙 변경일 때만 갱신한다.
-const int _boardingHash = 1250131111;
+const int _boardingHash = 2836265901;

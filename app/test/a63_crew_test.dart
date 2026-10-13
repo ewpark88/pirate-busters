@@ -15,15 +15,14 @@ import 'package:pirate_busters/l10n/data_text.dart';
 import 'package:pirate_busters/meta/my_ship.dart';
 import 'package:pirate_busters/meta/progress.dart';
 import 'package:pirate_busters/meta/progress_store.dart';
-import 'package:pirate_busters/meta/ship_upgrades.dart';
 import 'package:pirate_busters/settings/language.dart';
 import 'package:pirate_busters/settings/settings_store.dart';
 import 'package:pirate_busters/shipyard/ship_grid_view.dart';
 
 import 'test_catalog.dart';
 
-/// 큰 슬루프(선실 4칸)를 지은 진행, 해적 전원 보기 (설계서 §3.1, ADR-099).
-const _progress = PlayerProgress(ship: ShipUpgrades(stage: 4));
+/// 슬루프(선실 4칸 + 망대) 진행, 해적 전원 보기 (설계서 §3.1, ADR-099).
+const _progress = PlayerProgress();
 
 Future<MemoryFleetStore> _pump(WidgetTester tester) async {
   tester.view.physicalSize = const Size(1280, 720);
@@ -36,9 +35,7 @@ Future<MemoryFleetStore> _pump(WidgetTester tester) async {
         settingsStoreProvider.overrideWithValue(MemorySettingsStore()),
         gameCatalogProvider.overrideWithValue(testCatalog),
         fleetStoreProvider.overrideWithValue(store),
-        progressStoreProvider.overrideWithValue(
-          MemoryProgressStore(_progress),
-        ),
+        progressStoreProvider.overrideWithValue(MemoryProgressStore()),
       ],
       child: const MaterialApp(
         locale: Locale('ko'),

@@ -6,7 +6,7 @@ import 'package:test/test.dart';
 
 import 'golden/golden_scenarios.dart';
 
-/// 골든 리플레이 100판 (개발 계획서 M3·M7): 판 끝 방식마다 하나 + 무작위 94판. 규칙을 일부러
+/// 골든 리플레이 99판 (개발 계획서 M3·M7): 판 끝 방식마다 하나 + 무작위 94판. 규칙을 일부러
 /// 바꿨으면 `dart run test/golden/generate.dart` 로 다시 만들고 커밋 메시지에 이유를 적는다.
 void main() {
   // 헤드리스 판은 한 번씩만 돌려 여러 검사에서 같이 쓴다.
@@ -41,15 +41,14 @@ void main() {
     });
   }
 
-  test('골든 판들은 격침(내구도)·격침(침수)·전멸·시간 판정·무승부·항복을 모두 다룬다', () {
+  test('골든 판들은 선장실 파괴·전멸·턴 제한·무승부·항복을 모두 다룬다', () {
     final outcomes = {
       for (final g in goldenScenarios) resultOf(g).outcome,
     };
     expect(
       outcomes,
       containsAll(<MatchOutcome>[
-        MatchOutcome.sunk,
-        MatchOutcome.floodSunk,
+        MatchOutcome.captainLost,
         MatchOutcome.annihilation,
         MatchOutcome.timeDecision,
         MatchOutcome.surrender,

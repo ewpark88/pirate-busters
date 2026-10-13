@@ -1,22 +1,18 @@
 import 'package:pb_sim/src/match/match_state.dart';
+import 'package:pb_sim/src/ship/module.dart';
 
-/// 즉시 승리 판정 (설계서 §2.4): 전멸 → 격침(내구도) → 격침(침수 100%) 순.
-/// 두 배가 함께 끝나면 무승부(winner −1).
+/// 즉시 승리 판정 (설계서 §2.7): 전멸 → 선장실 파괴 순. 같은 조건을 양쪽이 같은
+/// 순간 채우면 무승부(winner −1), 다른 조건이면 먼저 보는 조건의 패자가 진다.
 void judgeInstant(MatchState state) {
-  final percent = state.rules.sunkHullPercent;
   for (final outcome in const [
     MatchOutcome.annihilation,
-    MatchOutcome.sunk,
-    MatchOutcome.floodSunk,
+    MatchOutcome.captainLost,
   ]) {
     final lost = [
       for (final s in state.sides)
-        switch (outcome) {
-          MatchOutcome.annihilation => s.crew.allDown || s.crew.attackersDown,
-          MatchOutcome.sunk =>
-            s.grid.totalHp * 100 < s.grid.initialTotalHp * percent,
-          _ => s.flood >= fullFlood,
-        },
+        outcome == MatchOutcome.annihilation
+            ? s.crew.allDown
+            : !s.captainStanding,
     ];
     if (!lost[0] && !lost[1]) continue;
     state
@@ -26,28 +22,42 @@ void judgeInstant(MatchState state) {
   }
 }
 
-/// 보조 판정의 침수량 차 기준: 1%p (0.1%p 단위).
-const int floodTieMargin = 10;
-
-/// 지금 판이 끝나면 시간 판정으로 누가 이기는가 (설계서 §2.4). `winner` 는 0·1, 무승부는
-/// −1. `byHull` 은 침수량 차이가 1%p 이내라 선체 내구도 비율로 갈렸는지다. 상태는
-/// 바꾸지 않는다(HUD 안내도 이 값을 쓴다, ADR-092).
-({int winner, bool byHull}) timeLeader(MatchState state) {
+/// 턴 제한 판정의 앞선 쪽 (설계서 §2.7): 남은 해적 체력 비율이 높은 쪽, 같으면
+/// 선장실 블록 남은 내구도 비율이 높은 쪽, 그마저 같으면 −1. 상태는 바꾸지 않는다
+/// (HUD 안내도 이 값을 쓴다).
+int timeLeader(MatchState state) {
   final a = state.sides[0];
   final b = state.sides[1];
-  final diff = a.flood - b.flood;
-  if (diff > floodTieMargin) return (winner: 1, byHull: false);
-  if (diff < -floodTieMargin) return (winner: 0, byHull: false);
-  // 비율 비교: a.hp / a.init vs b.hp / b.init → 교차 곱.
-  final ra = a.grid.totalHp * b.grid.initialTotalHp;
-  final rb = b.grid.totalHp * a.grid.initialTotalHp;
-  return (winner: ra == rb ? -1 : (ra > rb ? 0 : 1), byHull: true);
+  final ra = a.crew.hpLeft * b.crew.hpStart;
+  final rb = b.crew.hpLeft * a.crew.hpStart;
+  if (ra != rb) return ra > rb ? 0 : 1;
+  final ca = captainHp(a) * captainMaxHp(b);
+  final cb = captainHp(b) * captainMaxHp(a);
+  if (ca != cb) return ca > cb ? 0 : 1;
+  return -1;
 }
 
-/// 시간 판정 (설계서 §2.4): 침수량이 적은 쪽이 이긴다. 차이가 1%p 이내면 선체
-/// 내구도 비율이 높은 쪽, 그마저 같으면 무승부.
+/// 선장실 블록의 남은 내구도(부서졌으면 0).
+int captainHp(SideState s) {
+  for (final m in s.modules.list) {
+    if (m.kind != ModuleKind.captain) continue;
+    return s.grid.hasBlock(m.x, m.y) ? s.grid.hpAt(m.x, m.y) : 0;
+  }
+  return 0;
+}
+
+/// 선장실 블록의 최대 내구도.
+int captainMaxHp(SideState s) {
+  for (final m in s.modules.list) {
+    if (m.kind != ModuleKind.captain) continue;
+    return s.grid.maxHpAt(s.grid.indexOf(m.x, m.y));
+  }
+  return 1;
+}
+
+/// 턴 제한 판정 (설계서 §2.7).
 void judgeTime(MatchState state) {
   state
     ..outcome = MatchOutcome.timeDecision
-    ..winner = timeLeader(state).winner;
+    ..winner = timeLeader(state);
 }

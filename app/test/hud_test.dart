@@ -64,18 +64,16 @@ void main() {
     testWidgets('한국어로 HUD 글자가 나오고 넘치지 않는다', (tester) async {
       await _pumpHud(tester, const Locale('ko'));
       expect(find.text('턴 종료'), findsOneWidget);
-      expect(find.text('남은 턴 30'), findsOneWidget);
+      expect(find.text('남은 턴 24'), findsOneWidget);
       expect(find.text('연료'), findsWidgets);
-      expect(find.textContaining('침수'), findsNWidgets(2));
       expect(tester.takeException(), isNull);
     });
 
     testWidgets('영어로 HUD 글자가 나오고 넘치지 않는다', (tester) async {
       await _pumpHud(tester, const Locale('en'));
       expect(find.text('End turn'), findsOneWidget);
-      expect(find.text('30 turns left'), findsOneWidget);
+      expect(find.text('24 turns left'), findsOneWidget);
       expect(find.text('Fuel'), findsWidgets);
-      expect(find.textContaining('Flood'), findsNWidgets(2));
       expect(tester.takeException(), isNull);
     });
 

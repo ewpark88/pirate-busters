@@ -1,15 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:pb_sim/pb_sim.dart';
 import 'package:pirate_busters/audio/sfx_bank.dart';
 import 'package:pirate_busters/audio/shanty_music.dart';
 import 'package:pirate_busters/audio/sound_service.dart';
-import 'package:pirate_busters/game/battle_cues.dart';
 import 'package:pirate_busters/game/view/explosion_fx.dart';
-import 'package:pirate_busters/game/view/ship_motion.dart';
-import 'package:pirate_busters/game/view/water_fx.dart';
 import 'package:pirate_busters/settings/settings_store.dart';
-
-import 'test_catalog.dart';
 
 void main() {
   group('폭발 (설계서 §10.4, A13)', () {
@@ -31,83 +25,6 @@ void main() {
       expect(Fireball.alphaAt(.2), 1);
       expect(Fireball.alphaAt(Fireball.life), 0);
       expect(Fireball.alphaAt(.5), inExclusiveRange(0, 1));
-    });
-
-    test('화약고·연료통만 유폭한다', () {
-      expect(
-        BattleCues.blastRadius(ModuleKind.magazine.index),
-        ModuleNumbers.magazineRadius,
-      );
-      expect(
-        BattleCues.blastRadius(ModuleKind.fuelTank.index),
-        ModuleNumbers.fuelTankRadius,
-      );
-      expect(BattleCues.blastRadius(ModuleKind.pump.index), 0);
-    });
-  });
-
-  test('턴 끝 침수가 늘 때만 물방울이 튀고, 펌프로 줄면 튀지 않는다 (설계서 §10.4)', () {
-    expect(BattleCues.floodRose(12), isTrue);
-    expect(BattleCues.floodRose(0), isFalse);
-    expect(BattleCues.floodRose(-40), isFalse);
-  });
-
-  group('격침 (설계서 §10.4)', () {
-    test('격침·침수 격침으로 끝난 판만 배가 가라앉는다', () {
-      expect(isSinkOutcome(MatchOutcome.sunk), isTrue);
-      expect(isSinkOutcome(MatchOutcome.floodSunk), isTrue);
-      expect(isSinkOutcome(MatchOutcome.annihilation), isFalse);
-      expect(isSinkOutcome(MatchOutcome.timeDecision), isFalse);
-      expect(isSinkOutcome(MatchOutcome.surrender), isFalse);
-    });
-
-    test('가라앉기는 부드럽게 깊어지고 다 가라앉아야 결과 창을 띄운다', () {
-      final m = ShipMotion();
-      expect(m.settled, isTrue, reason: '가라앉지 않는 배는 기다리지 않는다');
-      m.startSink();
-      expect(m.settled, isFalse);
-      var last = 0.0;
-      for (var i = 0; i < 30; i++) {
-        m.update(.1);
-        expect(m.depth, greaterThanOrEqualTo(last));
-        last = m.depth;
-      }
-      expect(m.settled, isTrue);
-      expect(m.depth, ShipMotion.sinkDepth);
-      expect(m.extraTilt(-1), -ShipMotion.sinkTilt);
-      // 다시 불러도 처음부터 다시 가라앉지 않는다.
-      m.startSink();
-      expect(m.depth, ShipMotion.sinkDepth);
-    });
-  });
-
-  group('침수 거품 (설계서 §10.4)', () {
-    test('물이 새는 칸이 없으면 거품도 없고, 흘수선 아래 구멍 칸에서만 고르게 돌아가며 난다', () {
-      final side = testSetup.newMatch(3).state.sides[0];
-      expect(WaterFx.bubbleCells(side, 0, 2), isEmpty);
-      // 용골 줄(y = 0, 늘 물속) 두 칸을 구멍 단계로 만든다.
-      final grid = side.grid;
-      final xs = [
-        for (var x = 0; x < grid.width; x++)
-          if (grid.hasBlock(x, 0)) x,
-      ].take(3).toList();
-      for (final x in xs) {
-        grid.damage(x, 0, grid.hpAt(x, 0) * 4 ~/ 5);
-      }
-      final leaks = <(int, int)>{};
-      forEachSubmergedLeak(side, (x, y, _) => leaks.add((x, y)));
-      expect(leaks, isNotEmpty);
-      for (var tick = 0; tick < 6; tick++) {
-        final cells = WaterFx.bubbleCells(side, tick, 2);
-        expect(cells.length, lessThanOrEqualTo(2));
-        expect(leaks.containsAll(cells), isTrue);
-      }
-      // 여러 번 돌면 새는 칸이 모두 한 번씩은 거품을 낸다.
-      final seen = {
-        for (var tick = 0; tick < leaks.length; tick++)
-          ...WaterFx.bubbleCells(side, tick, 2),
-      };
-      expect(seen, leaks);
     });
   });
 

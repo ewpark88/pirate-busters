@@ -12,7 +12,7 @@ typedef Breeze = ({double strength, int dir, double t});
 
 /// 돛대 그리기 (설계서 §3.3 돛대 칸, §10.2): 돛대 모듈 칸 위로 돛대 칸을 따라 기둥을
 /// 세우고, 다 서 있으면 돛·깃발을 단다. 돛대 칸이 부서지면 남은 높이까지만 그루터기로
-/// 그리고 돛은 없다. 꼭대기가 돛 자리면 발판을 그린다. 판정은 시뮬레이션에 있고
+/// 그리고 돛은 없다. 꼭대기 망대에는 발판을 그린다. 판정은 시뮬레이션에 있고
 /// 여기는 그리기만 한다.
 abstract final class MastPainter {
   static final Paint _outline = Paint()
@@ -20,14 +20,8 @@ abstract final class MastPainter {
     ..style = PaintingStyle.stroke
     ..strokeWidth = 2;
 
-  /// 종류별 기둥 색·굵기(px).
-  static (Color, double) look(ModuleKind kind) => switch (kind) {
-    ModuleKind.mastBamboo => (const Color(0xFFB9A35A), 6),
-    ModuleKind.mastOak => (const Color(0xFF6B4528), 9),
-    ModuleKind.mastIron => (const Color(0xFF7D8590), 9),
-    ModuleKind.mastCrow => (const Color(0xFF8B5A2B), 8),
-    _ => (const Color(0xFFB07A45), 8),
-  };
+  /// 기둥 색·굵기(px).
+  static (Color, double) look(ModuleKind kind) => (const Color(0xFFB07A45), 8);
 
   /// 아래에서부터 이어서 남은 돛대 칸 수.
   static int standing(
@@ -98,14 +92,12 @@ abstract final class MastPainter {
       canvas
         ..drawRect(pole, Paint()..color = color)
         ..drawRect(pole, _outline);
-      _bands(canvas, m.kind, pole);
       if (!whole) {
         _splinters(canvas, pole, color);
         continue;
       }
       final (tx, ty) = rig.last;
-      final seat = seats.any((c) => c.x == tx && c.y == ty);
-      if (seat || m.kind == ModuleKind.mastCrow) {
+      if (seats.any((c) => c.x == tx && c.y == ty)) {
         _platform(canvas, cellRect(tx, ty));
       }
       _flag(canvas, sprites, Offset(pole.center.dx, top), breeze, blue: blue);
@@ -135,17 +127,6 @@ abstract final class MastPainter {
       ..scale(s == 0 ? .92 : 1 + .08 * s, s == 0 ? .9 : 1);
     sail.render(canvas, position: Vector2(-w / 2, 0), size: Vector2(w, h));
     canvas.restore();
-  }
-
-  /// 대나무 마디·철 띠.
-  static void _bands(Canvas canvas, ModuleKind kind, Rect pole) {
-    if (kind != ModuleKind.mastBamboo && kind != ModuleKind.mastIron) return;
-    final band = Paint()
-      ..color = const Color(0xFF3B2414)
-      ..strokeWidth = kind == ModuleKind.mastIron ? 3 : 1.5;
-    for (var y = pole.bottom - 12; y > pole.top + 4; y -= 16) {
-      canvas.drawLine(Offset(pole.left, y), Offset(pole.right, y), band);
-    }
   }
 
   /// 부러진 끝의 뾰족한 나뭇결.

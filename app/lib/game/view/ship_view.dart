@@ -13,8 +13,6 @@ import 'package:pirate_busters/game/view/boss_mark.dart';
 import 'package:pirate_busters/game/view/cabin_painter.dart';
 import 'package:pirate_busters/game/view/crew_reactions.dart';
 import 'package:pirate_busters/game/view/damage_layer.dart';
-import 'package:pirate_busters/game/view/fire_view.dart';
-import 'package:pirate_busters/game/view/gimmick_marks.dart';
 import 'package:pirate_busters/game/view/hull_trim.dart';
 import 'package:pirate_busters/game/view/hull_water.dart';
 import 'package:pirate_busters/game/view/mast_painter.dart';
@@ -22,7 +20,7 @@ import 'package:pirate_busters/game/view/module_painter.dart';
 import 'package:pirate_busters/game/view/plank_join.dart';
 import 'package:pirate_busters/game/view/ship_motion.dart';
 
-/// 배 한 척: 격자 타일, 돛대, 선실 칸 안의 해적, 불(`FireView`). 그리기만 한다.
+/// 배 한 척: 격자 타일, 돛대, 선실 칸 안의 해적. 그리기만 한다.
 /// 원점은 배 가운데 용골 바닥, 오른쪽 배는 좌우 뒤집음. 파도·기울기·이동 반영 (§2.5·§2.6).
 class ShipView extends PositionComponent with HasGameReference {
   ShipView({
@@ -67,7 +65,6 @@ class ShipView extends PositionComponent with HasGameReference {
       rigs.add(rig);
       await add(rig);
     }
-    await add(FireView(session: session, side: side, sprites: sprites));
   }
 
   double _localX(num cx) => (cx - _width / 2) * _cell;
@@ -115,7 +112,7 @@ class ShipView extends PositionComponent with HasGameReference {
         : sprites.tileOf(m, cell % _width, cell ~/ _width, _state.draft);
   }
 
-  /// 흔들림·격침 연출 (설계서 §10.4).
+  /// 흔들림 연출 (설계서 §10.4).
   final ShipMotion motion = ShipMotion();
 
   void rock(int dir) => motion.rock(dir); // 맞은 쪽으로 흔들림 (§10.4).
@@ -130,40 +127,31 @@ class ShipView extends PositionComponent with HasGameReference {
   }
 
   /// 파도 위아래 흔들림(시뮬레이션 단위).
-  int get heave =>
-      Wave(session.state.rules, session.state.turn).heave(side, session.turnMs);
+  int get heave => Wave(session.state).heave(side, session.turnMs);
 
   @override
   void update(double dt) {
     super.update(dt);
     final facing = facingOf(side);
     final midX = bowX - facing * _width * cellUnit / 2;
-    final state = session.state;
-    // 판이 격침으로 끝나면 진 배가 기울며 가라앉는다(재생이 끝난 뒤).
-    if (state.isOver && isSinkOutcome(state.outcome) && state.winner != side) {
-      if (session.playback == null) motion.startSink();
-    }
     motion.update(dt);
     position = Coords.point(midX, heave - _state.draft)
       ..x += motion.recoilX
-      ..y += motion.depth + motion.dip;
+      ..y += motion.dip;
     scale.x = facing.toDouble();
-    final rules = state.rules;
-    final flood = floodTilt(_state, rules);
-    final tilt = Wave(rules, state.turn).roll(side, session.turnMs) + flood;
+    final tilt = Wave(session.state).roll(side, session.turnMs);
     angle =
         -facing * tilt * math.pi / 180000 +
         motion.rockAngle +
-        motion.recoilAngle -
-        facing * motion.extraTilt(flood == 0 ? -1 : flood.sign.toDouble());
+        motion.recoilAngle;
     _updateCrew(dt);
   }
 
   final List<Vector2> _targets = [];
   double _t = 0;
 
-  /// 해적 자세 (설계서 §10.1): 선실에서 대기, 조준할 때 몸을 젖히고, 선실이
-  /// 부서지면 바다로 떨어져 헤엄치고, 돌아오면 선실로 올라가고, 쓰러지면 사라진다.
+  /// 해적 자세 (설계서 §10.1): 선실에서 대기, 조준할 때 몸을 젖히고, 쓰러지면
+  /// 사라진다.
   /// 착탄 전(탄 비행 중)에는 쏘기 전 자세를 유지한다.
   void _updateCrew(double dt) {
     _t += dt;
@@ -182,14 +170,6 @@ class ShipView extends PositionComponent with HasGameReference {
         switch (status) {
           case PirateStatus.aboard:
             _targets[slot].setFrom(cabinFeet(slot));
-          case PirateStatus.swimming:
-            // 뱃머리 1칸 앞 해수면(시뮬레이션 swimmerPosition), 물결에 까딱인다.
-            final sea = (heave - _state.draft) * _cell / cellUnit;
-            final bob = math.sin(_t * 3 + slot) * 2;
-            _targets[slot].setValues(
-              _localX(_width + 1 + slot * 0.6),
-              sea + bob,
-            );
           case PirateStatus.down || PirateStatus.boarding:
             break;
         }
@@ -201,12 +181,10 @@ class ShipView extends PositionComponent with HasGameReference {
         rig.alpha = 0;
       }
       reactions.move(slot, rig.home, _targets[slot], k, dt);
-      // 상태 동작과 표정 (설계서 §10.1): 떨어지는 중, 헤엄, 판이 끝나면 승리·패배.
+      // 상태 동작과 표정 (설계서 §10.1): 판이 끝나면 승리·패배.
       rig
         ..lean = leanOf(session, side, slot)
-        ..state = status == PirateStatus.swimming
-            ? (rig.home.distanceTo(_targets[slot]) > 8 ? 'fall' : 'swim')
-            : state.isOver && state.winner >= 0
+        ..state = state.isOver && state.winner >= 0
             ? (state.winner == side ? 'win' : 'lose')
             : (rig.lean > 0 ? 'aim' : null);
     }
@@ -257,7 +235,6 @@ class ShipView extends PositionComponent with HasGameReference {
       cellRect: cellRect,
       style: TrimStyle.ofSide(side),
     );
-    GimmickMarks.shield(canvas, _state, materials, cellRect, _t);
     // 배 속·그을음·금·구멍·찢긴 변·파편은 타일을 모두 그린 뒤 한 장으로 얹는다.
     var wetRows = 0;
     while (wetRows < grid.height &&

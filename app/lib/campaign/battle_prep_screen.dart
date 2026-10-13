@@ -92,7 +92,7 @@ class _BattlePrepScreenState extends ConsumerState<BattlePrepScreen> {
                         deck: deck,
                         used: used,
                         limit: ref.watch(costLimitProvider),
-                        cabins: progress.ship.hull.cabinSlots,
+                        cabins: progress.ship.hull.crewSlots,
                       ),
                     ),
                   ),
@@ -152,7 +152,7 @@ class _BattlePrepScreenState extends ConsumerState<BattlePrepScreen> {
     GameCatalog catalog,
   ) {
     final ship = ref.read(progressProvider).ship;
-    final mine = fleet.blueprint(fleet.activeSlot, stage: ship.stage);
+    final mine = fleet.blueprint(fleet.activeSlot);
     return PbPanel(
       title: l10n.prepMyShip,
       child: Column(
@@ -192,7 +192,6 @@ class _BattlePrepScreenState extends ConsumerState<BattlePrepScreen> {
 
   Widget _enemy(AppLocalizations l10n) {
     final keys = stage.dialogueKeys;
-    final gimmick = stage.gimmick;
     return PbPanel(
       title: l10n.prepEnemy,
       child: Column(
@@ -223,9 +222,10 @@ class _BattlePrepScreenState extends ConsumerState<BattlePrepScreen> {
                     '${personalityLabel(l10n, stage.personality)} · '
                     '${l10n.prepEnemyCount(stage.enemyDeck.length)}',
               ),
-              PbChip(label: l10n.prepWeather(stage.waveLevel, stage.maxWind)),
-              if (gimmick != null)
-                PbChip(label: dataText(l10n, 'gimmick_$gimmick'), warn: true),
+              // 파도 칸: 잔잔한 바다면 0, 아니면 구간마다 달라 1 로 둔다(ARB 문구 정리 전).
+              PbChip(
+                label: l10n.prepWeather(stage.maxWind),
+              ),
             ],
           ),
           const SizedBox(height: 6),
@@ -238,7 +238,6 @@ class _BattlePrepScreenState extends ConsumerState<BattlePrepScreen> {
               ).enemyBlueprintOf(stage),
               line: keys.isEmpty ? '' : dataText(l10n, keys[_line]),
               tapHint: l10n.dialogueTap,
-              shield: gimmick == 'bow_iron_shield',
               onTap: () => setState(() => _line = (_line + 1) % keys.length),
             ),
           ),

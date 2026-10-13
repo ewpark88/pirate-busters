@@ -21,7 +21,7 @@ Future<BattleGame> _game(WidgetTester tester) async {
       1,
       deck: const ['p21_puffy'],
       enemyDeck: const ['p01_octo'],
-      rules: const MatchRules(waveLevel: 0),
+      rules: const MatchRules(calmSea: true),
       costLimit: 20,
       enemyCostLimit: 20,
     );
@@ -64,24 +64,21 @@ void main() {
       const SimEvent(SimEventKind.blockDestroyed, side: 1, cell: 3),
     ]);
     expect(w.score, HitWeight.base + HitWeight.perDestroyed);
-    expect(HitWeight.of([_fired(EffectKind.flockDrop)]).score, 0);
+    expect(HitWeight.of([_fired(EffectKind.biteAgain)]).score, 0);
   });
 
-  testWidgets('설치탄·떠 있는 기뢰 폭발만 따로 그리고, 펠리 폭탄은 뒤따르는 착탄이 그린다', (
+  testWidgets('설치탄 폭발만 따로 그리고, 강습 물기·촉수는 그리지 않는다', (
     tester,
   ) async {
     rootBundle.clear();
     final game = await _game(tester);
     expect(game.cues.isMineBlast(_fired(EffectKind.mineBlast)), isTrue);
-    expect(game.cues.isMineBlast(_fired(EffectKind.floatMine)), isTrue);
-    expect(game.cues.isMineBlast(_fired(EffectKind.flockDrop)), isFalse);
-    expect(game.cues.isMineBlast(_fired(EffectKind.gnawBite)), isFalse);
+    expect(game.cues.isMineBlast(_fired(EffectKind.biteAgain)), isFalse);
+    expect(game.cues.isMineBlast(_fired(EffectKind.tentacle)), isFalse);
   });
 
   for (final (name, kind, onHull) in [
     ('붙은 설치탄', EffectKind.mineBlast, true),
-    ('떠 있는 기뢰', EffectKind.floatMine, true),
-    ('선체가 없는 줄의 떠 있는 기뢰', EffectKind.floatMine, false),
   ]) {
     testWidgets('$name 이 터지면 폭발·흔들림·카메라 당김·이름표가 난다', (tester) async {
       rootBundle.clear();
@@ -102,7 +99,6 @@ void main() {
         _fired(kind, cell: onHull ? cell : -1, x: ship.bowX),
         if (onHull)
           SimEvent(SimEventKind.blockHit, side: 1, cell: cell, value: 40),
-        const SimEvent(SimEventKind.flood, side: 1, value: 20),
       ]);
       expect(game.cues.fx.trauma.value, greaterThan(0), reason: '흔들림');
       expect(tags, contains(HitTag.mineBlast));

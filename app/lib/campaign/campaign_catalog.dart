@@ -20,8 +20,7 @@ class CampaignCatalog {
       for (final sea in seas)
         ...sea.problems(
           hasPirate: game.pirates.has,
-          hasPreset: (id, stage) =>
-              game.presets.any((p) => p.id == id && p.stage == stage),
+          hasPreset: (id) => game.presets.any((p) => p.id == id),
         ),
     ];
     if (problems.isNotEmpty) {
@@ -43,7 +42,7 @@ class CampaignCatalog {
   ], game);
 
   /// 원격 설정으로 스테이지 표를 덮어쓴 캠페인 (설계서 §7.4 `campaign_*`,
-  /// 개발 계획서 A9). 키: `stage_<id>_aiLevel`(난이도 이름)·`_waveLevel`·`_maxWind`·
+  /// 개발 계획서 A9). 키: `stage_<id>_aiLevel`(난이도 이름)·`_maxWind`·
   /// `_starTurns`·`_rewardGold`. 범위 밖 값은 무시한다.
   CampaignCatalog applyRemote(RemoteValues remote) => CampaignCatalog([
     for (final sea in seas)

@@ -8,13 +8,13 @@ void main() {
         AiLevel.hard,
         (k) => switch (k) {
           'ai_hard_thinkMs' => 400,
-          'ai_hard_timeMode' => 0,
+          'ai_hard_waveZones' => 0,
           'ai_easy_thinkMs' => 1,
           _ => null,
         },
       );
       expect(hard.thinkMs, 400);
-      expect(hard.timeMode, isFalse);
+      expect(hard.waveZones, isFalse);
       expect(hard.angleErrorMdeg, AiDials.of(AiLevel.hard).angleErrorMdeg);
       expect(
         AiDials.withOverrides(AiLevel.normal, (_) => null).thinkMs,
@@ -22,21 +22,19 @@ void main() {
       );
     });
 
-    test('범위 밖 값(퍼센트 101, bool 2, support 순번 밖)은 무시한다', () {
+    test('범위 밖 값(퍼센트 101, bool 2, 음수)은 무시한다', () {
       final d = AiDials.withOverrides(
         AiLevel.easy,
         (k) => switch (k) {
           'ai_easy_pickTopPercent' => 101,
-          'ai_easy_combo' => 2,
-          'ai_easy_support' => SupportUse.values.length,
+          'ai_easy_waveTiming' => 2,
           'ai_easy_positions' => -1,
           _ => null,
         },
       );
       final base = AiDials.of(AiLevel.easy);
       expect(d.pickTopPercent, base.pickTopPercent);
-      expect(d.combo, base.combo);
-      expect(d.support, base.support);
+      expect(d.waveTiming, base.waveTiming);
       expect(d.positions, base.positions);
     });
 

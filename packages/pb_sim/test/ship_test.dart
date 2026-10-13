@@ -8,76 +8,17 @@ import 'fixtures.dart';
 Map<String, Object?> _parse(String s) => jsonDecode(s) as Map<String, Object?>;
 
 void main() {
-  test('재질 5종의 수치는 설계서 §3.2 표와 같다', () {
+  test('재질 3종의 수치는 BALANCE.md A3.2 표와 같다', () {
     final table = {
-      for (final m in BlockMaterial.blocks)
-        m.name: [m.durability, m.weight, m.cost],
+      for (final m in BlockMaterial.blocks) m.name: [m.durability, m.cost],
     };
     expect(table, {
-      'pine': [40, 500, 1],
-      'oak': [80, 2000, 2],
-      'iron': [160, 5000, 4],
-      'cork': [30, -2000, 3],
-      'net': [20, 500, 1],
+      'pine': [40, 1],
+      'oak': [80, 2],
+      'iron': [160, 4],
     });
-    expect(BlockMaterial.iron.fireImmune, isTrue);
-    expect(BlockMaterial.pine.weakToFire, isTrue);
-    expect(BlockMaterial.cork.buoyant, isTrue);
-    expect(BlockMaterial.net.slowsShots && BlockMaterial.net.blocksAir, isTrue);
-  });
-
-  test('선체 틀은 용골 줄 양끝 2칸, 그 위 줄 1칸을 뺀 V 자다 (설계서 §3.4, BALANCE.md A3.1)', () {
-    const s = HullSpec.sloop;
-    expect([s.frameInset(0), s.frameInset(1), s.frameInset(2)], [2, 1, 0]);
-    expect(
-      [s.inFrame(1, 0), s.inFrame(2, 0), s.inFrame(9, 0), s.inFrame(10, 0)],
-      [
-        false,
-        true,
-        true,
-        false,
-      ],
-    );
-    expect(
-      [s.inFrame(0, 1), s.inFrame(1, 1), s.inFrame(0, 2)],
-      [false, true, true],
-    );
-    const dinghy = HullSpec(
-      id: 'dinghy_test',
-      width: 6,
-      height: 5,
-      cabinSlots: 2,
-      buildPoints: 20,
-      moveSpeed: 2800,
-      fuelTank: 80,
-      fuelPerCell: 8,
-      moduleLimit: 1,
-    );
-    expect(dinghy.frameInset(0), 1, reason: '폭 6 이하는 용골 줄 양끝 1칸');
-    expect(boxSloop.inFrame(0, 0), isTrue, reason: '테스트용 직사각형');
-  });
-
-  test('선체 틀 밖에 블록을 두면 거부한다 (설계서 §3.4)', () {
-    Blueprint withKeelAt(int x) => Blueprint(
-      HullSpec.sloop,
-      [
-        ...sampleBlueprint().cells,
-        BlockCell(x, 0, BlockMaterial.pine),
-      ],
-      cabins: sampleCabins,
-      modules: const [ModuleCell(10, 1, ModuleKind.captain)],
-    );
-    expect(() => withKeelAt(1), throwsArgumentError);
-    expect(() => withKeelAt(10), throwsArgumentError);
-    expect(
-      buildProblem(
-        HullSpec.sloop,
-        [const BlockCell(0, 0, BlockMaterial.oak)],
-        cabins: const [],
-        modules: const [],
-      ),
-      contains('선체 틀 밖'),
-    );
+    expect(BlockMaterial.rigPine.rig, isTrue);
+    expect(BlockMaterial.rigPine.durability, 30);
   });
 
   test('슬루프는 12×8, 선실 4, 건조 포인트 60 이다', () {
@@ -120,7 +61,7 @@ void main() {
         '6,0',
       ],
     );
-    expect(sampleBlueprint().cost, 57);
+    expect(sampleBlueprint().cost, 56);
   });
 
   test('용골과 이어지지 않은 블록이나 빈 용골 줄은 거부한다 (설계서 §3.4)', () {
@@ -291,8 +232,9 @@ void main() {
     expect(g.hpAt(2, 2), 160);
     expect(g.materialAt(0, 7), isNull);
     expect(g.hpAt(0, 7), 0);
-    expect(g.blockCount, 37);
-    expect(g.totalHp, 12 * 80 + 12 * 40 + 30 + 2 * 160 + 6 * 40 + 4 * 20);
-    expect(g.rawMaterials[g.indexOf(1, 2)], BlockMaterial.cork.index);
+    // 블록 37칸 + 돛대 칸 3칸 (0, 3..5).
+    expect(g.blockCount, 40);
+    expect(g.totalHp, 12 * 80 + 12 * 40 + 80 + 2 * 160 + 10 * 40 + 3 * 30);
+    expect(g.materialAt(0, 5), BlockMaterial.rigPine);
   });
 }

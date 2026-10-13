@@ -27,10 +27,10 @@ class AppLocalizationsEn extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count turns to time decision',
-      one: '1 turn to time decision',
+      other: '$count turns to turn limit',
+      one: '1 turn to turn limit',
     );
-    return '$_temp0 · less flooding wins';
+    return '$_temp0 · most crew HP wins';
   }
 
   @override
@@ -39,7 +39,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get timeVerdictByHull => 'Flooding close: hull decides';
+  String get timeVerdictByHull => 'HP tied: cabin decides';
 
   @override
   String get yourTurn => 'Your turn';
@@ -184,10 +184,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get resultDraw => 'Draw';
 
   @override
-  String get outcomeSunk => 'Ship wrecked';
-
-  @override
-  String get outcomeFloodSunk => 'Sunk by flooding';
+  String get outcomeCaptainLost => 'Captain\'s cabin lost';
 
   @override
   String get outcomeAnnihilation => 'Crew wiped out';
@@ -224,7 +221,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get emphasisCabin => 'Cabin hit!';
 
   @override
-  String get sunkBanner => 'Sunk!';
+  String get bannerCaptainLost => 'Cabin down!';
 
   @override
   String get bannerMyTurn => 'Your turn!';
@@ -276,8 +273,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pirate_p07_name => 'Hippo the Gunslinger';
 
   @override
-  String get pirate_p07_desc =>
-      'Short-range focused triple shot that hammers one spot';
+  String get pirate_p07_desc => 'Focused 3-shot burst on one spot';
 
   @override
   String get pirate_p07_lore =>
@@ -297,7 +293,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pirate_p16_name => 'Suri the Slinger';
 
   @override
-  String get pirate_p16_desc => 'Stone skips twice and hits the waterline';
+  String get pirate_p16_desc => 'Stone skips off the water into the lower hull';
 
   @override
   String get pirate_p16_lore =>
@@ -307,7 +303,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pirate_p21_name => 'Puffy the Blaster';
 
   @override
-  String get pirate_p21_desc => 'Clings below the waterline, bursts next turn';
+  String get pirate_p21_desc => 'Sticks under the hull, blows at my next turn';
 
   @override
   String get pirate_p21_lore =>
@@ -336,7 +332,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pirate_p28_name => 'Pelly the Pelican';
 
   @override
-  String get pirate_p28_desc => 'Drops 4 small bombs from her pouch next turn';
+  String get pirate_p28_desc => 'Drops 4 small bombs from the top';
 
   @override
   String get pirate_p28_lore =>
@@ -347,7 +343,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get pirate_p31_desc =>
-      'Leaps onto the deck and bites pirates within 1 cell';
+      'Leaps onto the enemy deck and bites nearby pirates';
 
   @override
   String get pirate_p31_lore =>
@@ -357,7 +353,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pirate_p36_name => 'Tok the Shipwright';
 
   @override
-  String get pirate_p36_desc => 'Hit the enemy to patch 3 holes on your ship';
+  String get pirate_p36_desc => 'Shell cannon shockwave pushes the ship 1 cell';
 
   @override
   String get pirate_p36_lore => 'Slow but careful. He keeps the ship afloat.';
@@ -366,7 +362,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pirate_p02_name => 'Starry the Firestar';
 
   @override
-  String get pirate_p02_desc => 'Spinning fire star that leaves a burning zone';
+  String get pirate_p02_desc => 'Spinning fire star bursts wide';
 
   @override
   String get pirate_p02_lore =>
@@ -376,8 +372,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pirate_p03_name => 'Crab Brothers';
 
   @override
-  String get pirate_p03_desc =>
-      'Two bombs on the same arc, one after the other';
+  String get pirate_p03_desc => 'Big claw bomb, bursts on impact';
 
   @override
   String get pirate_p03_lore =>
@@ -387,8 +382,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pirate_p05_name => 'Volke the Volcano Crab';
 
   @override
-  String get pirate_p05_desc =>
-      'Steep lob that drills 3 layers, then a big blast';
+  String get pirate_p05_desc => '★ Sky-high lob, drills 2 layers then blows';
 
   @override
   String get pirate_p05_lore => 'The volcano on his back has never cooled.';
@@ -397,7 +391,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pirate_p08_name => 'Bones the Sniper';
 
   @override
-  String get pirate_p08_desc => 'Lightning-fast shot with a glowing-eye scope';
+  String get pirate_p08_desc => 'Lightning-fast snipe, crits on pirates';
 
   @override
   String get pirate_p08_lore =>
@@ -407,8 +401,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pirate_p09_name => 'Lion the Spinefish';
 
   @override
-  String get pirate_p09_desc =>
-      'Scattered spines that spray wide and shred nets';
+  String get pirate_p09_desc => 'Scatter burst, sprays wide';
 
   @override
   String get pirate_p09_lore => 'Every fin is a venomous spine cannon.';
@@ -417,7 +410,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pirate_p10_name => 'Volt the Eel';
 
   @override
-  String get pirate_p10_desc => 'Chain lightning that jumps between pirates';
+  String get pirate_p10_desc => 'Chain lightning jumps from the hit pirate';
 
   @override
   String get pirate_p10_lore => 'Gets even livelier in wet places.';
@@ -426,7 +419,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pirate_p12_name => 'Nar the Narwhal';
 
   @override
-  String get pirate_p12_desc => 'Horn lance skewers up to 3 pirates in a row';
+  String get pirate_p12_desc => 'Horn spear pierces blocks';
 
   @override
   String get pirate_p12_lore =>
@@ -436,7 +429,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pirate_p13_name => 'Walrus the Anchorman';
 
   @override
-  String get pirate_p13_desc => 'Heavy anchor that rips blocks out';
+  String get pirate_p13_desc => 'Heavy anchor pierces blocks';
 
   @override
   String get pirate_p13_lore =>
@@ -446,7 +439,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pirate_p14_name => 'Saw the Sawshark';
 
   @override
-  String get pirate_p14_desc => 'Saw nose cuts a whole column';
+  String get pirate_p14_desc => 'Saw nose pierces blocks';
 
   @override
   String get pirate_p14_lore => 'Its nose itches whenever it sees a mast.';
@@ -455,7 +448,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pirate_p15_name => 'Moby the Whale';
 
   @override
-  String get pirate_p15_desc => 'Drags the enemy ship 3 cells and pins it';
+  String get pirate_p15_desc => '★ Drags the enemy ship 3 cells on a hull hit';
 
   @override
   String get pirate_p15_lore =>
@@ -465,7 +458,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pirate_p17_name => 'Pingu the Slider';
 
   @override
-  String get pirate_p17_desc => 'Bounces, then belly-slides across the deck';
+  String get pirate_p17_desc => 'Belly-slides off the water into the hull';
 
   @override
   String get pirate_p17_lore => 'No ice? No problem. Pingu slides on anything.';
@@ -474,7 +467,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pirate_p18_name => 'Sheldon the Horseshoe';
 
   @override
-  String get pirate_p18_desc => 'Ricochets off walls for repeat hits';
+  String get pirate_p18_desc => 'Shell skips into the hull';
 
   @override
   String get pirate_p18_lore =>
@@ -484,7 +477,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pirate_p19_name => 'Dolphy the Surfer';
 
   @override
-  String get pirate_p19_desc => 'Clings to the hull and pounds the waterline';
+  String get pirate_p19_desc => 'Surfs a wave into the hull';
 
   @override
   String get pirate_p19_lore => 'Has never stopped smiling on a wave.';
@@ -493,7 +486,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pirate_p20_name => 'Orca the Tide';
 
   @override
-  String get pirate_p20_desc => 'Huge wave sweeps the deck, flooding +8%p';
+  String get pirate_p20_desc =>
+      '★ Big wave sweeps the deck and pushes the ship 2 cells';
 
   @override
   String get pirate_p20_lore => 'When Orca passes, the whole sea tilts.';
@@ -502,7 +496,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pirate_p22_name => 'Jelly the Mine';
 
   @override
-  String get pirate_p22_desc => 'Floating mine that blows when a ship passes';
+  String get pirate_p22_desc => 'Sticks under the hull, blows at my next turn';
 
   @override
   String get pirate_p22_lore =>
@@ -522,7 +516,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pirate_p24_name => 'Moray the Eel';
 
   @override
-  String get pirate_p24_desc => 'Latches on, gnaws blocks and jams pumps';
+  String get pirate_p24_desc => 'Sticks under the hull, blows at my next turn';
 
   @override
   String get pirate_p24_lore => 'Sees a gap, sticks its teeth in first.';
@@ -531,7 +525,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pirate_p25_name => 'Kraki the Little Kraken';
 
   @override
-  String get pirate_p25_desc => 'Tentacles cling on and keep the water rising';
+  String get pirate_p25_desc =>
+      '★ Blows on contact, tentacles smash nearby blocks for 2 turns';
 
   @override
   String get pirate_p25_lore => 'Just a baby, but already has three tentacles.';
@@ -540,8 +535,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pirate_p29_name => 'Alba the Albatross';
 
   @override
-  String get pirate_p29_desc =>
-      'Tap to change course; reverses the wind on hit';
+  String get pirate_p29_desc => 'Curves toward the nearest pirate';
 
   @override
   String get pirate_p29_lore =>
@@ -551,8 +545,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pirate_p30_name => 'Manta the Storm Ray';
 
   @override
-  String get pirate_p30_desc =>
-      'Blinds the enemy aim line and strikes at random';
+  String get pirate_p30_desc => '★ Hides the foe\'s aim line next turn';
 
   @override
   String get pirate_p30_lore => 'No path is left in the sky Manta crosses.';
@@ -561,7 +554,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pirate_p32_name => 'Crabby the Roper';
 
   @override
-  String get pirate_p32_desc => 'Swings over and drags a pirate into the sea';
+  String get pirate_p32_desc =>
+      'Swings over on a rope and bites nearby pirates';
 
   @override
   String get pirate_p32_lore => 'One big claw is all it takes.';
@@ -570,7 +564,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pirate_p33_name => 'King the Shieldcrab';
 
   @override
-  String get pirate_p33_desc => 'Lands and seals a cabin for a turn';
+  String get pirate_p33_desc => 'Jumps aboard and bites nearby pirates';
 
   @override
   String get pirate_p33_lore => 'Has never learned how to put the shield down.';
@@ -579,7 +573,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pirate_p34_name => 'Lob the Twin-Claw';
 
   @override
-  String get pirate_p34_desc => 'Leaps to the next pirate after a knockout';
+  String get pirate_p34_desc => 'Spinning claws slash nearby pirates';
 
   @override
   String get pirate_p34_lore => 'Nobody has seen both claws at rest.';
@@ -588,7 +582,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pirate_p35_name => 'Davy the Skull Captain';
 
   @override
-  String get pirate_p35_desc => 'Summons 3 skeleton crew and revives once';
+  String get pirate_p35_desc => '★ Three skeleton crew bite along';
 
   @override
   String get pirate_p35_lore =>
@@ -598,7 +592,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pirate_p37_name => 'Pumpum the Baby Whale';
 
   @override
-  String get pirate_p37_desc => 'Hit the enemy to cut your flooding at once';
+  String get pirate_p37_desc => 'Water-jet shockwave pushes the ship 1 cell';
 
   @override
   String get pirate_p37_lore => 'Proud of the spout from its blowhole.';
@@ -607,8 +601,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pirate_p38_name => 'Cook the Hermit Crab';
 
   @override
-  String get pirate_p38_desc =>
-      'Hit the enemy to heal crew and cut cooldowns by 1';
+  String get pirate_p38_desc => 'Pot-bomb shockwave pushes the ship 1 cell';
 
   @override
   String get pirate_p38_lore => 'Believes a hungry crew cannot fight.';
@@ -617,8 +610,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pirate_p39_name => 'Corey the Coral Golem';
 
   @override
-  String get pirate_p39_desc =>
-      'Hit to raise a coral wall at your bow for 2 turns';
+  String get pirate_p39_desc => 'Coral-chunk shockwave pushes the ship 1 cell';
 
   @override
   String get pirate_p39_lore =>
@@ -628,8 +620,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pirate_p40_name => 'Lamp the Anglerfish';
 
   @override
-  String get pirate_p40_desc =>
-      'Hit for next turn: full aim line, no wind, +30 fuel';
+  String get pirate_p40_desc => '★ Huge shockwave pushes the ship 2 cells';
 
   @override
   String get pirate_p40_lore =>
@@ -640,21 +631,21 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get blueprint_balanced_desc =>
-      'Oak keel with a pump and a workshop. A gun port and a lookout back one star pirate.';
+      'Oak keel with an iron-clad captain\'s cabin. Oak guards the bow, and a mast midship holds the crow\'s nest.';
 
   @override
   String get blueprint_armored_name => 'Ironclad';
 
   @override
   String get blueprint_armored_desc =>
-      'Iron walls guard both sides of the cabins, and a magazine adds firepower. Heavy and low in the water, so watch the flooding.';
+      'Iron plates the bow for a tough front. The cabin roofs stay thin.';
 
   @override
   String get blueprint_fast_name => 'Swift';
 
   @override
   String get blueprint_fast_desc =>
-      'Pine and cork keep it light, and two fuel tanks let it roam far. It breaks easily.';
+      'A low ship that hides the captain\'s cabin in a mid oak deck. Fewer blocks, fewer points spent.';
 
   @override
   String ammoExplosive(int n) {
@@ -663,7 +654,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String ammoFire(int n) {
-    return 'Fire ${n}T';
+    return 'Fire r$n';
   }
 
   @override
@@ -698,7 +689,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String ammoMine(int n) {
-    return 'Mine ${n}T';
+    return 'Mine r$n';
   }
 
   @override
@@ -713,12 +704,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String ammoAssault(int n) {
-    return 'Raid +$n';
+    return 'Raid r$n';
   }
 
   @override
-  String ammoSupport(int n) {
-    return 'Repair $n%';
+  String ammoShock(int n) {
+    return 'Push $n';
   }
 
   @override
@@ -939,7 +930,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get familyAssault => 'Assault';
 
   @override
-  String get familySupport => 'Supply';
+  String get familyShock => 'Shock';
 
   @override
   String get rarityCommon => 'Common';
@@ -1154,8 +1145,8 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String prepWeather(Object wave, Object wind) {
-    return 'Waves $wave · Wind up to $wind';
+  String prepWeather(Object wind) {
+    return 'Wind up to $wind';
   }
 
   @override
@@ -1174,7 +1165,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get personality_hunter => 'Hunter';
 
   @override
-  String get personality_sinker => 'Sinker';
+  String get personality_shover => 'Shover';
 
   @override
   String get personality_rusher => 'Rusher';
@@ -1816,7 +1807,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ammoKindAssault => 'Assault';
 
   @override
-  String get ammoKindSupport => 'Support';
+  String get ammoKindShock => 'Shock shot';
 
   @override
   String pirateCost(int n) {

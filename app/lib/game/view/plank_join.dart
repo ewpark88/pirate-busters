@@ -15,11 +15,10 @@ abstract final class PlankJoin {
   /// 타일 그림(64px)의 칸 테두리 두께(px). 이웃과 이어지는 변은 이만큼 잘라 늘린다.
   static const double border = 2;
 
-  /// 이어 그리는 재질: 나무 판자 계열. 철판·망사는 칸마다 따로 보인다.
+  /// 이어 그리는 재질: 나무 판자 계열. 철판은 칸마다 따로 보인다.
   static bool joins(int material) =>
       material == BlockMaterial.oak.index ||
-      material == BlockMaterial.pine.index ||
-      material == BlockMaterial.cork.index;
+      material == BlockMaterial.pine.index;
 
   /// 칸 ([x], [y]) 의 이음 비트: 같은 이음 재질 이웃이 있는 방향.
   /// [materials] 는 `ShipGrid.rawMaterials` 와 같은 줄 우선 배열이다.

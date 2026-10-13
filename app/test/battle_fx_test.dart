@@ -95,7 +95,7 @@ void main() {
       expect(HitTag.ofAmmo(AmmoType.chain), HitTag.chain);
       expect(HitTag.ofAmmo(AmmoType.mine), HitTag.mine);
       expect(HitTag.ofAmmo(AmmoType.assault), HitTag.bite);
-      expect(HitTag.ofAmmo(AmmoType.support), isNull, reason: '수리 이름표는 내 배에');
+      expect(HitTag.ofAmmo(AmmoType.shock), isNull);
       expect(HitTag.ofAmmo(AmmoType.explosive), isNull);
       expect(HitTag.ofAmmo(AmmoType.split), isNull);
     });
@@ -241,7 +241,7 @@ void main() {
         ship.rock(1);
         game.update(1 / 30);
         expect(ship.angle, isNot(rest), reason: '맞은 방향으로 흔들린다');
-        // 해적마다 한 발씩: 쏠 수 있을 때만 쏘고 몇 초 돌린다.
+        // 해적마다 쏠 수 있을 때만 쏘고 몇 초 돌린다(한 턴 한 발, 상대 턴 연출도 센다).
         var shots = 0;
         for (var slot = 0; slot < deck.length; slot++) {
           if (session.isHumanTurn && session.canFire(slot)) {
@@ -258,7 +258,7 @@ void main() {
           recorder.endRecording().dispose();
         }
         expect(shots, greaterThanOrEqualTo(2), reason: '$deck');
-        // 남은 턴 수 배지 (§10.4): 설치탄은 붙은 칸에, 투하는 표시한 곳 위에 뜬다.
+        // 남은 턴 수 배지 (§10.4): 설치탄은 붙은 칸에 뜬다.
         final spec = session.state.sides[0].crew.pirates[0].spec;
         final enemy = session.state.sides[1];
         final cell =
@@ -276,16 +276,13 @@ void main() {
               x: x,
             );
         final mine = effect(EffectKind.mineBlast, cell: cell);
-        final drop = effect(EffectKind.flockDrop, x: 5 * cellUnit);
-        session.state.effects.addAll([mine, drop]);
+        session.state.effects.add(mine);
         final badges = game.world.children.whereType<EffectBadges>().single;
         final (cx, cy) = enemy.frame.cellCenter(
           enemy.cabins.first.x,
           enemy.cabins.first.y,
         );
         expect(badges.positionOf(mine), Coords.point(cx, cy));
-        expect(badges.positionOf(drop).x, Coords.x(5 * cellUnit));
-        expect(badges.positionOf(drop).y, -EffectBadges.dropHeight);
         final recorder = ui.PictureRecorder();
         game.render(ui.Canvas(recorder));
         recorder.endRecording().dispose();

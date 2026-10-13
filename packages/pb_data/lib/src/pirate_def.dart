@@ -17,13 +17,11 @@ class PirateDef {
     required this.family,
     required this.rarity,
     required this.hp,
-    required this.cooldownTurns,
     required this.ammo,
     required this.spreadDeg,
     required this.ammoParam,
     required this.ability,
     required this.abilityValue,
-    required this.range,
     required this.radiusCells,
     required this.blockDmg,
     required this.pirateDmg,
@@ -37,7 +35,6 @@ class PirateDef {
   factory PirateDef.fromJson(Object? json, {String path = 'pirate'}) {
     final r = JsonReader(json, path: path);
     final ammo = r.object('ammo');
-    final projectile = r.objectOr('projectile');
     final onHit = r.objectOr('onHit');
     final render = r.object('render');
     final growth = r.objectOr('growth');
@@ -47,7 +44,6 @@ class PirateDef {
       () => Family.byName(r.string('family')),
       '$path.family',
     );
-    final rangeName = projectile.stringOrNull('range');
     final def = PirateDef._(
       id: r.string('id'),
       nameKey: r.string('nameKey'),
@@ -56,7 +52,6 @@ class PirateDef {
       family: family,
       rarity: _parse(() => Rarity.byName(r.string('rarity')), '$path.rarity'),
       hp: r.integer('hp'),
-      cooldownTurns: r.integer('cooldownTurns'),
       ammo: _parse(
         () => AmmoType.byName(ammo.string('type')),
         '$path.ammo.type',
@@ -64,17 +59,11 @@ class PirateDef {
       spreadDeg: ammo.integerOr('spreadDeg', 0),
       ammoParam: ammo.has('pattern')
           ? _burstPattern(ammo.string('pattern'), '$path.ammo.pattern')
-          : ammo.integerOr('repairCells', ammo.integerOr('delayed', 0)),
+          : 0,
       ability: abilityName == null
           ? Ability.none
           : _parse(() => Ability.byName(abilityName), '$path.ability.type'),
       abilityValue: ability.integerOr('value', 0),
-      range: rangeName == null
-          ? family.defaultRange
-          : _parse(
-              () => RangeGrade.byName(rangeName),
-              '$path.projectile.range',
-            ),
       radiusCells: onHit.integerOr('radiusCells', 0),
       blockDmg: onHit.integerOr('blockDmg', 0),
       pirateDmg: onHit.integerOr('pirateDmg', 0),
@@ -115,13 +104,17 @@ class PirateDef {
     }
 
     need(ok: hp > 0, what: '체력은 양수');
-    need(
-      ok: cooldownTurns >= 0 && cooldownTurns <= maxCooldownTurns,
-      what: '쿨다운 0~2턴',
-    );
     need(ok: radiusCells >= 0 && radiusCells <= 2, what: '폭발 반경 0~2칸 (§4.8)');
     need(ok: blockDmg >= 0 && pirateDmg >= 0, what: '피해는 0 이상');
     need(ok: abilityValue >= 0, what: '고유 능력 인자는 0 이상 (§4.3)');
+    // 고유 능력은 전설만 갖는다. 바라 어뢰는 수중 관통탄 동작이다 (ADR-111).
+    need(
+      ok:
+          ability == Ability.none ||
+          ability == Ability.torpedo ||
+          rarity == Rarity.legend,
+      what: '고유 능력은 전설만 (설계서 §4.8)',
+    );
     final want = ammoFor(ability);
     need(
       ok: want == null || want == ammo,
@@ -143,7 +136,6 @@ class PirateDef {
   final Family family;
   final Rarity rarity;
   final int hp;
-  final int cooldownTurns;
   final AmmoType ammo;
   final int spreadDeg;
   final int ammoParam;
@@ -151,7 +143,6 @@ class PirateDef {
   /// 고유 능력과 정수 인자 (설계서 §4.3 `ability`, ADR-075). 없으면 [Ability.none].
   final Ability ability;
   final int abilityValue;
-  final RangeGrade range;
   final int radiusCells;
   final int blockDmg;
   final int pirateDmg;
@@ -167,7 +158,6 @@ class PirateDef {
   /// 걸리면 [DataFormatError].
   PirateDef copyWith({
     int? hp,
-    int? cooldownTurns,
     int? blockDmg,
     int? pirateDmg,
   }) => PirateDef._(
@@ -178,13 +168,11 @@ class PirateDef {
     family: family,
     rarity: rarity,
     hp: hp ?? this.hp,
-    cooldownTurns: cooldownTurns ?? this.cooldownTurns,
     ammo: ammo,
     spreadDeg: spreadDeg,
     ammoParam: ammoParam,
     ability: ability,
     abilityValue: abilityValue,
-    range: range,
     radiusCells: radiusCells,
     blockDmg: blockDmg ?? this.blockDmg,
     pirateDmg: pirateDmg ?? this.pirateDmg,
@@ -195,19 +183,22 @@ class PirateDef {
   ).._check('remote.$id');
 
   /// `pb_sim` 정수 정의로 바꾼다: 등급 배율을 곱하고 탄종 등급 수치를 사다리에서 찾는다.
+  /// 화염탄·설치탄·강습탄은 폭발 반경을 사다리에서 받는다 (BALANCE.md A4.8).
   PirateSpec toSpec(AmmoLadder ladder) {
     final mul = rarityPermille[rarity.step];
     int scaled(int v) => v * mul ~/ 1000;
     final (value, value2) = ladder.valueOf(ammo, rarity);
+    final radius = switch (ammo) {
+      AmmoType.fire || AmmoType.mine || AmmoType.assault => value,
+      _ => radiusCells,
+    };
     return PirateSpec(
       id: id,
       rarity: rarity,
       hp: scaled(hp),
-      cooldownTurns: cooldownTurns,
       blockDamage: scaled(blockDmg),
       pirateDamage: scaled(pirateDmg),
-      blastRadius: radiusCells,
-      range: range,
+      blastRadius: radius,
       family: family,
       ammo: ammo,
       ammoValue: value,

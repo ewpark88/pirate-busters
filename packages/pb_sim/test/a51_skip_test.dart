@@ -9,13 +9,11 @@ PirateSpec _skip({int value = 2}) => PirateSpec(
   id: 's',
   rarity: Rarity.common,
   hp: 240,
-  cooldownTurns: 0,
   blockDamage: 30,
   pirateDamage: 60,
   family: Family.skip,
   ammo: AmmoType.skip,
   ammoValue: value,
-  range: RangeGrade.long,
 );
 
 /// 수면에 ([vx], [vy]) 로 닿는 물수제비탄.
@@ -53,16 +51,11 @@ void main() {
       expect(bounceOffSea(_shot(10000, -1000, bounces: 0), 0), isFalse);
     });
 
-    test('멀면 튕김 수가 하나 줄고, 1회 해적은 1회를 지킨다 (§2.6)', () {
-      for (final (value, reach, want) in [
-        (3, Reach.far, 2),
-        (3, Reach.mid, 3),
-        (3, Reach.near, 3),
-        (1, Reach.far, 1),
-      ]) {
+    test('튕김 수는 사다리 값 그대로다 (최소 1)', () {
+      for (final (value, want) in [(3, 3), (1, 1), (0, 1)]) {
         final p = _shot(1, 0, value: value);
-        armShot(p, reach);
-        expect(p.bouncesLeft, want, reason: '$value $reach');
+        armShot(p);
+        expect(p.bouncesLeft, want, reason: '$value');
       }
     });
 
@@ -70,7 +63,7 @@ void main() {
       int damageAt(int cx, int cy, {required bool bounced}) {
         final m = Match.start(
           seed: 3,
-          rules: const MatchRules(waveLevel: 0),
+          rules: const MatchRules(calmSea: true),
           blueprints: [sampleBlueprint(), sampleBlueprint()],
           decks: const [
             ['s', 'r0'],

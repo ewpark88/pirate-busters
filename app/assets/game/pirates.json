@@ -1,5 +1,5 @@
 {
-  "_comment": "MVP 해적 12명 (설계서 §4.2, §4.3 계열별 기준 수치, 등급 배율은 pb_data 가 곱한다).",
+  "_comment": "해적 40명 (설계서 §4.2, BALANCE.md A4.3 계열별 기준 수치, 등급 배율은 pb_data 가 곱한다. 고유 능력은 전설만, ADR-111).",
   "pirates": [
     {
       "id": "p01_octo",
@@ -9,11 +9,9 @@
       "family": "lob",
       "rarity": "common",
       "hp": 240,
-      "cooldownTurns": 0,
       "ammo": {
         "type": "explosive"
       },
-      "projectile": {},
       "onHit": {
         "radiusCells": 1,
         "blockDmg": 40,
@@ -34,11 +32,9 @@
       "family": "lob",
       "rarity": "common",
       "hp": 240,
-      "cooldownTurns": 2,
       "ammo": {
         "type": "fire"
       },
-      "projectile": {},
       "onHit": {
         "radiusCells": 1,
         "blockDmg": 40,
@@ -59,18 +55,13 @@
       "family": "lob",
       "rarity": "rare",
       "hp": 240,
-      "cooldownTurns": 1,
       "ammo": {
         "type": "explosive"
       },
-      "projectile": {},
       "onHit": {
         "radiusCells": 1,
         "blockDmg": 40,
         "pirateDmg": 80
-      },
-      "ability": {
-        "type": "twin"
       },
       "growth": {},
       "render": {
@@ -87,14 +78,12 @@
       "family": "lob",
       "rarity": "hero",
       "hp": 240,
-      "cooldownTurns": 2,
       "ammo": {
         "type": "split",
         "spreadDeg": 25
       },
-      "projectile": {},
       "onHit": {
-        "radiusCells": 0,
+        "radiusCells": 1,
         "blockDmg": 40,
         "pirateDmg": 80
       },
@@ -113,27 +102,23 @@
       "family": "lob",
       "rarity": "legend",
       "hp": 240,
-      "cooldownTurns": 2,
       "ammo": {
         "type": "explosive"
-      },
-      "projectile": {
-        "range": "veryLong"
       },
       "onHit": {
         "radiusCells": 1,
         "blockDmg": 40,
         "pirateDmg": 80
       },
-      "ability": {
-        "type": "drill",
-        "value": 1
-      },
       "growth": {},
       "render": {
         "species": "volke",
         "props": [],
         "teamColorPart": "bandana"
+      },
+      "ability": {
+        "type": "drill",
+        "value": 2
       }
     },
     {
@@ -144,12 +129,8 @@
       "family": "direct",
       "rarity": "common",
       "hp": 220,
-      "cooldownTurns": 0,
       "ammo": {
         "type": "sniper"
-      },
-      "projectile": {
-        "range": "short"
       },
       "onHit": {
         "radiusCells": 0,
@@ -171,14 +152,10 @@
       "family": "direct",
       "rarity": "common",
       "hp": 220,
-      "cooldownTurns": 0,
       "ammo": {
         "type": "burst",
         "pattern": "focus",
         "spreadDeg": 0
-      },
-      "projectile": {
-        "range": "short"
       },
       "onHit": {
         "radiusCells": 0,
@@ -200,20 +177,13 @@
       "family": "direct",
       "rarity": "rare",
       "hp": 220,
-      "cooldownTurns": 1,
       "ammo": {
         "type": "sniper"
-      },
-      "projectile": {
-        "range": "veryLong"
       },
       "onHit": {
         "radiusCells": 0,
         "blockDmg": 60,
         "pirateDmg": 100
-      },
-      "ability": {
-        "type": "scope"
       },
       "growth": {},
       "render": {
@@ -230,20 +200,15 @@
       "family": "direct",
       "rarity": "hero",
       "hp": 220,
-      "cooldownTurns": 2,
       "ammo": {
         "type": "burst",
         "pattern": "scatter",
         "spreadDeg": 12
       },
-      "projectile": {},
       "onHit": {
         "radiusCells": 0,
         "blockDmg": 60,
         "pirateDmg": 100
-      },
-      "ability": {
-        "type": "shred"
       },
       "growth": {},
       "render": {
@@ -260,11 +225,9 @@
       "family": "direct",
       "rarity": "legend",
       "hp": 220,
-      "cooldownTurns": 2,
       "ammo": {
         "type": "chain"
       },
-      "projectile": {},
       "onHit": {
         "radiusCells": 0,
         "blockDmg": 60,
@@ -285,11 +248,9 @@
       "family": "pierce",
       "rarity": "common",
       "hp": 260,
-      "cooldownTurns": 0,
       "ammo": {
         "type": "pierce"
       },
-      "projectile": {},
       "onHit": {
         "radiusCells": 0,
         "blockDmg": 50,
@@ -310,19 +271,13 @@
       "family": "pierce",
       "rarity": "rare",
       "hp": 260,
-      "cooldownTurns": 1,
       "ammo": {
         "type": "pierce"
       },
-      "projectile": {},
       "onHit": {
         "radiusCells": 0,
         "blockDmg": 50,
         "pirateDmg": 70
-      },
-      "ability": {
-        "type": "skewer",
-        "value": 3
       },
       "growth": {},
       "render": {
@@ -339,18 +294,13 @@
       "family": "pierce",
       "rarity": "rare",
       "hp": 260,
-      "cooldownTurns": 1,
       "ammo": {
         "type": "pierce"
       },
-      "projectile": {},
       "onHit": {
         "radiusCells": 0,
         "blockDmg": 50,
         "pirateDmg": 70
-      },
-      "ability": {
-        "type": "rip"
       },
       "growth": {},
       "render": {
@@ -367,18 +317,13 @@
       "family": "pierce",
       "rarity": "hero",
       "hp": 260,
-      "cooldownTurns": 1,
       "ammo": {
         "type": "pierce"
       },
-      "projectile": {},
       "onHit": {
         "radiusCells": 0,
         "blockDmg": 50,
         "pirateDmg": 70
-      },
-      "ability": {
-        "type": "saw"
       },
       "growth": {},
       "render": {
@@ -395,25 +340,23 @@
       "family": "pierce",
       "rarity": "legend",
       "hp": 260,
-      "cooldownTurns": 2,
       "ammo": {
         "type": "pierce"
       },
-      "projectile": {},
       "onHit": {
         "radiusCells": 0,
         "blockDmg": 50,
         "pirateDmg": 70
-      },
-      "ability": {
-        "type": "pull",
-        "value": 3
       },
       "growth": {},
       "render": {
         "species": "moby",
         "props": [],
         "teamColorPart": "bandana"
+      },
+      "ability": {
+        "type": "pull",
+        "value": 3
       }
     },
     {
@@ -424,11 +367,9 @@
       "family": "skip",
       "rarity": "common",
       "hp": 240,
-      "cooldownTurns": 0,
       "ammo": {
         "type": "skip"
       },
-      "projectile": {},
       "onHit": {
         "radiusCells": 0,
         "blockDmg": 30,
@@ -449,19 +390,13 @@
       "family": "skip",
       "rarity": "rare",
       "hp": 240,
-      "cooldownTurns": 1,
       "ammo": {
         "type": "skip"
       },
-      "projectile": {},
       "onHit": {
         "radiusCells": 0,
         "blockDmg": 30,
         "pirateDmg": 60
-      },
-      "ability": {
-        "type": "slide",
-        "value": 2
       },
       "growth": {},
       "render": {
@@ -478,18 +413,13 @@
       "family": "skip",
       "rarity": "rare",
       "hp": 240,
-      "cooldownTurns": 1,
       "ammo": {
         "type": "skip"
       },
-      "projectile": {},
       "onHit": {
         "radiusCells": 0,
         "blockDmg": 30,
         "pirateDmg": 60
-      },
-      "ability": {
-        "type": "ricochet"
       },
       "growth": {},
       "render": {
@@ -506,18 +436,13 @@
       "family": "skip",
       "rarity": "hero",
       "hp": 240,
-      "cooldownTurns": 1,
       "ammo": {
         "type": "skip"
       },
-      "projectile": {},
       "onHit": {
         "radiusCells": 0,
         "blockDmg": 30,
         "pirateDmg": 60
-      },
-      "ability": {
-        "type": "cling"
       },
       "growth": {},
       "render": {
@@ -534,25 +459,23 @@
       "family": "skip",
       "rarity": "legend",
       "hp": 240,
-      "cooldownTurns": 2,
       "ammo": {
         "type": "skip"
       },
-      "projectile": {},
       "onHit": {
         "radiusCells": 0,
         "blockDmg": 30,
         "pirateDmg": 60
-      },
-      "ability": {
-        "type": "wave",
-        "value": 80
       },
       "growth": {},
       "render": {
         "species": "orca",
         "props": [],
         "teamColorPart": "bandana"
+      },
+      "ability": {
+        "type": "wave",
+        "value": 2
       }
     },
     {
@@ -563,14 +486,12 @@
       "family": "underwater",
       "rarity": "common",
       "hp": 220,
-      "cooldownTurns": 1,
       "ammo": {
         "type": "mine"
       },
-      "projectile": {},
       "onHit": {
-        "radiusCells": 1,
-        "blockDmg": 40,
+        "radiusCells": 0,
+        "blockDmg": 50,
         "pirateDmg": 50
       },
       "growth": {},
@@ -588,18 +509,13 @@
       "family": "underwater",
       "rarity": "rare",
       "hp": 220,
-      "cooldownTurns": 1,
       "ammo": {
         "type": "mine"
       },
-      "projectile": {},
       "onHit": {
-        "radiusCells": 1,
-        "blockDmg": 40,
+        "radiusCells": 0,
+        "blockDmg": 50,
         "pirateDmg": 50
-      },
-      "ability": {
-        "type": "floatMine"
       },
       "growth": {},
       "render": {
@@ -616,26 +532,22 @@
       "family": "underwater",
       "rarity": "rare",
       "hp": 220,
-      "cooldownTurns": 1,
       "ammo": {
         "type": "pierce"
       },
-      "projectile": {
-        "range": "long"
-      },
       "onHit": {
-        "radiusCells": 1,
-        "blockDmg": 40,
+        "radiusCells": 0,
+        "blockDmg": 50,
         "pirateDmg": 50
-      },
-      "ability": {
-        "type": "torpedo"
       },
       "growth": {},
       "render": {
         "species": "bara",
         "props": [],
         "teamColorPart": "bandana"
+      },
+      "ability": {
+        "type": "torpedo"
       }
     },
     {
@@ -646,19 +558,13 @@
       "family": "underwater",
       "rarity": "hero",
       "hp": 220,
-      "cooldownTurns": 2,
       "ammo": {
         "type": "mine"
       },
-      "projectile": {},
       "onHit": {
-        "radiusCells": 1,
-        "blockDmg": 40,
+        "radiusCells": 0,
+        "blockDmg": 50,
         "pirateDmg": 50
-      },
-      "ability": {
-        "type": "gnaw",
-        "value": 30
       },
       "growth": {},
       "render": {
@@ -675,25 +581,23 @@
       "family": "underwater",
       "rarity": "legend",
       "hp": 220,
-      "cooldownTurns": 2,
       "ammo": {
         "type": "mine"
       },
-      "projectile": {},
       "onHit": {
-        "radiusCells": 1,
-        "blockDmg": 40,
+        "radiusCells": 0,
+        "blockDmg": 50,
         "pirateDmg": 50
-      },
-      "ability": {
-        "type": "tentacle",
-        "value": 3
       },
       "growth": {},
       "render": {
         "species": "kraki",
         "props": [],
         "teamColorPart": "bandana"
+      },
+      "ability": {
+        "type": "tentacle",
+        "value": 2
       }
     },
     {
@@ -704,11 +608,9 @@
       "family": "air",
       "rarity": "common",
       "hp": 200,
-      "cooldownTurns": 0,
       "ammo": {
         "type": "homing"
       },
-      "projectile": {},
       "onHit": {
         "radiusCells": 0,
         "blockDmg": 50,
@@ -729,11 +631,9 @@
       "family": "air",
       "rarity": "common",
       "hp": 200,
-      "cooldownTurns": 0,
       "ammo": {
         "type": "flock"
       },
-      "projectile": {},
       "onHit": {
         "radiusCells": 0,
         "blockDmg": 50,
@@ -754,12 +654,9 @@
       "family": "air",
       "rarity": "rare",
       "hp": 200,
-      "cooldownTurns": 1,
       "ammo": {
-        "type": "flock",
-        "delayed": 1
+        "type": "flock"
       },
-      "projectile": {},
       "onHit": {
         "radiusCells": 0,
         "blockDmg": 50,
@@ -780,18 +677,13 @@
       "family": "air",
       "rarity": "hero",
       "hp": 200,
-      "cooldownTurns": 1,
       "ammo": {
         "type": "homing"
       },
-      "projectile": {},
       "onHit": {
         "radiusCells": 0,
         "blockDmg": 50,
         "pirateDmg": 90
-      },
-      "ability": {
-        "type": "steer"
       },
       "growth": {},
       "render": {
@@ -808,25 +700,22 @@
       "family": "air",
       "rarity": "legend",
       "hp": 200,
-      "cooldownTurns": 2,
       "ammo": {
         "type": "homing"
       },
-      "projectile": {},
       "onHit": {
         "radiusCells": 0,
         "blockDmg": 50,
         "pirateDmg": 90
-      },
-      "ability": {
-        "type": "blindTrail",
-        "value": 2
       },
       "growth": {},
       "render": {
         "species": "manta",
         "props": [],
         "teamColorPart": "bandana"
+      },
+      "ability": {
+        "type": "blindTrail"
       }
     },
     {
@@ -837,13 +726,11 @@
       "family": "assault",
       "rarity": "common",
       "hp": 280,
-      "cooldownTurns": 1,
       "ammo": {
         "type": "assault"
       },
-      "projectile": {},
       "onHit": {
-        "radiusCells": 1,
+        "radiusCells": 0,
         "blockDmg": 20,
         "pirateDmg": 90
       },
@@ -862,18 +749,13 @@
       "family": "assault",
       "rarity": "rare",
       "hp": 280,
-      "cooldownTurns": 1,
       "ammo": {
         "type": "assault"
       },
-      "projectile": {},
       "onHit": {
-        "radiusCells": 1,
+        "radiusCells": 0,
         "blockDmg": 20,
         "pirateDmg": 90
-      },
-      "ability": {
-        "type": "grab"
       },
       "growth": {},
       "render": {
@@ -890,18 +772,13 @@
       "family": "assault",
       "rarity": "rare",
       "hp": 280,
-      "cooldownTurns": 1,
       "ammo": {
         "type": "assault"
       },
-      "projectile": {},
       "onHit": {
-        "radiusCells": 1,
+        "radiusCells": 0,
         "blockDmg": 20,
         "pirateDmg": 90
-      },
-      "ability": {
-        "type": "sealCabin"
       },
       "growth": {},
       "render": {
@@ -918,18 +795,13 @@
       "family": "assault",
       "rarity": "hero",
       "hp": 280,
-      "cooldownTurns": 1,
       "ammo": {
         "type": "assault"
       },
-      "projectile": {},
       "onHit": {
-        "radiusCells": 1,
+        "radiusCells": 0,
         "blockDmg": 20,
         "pirateDmg": 90
-      },
-      "ability": {
-        "type": "leap"
       },
       "growth": {},
       "render": {
@@ -946,25 +818,23 @@
       "family": "assault",
       "rarity": "legend",
       "hp": 280,
-      "cooldownTurns": 2,
       "ammo": {
         "type": "assault"
       },
-      "projectile": {},
       "onHit": {
-        "radiusCells": 1,
+        "radiusCells": 0,
         "blockDmg": 20,
         "pirateDmg": 90
-      },
-      "ability": {
-        "type": "summon",
-        "value": 3
       },
       "growth": {},
       "render": {
         "species": "davy",
         "props": [],
         "teamColorPart": "bandana"
+      },
+      "ability": {
+        "type": "summon",
+        "value": 3
       }
     },
     {
@@ -972,19 +842,16 @@
       "nameKey": "pirate_p36_name",
       "descKey": "pirate_p36_desc",
       "loreKey": "pirate_p36_lore",
-      "family": "support",
+      "family": "shock",
       "rarity": "common",
       "hp": 260,
-      "cooldownTurns": 0,
       "ammo": {
-        "type": "support",
-        "repairCells": 3
+        "type": "shock"
       },
-      "projectile": {},
       "onHit": {
-        "radiusCells": 0,
-        "blockDmg": 30,
-        "pirateDmg": 60
+        "radiusCells": 2,
+        "blockDmg": 20,
+        "pirateDmg": 30
       },
       "growth": {},
       "render": {
@@ -998,22 +865,16 @@
       "nameKey": "pirate_p37_name",
       "descKey": "pirate_p37_desc",
       "loreKey": "pirate_p37_lore",
-      "family": "support",
+      "family": "shock",
       "rarity": "common",
       "hp": 260,
-      "cooldownTurns": 0,
       "ammo": {
-        "type": "support"
+        "type": "shock"
       },
-      "projectile": {},
       "onHit": {
-        "radiusCells": 0,
-        "blockDmg": 30,
-        "pirateDmg": 60
-      },
-      "ability": {
-        "type": "bail",
-        "value": 150
+        "radiusCells": 2,
+        "blockDmg": 20,
+        "pirateDmg": 30
       },
       "growth": {},
       "render": {
@@ -1027,22 +888,16 @@
       "nameKey": "pirate_p38_name",
       "descKey": "pirate_p38_desc",
       "loreKey": "pirate_p38_lore",
-      "family": "support",
+      "family": "shock",
       "rarity": "rare",
       "hp": 260,
-      "cooldownTurns": 1,
       "ammo": {
-        "type": "support"
+        "type": "shock"
       },
-      "projectile": {},
       "onHit": {
-        "radiusCells": 0,
+        "radiusCells": 2,
         "blockDmg": 20,
-        "pirateDmg": 40
-      },
-      "ability": {
-        "type": "cooldownCut",
-        "value": 1
+        "pirateDmg": 30
       },
       "growth": {},
       "render": {
@@ -1056,22 +911,16 @@
       "nameKey": "pirate_p39_name",
       "descKey": "pirate_p39_desc",
       "loreKey": "pirate_p39_lore",
-      "family": "support",
+      "family": "shock",
       "rarity": "hero",
       "hp": 260,
-      "cooldownTurns": 0,
       "ammo": {
-        "type": "support"
+        "type": "shock"
       },
-      "projectile": {},
       "onHit": {
-        "radiusCells": 0,
-        "blockDmg": 30,
-        "pirateDmg": 60
-      },
-      "ability": {
-        "type": "coral",
-        "value": 2
+        "radiusCells": 2,
+        "blockDmg": 20,
+        "pirateDmg": 30
       },
       "growth": {},
       "render": {
@@ -1085,29 +934,26 @@
       "nameKey": "pirate_p40_name",
       "descKey": "pirate_p40_desc",
       "loreKey": "pirate_p40_lore",
-      "family": "support",
+      "family": "shock",
       "rarity": "legend",
       "hp": 260,
-      "cooldownTurns": 1,
       "ammo": {
-        "type": "support",
-        "repairCells": 2
+        "type": "shock"
       },
-      "projectile": {},
       "onHit": {
-        "radiusCells": 0,
-        "blockDmg": 30,
-        "pirateDmg": 60
-      },
-      "ability": {
-        "type": "lantern",
-        "value": 30
+        "radiusCells": 2,
+        "blockDmg": 20,
+        "pirateDmg": 30
       },
       "growth": {},
       "render": {
         "species": "lamp",
         "props": [],
         "teamColorPart": "bandana"
+      },
+      "ability": {
+        "type": "shove",
+        "value": 2
       }
     }
   ]

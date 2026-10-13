@@ -85,14 +85,13 @@ void main() {
       expect(g.damage(2, 0, 10), isFalse);
     });
 
-    test('폭발은 착탄 칸 100% 와 균열 조각 4개(각 50%)로 나뉘고 총피해가 보존된다 (§4.8)', () {
+    test('폭발은 착탄 칸 100%, 반경 안 둘레 칸 50% 이고 난수를 쓰지 않는다 (§4.8)', () {
       final side = SideState(
         side: 1,
         blueprint: sampleBlueprint(),
         lineup: [testPirate('a')],
         rules: const MatchRules(),
       );
-      final events = <SimEvent>[];
       final before = side.grid.totalHp;
       resolveImpact(
         side,
@@ -101,26 +100,17 @@ void main() {
         cy: 1,
         x: 0,
         y: 0,
-        events: events,
-        rng: XorShift32(3),
+        events: <SimEvent>[],
       );
       final g = side.grid;
-      expect(g.hpAt(4, 1), 10); // 소나무 40 − 30. 조각은 착탄 칸으로 돌아오지 않는다.
+      expect(g.hpAt(4, 1), 10, reason: '소나무 40 − 30');
+      // 반경 1칸 둘레: (3,1)·(5,1)·(4,0)·(4,2) 에 15씩.
+      expect(g.hpAt(3, 1), 25);
+      expect(g.hpAt(5, 1), 25);
+      expect(g.hpAt(4, 0), 65);
+      expect(g.hpAt(4, 2), 25);
+      expect(g.hpAt(3, 2), 40, reason: '대각선은 반경 밖');
       expect(before - g.totalHp, 30 + 4 * 15);
-      // 조각이 떨어진 칸은 착탄 칸에서 두 걸음 안이다.
-      final hit = <(int, int)>[];
-      for (var y = 0; y < g.height; y++) {
-        for (var x = 0; x < g.width; x++) {
-          final m = g.materialAt(x, y);
-          if (m != null && g.hpAt(x, y) < m.durability && (x, y) != (4, 1)) {
-            hit.add((x, y));
-          }
-        }
-      }
-      expect(hit, isNotEmpty);
-      for (final (x, y) in hit) {
-        expect((x - 4).abs() <= 2 && (y - 1).abs() <= 2, isTrue);
-      }
     });
   });
 
@@ -155,7 +145,6 @@ void main() {
         x: 0,
         y: 0,
         events: events,
-        rng: XorShift32(1),
       );
       final kinds = [for (final e in events) e.kind];
       expect(

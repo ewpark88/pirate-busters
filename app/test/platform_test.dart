@@ -33,11 +33,11 @@ void main() {
     test('접두사 + 규칙 필드 이름으로 정수 값을 바꾼다', () {
       final rules = applyRemoteRules(
         const MatchRules(),
-        MemoryRemoteValues({'turn_maxTurns': 20, 'fuel_fuelPerTurn': 40}),
+        MemoryRemoteValues({'turn_maxTurns': 20, 'turn_turnTimeMs': 15000}),
       );
       expect(rules.maxTurns, 20);
-      expect(rules.fuelPerTurn, 40);
-      expect(rules.firesPerTurn, const MatchRules().firesPerTurn);
+      expect(rules.turnTimeMs, 15000);
+      expect(rules.maxWind, const MatchRules().maxWind);
     });
 
     test('값이 없으면 기본 규칙 그대로, 범위 밖 값이면 기본 규칙으로 돌아간다', () {

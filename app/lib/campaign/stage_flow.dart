@@ -70,7 +70,6 @@ abstract final class StageFlow {
       blocksDestroyed: stats.blocksDestroyed[0],
       mvpSlot: stats.mvpSlot(0),
     );
-    final enemyFlood = state.sides[1].flood * 100 ~/ fullFlood;
     final stars = const StarRules().evaluate(stage, mine);
     late StageReward reward;
     await ref.read(progressProvider.notifier).update((p) {
@@ -113,7 +112,6 @@ abstract final class StageFlow {
         builder: (_) => StageResultScreen(
           stage: stage,
           summary: mine,
-          enemyFloodPercent: enemyFlood,
           reward: reward,
           replay: replay,
         ),

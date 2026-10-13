@@ -66,16 +66,13 @@ int hashMatchState(MatchState state) {
       ..addInts(grid.rawHp)
       ..addInt(side.bowX)
       ..addInt(side.fuel)
-      ..addInt(side.flood)
       ..addInt(side.shotsFired)
       ..addInt(side.crew.size);
     for (final p in side.crew.pirates) {
       h
         ..addString(p.spec.id)
         ..addInt(p.hp)
-        ..addInt(p.status.index)
-        ..addInt(p.cooldown)
-        ..addInt(p.revived ? 1 : 0);
+        ..addInt(p.status.index);
       // 적 배 위 자리는 서 있을 때만 넣는다(강습이 없는 판의 해시 유지, ADR-110).
       if (p.status == PirateStatus.boarding) h.addInt(p.boardCell);
     }
@@ -90,11 +87,8 @@ int hashMatchState(MatchState state) {
         ..addInt(m.y)
         ..addInt(m.intact ? 1 : 0);
     }
-    // 지속 상태·화재 (ADR-075).
-    h
-      ..addInts(side.status.hashValues)
-      ..addInts(side.fireTurns)
-      ..addInts(side.fireExtra);
+    // 지속 상태 (만타 궤적 가림).
+    h.addInts(side.status.hashValues);
     // 흔들기 이동 합은 상대 강습 해적이 서 있을 때만 넣는다 (ADR-110).
     if (hasBoarders(side)) h.addInt(side.status.shakeMoved);
   }
@@ -111,9 +105,6 @@ int hashMatchState(MatchState state) {
       ..addInt(e.cell)
       ..addInt(e.x);
   }
-  h.addInt(state.barriers.length);
-  for (final b in state.barriers) {
-    h.addInts(b.hashValues);
-  }
+  h.addInts(state.waveZones);
   return h.value;
 }

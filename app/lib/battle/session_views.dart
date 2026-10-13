@@ -36,12 +36,13 @@ extension BattleSessionViews on BattleSession {
   /// 지금 [dx](1/10칸)를 누르면 실제로 갈 거리(1/1000칸). 시뮬레이션의 [moveReach].
   int reach(int dx) {
     final at = effectiveMs(state, turnMs);
+    final side = state.activeSide;
     return moveReach(
-      state.sides[state.activeSide],
+      state.sides[side],
+      state.otherOf(side),
       state.rules,
-      state.turn,
       dx,
-      state.rules.turnTimeFor(state.turn) - at,
+      state.rules.turnTimeMs - at,
     );
   }
 
@@ -56,7 +57,7 @@ extension BattleSessionViews on BattleSession {
   /// 묶음 시계로 잰다: 연출과 그 뒤 쉼 동안 멈춘다 (A62).
   int get remainingMs {
     if (!isHumanTurn && opponent != null) {
-      final left = state.rules.turnTimeFor(state.turn) - scriptMs;
+      final left = state.rules.turnTimeMs - scriptMs;
       return left < 0 ? 0 : left;
     }
     final shot = playback;
@@ -69,7 +70,7 @@ extension BattleSessionViews on BattleSession {
         : 0;
     final paused = state.pausedMs + pending - flightLeft;
     final used = turnMs - paused;
-    final left = state.rules.turnTimeFor(state.turn) - used;
+    final left = state.rules.turnTimeMs - used;
     return left < 0 ? 0 : left;
   }
 }

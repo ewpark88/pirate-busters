@@ -23,15 +23,12 @@ import 'package:pirate_busters/game/view/backdrop_view.dart';
 import 'package:pirate_busters/game/view/effect_badges.dart';
 import 'package:pirate_busters/game/view/fx_layer.dart';
 import 'package:pirate_busters/game/view/limit_marks.dart';
-import 'package:pirate_busters/game/view/rest_badge.dart';
 import 'package:pirate_busters/game/view/sea_shape.dart';
 import 'package:pirate_busters/game/view/sea_theme.dart';
 import 'package:pirate_busters/game/view/sea_view.dart';
 import 'package:pirate_busters/game/view/shake.dart';
 import 'package:pirate_busters/game/view/ship_view.dart';
 import 'package:pirate_busters/game/view/shot_view.dart';
-import 'package:pirate_busters/game/view/water_fx.dart';
-import 'package:pirate_busters/game/view/world_marks.dart';
 import 'package:pirate_busters/game/weapon_styles.dart';
 
 /// 전장 (M4): 매 프레임 [BattleSession] 을 진행하고 그린다. 판정은 안 한다 (규칙 3).
@@ -142,16 +139,8 @@ class BattleGame extends FlameGame with BattleTexts {
         priority: 10,
       ),
       _shot,
-      LeakBubbles(
-        session: session,
-        fx: _fx,
-        cellWorld: (side, cell) => _cues.cellWorld(side, cell),
-      ),
       EffectBadges(session: session, weapons: weapons, priority: 25)
         ..turnsText = (turns) => turnsText(turns),
-      WorldMarks(session: session, ships: _ships, priority: 25)
-        ..turnsText = (turns) => turnsText(turns),
-      RestBadges(session: session, ships: _ships, texts: this, priority: 26),
       ...battleOverlays(session, _ships, playSfx, vibrationOn, lowEnd),
       _fx,
     ]);
@@ -231,9 +220,7 @@ class BattleGame extends FlameGame with BattleTexts {
   /// 수면 모양: 두 배의 파도를 잇고 먼 바다에 너울 (설계서 §10.2, A24).
   late final SeaShape _sea = SeaShape(
     ships: () => [for (final ship in _ships) shipOnSea(ship)],
-    scale: () => session.state.rules.isStorm(session.state.turn)
-        ? session.state.rules.stormWavePercent / 100
-        : 1,
+    scale: () => 1,
   );
 
   void _updateCamera(double dt) {

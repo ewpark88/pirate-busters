@@ -35,10 +35,10 @@ void main() {
       expect(m.cells, hasLength(1));
     });
 
-    test('선실은 블록 위·슬롯 수까지, 포문은 선실에만, 선실을 빼면 포문도 빠진다', () {
+    test('선실은 블록 위·4칸까지, 선장실·돛대는 선실이 아닌 블록 위에 하나씩 (설계서 §3.3)', () {
       final m = ShipyardModel()
         ..selectTool(const MaterialTool(BlockMaterial.oak));
-      for (var x = 2; x < 8; x++) {
+      for (var x = 2; x < 9; x++) {
         m.apply(x, 0);
       }
       m
@@ -50,26 +50,25 @@ void main() {
       }
       expect(m.cabins, hasLength(4), reason: '슬루프 선실 4');
       m
-        ..selectTool(const ModuleTool(ModuleKind.gunPort))
-        ..apply(7, 0);
-      expect(m.moduleAt(7, 0), isNull, reason: '선실이 아닌 칸');
-      m.apply(2, 0);
-      expect(m.moduleAt(2, 0), ModuleKind.gunPort);
-      m
-        ..selectTool(const CabinTool())
+        ..selectTool(const ModuleTool(ModuleKind.captain))
         ..apply(2, 0);
-      expect(m.moduleAt(2, 0), isNull);
+      expect(m.moduleAt(2, 0), isNull, reason: '선실 칸');
+      m.apply(7, 0);
+      expect(m.moduleAt(7, 0), ModuleKind.captain);
+      m.apply(8, 0);
+      expect(m.moduleAt(7, 0), isNull, reason: '하나뿐이라 옮긴다');
+      expect(m.moduleAt(8, 0), ModuleKind.captain);
     });
 
-    test('선체 틀 밖 칸에는 아무것도 놓지 않는다 (설계서 §3.4)', () {
+    test('격자 밖 칸에는 아무것도 놓지 않는다 (설계서 §3.4)', () {
       final m = ShipyardModel()
         ..selectTool(const MaterialTool(BlockMaterial.oak))
-        ..apply(1, 0)
-        ..apply(0, 1)
-        ..apply(11, 1);
+        ..apply(-1, 0)
+        ..apply(12, 1)
+        ..apply(0, 8);
       expect(m.cells, isEmpty);
-      m.apply(1, 1);
-      expect(m.materialAt(1, 1), BlockMaterial.oak);
+      m.apply(0, 0);
+      expect(m.materialAt(0, 0), BlockMaterial.oak);
     });
 
     test('용골과 끊긴 블록은 빨간 칸이고 그 상태로는 저장할 수 없다', () {
@@ -107,18 +106,18 @@ void main() {
     });
   });
 
-  test('덱 평가: 계열·사거리 분포와 선호 거리 (설계서 §2.6, §13.7)', () {
+  test('덱 평가: 계열 분포와 코스트 (설계서 §13.7)', () {
     final pirates = testCatalog.pirates;
-    final near = DeckEval([
+    final deck = DeckEval([
       pirates.byId('p06_pang'),
       pirates.byId('p31_sharky'),
       pirates.byId('p01_octo'),
     ]);
-    expect(near.preferred, PreferredRange.near);
-    expect(near.families, {Family.lob: 1, Family.direct: 1, Family.assault: 1});
-    expect(near.ranges[RangeGrade.short], 2, reason: '팡·샤키 (A2.8 예외)');
-    expect(near.cost, 9);
-    final far = DeckEval([pirates.byId('p01_octo'), pirates.byId('p16_suri')]);
-    expect(far.preferred, PreferredRange.far);
+    expect(deck.families, {
+      Family.lob: 1,
+      Family.direct: 1,
+      Family.assault: 1,
+    });
+    expect(deck.cost, 9);
   });
 }

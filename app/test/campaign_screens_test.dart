@@ -6,7 +6,6 @@ import 'package:pb_sim/pb_sim.dart';
 import 'package:pirate_busters/app/providers.dart';
 import 'package:pirate_busters/campaign/battle_prep_screen.dart';
 import 'package:pirate_busters/campaign/campaign_map_screen.dart';
-import 'package:pirate_busters/campaign/result_parts.dart';
 import 'package:pirate_busters/campaign/rewards.dart';
 import 'package:pirate_busters/campaign/stage_result_screen.dart';
 import 'package:pirate_busters/campaign/star_rules.dart';
@@ -73,7 +72,6 @@ void main() {
     won: true,
     outcome: MatchOutcome.timeDecision,
     turns: 30,
-    floodPercent: 20,
     hullPercent: 70,
     piratesDown: 0,
     shotsFired: 24,
@@ -95,7 +93,6 @@ void main() {
         StageResultScreen(
           stage: stage,
           summary: summary,
-          enemyFloodPercent: 45,
           reward: reward,
         ),
       ]) {
@@ -140,7 +137,7 @@ void main() {
     expect(find.image(const AssetImage(MetaIcons.starOn)), findsNWidgets(2));
   });
 
-  testWidgets('결과: 시간 판정이면 침수 막대 두 개, 첫 클리어 보너스와 합류 해적이 보인다', (
+  testWidgets('결과: 첫 클리어 보너스와 합류 해적이 보인다', (
     tester,
   ) async {
     await _pump(
@@ -148,13 +145,11 @@ void main() {
       StageResultScreen(
         stage: stage,
         summary: summary,
-        enemyFloodPercent: 45,
         reward: reward,
       ),
       const Locale('ko'),
     );
     final l10n = await AppLocalizations.delegate.load(const Locale('ko'));
-    expect(find.byType(FloodBar), findsNWidgets(2));
     expect(find.text(l10n.rewardFirstClear), findsOneWidget);
     expect(find.textContaining(l10n.pirate_p16_name), findsOneWidget);
     expect(find.text(l10n.levelUpTo(2)), findsOneWidget);
@@ -180,7 +175,6 @@ void main() {
       StageResultScreen(
         stage: stage,
         summary: summary,
-        enemyFloodPercent: 45,
         reward: reward,
       ),
       const Locale('ko'),
@@ -206,7 +200,6 @@ void main() {
       StageResultScreen(
         stage: stage,
         summary: summary,
-        enemyFloodPercent: 45,
         reward: reward,
         replay: prepared.replay(),
       ),

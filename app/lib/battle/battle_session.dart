@@ -72,7 +72,7 @@ class BattleSession extends ChangeNotifier with SessionUiState {
   bool canFire(int slot) =>
       canAct &&
       !moveHeld &&
-      state.firesThisTurn < state.rules.firesPerTurn &&
+      state.firesThisTurn < 1 &&
       state.sides[state.activeSide].canFire(slot);
 
   /// 상대가 곧 쏠 해적과 조준 진행(0~1). 상대 턴 재생에서 앞 연출이 끝나면 그

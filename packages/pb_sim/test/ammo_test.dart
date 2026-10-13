@@ -1,8 +1,6 @@
 import 'package:pb_sim/pb_sim.dart';
 import 'package:pb_sim/src/combat/ammo_rules.dart';
-import 'package:pb_sim/src/combat/flight.dart';
 import 'package:pb_sim/src/combat/hit_effects.dart';
-import 'package:pb_sim/src/combat/support_effects.dart';
 import 'package:test/test.dart';
 
 import 'aim.dart';
@@ -23,11 +21,9 @@ PirateSpec _ammoPirate(
   id: 'a_${ammo.jsonName}',
   rarity: Rarity.common,
   hp: 300,
-  cooldownTurns: 0,
   blockDamage: blockDamage,
   pirateDamage: pirateDamage,
   blastRadius: blastRadius,
-  range: RangeGrade.long,
   family: family,
   ammo: ammo,
   ammoValue: value,
@@ -41,7 +37,7 @@ PirateSpec _ammoPirate(
 Match _duel(PirateSpec spec, {int seed = 11}) {
   final m = Match.start(
     seed: seed,
-    rules: const MatchRules(waveLevel: 0),
+    rules: const MatchRules(calmSea: true),
     blueprints: [sampleBlueprint(), sampleBlueprint()],
     decks: [
       [spec.id, 'r0'],
@@ -62,18 +58,9 @@ void _passTo(Match m, int side) {
   m.apply(const TapCommand(t: 0, slot: 9, ticks: 0));
 }
 
-/// 상대 배에서 부서진 블록 중 망사가 아닌 것의 수. 샘플 배의 망사(4..7, 3)는
-/// 탄이 지나가며 부서진다 (설계서 §3.2).
-int _solidDestroyed(Match m) {
-  final w = m.state.sides[1].grid.width;
-  return _of(m, SimEventKind.blockDestroyed)
-      .where(
-        (e) =>
-            e.side == 1 &&
-            !(e.cell ~/ w == 3 && e.cell % w >= 4 && e.cell % w <= 7),
-      )
-      .length;
-}
+/// 상대 배에서 부서진 블록 수.
+int _solidDestroyed(Match m) =>
+    _of(m, SimEventKind.blockDestroyed).where((e) => e.side == 1).length;
 
 List<SimEvent> _of(Match m, SimEventKind kind) =>
     m.state.events.where((e) => e.kind == kind).toList();
@@ -159,7 +146,7 @@ void main() {
       final log = m.turnLog;
       final again = Match.start(
         seed: 11,
-        rules: const MatchRules(waveLevel: 0),
+        rules: const MatchRules(calmSea: true),
         blueprints: [sampleBlueprint(), sampleBlueprint()],
         decks: [
           [uni.id, 'r0'],
@@ -220,24 +207,19 @@ void main() {
     expect(bounces.length, lessThanOrEqualTo(2));
   });
 
-  test('설치탄: 선체에 붙고, 다음 내 턴 시작에 터져 침수를 더한다', () {
-    final puffy = _ammoPirate(
-      AmmoType.mine,
-      value: 1,
-      value2: 20,
-      blastRadius: 1,
-    );
+  test('설치탄: 선체에 붙고, 다음 내 턴 시작에 반경만큼 터진다', () {
+    final puffy = _ammoPirate(AmmoType.mine, value: 1, blastRadius: 1);
     final m = _duel(puffy);
     m.apply(_atCabin(m));
     expect(_of(m, SimEventKind.mineAttached), hasLength(1));
-    expect(_solidDestroyed(m), 0, reason: '지나간 망사만 부서진다');
-    expect(m.state.effects, hasLength(1));
-    final flood = m.state.sides[1].flood;
+    expect(_solidDestroyed(m), 0, reason: '붙기만 하고 아직 터지지 않는다');
+    expect(m.state.effects.single.turnsLeft, 1);
+    final hp = m.state.sides[1].grid.totalHp;
     m.apply(const EndTurnCommand(t: 9000));
     _passTo(m, 0);
     expect(_of(m, SimEventKind.effectFired), hasLength(1));
     expect(m.state.effects, isEmpty);
-    expect(m.state.sides[1].flood, greaterThanOrEqualTo(flood + 20));
+    expect(m.state.sides[1].grid.totalHp, lessThan(hp));
   });
 
   test('유도탄: 중력 없이 날며 선회력이 있으면 위로 쏴도 해적 쪽으로 꺾여 맞힌다', () {
@@ -256,23 +238,6 @@ void main() {
     final m = _duel(wing)
       ..apply(const FireCommand(t: 1000, slot: 0, angle: 60000, power: 8000));
     expect(_of(m, SimEventKind.divide), hasLength(1));
-    expect(m.state.lastTraces, hasLength(4));
-  });
-
-  test('다중투하(펠리): 떨어진 곳을 표시하고 다음 내 턴 시작에 4개를 떨군다', () {
-    final pelly = _ammoPirate(
-      AmmoType.flock,
-      value: 4,
-      param: 1,
-      family: Family.air,
-    );
-    final m = _duel(pelly);
-    m.apply(_atCabin(m));
-    expect(_of(m, SimEventKind.divide), isEmpty);
-    expect(m.state.effects.single.kind, EffectKind.flockDrop);
-    m.apply(const EndTurnCommand(t: 9000));
-    _passTo(m, 0);
-    expect(_of(m, SimEventKind.effectFired), hasLength(1));
     expect(m.state.lastTraces, hasLength(4));
   });
 
@@ -295,62 +260,16 @@ void main() {
     expect(m.state.sides[1].crew.pirates[1].hp, lessThan(hp));
   });
 
-  test('보급탄: 상대 배를 맞히면 약한 피해를 주고 내 배 흘수선 아래 구멍을 고친다 (ADR-090)', () {
-    final tok = _ammoPirate(
-      AmmoType.support,
-      value: 100,
-      param: 3,
-      family: Family.support,
-      blockDamage: 20,
-      pirateDamage: 40,
-    );
-    final m = _duel(tok);
-    final grid = m.state.sides[0].grid;
-    // 내 배 소나무 칸 하나를 구멍 단계로 만든다.
-    final max = grid.materialAt(5, 1)!.durability;
-    grid.damage(5, 1, max - max ~/ 4);
-    expect(grid.stageAt(5, 1), DamageStage.holed);
-    final enemy = m.state.sides[1].grid;
-    final before = enemy.totalHp;
-    m.apply(aimAt(m.state, slot: 0, tx: 6, ty: 1));
-    expect(enemy.totalHp, lessThan(before), reason: '상대 배에 피해');
-    expect(
-      _of(m, SimEventKind.repaired).every((e) => e.side == 0),
-      isTrue,
-    );
-    expect(grid.hpAt(5, 1), max, reason: '효과는 내 배에');
-  });
-
-  test('보급탄 수리가 물에 잠긴 구멍을 고치면 칸마다 침수 2%p 를 뺀다 (ADR-094)', () {
-    final tok = _ammoPirate(
-      AmmoType.support,
-      value: 100,
-      param: 3,
-      family: Family.support,
-      blockDamage: 20,
-      pirateDamage: 40,
-    );
-    final m = _duel(tok);
-    final me = m.state.sides[0];
-    final grid = me.grid;
-    final max = grid.materialAt(5, 0)!.durability;
-    grid.damage(5, 0, max - max ~/ 4);
-    me.flood = 100;
-    m.apply(aimAt(m.state, slot: 0, tx: 6, ty: 1));
-    expect(_of(m, SimEventKind.repaired), isNotEmpty);
-    expect(me.flood, 100 - repairBailPerCell);
-  });
-
   test('여러 탄종이 섞인 판을 끝까지 돌려도 재생 해시가 같다', () {
     final specs = [
       _ammoPirate(AmmoType.split, value: 3, spread: 20000),
-      _ammoPirate(AmmoType.mine, value: 1, value2: 20, blastRadius: 1),
-      _ammoPirate(AmmoType.flock, value: 3, param: 1),
+      _ammoPirate(AmmoType.mine, value: 1, blastRadius: 1),
+      _ammoPirate(AmmoType.flock, value: 3),
       _ammoPirate(AmmoType.assault, value: 1, blastRadius: 1),
     ];
     Match start() => Match.start(
       seed: 5,
-      rules: const MatchRules(waveLevel: 0),
+      rules: const MatchRules(calmSea: true),
       blueprints: [sampleBlueprint(), sampleBlueprint()],
       decks: [
         [specs[0].id, specs[1].id],
@@ -366,141 +285,39 @@ void main() {
     expect(hashMatchState(again.state), hashMatchState(m.state));
   });
 
-  test('사거리 밖 표시: 간격이 사거리 − 8칸보다 멀면 닿기 어렵다 (설계서 §2.8)', () {
-    expect(RangeGrade.short.hitGap, 18 * cellUnit);
-    expect(RangeGrade.medium.hitGap, 28 * cellUnit);
-    final m = _duel(testPirate('far', range: RangeGrade.short));
-    // 시작 간격 22칸: 짧음(18칸)은 밖, 긺(42칸)은 안.
-    expect(isOutOfRange(m.state, 0, 0), isTrue);
-    expect(isOutOfRange(m.state, 0, 1), isFalse);
+  test('충격탄: 넓고 약하게 터지고 상대 배를 미는 칸 수만큼 밀어낸다 (설계서 §4.8)', () {
+    final tok = _ammoPirate(
+      AmmoType.shock,
+      value: 1,
+      family: Family.shock,
+      blockDamage: 20,
+      pirateDamage: 30,
+      blastRadius: 2,
+    );
+    final m = _duel(tok);
+    final before = m.state.sides[1].offset;
+    m.apply(_atCabin(m));
+    final pushed = _of(m, SimEventKind.pushed).single;
+    expect(pushed.side, 1);
+    expect(pushed.value, -cellUnit);
+    expect(m.state.sides[1].offset, before - cellUnit);
   });
 
-  group('거리에 따른 계열 상성 (설계서 §2.6, BALANCE.md A2.6)', () {
-    /// 두 배를 같은 거리만큼 옮겨 뱃머리 간격을 [gap] 칸으로.
-    void setGap(Match m, int gap) {
-      final now = (m.state.sides[0].bowX - m.state.sides[1].bowX).abs();
-      for (final s in m.state.sides) {
-        s.offset += (now - gap * cellUnit) ~/ 2;
-      }
-    }
-
-    List<Projectile> volley(PirateSpec spec, int gap) {
-      final m = _duel(spec);
-      setGap(m, gap);
-      return launchVolley(
-        m.state,
-        slot: 0,
-        angle: 30000,
-        power: 9000,
-        ms: 0,
-      );
-    }
-
-    test('간격 16칸 이하 가까움, 36칸 이상 멂', () {
-      final m = _duel(testPirate('x'));
-      setGap(m, 16);
-      expect(reachOf(m.state), Reach.near);
-      setGap(m, 17);
-      expect(reachOf(m.state), Reach.mid);
-      setGap(m, 36);
-      expect(reachOf(m.state), Reach.far);
-    });
-
-    test('직사: 가까우면 피해 +20%, 멀면 −20% 에 매치 난수로 각도가 흔들린다', () {
-      final direct = _ammoPirate(
-        AmmoType.explosive,
-        value: 50,
-        family: Family.direct,
-        blockDamage: 60,
-        pirateDamage: 100,
-      );
-      expect(volley(direct, 16).single.spec.blockDamage, 72);
-      expect(volley(direct, 28).single.spec.blockDamage, 60);
-      expect(volley(direct, 36).single.spec.pirateDamage, 80);
-      // 먼 거리 흔들림은 매치 난수를 쓴다: 같은 시드면 같은 각도.
-      final a = volley(direct, 40).single;
-      final b = volley(direct, 40).single;
-      expect([a.vx, a.vy], [b.vx, b.vy]);
-      final lob = volley(_ammoPirate(AmmoType.explosive, value: 50), 40);
-      expect(lob.single.spec.blockDamage, 40, reason: '투척은 거리 영향 없음');
-    });
-
-    test('관통: 가까우면 +1칸, 멀면 −1칸 (최소 1)', () {
-      final finn = _ammoPirate(AmmoType.pierce, value: 2);
-      expect(volley(finn, 16).single.pierceLeft, 3);
-      expect(volley(finn, 28).single.pierceLeft, 2);
-      expect(volley(finn, 36).single.pierceLeft, 1);
-    });
-
-    test('설치탄: 멀면 도달에 1턴 더 걸린다', () {
-      const mine = PirateSpec(
-        id: 'far_mine',
-        rarity: Rarity.common,
-        hp: 300,
-        cooldownTurns: 0,
-        blockDamage: 40,
-        pirateDamage: 50,
-        blastRadius: 1,
-        range: RangeGrade.veryLong,
-        family: Family.underwater,
-        ammo: AmmoType.mine,
-        ammoValue: 1,
-        ammoValue2: 20,
-      );
-      int delay(int gap) {
-        final m = _duel(mine);
-        setGap(m, gap);
-        m.apply(_atCabin(m));
-        return m.state.effects.single.turnsLeft;
-      }
-
-      expect(delay(28), 1);
-      expect(delay(40), 2);
-    });
-  });
-
-  test('보급탄은 상대 배로 날아간다 (설계서 §4.1 보급, ADR-090)', () {
-    final m = _duel(
-      _ammoPirate(AmmoType.support, value: 100, family: Family.support),
-    )..apply(const FireCommand(t: 1000, slot: 0, angle: 45000, power: 9000));
-    expect(m.state.sides[0].shotsFired, 1);
-    final hits = _of(m, SimEventKind.impact);
-    expect(hits.every((e) => e.side == 1), isTrue, reason: '내 배에는 떨어지지 않는다');
+  test('충격탄은 바다 끝에서 더 밀리지 않는다', () {
+    final tok = _ammoPirate(
+      AmmoType.shock,
+      value: 1,
+      family: Family.shock,
+      blastRadius: 2,
+    );
+    final m = _duel(tok);
+    m.state.sides[1].offset = -m.state.rules.backRoom;
+    m.apply(_atCabin(m));
+    expect(_of(m, SimEventKind.pushed), isEmpty);
+    expect(m.state.sides[1].offset, -m.state.rules.backRoom);
   });
 
   group('검토 반영 규칙 (ADR-050)', () {
-    /// 오른쪽 배 망사 칸 (5, 3) 으로 곧게 날아가는 탄을 한 틱씩 진행한다.
-    (Projectile, List<SimEvent>) throughNet(Family family) {
-      final m = _duel(_ammoPirate(AmmoType.explosive, family: family));
-      final target = m.state.sides[1];
-      final (x, y) = target.frame.cellCenter(5, 3);
-      final p = Projectile(
-        id: 99,
-        side: 0,
-        slot: 0,
-        spec: _ammoPirate(AmmoType.explosive, family: family),
-        x: x - 3000,
-        y: y,
-        vx: 60000 * facingOf(0),
-        vy: 0,
-      )..gravity = false;
-      m.state.events.clear();
-      for (var tick = 1; tick < 10; tick++) {
-        if (stepShot(m.state, p, 0, 0, tick)) break;
-        if (p.passedNet >= 0) break;
-      }
-      return (p, m.state.events);
-    }
-
-    test('망사: 공중이 아닌 탄은 속도 50% 로 지나가고, 공중 탄은 막혀 맞는다 (§3.2)', () {
-      final (shot, _) = throughNet(Family.lob);
-      expect(shot.passedNet, isNonNegative);
-      expect(shot.vx.abs(), 30000);
-      final (bird, events) = throughNet(Family.air);
-      expect(bird.passedNet, -1);
-      expect(events.any((e) => e.kind == SimEventKind.impact), isTrue);
-    });
-
     test('관통탄은 두 번째 칸부터 피해 40% (§4.8, R1d 2차)', () {
       expect(pierceFalloffPercent, 40);
       final m = _duel(_ammoPirate(AmmoType.pierce, value: 3));

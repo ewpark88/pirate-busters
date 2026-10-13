@@ -117,7 +117,7 @@ void main() {
     session.dispose();
   });
 
-  test('무승부는 pb_sim 의 winner 로 판정한다 (설계서 §2.4, §13.5)', () {
+  test('무승부는 pb_sim 의 winner 로 판정한다 (설계서 §2.7, §13.5)', () {
     final state = testSetup.newMatch(4).state
       ..outcome = MatchOutcome.timeDecision
       ..winner = -1;
@@ -128,9 +128,9 @@ void main() {
     final won = MatchSummary.fromState(state, 0);
     expect(won.draw, isFalse);
     expect(won.won, isTrue);
-    // 양쪽이 같은 턴에 격침돼도 무승부다(판정은 pb_sim judge).
+    // 양쪽 선장실이 같은 순간 부서져도 무승부다(판정은 pb_sim judge).
     state
-      ..outcome = MatchOutcome.sunk
+      ..outcome = MatchOutcome.captainLost
       ..winner = -1;
     expect(MatchSummary.fromState(state, 1).draw, isTrue);
   });

@@ -1,7 +1,6 @@
 import 'package:pb_sim/src/match/rules.dart';
 import 'package:pb_sim/src/pirate/ability.dart';
 import 'package:pb_sim/src/pirate/ammo.dart';
-import 'package:pb_sim/src/pirate/range_grade.dart';
 import 'package:pb_sim/src/ship/hull.dart';
 
 /// 해적 등급과 출전 코스트 (설계서 §4.2, §4.5). 순서는 해시에 들어가므로 바꾸지 않는다.
@@ -38,11 +37,9 @@ class PirateSpec {
     required this.id,
     required this.rarity,
     required this.hp,
-    required this.cooldownTurns,
     required this.blockDamage,
     required this.pirateDamage,
     this.blastRadius = 0,
-    this.range = RangeGrade.medium,
     this.family = Family.lob,
     this.ammo = AmmoType.explosive,
     this.ammoValue = 50,
@@ -59,9 +56,6 @@ class PirateSpec {
   /// 최대 체력.
   final int hp;
 
-  /// 쏜 뒤 건너뛰는 내 턴 수(0~2). 0 이면 다음 내 턴에 다시 쏜다 (설계서 §2.3).
-  final int cooldownTurns;
-
   /// 착탄 칸 블록 피해. 폭발 반경 안 나머지 칸은 절반.
   final int blockDamage;
 
@@ -71,11 +65,8 @@ class PirateSpec {
   /// 폭발 반경(칸). 0 이면 착탄 칸만.
   final int blastRadius;
 
-  /// 최대 사거리 등급 (설계서 §2.8). 탄 속도를 정한다.
-  final RangeGrade range;
-
-  /// 힘 10000 일 때 탄 속도(1/1000칸/초).
-  int get launchSpeed => range.launchSpeed;
+  /// 힘 10000 일 때 탄 속도(1/1000칸/초). 모든 해적이 같다 (BALANCE.md A2.8).
+  int get launchSpeed => fullLaunchSpeed;
 
   /// 공격 계열 (설계서 §4.1).
   final Family family;
@@ -115,11 +106,9 @@ class PirateSpec {
     id: id,
     rarity: rarity,
     hp: hp,
-    cooldownTurns: cooldownTurns,
     blockDamage: blockDamage,
     pirateDamage: pirateDamage,
     blastRadius: blastRadius ?? this.blastRadius,
-    range: range,
     family: family,
     ammo: ammo,
     ammoValue: ammoValue,
@@ -136,8 +125,9 @@ class PirateSpec {
 const int burstFocus = 0;
 const int burstScatter = 1;
 
-/// 해적 쿨다운 상한(턴) (설계서 §2.3 “쿨다운 해적마다 0~2턴”).
-const int maxCooldownTurns = 2;
+/// 힘 10000 일 때 탄 속도(1/1000칸/초): 옛 ‘긺’ 사거리 등급 값. 시작 간격에서
+/// 바람이 없으면 45°·최대 힘으로 상대 배를 넘어간다 (BALANCE.md A2.8, ADR-111).
+const int fullLaunchSpeed = 12869;
 
 /// 해적 id → 정의. 매치가 덱 id 를 풀 때 쓴다.
 class PirateCatalog {
@@ -164,7 +154,7 @@ class PirateCatalog {
 
 /// 출전 명단 검사 (설계서 §3.1, §4.5). 위반이면 [ArgumentError].
 ///
-/// 인원은 1명 이상, 선형 선실 수 이하, 최대 [maxLineup] 명. 코스트 합계는
+/// 인원은 1명 이상, 선실 + 망대 수 이하, 최대 [maxLineup] 명. 코스트 합계는
 /// [costLimit](플레이어 레벨로 정해지는 출전 코스트 한도) 이하. 같은 해적은 한 번만.
 void checkLineup(HullSpec hull, List<PirateSpec> lineup, int costLimit) {
   final problem = lineupProblem(hull, lineup, costLimit);
@@ -174,15 +164,11 @@ void checkLineup(HullSpec hull, List<PirateSpec> lineup, int costLimit) {
 /// [checkLineup] 의 규칙 문제(개발용 글), 없으면 null. 편성 화면이 예외 없이 쓴다.
 String? lineupProblem(HullSpec hull, List<PirateSpec> lineup, int costLimit) {
   if (lineup.isEmpty) return '출전 해적이 없다';
-  if (lineup.length > hull.cabinSlots || lineup.length > maxLineup) {
-    return '출전 인원 초과: ${lineup.length} (선실 ${hull.cabinSlots}, 최대 $maxLineup)';
+  if (lineup.length > hull.crewSlots || lineup.length > maxLineup) {
+    return '출전 인원 초과: ${lineup.length} (자리 ${hull.crewSlots}, 최대 $maxLineup)';
   }
   var cost = 0;
   for (var i = 0; i < lineup.length; i++) {
-    final cd = lineup[i].cooldownTurns;
-    if (cd < 0 || cd > maxCooldownTurns) {
-      return '쿨다운은 0~$maxCooldownTurns 턴: ${lineup[i].id} $cd';
-    }
     cost += lineup[i].cost;
     for (var j = 0; j < i; j++) {
       if (lineup[j].id == lineup[i].id) return '같은 해적이 둘: ${lineup[i].id}';

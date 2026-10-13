@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:pb_sim/pb_sim.dart';
 import 'package:pirate_busters/battle/battle_session.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
 import 'package:pirate_busters/ui/hud/hud_style.dart';
 
-/// 시간 판정 안내 띠 (설계서 §13.4, ADR-090): 남은 턴이 [shownFrom] 이하가 되면
-/// “시간 판정까지 N턴 · 침수 적은 쪽 승리”와 양쪽 침수량을 보여 준다. 그리기만 하고
-/// 판정은 시뮬(§2.4)이 한다.
+/// 턴 제한 안내 띠 (설계서 §2.7·§13.4): 남은 턴이 [shownFrom] 이하가 되면
+/// “턴 제한까지 N턴”과 양쪽 남은 해적 체력 비율을 보여 준다. 색은 시뮬의
+/// [timeLeader](체력 비율 → 선장실 내구도 비율)를 따른다. 그리기만 하고 판정은
+/// 시뮬이 한다.
 class TimeVerdictBar extends StatelessWidget {
   const TimeVerdictBar({required this.session, super.key});
 
@@ -31,27 +31,29 @@ class TimeVerdictBar extends StatelessWidget {
     final state = session.state;
     if (!shows(state)) return const SizedBox.shrink();
     final l10n = AppLocalizations.of(context);
-    final fmt = NumberFormat(
-      '0.0',
-      Localizations.localeOf(context).toLanguageTag(),
-    );
-    // 사람 한 명이면 그쪽이 ‘나’, 핫시트는 침수 비교 없이 규칙만 적는다.
+    // 사람 한 명이면 그쪽이 ‘나’, 핫시트는 비교 없이 규칙만 적는다.
     final me = session.humanSides.length == 1 ? session.humanSides.first : -1;
     Widget? compare;
     if (me >= 0) {
-      final mine = state.sides[me].flood;
-      final theirs = state.sides[1 - me].flood;
-      // 색은 시뮬의 시간 판정과 같은 기준(침수 1%p 이내면 선체 비율)으로 정한다.
+      int percent(int side) {
+        final crew = state.sides[side].crew;
+        return crew.hpStart == 0 ? 0 : crew.hpLeft * 100 ~/ crew.hpStart;
+      }
+
+      final mine = percent(me);
+      final theirs = percent(1 - me);
       final lead = timeLeader(state);
-      final color = lead.winner == me
+      final color = lead == me
           ? HudColors.good
-          : (lead.winner < 0 ? HudColors.text : HudColors.danger);
-      final flood = l10n.timeVerdictFlood(
-        fmt.format(mine / 10),
-        fmt.format(theirs / 10),
-      );
+          : (lead < 0 ? HudColors.text : HudColors.danger);
+      final hp = l10n.timeVerdictFlood('$mine', '$theirs');
+      // 체력 비율이 같으면 선장실 내구도로 가린다.
+      final byCaptain =
+          lead >= 0 &&
+          state.sides[me].crew.hpLeft * state.sides[1 - me].crew.hpStart ==
+              state.sides[1 - me].crew.hpLeft * state.sides[me].crew.hpStart;
       compare = Text(
-        lead.byHull ? '$flood · ${l10n.timeVerdictByHull}' : flood,
+        byCaptain ? '$hp · ${l10n.timeVerdictByHull}' : hp,
         style: TextStyle(color: color, fontSize: 13),
       );
     }

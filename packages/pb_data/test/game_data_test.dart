@@ -23,7 +23,6 @@ String _pirate(Map<String, Object?> override) => jsonEncode({
       'family': 'lob',
       'rarity': 'common',
       'hp': 240,
-      'cooldownTurns': 0,
       'ammo': {'type': 'explosive'},
       'onHit': {'radiusCells': 1, 'blockDmg': 40, 'pirateDmg': 80},
       'render': {'species': 'octo'},
@@ -36,7 +35,7 @@ void main() {
   final ammoJson = File('$_gameDir/ammo.json').readAsStringSync();
 
   group('탄종 사다리 ammo.json (설계서 §4.8)', () {
-    test('탄종 13개 × 등급 5칸이 설계서 표와 같다', () {
+    test('탄종 13개 × 등급 5칸이 BALANCE.md A4.8 표와 같다', () {
       final l = _load().ladder;
       (int, int) v(AmmoType t, Rarity r) => l.valueOf(t, r);
       expect(
@@ -63,9 +62,16 @@ void main() {
         [for (final r in Rarity.values) v(AmmoType.homing, r).$1],
         [30, 45, 60, 75, 90],
       );
-      expect(v(AmmoType.mine, Rarity.common), (1, 20));
-      expect(v(AmmoType.mine, Rarity.myth), (3, 60));
-      expect(v(AmmoType.support, Rarity.legend).$1, 145);
+      expect(
+        [for (final r in Rarity.values) v(AmmoType.mine, r).$1],
+        [1, 1, 1, 2, 2],
+      );
+      expect(v(AmmoType.fire, Rarity.common), (2, 30));
+      expect(v(AmmoType.fire, Rarity.legend), (2, 45));
+      expect(
+        [for (final r in Rarity.values) v(AmmoType.shock, r).$1],
+        [1, 1, 1, 1, 1],
+      );
     });
 
     test('탄종이 빠지거나 칸 수가 틀리거나 실수가 있으면 거부한다', () {
@@ -107,7 +113,6 @@ void main() {
       final pelly = c.byId('p28_pelly');
       expect([wing.ammo, wing.ammoValue], [AmmoType.flock, 3]);
       expect([pelly.ammo, pelly.ammoValue], [AmmoType.flock, 4]);
-      expect(pelly.ammoParam, 1, reason: '다음 내 턴 시작 투하');
     });
 
     test('우니(영웅)는 분열탄 4조각, 퍼짐 25°', () {
@@ -130,18 +135,6 @@ void main() {
       expect(c.byId('p01_octo').hp, 240);
     });
 
-    test('사거리는 계열 기본 등급, 히포·팡은 짧음 (설계서 §2.8, A2.8 예외)', () {
-      final c = _load().catalog;
-      expect(c.byId('p01_octo').range, RangeGrade.long);
-      expect(c.byId('p06_pang').range, RangeGrade.short);
-      expect(c.byId('p07_hippo').range, RangeGrade.short);
-      expect(c.byId('p26_polly').range, RangeGrade.veryLong);
-      expect(c.byId('p31_sharky').range, RangeGrade.short);
-      expect(c.byId('p08_bones').range, RangeGrade.veryLong);
-      expect(c.byId('p05_volke').range, RangeGrade.veryLong);
-      expect(c.byId('p23_bara').range, RangeGrade.long);
-    });
-
     test('등급 분포는 일반 12 · 희귀 12 · 영웅 8 · 전설 8 이다 (설계서 §4.2)', () {
       final count = List.filled(Rarity.values.length, 0);
       for (final p in _load().pirates) {
@@ -150,54 +143,52 @@ void main() {
       expect(count, [12, 12, 8, 8, 0]);
     });
 
-    test('쿨다운은 BALANCE.md A4.2 표와 같다', () {
-      const twoTurns = {
-        'p02_starry',
-        'p04_uni',
-        'p05_volke',
-        'p09_lion',
-        'p10_volt',
-        'p15_moby',
-        'p20_orca',
-        'p24_moray',
-        'p25_kraki',
-        'p30_manta',
-        'p35_davy',
-      };
-      const zeroTurns = {
-        'p01_octo',
-        'p06_pang',
-        'p07_hippo',
-        'p11_finn',
-        'p16_suri',
-        'p26_polly',
-        'p27_wing',
-        'p36_tok',
-        'p37_pumpum',
-        'p39_corey',
+    test('고유 능력은 전설만 갖고 BALANCE.md A4.2 인자를 갖는다 (바라 어뢰 제외)', () {
+      final c = _load().catalog;
+      final legends = {
+        'p05_volke': (Ability.drill, 2),
+        'p15_moby': (Ability.pull, 3),
+        'p20_orca': (Ability.wave, 2),
+        'p25_kraki': (Ability.tentacle, 2),
+        'p30_manta': (Ability.blindTrail, 0),
+        'p35_davy': (Ability.summon, 3),
+        'p40_lamp': (Ability.shove, 2),
+        'p10_volt': (Ability.none, 0),
       };
       for (final p in _load().pirates) {
-        final want = twoTurns.contains(p.id)
-            ? 2
-            : (zeroTurns.contains(p.id) ? 0 : 1);
-        expect(p.cooldownTurns, want, reason: p.id);
+        final s = c.byId(p.id);
+        final want =
+            legends[p.id] ??
+            (p.id == 'p23_bara' ? (Ability.torpedo, 0) : (Ability.none, 0));
+        expect((s.ability, s.abilityValue), want, reason: p.id);
       }
     });
 
-    test('고유 효과가 있는 해적은 설계서 §4.3 키와 BALANCE.md A4.2 인자를 갖는다', () {
+    test('보급 계열은 없고 충격 계열 5명이 충격탄을 쏜다 (ADR-111)', () {
+      final shock = [
+        for (final p in _load().pirates)
+          if (p.family == Family.shock) p.id,
+      ];
+      expect(shock, [
+        'p36_tok',
+        'p37_pumpum',
+        'p38_cook',
+        'p39_corey',
+        'p40_lamp',
+      ]);
       final c = _load().catalog;
-      expect(
-        [c.byId('p15_moby').ability, c.byId('p15_moby').abilityValue],
-        [
-          Ability.pull,
-          3,
-        ],
-      );
-      expect(c.byId('p20_orca').abilityValue, 80);
-      expect(c.byId('p37_pumpum').abilityValue, 150);
-      expect(c.byId('p40_lamp').abilityValue, 30);
-      expect(c.byId('p29_alba').ability, Ability.steer);
-      expect(c.byId('p01_octo').ability, Ability.none);
+      for (final id in shock) {
+        expect(c.byId(id).ammo, AmmoType.shock, reason: id);
+        expect(c.byId(id).blastRadius, 2, reason: id);
+      }
+    });
+
+    test('화염탄·설치탄·강습탄은 폭발 반경을 사다리에서 받는다', () {
+      final c = _load().catalog;
+      expect(c.byId('p02_starry').blastRadius, 2);
+      expect(c.byId('p21_puffy').blastRadius, 1);
+      expect(c.byId('p25_kraki').blastRadius, 2);
+      expect(c.byId('p35_davy').blastRadius, 2);
     });
 
     test('해적 글자 키가 한국어·영어 ARB 에 모두 있다 (설계서 §14.5)', () {
@@ -249,7 +240,7 @@ void main() {
         reason: '$o',
       );
       bad({'hp': 240.0});
-      bad({'cooldownTurns': 3});
+      bad({'hp': 0});
       bad({
         'onHit': {'radiusCells': 3},
       });
@@ -317,6 +308,7 @@ void main() {
       }
 
       final moby = read({
+        'rarity': 'legend',
         'ammo': {'type': 'pierce'},
         'ability': {'type': 'pull', 'value': 3},
       });
@@ -334,18 +326,29 @@ void main() {
       );
       expect(
         () => read({
-          'ammo': {'type': 'support'},
-          'ability': {'type': 'bail', 'value': -1},
+          'rarity': 'legend',
+          'ammo': {'type': 'shock'},
+          'ability': {'type': 'shove', 'value': -1},
         }),
         throwsA(isA<DataFormatError>()),
       );
       expect(
         () => read({
+          'rarity': 'legend',
           'ammo': {'type': 'explosive'},
-          'ability': {'type': 'floatMine'},
+          'ability': {'type': 'tentacle'},
         }),
         throwsA(isA<DataFormatError>()),
-        reason: '떠 있는 기뢰는 설치탄에만',
+        reason: '촉수는 설치탄에만',
+      );
+      expect(
+        () => read({
+          'rarity': 'rare',
+          'ammo': {'type': 'pierce'},
+          'ability': {'type': 'pull', 'value': 3},
+        }),
+        throwsA(isA<DataFormatError>()),
+        reason: '고유 능력은 전설만',
       );
     });
   });
@@ -359,9 +362,7 @@ void main() {
       expect(perShotDamage(50, 2, 4), 20);
     });
 
-    test('특성·세트 보너스는 개수 +2, 폭발 반경 2칸까지', () {
-      expect(cappedCount(4, 5), 6);
-      expect(cappedCount(4, 1), 5);
+    test('폭발 반경은 2칸까지', () {
       expect(cappedBlastRadius(3), 2);
     });
   });
@@ -371,18 +372,9 @@ void main() {
       jsonDecode(File('$_gameDir/blueprints.json').readAsStringSync()),
     );
 
-    test('확장 단계마다 밸런스·철갑·고속 3종이 있고 건조 규칙을 지킨다 (§3.1)', () {
+    test('밸런스·철갑·고속 3종이 있고 건조 규칙을 지킨다 (§3.4)', () {
       final presets = load();
-      for (var stage = 1; stage <= HullSpec.maxStage; stage++) {
-        expect(
-          [
-            for (final p in presets)
-              if (p.stage == stage) p.id,
-          ],
-          ['balanced', 'armored', 'fast'],
-          reason: '단계 $stage',
-        );
-      }
+      expect([for (final p in presets) p.id], ['balanced', 'armored', 'fast']);
       for (final p in presets) {
         final b = p.blueprint;
         expect(b.cost, lessThanOrEqualTo(b.hull.buildPoints), reason: p.id);
@@ -390,22 +382,8 @@ void main() {
           b.modules.where((m) => m.kind == ModuleKind.captain),
           hasLength(1),
         );
+        expect(b.seatCount, 5, reason: '선실 4 + 망대 1');
       }
-    });
-
-    test('철갑은 가장 무겁고, 고속은 가장 가볍고 연료통으로 탱크가 크다', () {
-      final byId = {
-        for (final p in load())
-          if (p.stage == HullSpec.maxStage) p.id: p.blueprint,
-      };
-      int weight(Blueprint b) =>
-          b.cells.fold(0, (s, c) => s + c.material.weight);
-      expect(weight(byId['armored']!), greaterThan(weight(byId['balanced']!)));
-      expect(weight(byId['fast']!), lessThan(weight(byId['balanced']!)));
-      expect(
-        byId['fast']!.modules.where((m) => m.kind == ModuleKind.fuelTank),
-        hasLength(2),
-      );
     });
 
     test('설계도 이름·설명 키가 한국어·영어 ARB 에 모두 있다 (설계서 §14.5)', () {

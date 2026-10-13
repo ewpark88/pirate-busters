@@ -11,8 +11,6 @@ void _apply(List<List<int>> hp, List<SimEvent> events) {
         hp[e.side][e.cell] = e.y;
       case SimEventKind.blockDestroyed || SimEventKind.blockCollapsed:
         hp[e.side][e.cell] = 0;
-      case SimEventKind.repaired:
-        hp[e.side][e.cell] = e.y;
       case _:
         break;
     }

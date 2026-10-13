@@ -57,56 +57,22 @@ void main() {
     }
   });
 
-  test('최대 힘·45° 비행 시간이 BALANCE.md A2.8 표와 같다(±1틱)', () {
-    const seconds = {
-      RangeGrade.short: 40,
-      RangeGrade.medium: 47,
-      RangeGrade.long: 55,
-      RangeGrade.veryLong: 63,
-    };
-    for (final grade in RangeGrade.values) {
-      final p = Projectile.launch(
-        id: 0,
-        side: 0,
-        slot: 0,
-        spec: testPirate('t', range: grade),
-        x: 0,
-        y: 0,
-        angle: 45000,
-        power: maxFirePower,
-      );
-      while (p.y >= 0) {
-        p.advance(0);
-      }
-      final want = seconds[grade]! * simTickHz ~/ 10;
-      expect(p.age, inInclusiveRange(want - 2, want + 2), reason: grade.name);
+  test('최대 힘·45° 로 쏘면 해수면까지 약 50칸 날아간다: 모든 해적이 같다 (BALANCE.md A2.8)', () {
+    final p = Projectile.launch(
+      id: 0,
+      side: 0,
+      slot: 0,
+      spec: testPirate('t'),
+      x: 0,
+      y: 0,
+      angle: 45000,
+      power: maxFirePower,
+    );
+    while (p.y >= 0) {
+      p.advance(0);
     }
-  });
-
-  test('최대 힘·45° 로 쏘면 해수면까지 등급 사거리만큼 날아간다 (설계서 §2.8)', () {
-    for (final grade in RangeGrade.values) {
-      final p = Projectile.launch(
-        id: 0,
-        side: 0,
-        slot: 0,
-        spec: testPirate('t', range: grade),
-        x: 0,
-        y: 0,
-        angle: 45000,
-        power: maxFirePower,
-      );
-      while (p.y >= 0) {
-        p.advance(0);
-      }
-      final lo = (grade.cells - 1) * cellUnit;
-      final hi = (grade.cells + 1) * cellUnit;
-      expect(p.x, inInclusiveRange(lo, hi), reason: grade.name);
-    }
-  });
-
-  test('사거리 등급은 데이터 이름으로 찾고, 모르는 이름은 오류를 낸다', () {
-    expect(RangeGrade.byName('veryLong'), RangeGrade.veryLong);
-    expect(() => RangeGrade.byName('far'), throwsFormatException);
+    expect(p.x, inInclusiveRange(49 * cellUnit, 51 * cellUnit));
+    expect(testPirate('a').launchSpeed, fullLaunchSpeed);
   });
 
   test('순풍이면 더 멀리, 역풍이면 덜 날아간다', () {

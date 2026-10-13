@@ -47,7 +47,7 @@ void main() {
       expect(MetaIcons.factionOfSea(1), endsWith('faction_redclaw.png'));
     });
 
-    test('모듈 8종 모두 그림과 자리가 있고 선실 그림 2장이 있다', () {
+    test('모듈(선장실·돛대) 모두 그림과 자리가 있고 선실 그림 2장이 있다', () {
       for (final k in ModuleKind.values) {
         final file = 'assets/images/${BattleSprites.moduleFile(k)}';
         expect(File(file).existsSync(), isTrue, reason: file);
@@ -59,14 +59,6 @@ void main() {
       }
     });
 
-    test('포문은 앞벽 밖으로 8px 나가고 망루는 선실 위 1칸으로 솟는다', () {
-      final (gunAt, gunSize) = ModulePainter.art[ModuleKind.gunPort]!;
-      expect(gunAt.dx + gunSize.width, 40);
-      final (nestAt, nestSize) = ModulePainter.art[ModuleKind.lookout]!;
-      expect(nestAt.dy, -32);
-      expect(nestAt.dy + nestSize.height, 32);
-    });
-
     test('돛대는 아래부터 이어서 남은 돛대 칸 높이까지만 선다 (설계서 §3.3)', () {
       // 가로 4칸 × 5줄. 칸 번호 = y × 4 + x. (1, 0) 에 돛대, 돛대 칸 (1, 1..3).
       const e = ShipGrid.emptyCell;
@@ -76,12 +68,6 @@ void main() {
       expect(MastPainter.standing(mast, materials, 4, 4), 3);
       final broken = [...materials]..[9] = e;
       expect(MastPainter.standing(mast, broken, 4, 4), 1);
-      expect(
-        MastPainter.look(ModuleKind.mastIron).$2,
-        greaterThan(
-          MastPainter.look(ModuleKind.mastBamboo).$2,
-        ),
-      );
     });
   });
 }

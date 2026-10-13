@@ -33,7 +33,7 @@ void main() {
       }
     });
 
-    test('사람과 같은 커맨드만 쓰고, 발사는 2번 이하, 시각은 줄지 않는다 (§5.5)', () {
+    test('사람과 같은 커맨드만 쓰고, 발사는 1번 이하, 시각은 줄지 않는다 (§2.3, §5.5)', () {
       final m = newMatch(9, left: const ['uni', 'octo', 'pang']);
       final bundle = const AiController(level: AiLevel.hell).turnFor(m.state);
       var t = 0;
@@ -52,26 +52,37 @@ void main() {
       }
       expect(
         bundle.commands.whereType<FireCommand>().length,
-        lessThanOrEqualTo(2),
+        lessThanOrEqualTo(1),
       );
       expect(bundle.commands.last, isA<EndTurnCommand>());
     });
 
-    test('쉬움은 움직이지 않고 지원 해적을 쓰지 않는다 (A5.2, A5.5)', () {
+    test('쉬움은 움직이지 않는다 (A5.5)', () {
       for (var seed = 1; seed < 6; seed++) {
         final m = newMatch(
           seed,
           left: const ['tok', 'octo'],
           right: const ['tok', 'octo'],
         );
-        m.state.sides[m.state.activeSide].flood = 800;
         final bundle = const AiController(level: AiLevel.easy).turnFor(m.state);
         expect(bundle.commands.whereType<MoveCommand>(), isEmpty);
-        expect(
-          bundle.commands.whereType<FireCommand>().where((f) => f.slot == 0),
-          isEmpty,
-        );
       }
+    });
+
+    test('밀치기형은 충격탄으로 상대를 밀 수 있으면 민다 (A5.3)', () {
+      var pushes = 0;
+      for (var seed = 1; seed <= 10; seed++) {
+        final m = newMatch(seed, left: const ['tok'], right: const ['octo']);
+        if (m.state.activeSide != 0) continue;
+        m.playTurn(
+          const AiController(
+            level: AiLevel.hell,
+            personality: Personality.shover,
+          ).turnFor(m.state),
+        );
+        if (m.state.sides[1].offset < 0) pushes++;
+      }
+      expect(pushes, greaterThan(0));
     });
 
     test('AI 끼리 끝까지 두어도 판이 끝나고 턴 묶음 재생 해시가 같다', () {
@@ -140,61 +151,19 @@ void main() {
         d.thinkMs,
         d.pickTopPercent,
         d.waveTiming,
-        d.support,
         d.positions,
-        d.combo,
         d.windCorrectionPercent,
-        d.timeMode,
+        d.waveZones,
       ];
     }
 
-    expect(row(AiLevel.easy), [
-      8000,
-      2500,
-      50,
-      false,
-      SupportUse.timely,
-      0,
-      false,
-      50,
-      false,
-    ]);
-    expect(row(AiLevel.normal), [
-      4000,
-      1500,
-      20,
-      false,
-      SupportUse.timely,
-      3,
-      false,
-      75,
-      false,
-    ]);
-    expect(row(AiLevel.hard), [
-      2000,
-      800,
-      5,
-      true,
-      SupportUse.timely,
-      5,
-      true,
-      95,
-      true,
-    ]);
-    expect(row(AiLevel.hell), [
-      500,
-      300,
-      0,
-      true,
-      SupportUse.timely,
-      7,
-      true,
-      100,
-      true,
-    ]);
+    expect(row(AiLevel.easy), [8000, 2500, 50, false, 0, 50, false]);
+    expect(row(AiLevel.normal), [4000, 1500, 20, false, 3, 75, false]);
+    expect(row(AiLevel.hard), [2000, 800, 5, true, 5, 95, true]);
+    expect(row(AiLevel.hell), [500, 300, 0, true, 7, 100, true]);
     expect(
-      [AiDials.positionStepCells, AiDials.timeModeTurn, AiDials.fuelReserve],
-      [2, 22, 40],
+      [AiDials.positionStepCells, AiDials.wavePenaltyPerLevel],
+      [1, 20],
     );
   });
 

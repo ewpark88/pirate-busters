@@ -4,7 +4,7 @@ import 'package:pirate_busters/app/app_theme.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
 import 'package:pirate_busters/shipyard/shipyard_model.dart';
 
-/// 저장 조건 줄 (설계서 §13.6 “위에 건조 포인트 사용량”): 포인트 게이지와 선실·모듈·
+/// 저장 조건 줄 (설계서 §13.6 “위에 건조 포인트 사용량”): 포인트 게이지와 선실·
 /// 선장실 수. 어긋난 값은 빨갛고, 저장할 수 없으면 끝에 이유 한 줄을 붙인다.
 class ShipyardGauges extends StatelessWidget {
   const ShipyardGauges({required this.model, super.key});
@@ -31,10 +31,6 @@ class ShipyardGauges extends StatelessWidget {
             text: l10n.statCabins(cabins, hull.cabinSlots),
             bad: cabins != hull.cabinSlots,
           ),
-          _Pill(
-            text: l10n.statModules(s.modulesCounted, hull.moduleLimit),
-            bad: s.modulesCounted > hull.moduleLimit,
-          ),
           _Pill(text: l10n.statCaptain(s.captains), bad: s.captains != 1),
           if (!model.canSave)
             Text(
@@ -51,7 +47,7 @@ class ShipyardGauges extends StatelessWidget {
   }
 }
 
-/// 참고 수치 한 줄 (설계서 §13.6 “무게·흘수선·속도·연료 탱크 수치가 바로 바뀐다”).
+/// 참고 수치 한 줄 (설계서 §13.6): 속도·연료. 무게·흘수선은 없다 (ADR-111).
 class ShipyardStatLine extends StatelessWidget {
   const ShipyardStatLine({required this.model, super.key});
 
@@ -61,20 +57,15 @@ class ShipyardStatLine extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final hull = model.hull;
-    final s = model.stats;
     final locale = Localizations.localeOf(context).toLanguageTag();
     final one = NumberFormat('0.0', locale);
-    final two = NumberFormat('0.00', locale);
     return FittedBox(
       fit: BoxFit.scaleDown,
       child: Text(
         [
-          l10n.statWaterline(one.format(s.waterline / 1000)),
           l10n.statSpeed(one.format(hull.moveSpeed / 1000)),
-          l10n.statFuelPerCell(
-            two.format(hull.fuelPerCell * s.fuelPermille / 1000),
-          ),
-          l10n.statTank(s.tank),
+          l10n.statFuelPerCell(one.format(hull.fuelPerCell)),
+          l10n.statTank(hull.fuelTank),
         ].join('  ·  '),
         style: const TextStyle(fontSize: 12, color: AppColors.mute),
       ),

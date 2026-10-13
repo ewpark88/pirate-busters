@@ -4,9 +4,6 @@ import 'package:pb_ai/pb_ai.dart';
 import 'package:pb_sim/pb_sim.dart';
 import 'package:pirate_busters/battle/auto_end.dart';
 import 'package:pirate_busters/battle/battle_session.dart';
-import 'package:pirate_busters/battle/rest_turns.dart';
-import 'package:pirate_busters/game/battle_texts.dart';
-import 'package:pirate_busters/game/view/rest_badge.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
 import 'package:pirate_busters/ui/hud/no_shooter_banner.dart';
 
@@ -27,11 +24,11 @@ BattleSession _humanFirst() {
   }
 }
 
-/// 내 진영 해적을 [except] 말고 모두 쉬게 한다.
+/// 내 진영 해적을 [except] 말고 모두 이번 턴에 쏜 것으로 둔다(쏠 해적 없음).
 void _restAll(BattleSession s, {int except = -1}) {
-  final pirates = s.state.sides[0].crew.pirates;
-  for (var i = 0; i < pirates.length; i++) {
-    if (i != except) pirates[i].cooldown = 2;
+  final crew = s.state.sides[0].crew;
+  for (var i = 0; i < crew.size; i++) {
+    if (i != except) crew.markFired(i);
   }
 }
 
@@ -65,7 +62,7 @@ void main() {
       expect(s.isHumanTurn, isFalse);
     });
 
-    test('한 발 쏜 뒤 더 쏠 해적이 없으면 2발 뒤와 같은 유예로 끝나고 안내는 없다', () {
+    test('한 발 쏜 뒤에는 발사 뒤 유예로 끝나고 안내는 없다', () {
       final s = _humanFirst();
       _restAll(s, except: 0);
       s
@@ -89,46 +86,7 @@ void main() {
     });
   });
 
-  group('A53 머리 위 쉬는 턴 배지 (설계서 §13.4, ADR-102)', () {
-    test('머리 위 숫자는 카드와 같은 쉬는 턴 수이고, 쏜 해적은 이번 턴을 빼고 센다', () {
-      final s = _humanFirst();
-      final side = s.state.sides[0];
-      side.crew.pirates[1].cooldown = 2;
-      final badges = RestBadges(session: s, ships: const [], texts: _Texts())
-        ..update(0.016);
-      expect(badges.shownOf(0, 1), 2);
-      expect(badges.shownOf(0, 1), restTurnsOf(side, 1));
-      expect(badges.shownOf(0, 0), 0);
-      side.crew.markFired(0);
-      badges.update(0.016);
-      expect(badges.shownOf(0, 0), restTurnsOf(side, 0));
-    });
-
-    test('쉬는 턴이 풀리면 그 진영 턴 시작에 준비 표시가 나온다', () {
-      final s = _humanFirst();
-      s.state.sides[0].crew.pirates[0].cooldown = 1;
-      final badges = RestBadges(session: s, ships: const [], texts: _Texts())
-        ..update(0.016);
-      expect(badges.shownOf(0, 0), 1);
-      s.endTurn();
-      badges.update(0.016);
-      expect(badges.shownOf(0, 0), 0);
-      expect(badges.readyOf(0, 0), isFalse, reason: '상대 턴에는 아직');
-      var guard = 0;
-      while (!s.isHumanTurn && !s.isOver && guard++ < 4000) {
-        s.update(100);
-        badges.update(0.1);
-      }
-      while (s.playback != null && guard++ < 6000) {
-        s.update(50);
-        badges.update(0.05);
-      }
-      badges.update(0.016);
-      expect(badges.readyOf(0, 0), isTrue);
-      badges.update(RestBadges.readyTime);
-      expect(badges.readyOf(0, 0), isFalse);
-    });
-
+  group('A53 안내 배너', () {
     testWidgets('안내 배너는 켜지는 순간부터 정해진 시간 동안 보인다', (tester) async {
       Widget app({required bool active}) => MaterialApp(
         localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -153,5 +111,3 @@ void main() {
     });
   });
 }
-
-class _Texts with BattleTexts {}

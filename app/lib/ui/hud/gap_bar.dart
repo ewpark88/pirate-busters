@@ -17,8 +17,8 @@ class GapBar extends StatelessWidget {
     final a = state.sides[0].bowX;
     final b = state.sides[1].bowX;
     final gap = (b - a).abs() ~/ cellUnit;
-    // 막대 범위: 두 배의 가장 먼 후퇴 한계 사이.
-    const span = startGap + 2 * moveRange;
+    // 막대 범위: 두 배의 바다 끝 사이 (설계서 §2.5).
+    final span = startGap + 2 * state.rules.backRoom;
     double at(int x) => ((x + span / 2) / span).clamp(0, 1).toDouble();
     return Row(
       mainAxisSize: MainAxisSize.min,

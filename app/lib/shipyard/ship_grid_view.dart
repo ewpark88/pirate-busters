@@ -44,8 +44,6 @@ class ShipGridView extends StatelessWidget {
   /// 재질 칸 그림 (에셋 `ship/tiles_v2`, 무늬는 칸 위치로 고정). 전장과 같은 타일.
   static String tileImage(BlockMaterial m, int x, int y) => switch (m) {
     BlockMaterial.iron => 'assets/images/ship/tiles_v2/iron.png',
-    BlockMaterial.net =>
-      'assets/images/ship/tiles_v2/mesh_${BattleSprites.variantOf(x, y)}.png',
     _ =>
       'assets/images/ship/tiles_v2/${m.name}_${BattleSprites.variantOf(x, y)}.png',
   };

@@ -39,19 +39,15 @@ void main() {
       expect(HitWeight.of(batch(pirate: 80)).level, HitLevel.medium);
       expect(HitWeight.of(batch(destroyed: 4)).level, HitLevel.heavy);
       expect(HitWeight.of(batch(pirate: 80, down: true)).level, HitLevel.heavy);
-      expect(
-        HitWeight.of(batch(module: ModuleKind.magazine)).level,
-        HitLevel.medium,
-      );
     });
 
-    test('화약고·연료통만 유폭으로 세고 다른 모듈은 더하지 않는다', () {
+    test('모듈이 부서져도 한 방 크기에 따로 더하지 않는다 (유폭 없음)', () {
       final plain = HitWeight.of(batch()).score;
       expect(
-        HitWeight.of(batch(module: ModuleKind.fuelTank)).score,
-        plain + 400,
+        HitWeight.of(batch(module: ModuleKind.captain)).score,
+        plain,
       );
-      expect(HitWeight.of(batch(module: ModuleKind.pump)).score, plain);
+      expect(HitWeight.of(batch(module: ModuleKind.mast)).score, plain);
     });
 
     test('치명은 해적을 맞혔을 때만 더한다', () {

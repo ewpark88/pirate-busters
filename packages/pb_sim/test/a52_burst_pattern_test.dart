@@ -10,7 +10,6 @@ PirateSpec _burst({required int pattern, int spread = 12000, int count = 3}) =>
       id: 'b',
       rarity: Rarity.common,
       hp: 220,
-      cooldownTurns: 0,
       blockDamage: 60,
       pirateDamage: 100,
       family: Family.direct,
@@ -23,7 +22,7 @@ PirateSpec _burst({required int pattern, int spread = 12000, int count = 3}) =>
 Match _match(PirateSpec spec, {int seed = 5}) {
   return Match.start(
     seed: seed,
-    rules: const MatchRules(waveLevel: 0),
+    rules: const MatchRules(calmSea: true),
     blueprints: [sampleBlueprint(), sampleBlueprint()],
     decks: [
       [spec.id, 'r0'],

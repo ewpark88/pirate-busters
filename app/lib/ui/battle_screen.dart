@@ -208,14 +208,8 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
 
   late final MusicTrackNotifier _music;
 
-  /// 전투 곡, 폭풍 타임에는 빠르게 (설계서 §10.3).
-  void _updateMusic() {
-    final state = _session.state;
-    _music.play(
-      Music.battle,
-      speed: state.rules.isStorm(state.turn) ? stormMusicSpeed : 1,
-    );
-  }
+  /// 전투 곡 (설계서 §10.3).
+  void _updateMusic() => _music.play(Music.battle);
 
   @override
   Widget build(BuildContext context) {

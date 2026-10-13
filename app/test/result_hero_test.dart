@@ -55,9 +55,8 @@ Future<void> _pump(WidgetTester tester, Widget screen, {bool? motion}) async {
 
 MatchSummary _summary({required bool won, String? mvp}) => MatchSummary(
   won: won,
-  outcome: won ? MatchOutcome.sunk : MatchOutcome.floodSunk,
+  outcome: won ? MatchOutcome.captainLost : MatchOutcome.annihilation,
   turns: 9,
-  floodPercent: 12,
   hullPercent: 71,
   piratesDown: 0,
   shotsFired: 4,
@@ -103,7 +102,6 @@ void main() {
         StageResultScreen(
           stage: stage,
           summary: s,
-          enemyFloodPercent: 40,
           reward: reward(s),
         ),
       );
@@ -123,7 +121,6 @@ void main() {
         StageResultScreen(
           stage: stage,
           summary: s,
-          enemyFloodPercent: 40,
           reward: reward(s),
         ),
       );
@@ -141,7 +138,6 @@ void main() {
         StageResultScreen(
           stage: stage,
           summary: s,
-          enemyFloodPercent: 40,
           reward: reward(s),
         ),
         motion: true,

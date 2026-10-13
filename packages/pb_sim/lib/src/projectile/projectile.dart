@@ -82,9 +82,9 @@ class Projectile {
   /// 지금까지 뚫은 칸 수(관통탄 두 번째 칸부터 피해 50%, ADR-050).
   int piercedCells = 0;
 
-  /// 마지막으로 지나간 망사 칸(맞는 배 로컬 인덱스, 없으면 −1). 같은 칸에 다시
-  /// 걸리지 않게 한다 (설계서 §3.2, ADR-050).
-  int passedNet = -1;
+  /// 마지막으로 뚫고 지나간 칸(맞는 배 로컬 인덱스, 없으면 −1, 볼케). 같은 칸에
+  /// 다시 맞지 않게 한다.
+  int passedCell = -1;
 
   /// 한 번 쪼개졌는가 (분열탄·다중투하는 한 번만 갈라진다).
   bool divided = false;
@@ -95,14 +95,8 @@ class Projectile {
   /// 고유 능력의 명중 효과를 이미 냈는가(관통탄은 여러 칸을 맞아도 한 번, ADR-075).
   bool abilityDone = false;
 
-  /// 방향 전환 탭을 이미 썼는가(알바, 1회).
-  bool steered = false;
-
   /// 수면에서 멈추지 않고 물속으로 들어간다(바라 어뢰, ADR-078).
   bool submerged = false;
-
-  /// 관통하며 피해를 준 해적 수(나르, ADR-078).
-  int skeweredPirates = 0;
 
   /// 한 틱 진행한다: 속도에 바람(가로)과 중력을 더하고 위치를 옮긴다.
   ///

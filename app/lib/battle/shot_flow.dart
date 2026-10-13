@@ -4,15 +4,13 @@ import 'package:pirate_busters/battle/shot_path.dart';
 
 /// 발사 연출을 만드는 계산 (판정은 모두 [Match] 가 한다).
 
-/// [c] 가 비행 중 탭을 기다리는 발사(분열탄·방향 전환 탄, 설계서 §4.8)면 탭 없이
+/// [c] 가 비행 중 탭을 기다리는 발사(분열탄, 설계서 §4.8)면 탭 없이
 /// 떨어질 때까지의 예측 경로, 아니면 null. 발사 커맨드를 넣기 전 상태로 부른다.
 ShotPath? splitPathFor(MatchState state, FireCommand c) {
   final pirate = state.sides[state.activeSide].crew.pirateAt(c.slot);
   if (pirate == null) return null;
   final spec = pirate.spec;
-  if (spec.ammo != AmmoType.split && spec.ability != Ability.steer) {
-    return null;
-  }
+  if (spec.ammo != AmmoType.split) return null;
   return ShotPath.predictToHit(
     state,
     slot: c.slot,

@@ -18,7 +18,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String timeVerdict(int count) {
-    return '시간 판정까지 $count턴 · 침수 적은 쪽 승리';
+    return '턴 제한까지 $count턴 · 해적 체력 많은 쪽 승리';
   }
 
   @override
@@ -27,7 +27,7 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
-  String get timeVerdictByHull => '침수 비슷: 선체 비교';
+  String get timeVerdictByHull => '체력 같음: 선장실 비교';
 
   @override
   String get yourTurn => '내 턴';
@@ -159,10 +159,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get resultDraw => '무승부';
 
   @override
-  String get outcomeSunk => '격침';
-
-  @override
-  String get outcomeFloodSunk => '침몰';
+  String get outcomeCaptainLost => '선장실 파괴';
 
   @override
   String get outcomeAnnihilation => '전멸';
@@ -199,7 +196,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get emphasisCabin => '선실 직격!';
 
   @override
-  String get sunkBanner => '격침!';
+  String get bannerCaptainLost => '선장실 파괴!';
 
   @override
   String get bannerMyTurn => '내 턴!';
@@ -249,7 +246,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get pirate_p07_name => '해마 쌍권총 히포';
 
   @override
-  String get pirate_p07_desc => '짧은 사거리 집중 3연사, 한 점을 연타한다';
+  String get pirate_p07_desc => '집중 3연사, 한 점을 연타한다';
 
   @override
   String get pirate_p07_lore => '꼬리로 몸을 지탱하고 쌍권총을 쏜다.';
@@ -267,7 +264,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get pirate_p16_name => '해달 돌팔매 수리';
 
   @override
-  String get pirate_p16_desc => '돌이 수면 2회 튕겨 흘수선 명중';
+  String get pirate_p16_desc => '돌이 수면에서 튕겨 선체 아래쪽 명중';
 
   @override
   String get pirate_p16_lore => '배 위에서 조개를 깨던 솜씨로 돌을 튕긴다.';
@@ -276,7 +273,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get pirate_p21_name => '복어 자폭병 퍼피';
 
   @override
-  String get pirate_p21_desc => '흘수선 아래에 붙어 다음 내 턴 시작에 폭발';
+  String get pirate_p21_desc => '선체 아래에 붙어 다음 내 턴 시작에 폭발';
 
   @override
   String get pirate_p21_lore => '잔뜩 부풀어 배 밑에 달라붙는다. 그다음은 펑.';
@@ -303,7 +300,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get pirate_p28_name => '펠리컨 수송대 펠리';
 
   @override
-  String get pirate_p28_desc => '다음 내 턴 시작에 부리 주머니에서 소형 폭탄 4개';
+  String get pirate_p28_desc => '꼭대기에서 소형 폭탄 4개';
 
   @override
   String get pirate_p28_lore => '부리 주머니에 무엇이 들었는지는 아무도 모른다.';
@@ -312,7 +309,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get pirate_p31_name => '상어 난동꾼 샤키';
 
   @override
-  String get pirate_p31_desc => '적 갑판에 뛰어들어 반경 1칸 해적을 물어뜯음';
+  String get pirate_p31_desc => '적 갑판에 뛰어들어 둘레 해적을 문다';
 
   @override
   String get pirate_p31_lore => '적 배에 뛰어드는 것을 무엇보다 좋아한다.';
@@ -321,7 +318,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get pirate_p36_name => '거북 목수 톡';
 
   @override
-  String get pirate_p36_desc => '상대 배를 맞히면 내 배 구멍 3칸 수리';
+  String get pirate_p36_desc => '등딱지 대포, 충격파로 적 배를 1칸 민다';
 
   @override
   String get pirate_p36_lore => '느리지만 꼼꼼하다. 배는 그가 지킨다.';
@@ -330,7 +327,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get pirate_p02_name => '불가사리 불꽃병 스타리';
 
   @override
-  String get pirate_p02_desc => '회전하는 불별, 착탄 둘레 화상 지대';
+  String get pirate_p02_desc => '회전하는 불별이 넓게 터진다';
 
   @override
   String get pirate_p02_lore => '불꽃놀이를 좋아하다 배를 세 척 태웠다.';
@@ -339,7 +336,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get pirate_p03_name => '꽃게 형제';
 
   @override
-  String get pirate_p03_desc => '둘이 한 발씩, 같은 지점에 두 번 터진다';
+  String get pirate_p03_desc => '큰 집게 폭탄, 착탄 폭발';
 
   @override
   String get pirate_p03_lore => '둘이 늘 말다툼하지만 겨누는 곳은 늘 같다.';
@@ -348,7 +345,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get pirate_p05_name => '화산 소라게 볼케';
 
   @override
-  String get pirate_p05_desc => '초고각 곡사, 3층을 뚫고 크게 폭발';
+  String get pirate_p05_desc => '★ 초고각 곡사, 2층을 뚫고 크게 폭발';
 
   @override
   String get pirate_p05_lore => '등의 화산이 식은 적이 없다.';
@@ -357,7 +354,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get pirate_p08_name => '해골 저격수 본즈';
 
   @override
-  String get pirate_p08_desc => '초고속 저격, 빛나는 눈 조준경';
+  String get pirate_p08_desc => '초고속 저격, 해적 명중 시 치명';
 
   @override
   String get pirate_p08_lore => '눈구멍에서 빛이 나면 이미 늦었다.';
@@ -366,7 +363,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get pirate_p09_name => '쏠배감펭 가시포 라이언';
 
   @override
-  String get pirate_p09_desc => '가시 산발 연사, 넓게 흩뿌려 망사를 찢는다';
+  String get pirate_p09_desc => '산발 연사, 넓게 흩뿌린다';
 
   @override
   String get pirate_p09_lore => '지느러미 하나하나가 독 가시 대포다.';
@@ -384,7 +381,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get pirate_p12_name => '일각고래 나르';
 
   @override
-  String get pirate_p12_desc => '뿔 창으로 해적 3명까지 일렬로 꿰뚫는다';
+  String get pirate_p12_desc => '뿔 창으로 블록을 뚫는다';
 
   @override
   String get pirate_p12_lore => '북쪽 바다에서 내려온 조용한 창잡이.';
@@ -393,7 +390,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get pirate_p13_name => '바다코끼리 닻잡이 왈러스';
 
   @override
-  String get pirate_p13_desc => '무거운 닻으로 블록을 뚫고 뜯어낸다';
+  String get pirate_p13_desc => '무거운 닻으로 블록을 뚫는다';
 
   @override
   String get pirate_p13_lore => '닻을 던지는 것보다 끌어오는 걸 더 좋아한다.';
@@ -402,7 +399,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get pirate_p14_name => '톱상어 소오';
 
   @override
-  String get pirate_p14_desc => '톱날 코로 세로줄을 통째로 자른다';
+  String get pirate_p14_desc => '톱날 코로 블록을 뚫는다';
 
   @override
   String get pirate_p14_lore => '돛대만 보면 코가 근질거린다.';
@@ -411,7 +408,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get pirate_p15_name => '향유고래 모비';
 
   @override
-  String get pirate_p15_desc => '적 배를 3칸 끌어당기고 다음 턴 묶는다';
+  String get pirate_p15_desc => '★ 선체에 맞으면 적 배를 3칸 끌어당긴다';
 
   @override
   String get pirate_p15_lore => '바다에서 가장 큰 힘. 느리지만 놓치지 않는다.';
@@ -420,7 +417,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get pirate_p17_name => '펭귄 배썰매 핑구';
 
   @override
-  String get pirate_p17_desc => '튕긴 뒤 갑판을 미끄러지며 연속 피해';
+  String get pirate_p17_desc => '배로 튕겨 선체 명중';
 
   @override
   String get pirate_p17_lore => '얼음이 없어도 어디서든 미끄러진다.';
@@ -429,7 +426,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get pirate_p18_name => '투구게 셀던';
 
   @override
-  String get pirate_p18_desc => '벽에서 되튀며 여러 번 친다';
+  String get pirate_p18_desc => '등껍질로 튕겨 선체 명중';
 
   @override
   String get pirate_p18_lore => '삼억 년을 버틴 등껍질은 어디든 튕긴다.';
@@ -438,7 +435,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get pirate_p19_name => '돌고래 서퍼 돌피';
 
   @override
-  String get pirate_p19_desc => '선체에 붙어 흘수선을 연타';
+  String get pirate_p19_desc => '파도 타고 튕겨 선체 명중';
 
   @override
   String get pirate_p19_lore => '파도 위에서 웃지 않은 적이 없다.';
@@ -447,7 +444,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get pirate_p20_name => '범고래 해일 오르카';
 
   @override
-  String get pirate_p20_desc => '큰 파도로 갑판 해적을 쓸고 침수 +8%p';
+  String get pirate_p20_desc => '★ 큰 파도가 갑판 해적을 쓸고 적 배를 2칸 민다';
 
   @override
   String get pirate_p20_lore => '오르카가 지나가면 바다가 한 번 기운다.';
@@ -456,7 +453,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get pirate_p22_name => '해파리 기뢰 젤리';
 
   @override
-  String get pirate_p22_desc => '떠 있는 기뢰, 적 배가 지나가면 폭발';
+  String get pirate_p22_desc => '선체 아래에 붙어 다음 내 턴 시작에 폭발';
 
   @override
   String get pirate_p22_lore => '어디 떠 있는지 아무도 모른다. 젤리 자신도.';
@@ -474,7 +471,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get pirate_p24_name => '곰치 모레이';
 
   @override
-  String get pirate_p24_desc => '붙어서 물어뜯고 펌프를 멈춘다';
+  String get pirate_p24_desc => '선체 아래에 붙어 다음 내 턴 시작에 폭발';
 
   @override
   String get pirate_p24_lore => '틈만 보이면 이빨부터 들이민다.';
@@ -483,7 +480,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get pirate_p25_name => '아기 크라켄 크라키';
 
   @override
-  String get pirate_p25_desc => '촉수로 붙어 턴마다 침수를 올린다';
+  String get pirate_p25_desc => '★ 붙는 순간 터지고, 촉수가 2턴 동안 둘레 블록을 친다';
 
   @override
   String get pirate_p25_lore => '아직 아기지만 촉수는 벌써 셋이다.';
@@ -492,7 +489,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get pirate_p29_name => '알바트로스 알바';
 
   @override
-  String get pirate_p29_desc => '비행 중 탭으로 방향 전환, 명중 시 바람 역전';
+  String get pirate_p29_desc => '가장 가까운 해적 쪽으로 휜다';
 
   @override
   String get pirate_p29_lore => '바람을 거슬러 나는 법을 처음 알아낸 새.';
@@ -501,7 +498,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get pirate_p30_name => '폭풍 가오리 만타';
 
   @override
-  String get pirate_p30_desc => '상대 다음 턴 궤적 봉쇄, 무작위 피해';
+  String get pirate_p30_desc => '★ 상대의 다음 턴 궤적 점선을 숨긴다';
 
   @override
   String get pirate_p30_lore => '만타가 지나간 하늘에는 길이 남지 않는다.';
@@ -510,7 +507,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get pirate_p32_name => '농게 로프 크래비';
 
   @override
-  String get pirate_p32_desc => '로프로 넘어가 해적을 물고 바다로';
+  String get pirate_p32_desc => '로프로 넘어가 둘레 해적을 문다';
 
   @override
   String get pirate_p32_lore => '큰 집게 하나면 충분하다.';
@@ -519,7 +516,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get pirate_p33_name => '대게 방패병 킹';
 
   @override
-  String get pirate_p33_desc => '착지해 선실 하나를 다음 턴 봉쇄';
+  String get pirate_p33_desc => '뛰어들어 둘레 해적을 문다';
 
   @override
   String get pirate_p33_lore => '방패를 내려놓는 법을 모른다.';
@@ -528,7 +525,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get pirate_p34_name => '바닷가재 쌍집게 랍';
 
   @override
-  String get pirate_p34_desc => '쓰러뜨리면 다음 해적으로 점프';
+  String get pirate_p34_desc => '회전 집게로 둘레 해적을 벤다';
 
   @override
   String get pirate_p34_lore => '두 집게가 쉬는 걸 본 사람이 없다.';
@@ -537,7 +534,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get pirate_p35_name => '해골 선장 데비';
 
   @override
-  String get pirate_p35_desc => '해골 선원 3명 소환, 한 번 부활';
+  String get pirate_p35_desc => '★ 해골 선원 3명이 함께 문다';
 
   @override
   String get pirate_p35_lore => '바다 밑에서 돌아온 선장. 두 번은 안 진다.';
@@ -546,7 +543,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get pirate_p37_name => '아기고래 뿜뿜';
 
   @override
-  String get pirate_p37_desc => '상대 배를 맞히면 내 침수량 즉시 감소';
+  String get pirate_p37_desc => '물대포 충격파로 적 배를 1칸 민다';
 
   @override
   String get pirate_p37_lore => '숨구멍으로 뿜는 물줄기가 자랑이다.';
@@ -555,7 +552,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get pirate_p38_name => '소라게 요리사 쿡';
 
   @override
-  String get pirate_p38_desc => '상대 배를 맞히면 아군 치유, 쿨다운 −1';
+  String get pirate_p38_desc => '냄비 폭탄 충격파로 적 배를 1칸 민다';
 
   @override
   String get pirate_p38_lore => '배고픈 선원은 싸우지 못한다는 게 신조다.';
@@ -564,7 +561,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get pirate_p39_name => '산호 골렘 코리';
 
   @override
-  String get pirate_p39_desc => '맞히면 내 뱃머리 앞에 산호 방벽, 2턴';
+  String get pirate_p39_desc => '산호 덩어리 충격파로 적 배를 1칸 민다';
 
   @override
   String get pirate_p39_lore => '천천히 자라지만 무엇이든 막아선다.';
@@ -573,7 +570,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get pirate_p40_name => '아귀 항해사 램프';
 
   @override
-  String get pirate_p40_desc => '맞히면 다음 턴 궤적 확대·바람 무시·연료 +30';
+  String get pirate_p40_desc => '★ 아주 강한 충격파로 적 배를 2칸 민다';
 
   @override
   String get pirate_p40_lore => '어두운 바다에서도 길을 잃은 적이 없다.';
@@ -583,21 +580,20 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get blueprint_balanced_desc =>
-      '참나무 용골에 펌프와 목수 공방을 단 기본형. 포문과 망루로 한 명을 키운다.';
+      '참나무 용골에 선장실을 철판으로 감싼 기본형. 뱃머리를 참나무로 막고 가운데 돛대에 망대를 둔다.';
 
   @override
   String get blueprint_armored_name => '철갑';
 
   @override
-  String get blueprint_armored_desc =>
-      '선실 양옆을 철판으로 막은 튼튼한 배. 화약고로 화력을 더하지만, 무거워 깊이 잠기니 침수를 조심하자.';
+  String get blueprint_armored_desc => '뱃머리를 철판으로 막은 튼튼한 배. 대신 선실 지붕이 얇다.';
 
   @override
   String get blueprint_fast_name => '고속';
 
   @override
   String get blueprint_fast_desc =>
-      '소나무와 코르크로 가볍게 띄우고 연료통 둘로 멀리 움직인다. 대신 잘 부서진다.';
+      '선장실을 배 한가운데 참나무 층에 숨긴 낮은 배. 블록이 적어 남는 포인트는 아낀다.';
 
   @override
   String ammoExplosive(int n) {
@@ -606,7 +602,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String ammoFire(int n) {
-    return '화염 $n턴';
+    return '화염 $n칸';
   }
 
   @override
@@ -641,7 +637,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String ammoMine(int n) {
-    return '설치 $n턴';
+    return '설치 $n칸';
   }
 
   @override
@@ -656,12 +652,12 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String ammoAssault(int n) {
-    return '강습 +$n';
+    return '강습 $n칸';
   }
 
   @override
-  String ammoSupport(int n) {
-    return '수리 $n%';
+  String ammoShock(int n) {
+    return '밀기 $n칸';
   }
 
   @override
@@ -882,7 +878,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get familyAssault => '강습';
 
   @override
-  String get familySupport => '보급';
+  String get familyShock => '충격';
 
   @override
   String get rarityCommon => '일반';
@@ -1079,8 +1075,8 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
-  String prepWeather(Object wave, Object wind) {
-    return '파도 $wave · 바람 최대 $wind';
+  String prepWeather(Object wind) {
+    return '바람 최대 $wind';
   }
 
   @override
@@ -1099,7 +1095,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get personality_hunter => '사냥형';
 
   @override
-  String get personality_sinker => '침몰형';
+  String get personality_shover => '밀치기형';
 
   @override
   String get personality_rusher => '돌격형';
@@ -1729,7 +1725,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get ammoKindAssault => '강습';
 
   @override
-  String get ammoKindSupport => '보급';
+  String get ammoKindShock => '충격탄';
 
   @override
   String pirateCost(int n) {

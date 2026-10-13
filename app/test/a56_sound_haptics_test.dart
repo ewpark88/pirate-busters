@@ -102,7 +102,7 @@ void main() {
   });
 
   group('A56 전장 소리·진동 (설계서 §10.3·§10.4)', () {
-    testWidgets('턴 전환·침수·불·이동(간격)에 소리, 사람 발사에 진동, 환경음은 설정을 따른다', (
+    testWidgets('턴 전환·이동(간격)에 소리, 사람 발사에 진동, 환경음은 설정을 따른다', (
       tester,
     ) async {
       var vibrations = 0;
@@ -136,16 +136,13 @@ void main() {
           SimEvent(k, side: side, value: value);
       d.update(.016, [
         ev(SimEventKind.turnStart, value: 2),
-        ev(SimEventKind.flood, value: 15),
-        ev(SimEventKind.flood, value: -40),
-        ev(SimEventKind.ignited),
         ev(SimEventKind.move),
         ev(SimEventKind.move),
         ev(SimEventKind.fire),
         ev(SimEventKind.fire, side: 1),
       ]);
       await tester.pump();
-      expect(played, [Sfx.turn, Sfx.gurgle, Sfx.crackle, Sfx.wake]);
+      expect(played, [Sfx.turn, Sfx.wake]);
       expect(vibrations, 1, reason: '내 발사만 가볍게');
       d.update(FinaleDirector.wakeGapSec, [ev(SimEventKind.move)]);
       expect(played.last, Sfx.wake, reason: '간격이 지나면 다시 물살');
@@ -182,13 +179,13 @@ void main() {
     ) async {
       final s = _session();
       s.state
-        ..outcome = MatchOutcome.sunk
+        ..outcome = MatchOutcome.captainLost
         ..winner = 0;
       final settled = ValueNotifier(false);
       final banner = ValueNotifier<BattleBanner?>(null);
       final d = await director(s, settled: settled, banner: banner);
       d.update(.016, const []);
-      expect(banner.value?.kind, BattleBannerKind.sunk);
+      expect(banner.value?.kind, BattleBannerKind.captainLost);
       expect(settled.value, isFalse, reason: '배너가 떠 있는 동안');
       d.update(FinaleDirector.endBannerSec / 2, const []);
       expect(settled.value, isFalse);
@@ -228,7 +225,7 @@ void main() {
       final d = await director(s, vibration: ValueNotifier(false));
       d.update(.016, const [SimEvent(SimEventKind.fire, side: 0)]);
       s.state
-        ..outcome = MatchOutcome.sunk
+        ..outcome = MatchOutcome.captainLost
         ..winner = 0;
       d.update(.016, const []);
       await tester.pump(const Duration(milliseconds: 300));

@@ -18,7 +18,7 @@ typedef ShipOnSea = ({
 
 /// 수면 모양 (설계서 §10.2 “큰 너울과 물마루”): 두 배의 파도 위아래(시뮬레이션
 /// heave)를 잇고, 배에서 먼 바다에만 긴 너울을 더한다. 배 자리에서는 너울이 0이라
-/// 배와 물이 어긋나지 않는다. 폭풍 타임(§2.4)이면 너울이 [scale] 배로 커진다.
+/// 배와 물이 어긋나지 않는다. 너울은 [scale] 배로 그린다.
 /// 그리기 전용이라 판정과 무관하다.
 class SeaShape extends Component {
   SeaShape({required this.ships, required this.scale});

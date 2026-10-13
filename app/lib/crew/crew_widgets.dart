@@ -53,7 +53,7 @@ class CostBar extends StatelessWidget {
   }
 }
 
-/// 덱 평가: 계열 분포·사거리 분포·선호 거리 (설계서 §13.7).
+/// 덱 평가: 계열 분포 (설계서 §13.7).
 class DeckEvalView extends StatelessWidget {
   const DeckEvalView(this.eval, {super.key});
 
@@ -67,12 +67,6 @@ class DeckEvalView extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        OutlinedText(switch (eval.preferred) {
-          PreferredRange.near => l10n.preferNear,
-          PreferredRange.far => l10n.preferFar,
-          PreferredRange.mixed => l10n.preferMixed,
-        }, size: 15),
-        const SizedBox(height: 4),
         Text(l10n.deckFamilies, style: head),
         Wrap(
           spacing: 4,
@@ -80,16 +74,6 @@ class DeckEvalView extends StatelessWidget {
           children: [
             for (final e in eval.families.entries)
               chip('${Labels.family(l10n, e.key)} ${e.value}'),
-          ],
-        ),
-        const SizedBox(height: 4),
-        Text(l10n.deckRanges, style: head),
-        Wrap(
-          spacing: 4,
-          runSpacing: 4,
-          children: [
-            for (final e in eval.ranges.entries)
-              chip('${rangeLabel(l10n, e.key)} ${e.value}'),
           ],
         ),
       ],

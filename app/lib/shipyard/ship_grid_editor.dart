@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pb_sim/pb_sim.dart';
 import 'package:pirate_busters/shipyard/ship_grid_view.dart';
 import 'package:pirate_busters/shipyard/shipyard_model.dart';
 import 'package:pirate_busters/ui/labels.dart';
@@ -86,8 +87,8 @@ class ShipGridPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final h = model.height;
-    // 흘수선: 무게로 정해지는 잠긴 깊이 (설계서 §3.4).
-    final wl = model.stats.waterline / 1000 * cell;
+    // 물에 잠긴 깊이: 모든 배가 같다 (ADR-111).
+    final wl = shipDraft / 1000 * cell;
     if (!overlay && water) {
       canvas.drawRect(
         Rect.fromLTRB(0, size.height - wl, size.width, size.height),
@@ -96,8 +97,6 @@ class ShipGridPainter extends CustomPainter {
     }
     for (var y = 0; y < h; y++) {
       for (var x = 0; x < model.width; x++) {
-        // 선체 틀 밖 칸은 그리지 않아 격자가 배 모양으로 보인다 (설계서 §3.4).
-        if (!model.hull.inFrame(x, y)) continue;
         final r = Rect.fromLTWH(x * cell, (h - 1 - y) * cell, cell, cell);
         final m = model.materialAt(x, y);
         if (!overlay) {

@@ -9,7 +9,7 @@ Match _match(List<PirateSpec> left) {
   for (var seed = 1; ; seed++) {
     final m = Match.start(
       seed: seed,
-      rules: const MatchRules(waveLevel: 0),
+      rules: const MatchRules(calmSea: true),
       blueprints: [sampleBlueprint(), sampleBlueprint()],
       decks: [
         [for (final p in left) p.id],
@@ -58,11 +58,9 @@ void main() {
         id: 'uni',
         rarity: Rarity.hero,
         hp: 300,
-        cooldownTurns: 0,
         blockDamage: 50,
         pirateDamage: 100,
         blastRadius: 1,
-        range: RangeGrade.long,
         ammo: AmmoType.split,
         ammoValue: 4,
         spreadMdeg: 25000,

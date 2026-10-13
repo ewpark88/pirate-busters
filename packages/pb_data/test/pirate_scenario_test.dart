@@ -14,7 +14,7 @@ final GameData _data = GameData.parse(
 
 final Blueprint _ship = parsePresets(
   jsonDecode(File('$_gameDir/blueprints.json').readAsStringSync()),
-).firstWhere((p) => p.stage == HullSpec.maxStage).blueprint;
+).first.blueprint;
 
 /// 왼쪽(0) 이 [id] 해적과 옥토, 오른쪽은 옥토·톡. 파도 없음, 왼쪽이 선공.
 /// [gap] 을 주면 두 배를 같은 거리만큼 당겨 뱃머리 간격을 맞춘다.
@@ -22,7 +22,7 @@ Match _start(String id, {int? gap}) {
   for (var seed = 1; ; seed++) {
     final m = Match.start(
       seed: seed,
-      rules: const MatchRules(waveLevel: 0),
+      rules: const MatchRules(calmSea: true),
       blueprints: [_ship, _ship],
       decks: [
         [id, if (id != 'p01_octo') 'p01_octo'],
@@ -116,16 +116,15 @@ void main() {
       );
     });
 
-    test('핀(관통탄, 보통): 간격 20칸에서 한 발에 블록을 둘 이상 뚫는다', () {
+    test('핀(관통탄): 한 발이 블록을 뚫고 두 칸 이상 맞힌다', () {
       expect(
         _someShot(
           'p11_finn',
           (s) =>
               s.events
-                  .where((e) => e.kind == SimEventKind.blockDestroyed)
+                  .where((e) => e.kind == SimEventKind.blockHit && e.side == 1)
                   .length >=
               2,
-          gap: 20000,
         ),
         isTrue,
       );
@@ -158,7 +157,7 @@ void main() {
       );
     });
 
-    test('윙(다중투하, 일반 3개)과 펠리(희귀 4개, 다음 내 턴 투하)', () {
+    test('윙(다중투하, 일반 3개)과 펠리(희귀 4개)는 꼭대기에서 갈라진다', () {
       expect(
         _someShot(
           'p27_wing',
@@ -170,7 +169,8 @@ void main() {
       expect(
         _someShot(
           'p28_pelly',
-          (s) => s.effects.any((e) => e.kind == EffectKind.flockDrop),
+          (s) => _has(s, SimEventKind.divide) && s.lastTraces.length == 5,
+          fromDeg: 30,
         ),
         isTrue,
       );
@@ -189,72 +189,41 @@ void main() {
       );
     });
 
-    test('톡(보급탄): 상대 배를 맞히면 내 배의 구멍 난 블록을 고친다 (ADR-090)', () {
+    test('톡(충격탄): 상대 배를 맞히면 1칸 밀어낸다 (ADR-111)', () {
       expect(
-        _someShot(
-          'p36_tok',
-          (s) =>
-              _has(s, SimEventKind.repaired, side: 0) &&
-              _has(s, SimEventKind.impact, side: 1),
-          setup: (s) {
-            final grid = s.sides[0].grid;
-            for (var x = 0; x < grid.width; x++) {
-              if (!grid.hasBlock(x, 1)) continue;
-              final max = grid.materialAt(x, 1)!.durability;
-              grid.damage(x, 1, max - max ~/ 4);
-            }
-          },
-        ),
+        _someShot('p36_tok', (s) => _has(s, SimEventKind.pushed, side: 1)),
         isTrue,
       );
     });
   });
 
-  group('나머지 28명 시나리오: 고유 동작대로 동작한다 (설계서 §4.2, §4.8, ADR-075·078)', () {
+  group('나머지 28명 시나리오: 탄종과 전설 능력대로 동작한다 (설계서 §4.2, §4.8, ADR-111)', () {
     bool enemy(MatchState s, SimEventKind k) => _has(s, k, side: 1);
     int count(MatchState s, SimEventKind k) =>
         s.events.where((e) => e.kind == k && e.side == 1).length;
-    void damageOwnDeck(MatchState s) {
-      final grid = s.sides[0].grid;
-      for (var x = 0; x < grid.width; x++) {
-        if (!grid.hasBlock(x, 1)) continue;
-        final max = grid.materialAt(x, 1)!.durability;
-        grid.damage(x, 1, max - max ~/ 4);
-      }
-      s.sides[0].flood = 300;
-    }
-
+    bool boarded(MatchState s) => _has(s, SimEventKind.boarded, side: 0);
+    bool pushed(MatchState s) => enemy(s, SimEventKind.pushed);
     final cases = <(String, String, bool Function(MatchState), int?)>[
       (
         'p02_starry',
-        '화염탄이 불을 붙인다',
-        (s) => enemy(s, SimEventKind.ignited),
+        '화염탄이 넓게 터진다(반경 2칸)',
+        (s) => count(s, SimEventKind.blockHit) >= 5,
         null,
       ),
+      ('p03_crabs', '폭발탄이 맞는다', (s) => enemy(s, SimEventKind.impact), null),
       (
-        'p03_crabs',
-        '두 발이 모두 적 배에 맞는다',
+        'p05_volke',
+        '층을 뚫고 터진다',
         (s) => count(s, SimEventKind.impact) >= 2,
         null,
       ),
-      (
-        'p05_volke',
-        '한 층을 뚫고 터진다',
-        (s) => enemy(s, SimEventKind.impact),
-        null,
-      ),
-      (
-        'p08_bones',
-        '매우 긴 사거리로 맞힌다',
-        (s) => enemy(s, SimEventKind.impact),
-        null,
-      ),
-      ('p09_lion', '연사가 적 배에 맞는다', (s) => enemy(s, SimEventKind.impact), 16),
+      ('p08_bones', '저격탄이 맞는다', (s) => enemy(s, SimEventKind.impact), null),
+      ('p09_lion', '연사가 적 배에 맞는다', (s) => enemy(s, SimEventKind.impact), 16000),
       (
         'p10_volt',
         '맞은 해적에서 번개가 번진다',
         (s) => enemy(s, SimEventKind.chained),
-        16,
+        16000,
       ),
       ('p12_nar', '관통해 맞힌다', (s) => enemy(s, SimEventKind.impact), null),
       (
@@ -265,31 +234,19 @@ void main() {
       ),
       (
         'p14_saw',
-        '세로줄을 자른다',
+        '관통해 블록을 부순다',
         (s) => enemy(s, SimEventKind.blockDestroyed),
         null,
       ),
-      (
-        'p15_moby',
-        '적 배를 끌어당겨 묶는다',
-        (s) => enemy(s, SimEventKind.statusApplied),
-        null,
-      ),
+      ('p15_moby', '적 배를 끌어당긴다', pushed, null),
       ('p17_pingu', '튕겨 맞힌다', (s) => enemy(s, SimEventKind.impact), null),
-      (
-        'p18_sheldon',
-        '벽에서 되튀어 두 번 이상 맞힌다',
-        (s) => count(s, SimEventKind.impact) >= 2,
-        null,
-      ),
-      ('p19_dolphy', '흘수선을 연타한다', (s) => enemy(s, SimEventKind.impact), null),
-      ('p20_orca', '침수를 올린다', (s) => enemy(s, SimEventKind.flood), null),
+      ('p18_sheldon', '튕겨 맞힌다', (s) => enemy(s, SimEventKind.impact), null),
+      ('p19_dolphy', '튕겨 맞힌다', (s) => enemy(s, SimEventKind.impact), null),
+      ('p20_orca', '해일로 적 배를 밀어낸다', pushed, null),
       (
         'p22_jelly',
-        '기뢰를 띄우거나 붙인다',
-        (s) =>
-            enemy(s, SimEventKind.mineFloated) ||
-            enemy(s, SimEventKind.mineAttached),
+        '선체에 붙는다',
+        (s) => enemy(s, SimEventKind.mineAttached),
         null,
       ),
       (
@@ -300,36 +257,38 @@ void main() {
       ),
       (
         'p25_kraki',
-        '촉수가 붙는다',
-        (s) => enemy(s, SimEventKind.mineAttached),
+        '촉수가 붙고 바로 터진다',
+        (s) =>
+            enemy(s, SimEventKind.mineAttached) &&
+            enemy(s, SimEventKind.blockHit),
         null,
       ),
-      (
-        'p29_alba',
-        '명중 시 바람 역전을 건다',
-        (s) => enemy(s, SimEventKind.statusApplied),
-        null,
-      ),
+      ('p29_alba', '유도탄이 맞는다', (s) => enemy(s, SimEventKind.impact), null),
       (
         'p30_manta',
-        '명중 시 궤적 봉쇄를 건다',
+        '명중 시 궤적 가림을 건다',
         (s) => enemy(s, SimEventKind.statusApplied),
         null,
       ),
-      (
-        'p32_crabby',
-        '해적을 바다로 떨어뜨린다',
-        (s) => enemy(s, SimEventKind.pirateFell),
-        12,
-      ),
-      ('p33_king', '선실을 봉쇄한다', (s) => enemy(s, SimEventKind.statusApplied), 12),
-      ('p34_lob', '착지해 해적을 벤다', (s) => enemy(s, SimEventKind.pirateHit), 12),
+      ('p32_crabby', '적 배 위에 선다', boarded, 12000),
+      ('p33_king', '적 배 위에 선다', boarded, 12000),
+      ('p34_lob', '적 배 위에 선다', boarded, 12000),
       (
         'p35_davy',
-        '해골 선원을 부른다',
-        (s) =>
-            s.effects.where((e) => e.kind == EffectKind.biteAgain).length >= 3,
-        12,
+        '해골 선원과 함께 문다',
+        (s) => boarded(s) && enemy(s, SimEventKind.pirateHit),
+        12000,
+      ),
+      ('p37_pumpum', '충격탄이 적 배를 민다', pushed, null),
+      ('p38_cook', '충격탄이 적 배를 민다', pushed, null),
+      ('p39_corey', '충격탄이 적 배를 민다', pushed, null),
+      (
+        'p40_lamp',
+        '큰 충격파로 적 배를 2칸 민다',
+        (s) => s.events.any(
+          (e) => e.kind == SimEventKind.pushed && e.value == -2 * cellUnit,
+        ),
+        null,
       ),
     ];
     for (final (id, what, ok, gap) in cases) {
@@ -349,29 +308,6 @@ void main() {
         isTrue,
       );
     });
-
-    final support = <(String, String, bool Function(MatchState))>[
-      (
-        'p37_pumpum',
-        '내 배 침수를 줄인다',
-        (s) => _has(s, SimEventKind.supported, side: 0),
-      ),
-      ('p38_cook', '아군을 치유한다', (s) => _has(s, SimEventKind.supported, side: 0)),
-      ('p39_corey', '산호 방벽을 세운다', (s) => _has(s, SimEventKind.barrierPlaced)),
-      (
-        'p40_lamp',
-        '다음 턴 궤적·바람·연료를 건다',
-        (s) => _has(s, SimEventKind.supported, side: 0),
-      ),
-    ];
-    for (final (id, what, ok) in support) {
-      test('$id(지원탄): $what', () {
-        expect(
-          _someShot(id, ok, setup: damageOwnDeck, fromDeg: 60, toDeg: 175),
-          isTrue,
-        );
-      });
-    }
   });
 
   test('우니의 탭 분열은 리플레이에서 같은 해시로 재현된다 (완료 조건)', () {

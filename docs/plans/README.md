@@ -59,3 +59,5 @@
 | [2026-10-13-A64-assault-boarding.md](2026-10-13-A64-assault-boarding.md) | 강습 해적 적 갑판 체류: 근접 수비·흔들기·아군 피해, 고유 해적별 처리, AI 흔들기, 화면 (A64, ADR-110) |
 | [2026-10-13-simplify-reset.md](2026-10-13-simplify-reset.md) | 게임 정리 계획: 핵심 루프(전멸·선장실, 자유 이동, 파도 구간, 바람)로 되돌리고 S1~S5 로 진행 (ADR-111) |
 | [2026-10-13-simplify-core-rules-draft.md](2026-10-13-simplify-core-rules-draft.md) | 게임 정리 새 핵심 규칙 초안(사용자 승인, 망대 추가) |
+| [2026-10-13-s2-wave-wind-visual.md](2026-10-13-s2-wave-wind-visual.md) | S2 준비: 파도 구간·바람·이동 보이기 구현 계획(바람 W1~W10, 구간 Z1~Z7, 이동 M1~M5, 카메라 C1~C5) |
+| [2026-10-13-s4-asset-candidates.md](2026-10-13-s4-asset-candidates.md) | S4 준비: CC0 폭발·파편·효과음·음악 후보와 교체 작업 목록 |

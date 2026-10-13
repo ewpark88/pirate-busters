@@ -79,8 +79,7 @@ abstract final class HullWater {
       grid.width,
       ship.cellRect,
     );
-    final w0 =
-        -state.draft * Coords.cell / cellUnit - motion.depth - motion.dip;
+    final w0 = -state.draft * Coords.cell / cellUnit - motion.dip;
     draw(
       canvas,
       hull: hull,

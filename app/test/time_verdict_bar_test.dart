@@ -34,19 +34,22 @@ BattleSession _sessionAt(int left) {
 }
 
 void main() {
-  group('시간 판정 안내 띠 (설계서 §13.4, ADR-090)', () {
+  group('턴 제한 안내 띠 (설계서 §2.7·§13.4)', () {
     test('남은 턴이 10 이하일 때만 보인다', () {
       expect(TimeVerdictBar.shows(_sessionAt(11).state), isFalse);
       expect(TimeVerdictBar.shows(_sessionAt(10).state), isTrue);
       expect(TimeVerdictBar.shows(_sessionAt(1).state), isTrue);
     });
 
-    testWidgets('남은 턴과 양쪽 침수량을 함께 보여 준다', (tester) async {
+    testWidgets('남은 턴과 양쪽 남은 해적 체력 비율을 함께 보여 준다', (tester) async {
       final s = _sessionAt(4);
-      s.state.sides[1].flood = 123;
+      final foe = s.state.sides[1].crew;
+      final dmg = foe.pirates[0].hp ~/ 2;
+      foe.damage(0, dmg, 1, s.state.events);
+      final theirs = (foe.hpStart - dmg) * 100 ~/ foe.hpStart;
       await tester.pumpWidget(_app(TimeVerdictBar(session: s)));
-      expect(find.text('시간 판정까지 4턴 · 침수 적은 쪽 승리'), findsOneWidget);
-      expect(find.text('나 0.0% : 상대 12.3%'), findsOneWidget);
+      expect(find.text('턴 제한까지 4턴 · 해적 체력 많은 쪽 승리'), findsOneWidget);
+      expect(find.text('나 100% : 상대 $theirs%'), findsOneWidget);
     });
 
     testWidgets('판 초반에는 아무것도 그리지 않는다', (tester) async {

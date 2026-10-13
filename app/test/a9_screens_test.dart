@@ -13,7 +13,6 @@ import 'package:pirate_busters/data/fleet_store.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
 import 'package:pirate_busters/meta/progress.dart';
 import 'package:pirate_busters/meta/progress_store.dart';
-import 'package:pirate_busters/meta/ship_upgrades.dart';
 import 'package:pirate_busters/platform/remote_overrides.dart';
 import 'package:pirate_busters/platform/remote_values.dart';
 import 'package:pirate_busters/settings/language.dart';
@@ -146,10 +145,7 @@ void main() {
       await _pump(
         tester,
         BattlePrepScreen(stage: stage),
-        progress: const PlayerProgress(
-          tutorialDone: 3,
-          ship: ShipUpgrades(stage: 4),
-        ),
+        progress: const PlayerProgress(tutorialDone: 3),
         fleet: fleet,
       );
       final l10n = _l10n(tester, BattlePrepScreen);
@@ -187,22 +183,20 @@ void main() {
         stage,
         MemoryRemoteValues({
           'stage_1-2_aiLevel': 'hard',
-          'stage_1-2_waveLevel': 3,
           'stage_1-2_maxWind': 9,
           'stage_1-2_rewardGold': 777,
         }),
       );
       expect(changed.aiLevel, AiLevel.hard);
-      expect(changed.waveLevel, 3);
-      expect(changed.maxWind, stage.maxWind);
+      expect(changed.maxWind, stage.maxWind, reason: '범위 밖은 무시');
       expect(changed.rewardGold, 777);
       expect(changed.starTurns, stage.starTurns);
       expect(changed.id, stage.id);
       final whole = testCampaign.applyRemote(
-        MemoryRemoteValues({'stage_1-2_waveLevel': 0}),
+        MemoryRemoteValues({'stage_1-2_maxWind': 1}),
       );
-      expect(whole.stage('1-2').waveLevel, 0);
-      expect(whole.stage('1-1').waveLevel, testCampaign.stage('1-1').waveLevel);
+      expect(whole.stage('1-2').maxWind, 1);
+      expect(whole.stage('1-1').maxWind, testCampaign.stage('1-1').maxWind);
     });
 
     test('해적 수치·탄종 사다리는 카탈로그에 덮어쓴다', () {
@@ -225,15 +219,13 @@ void main() {
         AiLevel.normal,
         MemoryRemoteValues({
           'ai_normal_angleErrorMdeg': 1000,
-          'ai_normal_combo': 1,
+          'ai_normal_waveZones': 1,
           'ai_normal_pickTopPercent': 500,
-          'ai_normal_support': 0,
         }).intOr,
       );
       expect(dials.angleErrorMdeg, 1000);
-      expect(dials.combo, isTrue);
+      expect(dials.waveZones, isTrue);
       expect(dials.pickTopPercent, AiDials.of(AiLevel.normal).pickTopPercent);
-      expect(dials.support, SupportUse.never);
       expect(dials.thinkMs, AiDials.of(AiLevel.normal).thinkMs);
     });
   });

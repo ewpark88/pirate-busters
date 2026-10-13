@@ -42,14 +42,14 @@ void main() {
       expect(data.catalog.byId('p01_octo').hp, isNot(300));
     });
 
-    test('규칙에 어긋나는 값(체력 0, 쿨다운 9)은 DataFormatError 다', () {
+    test('규칙에 어긋나는 값(체력 0, 음수 피해)은 DataFormatError 다', () {
       expect(
         () => data.withOverrides((k) => k == 'pirate_p01_octo_hp' ? 0 : null),
         throwsA(isA<DataFormatError>()),
       );
       expect(
         () => data.withOverrides(
-          (k) => k == 'pirate_p01_octo_cooldownTurns' ? 9 : null,
+          (k) => k == 'pirate_p01_octo_blockDmg' ? -1 : null,
         ),
         throwsA(isA<DataFormatError>()),
       );
