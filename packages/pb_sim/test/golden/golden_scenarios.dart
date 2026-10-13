@@ -2,11 +2,13 @@ import 'package:pb_sim/pb_sim.dart';
 
 import '../fixtures.dart';
 import '../scenarios.dart';
+import 'effect_scenarios.dart';
 
 /// 골든 리플레이를 재생할 때 쓰는 해적 정의(샘플 + 시나리오).
 final PirateCatalog goldenCatalog = PirateCatalog([
   ...samplePirates,
   ...scenarioPirates,
+  ...effectPirates,
 ]);
 
 /// 골든 리플레이 한 판 (개발 계획서 M3). [run] 으로 헤드리스 판을 돌린다.
@@ -79,7 +81,7 @@ final List<int> randomGoldenSeeds = [
   for (var i = 1; i <= 90; i++) 1000 + i,
 ];
 
-/// 판 끝 방식마다 하나씩(5판) + 무작위 94판 = 99판.
+/// 판 끝 방식마다 하나씩(5판) + 턴 효과·전설 능력 판 5개 + 무작위 94판 = 104판.
 final List<GoldenScenario> goldenScenarios = [
   GoldenScenario(
     'captain_lost',
@@ -112,6 +114,19 @@ final List<GoldenScenario> goldenScenarios = [
       passController,
     ),
   ),
+  // 설치탄·강습 체류·크라키 촉수·충격탄 밀림·모비 끌림·망대 저격·돛대 붕괴가
+  // 들어가고 턴 끝에 효과가 남는 판 (턴 효과가 상태 해시에 들어가는지 지킨다).
+  for (final (name, seed, quit, move, hunt) in effectGoldens)
+    GoldenScenario(
+      name,
+      () => runEffectMatch(
+        seed,
+        pirates: goldenCatalog,
+        quitAfter: quit,
+        move: move,
+        captainHunt: hunt,
+      ),
+    ),
   for (final seed in randomGoldenSeeds)
     GoldenScenario(
       'random_$seed',
