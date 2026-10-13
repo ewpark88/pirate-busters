@@ -1104,3 +1104,23 @@
 
 **남은 것**
 - `TurnEffect.x` 해시 제거는 S4 뒤(앱 테스트와 함께)
+
+## S4 타격감 다시 만들기 (2026-10-13, 브랜치 `feat/S4-hit-feel`)
+
+**완료**
+- 폭발: Sinestesia CC0 연속 프레임 시트 3장(가벼움·중간·묵직)을 24프레임 160px 시트로 솎고 색을 화풍에 맞춤. `BlastSheet`·`SheetBlast`(저사양은 프레임 반), 반경 2 이상·묵직·유폭은 큰 시트와 둘레 작은 불덩이 3개
+- 섬광·충격파: 원반·톱니 고리 그림 대신 코드로 그리는 부드러운 빛(`GlowFlash`)과 얇아지는 고리(`ShockRing`)
+- 연기: Kenney Smoke Particles 로 폭발 연기(서서히 짙어졌다 흐려짐)와 3~4덩이 연기 기둥, 포구·물안개 흰 연기
+- 포구 불꽃: Sinestesia 옆 폭발 시트, 쏜 방향으로 뒤집기. 직사 착탄은 작은 시트 불덩이 + 불티
+- 파편: 기존 칸 타일 조각에 불티를 더함(철판은 더 멀리). 물 착탄에 물안개
+- 소리: 포성을 가까운 포성(내 배)·먼 포성(상대)으로 나눔(`Sfx.cannonFar`, 설계서 §10.3 한 줄 추가, 사용자 승인). 포성·착탄·큰 착탄·유폭·잔향은 Thimras ‘Battle at sea’ 등 실녹음, 나무·붕괴·철판 찌그러짐은 rubberduck 100 metal and wood. `dent` 를 합성음에서 음원으로
+- 음악: 항구 Pirate's Orchestra(Dizzy Crow), 전투 Pirate Indenture 루프판(Eldritch Grim)
+- 출처·손질: `docs/ASSETS.md` 「음원」·「폭발·연기 그림」. 그림 +1.0MB, 소리 3.1MB → 2.2MB
+- 전후 캡처: `docs/quality/s4/before/`·`after/` 의 light(직사)·medium·heavy·magazine(유폭)·water·shatter(판자 조각)·muzzle, 장면마다 0.05·0.15·0.3·0.6초 (`app/test/s4_hit_feel_test.dart`, `--dart-define=S4_CAPTURE=<폴더>`)
+- 테스트: 시트 프레임 순서·저사양 반·퍼짐·섬광·충격파, 가까운/먼 포성, 장면 7개 렌더. verify 통과
+
+**남은 것**
+- 사용자 승인: 실기기 전후 영상, 소리·음악 듣기(에이전트는 들어 보지 못하고 파형·주파수로만 골랐다)
+- CC0 로 못 찾은 것: 물기둥 연속 프레임, 파편 스프라이트(코드 조각 유지)
+- Freesound 후보는 로그인이 필요해 쓰지 못했다
+- 안 쓰게 된 `fx/impact/fireball_*`·`smoke.png` 그림과 Sci-fi·RPG 라이선스 파일은 아직 남아 있다. 다음 정리 때 지운다

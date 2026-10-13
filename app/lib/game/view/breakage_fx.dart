@@ -16,6 +16,10 @@ extension BreakageFx on FxLayer {
     Vector2? from,
   }) {
     spawn(ExplosionFx.debris(sprites, rnd, at, count: few(3), plank: !iron));
+    // 불티: 철판은 쇳불똥처럼 더 멀리 튄다 (S4).
+    spawn(
+      ExplosionFx.embers(sprites, rnd, at, count: few(4), reach: iron ? 1 : .6),
+    );
     if (tile == null) return;
     final away = from == null ? 0.0 : (at.x - from.x).clamp(-24.0, 24.0) / 24;
     final plan = shardPlan(

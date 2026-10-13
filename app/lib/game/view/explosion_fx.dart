@@ -4,30 +4,33 @@ import 'dart:ui';
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 import 'package:flame/particles.dart';
+import 'package:flutter/animation.dart';
 import 'package:pirate_busters/game/sprites.dart';
+import 'package:pirate_busters/game/view/blast_sheet.dart';
 
 /// 폭발 조각들 (설계서 §10.4 ‘여러 장의 불덩이 그림이 차례로 바뀌며 퍼지고, 불티가
 /// 튀며, 맞은 칸에 그을음’, 에셋 README 폭발 v3·명중 임팩트 v2). 그리기만 한다.
 abstract final class ExplosionFx {
-  /// 불덩이 그림 (뜨거움 → 불 → 식음 → 속불 남은 연기 → 연기).
-  static const List<String> fireballFrames = [
-    'fx/impact/fireball_0_hot.png',
-    'fx/impact/fireball_1_fire.png',
-    'fx/impact/fireball_2_cool.png',
-    'fx/impact/fireball_3_smoke_hot.png',
-    'fx/impact/fireball_4_smoke.png',
-  ];
-
   static const String ember = 'fx/impact/ember.png';
   static const String flame = 'fx/impact/flame.png';
-  static const String smoke = 'fx/impact/smoke.png';
+
+  /// 연기 기둥 그림 6장 (Kenney Smoke Particles ‘Black smoke’, 색을 화풍에 맞춤).
+  static List<String> get smokes => [
+    for (var i = 0; i < 6; i++) 'fx/smoke/smoke_$i.png',
+  ];
+
+  /// 흰 연기 덩이 6장 (Kenney Smoke Particles ‘White puff’).
+  static List<String> get whitePuffs => [
+    for (var i = 0; i < 6; i++) 'fx/smoke/puff_$i.png',
+  ];
 
   /// 전장이 미리 읽는 그림.
-  static const List<String> files = [
-    ...fireballFrames,
+  static List<String> get files => [
+    for (final s in BlastSheet.all) s.file,
     ember,
     flame,
-    smoke,
+    ...smokes,
+    ...whitePuffs,
   ];
 
   /// 파편: 사방으로 튀어 올랐다가 떨어진다.
@@ -64,24 +67,42 @@ abstract final class ExplosionFx {
     ),
   );
 
-  /// 연기 덩이: 천천히 떠오른다.
+  /// 연기 덩이: 퍼지며 떠오르다 흐려진다. [dark] 면 검은 연기, 아니면 흰 연기.
   static ParticleSystemComponent puffs(
     BattleSprites sprites,
     math.Random rnd,
     Vector2 at, {
     required int count,
+    bool dark = false,
+    double size = 40,
   }) => ParticleSystemComponent(
     position: at.clone(),
     particle: Particle.generate(
       count: count,
       lifespan: 1.2,
-      generator: (i) => MovingParticle(
-        to: Vector2((rnd.nextDouble() - 0.5) * 60, -40 - i * 10),
-        child: SpriteParticle(
-          sprite: sprites.get('fx/impact/puff_${i % 6}.png'),
-          size: Vector2.all(36 + rnd.nextDouble() * 20),
-        ),
-      ),
+      generator: (i) {
+        final sprite = sprites.get((dark ? smokes : whitePuffs)[i % 6]);
+        final s = size * (.8 + rnd.nextDouble() * .5);
+        final paint = Paint();
+        return MovingParticle(
+          to: Vector2((rnd.nextDouble() - 0.5) * 50, -36 - i * 8),
+          curve: Curves.easeOutCubic,
+          child: ComputedParticle(
+            renderer: (canvas, p) {
+              final t = p.progress;
+              // 불덩이에 가리지 않게 천천히 짙어졌다가 흐려진다.
+              final fade = t < .3 ? t / .3 : 1.0;
+              paint.color = Color.fromRGBO(255, 255, 255, .7 * fade * (1 - t));
+              sprite.render(
+                canvas,
+                size: Vector2.all(s * (.6 + .9 * t)),
+                anchor: Anchor.center,
+                overridePaint: paint,
+              );
+            },
+          ),
+        );
+      },
     ),
   );
 
@@ -112,38 +133,48 @@ abstract final class ExplosionFx {
     ),
   );
 
-  /// 연기 기둥: 떠오르며 커지고 흐려진다.
-  static SpriteComponent rising(
+  /// 연기 기둥 (설계서 §10.4 ‘연기는 떠오르며 흩어진다’): 검은 연기 [count] 덩이가
+  /// 조금씩 늦게 올라가며 커지고 흐려진다.
+  static List<SpriteComponent> rising(
     BattleSprites sprites,
     Vector2 at,
     double size, {
     double delay = 0,
-  }) => SpriteComponent(
-    sprite: sprites.get(smoke),
-    position: at.clone(),
-    size: Vector2.all(size),
-    anchor: Anchor.center,
-    children: [
-      OpacityEffect.to(0, EffectController(duration: 0)),
-      OpacityEffect.to(
-        .75,
-        EffectController(duration: 0.15, startDelay: delay),
+    int count = 3,
+  }) => [
+    for (var i = 0; i < count; i++)
+      SpriteComponent(
+        sprite: sprites.get(smokes[(i * 2 + 1) % 6]),
+        position: at + Vector2((i.isEven ? -1 : 1) * size * .12 * i, 0),
+        size: Vector2.all(size * (1 - i * .12)),
+        anchor: Anchor.center,
+        angle: i * .9,
+        children: [
+          OpacityEffect.to(0, EffectController(duration: 0)),
+          OpacityEffect.to(
+            .6,
+            EffectController(duration: 0.2, startDelay: delay + i * .14),
+          ),
+          MoveByEffect(
+            Vector2(size * .1 * (i - 1), -size * (.9 + i * .25)),
+            EffectController(
+              duration: 1.6,
+              startDelay: delay + i * .14,
+              curve: Curves.easeOut,
+            ),
+          ),
+          ScaleEffect.to(
+            Vector2.all(1.9),
+            EffectController(duration: 1.6, startDelay: delay + i * .14),
+          ),
+          OpacityEffect.to(
+            0,
+            EffectController(duration: 1, startDelay: delay + i * .14 + .6),
+          ),
+          RemoveEffect(delay: delay + i * .14 + 1.65),
+        ],
       ),
-      MoveByEffect(
-        Vector2(0, -46),
-        EffectController(duration: 1.3, startDelay: delay),
-      ),
-      ScaleEffect.to(
-        Vector2.all(1.6),
-        EffectController(duration: 1.3, startDelay: delay),
-      ),
-      OpacityEffect.to(
-        0,
-        EffectController(duration: 0.9, startDelay: delay + 0.4),
-      ),
-      RemoveEffect(delay: delay + 1.35),
-    ],
-  );
+  ];
 
   /// 잔불: 맞은 자리에서 잠깐 일렁이다 꺼진다(블록 화재 규칙은 R1, ADR-068).
   static SpriteComponent flicker(
@@ -175,73 +206,4 @@ abstract final class ExplosionFx {
       RemoveEffect(delay: delay + 0.8),
     ],
   );
-}
-
-/// 불덩이 하나: 나이에 따라 그림이 뜨거움 → 연기로 바뀌며 빠르게 커졌다가 흐려진다
-/// (에셋 README 폭발 v3: 커지는 시간상수 0.035초, 0.35초부터 식어 떠오름).
-class Fireball extends PositionComponent {
-  Fireball(
-    this.frames,
-    Vector2 at,
-    this.size0, {
-    this.delay = 0,
-    this.low = false,
-  }) : super(position: at.clone(), anchor: Anchor.center);
-
-  final List<Sprite> frames;
-
-  /// 다 커졌을 때의 지름(월드 px).
-  final double size0;
-  final double delay;
-
-  /// 저사양: 그림을 하나 건너 바꿔 프레임 수를 줄인다 (설계서 §10.4 저사양, A57).
-  final bool low;
-  double _age = 0;
-
-  /// 전체 수명(초).
-  static const double life = 0.62;
-
-  /// 그림이 바뀌는 나이(초): 이 값을 넘을 때마다 다음 그림.
-  static const List<double> stages = [0.06, 0.14, 0.26, 0.4];
-
-  /// [age] 초에 그릴 그림 번호(0 ~ 4).
-  static int frameAt(double age) {
-    var i = 0;
-    while (i < stages.length && age >= stages[i]) {
-      i++;
-    }
-    return i;
-  }
-
-  /// [age] 초의 크기 배율: 빠르게 커지고, 식으면서 조금 더 퍼진다.
-  static double scaleAt(double age) =>
-      0.35 + 0.65 * (1 - math.exp(-age / 0.035)) + 0.3 * math.max(0, age - .35);
-
-  /// [age] 초의 불투명도: 0.4초부터 끝까지 사라진다.
-  static double alphaAt(double age) =>
-      age < .4 ? 1 : (1 - (age - .4) / (life - .4)).clamp(0, 1);
-
-  final Paint _paint = Paint();
-
-  @override
-  void update(double dt) {
-    _age += dt;
-    // 식은 연기는 위로 떠오른다.
-    if (_age - delay > .35) position.y -= dt * 40;
-    if (_age - delay >= life) removeFromParent();
-  }
-
-  @override
-  void render(Canvas canvas) {
-    final age = _age - delay;
-    if (age < 0) return;
-    _paint.color = Color.fromRGBO(255, 255, 255, alphaAt(age));
-    final f = frameAt(age);
-    frames[low ? f - f % 2 : f].render(
-      canvas,
-      size: Vector2.all(size0 * scaleAt(age)),
-      anchor: Anchor.center,
-      overridePaint: _paint,
-    );
-  }
 }

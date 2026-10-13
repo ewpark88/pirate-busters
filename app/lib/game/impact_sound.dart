@@ -3,6 +3,10 @@ import 'package:pirate_busters/game/view/hit_weight.dart';
 
 /// 착탄 소리 겹침 (설계서 §10.3, A32): 한 소리가 아니라 쾅 + 맞은 재질 + (묵직하면)
 /// 잔향을 겹친다. 쾅은 한 방 크기에 따라 작은·큰 소리와 크기가 다르다.
+/// 포성 (설계서 §10.3, 게임 정리 S4): 내 배가 쏜 포는 가까운 포성, 상대 배가 쏜 포는 먼
+/// 포성이다. [mine] 은 보는 사람 쪽 배가 쐈는지다.
+Sfx cannonSfx({required bool mine}) => mine ? Sfx.cannon : Sfx.cannonFar;
+
 List<(Sfx, double)> impactLayers(HitWeight weight, {required bool iron}) => [
   switch (weight.level) {
     HitLevel.light => (Sfx.hit, 0.7),

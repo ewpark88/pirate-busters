@@ -127,48 +127,80 @@ dart run tool/import_assets.dart --merge art/pb_v0.24_main
 - 앱은 예시 PNG 를 넣지 않고 규칙을 코드로 그린다(`app/lib/game/view/damage_*.dart`, A15). 색은 `damage_style.dart` 에 옮겨 두었다.
 - `fx/impact/scorch.png` 는 A15 부터 쓰지 않는다(그을음은 코드로 그림). 폴더째 가져오므로 다음 가져오기 정리 때 뺀다.
 
-## 음원 (A19, CC0)
+## 음원 (A19, CC0 — 게임 정리 S4 에서 다시 고름)
 
 설계서 §10.3(ADR-071): CC0 녹음·샘플 음원을 먼저 쓰고, 불러오지 못한 소리만 아래 「소리」 절의 코드 합성음으로 대신한다. 파일은 `app/assets/audio/` 한 폴더에 있다(`sfx_<소리>_<번호>.ogg`, `music_<곡>.ogg`). 목록은 `app/lib/audio/sound_library.dart` `AudioAssets`, 재생은 `SoloudSoundService`(변형을 돌아가며 쓰고 재생 속도를 ±6% 흔든다, 승리·패배 악구는 흔들지 않음). 모두 CC0 이라 표기 의무는 없지만 출처를 남긴다(절대 규칙 8). Kenney 팩의 라이선스 원문은 `app/assets/audio/LICENSE_kenney_*.txt`. A32 에서 착탄 겹침·붕괴·해적 소리를 더했다(설계서 §10.3, ADR-087).
+
+**게임 정리 S4 (2026-10-13):** 포성·착탄·유폭·잔향·나무·붕괴·철판 찌그러짐과 두 곡을 실녹음 CC0 으로 바꿨다. 라이선스는 받기 직전에 각 OpenGameArt 페이지의 License 칸(CC0)으로 다시 확인했다. 받은 원본은 저장소 밖 임시 폴더에서 손질한 뒤 지웠다. 손질: 앞 무음 자르기, 모노 44.1kHz, 꼬리 페이드, 최대 -1dBFS 정규화, Ogg Vorbis. 먼 포성은 가까운 포성 녹음을 낮은 대역만 남기고(1극 저역 통과 2회, 550~800Hz) 짧은 반사 잔향을 더해 7dB 작게 만들었다(설계서 §10.3 포성 두 단계). Freesound 후보는 로그인해야 받을 수 있어 쓰지 않았다.
 
 | 출처 (모두 CC0 1.0) | 원작자 | 받은 곳 |
 | --- | --- | --- |
 | Impact Sounds 1.0 | Kenney (kenney.nl) | https://kenney.nl/assets/impact-sounds |
 | Interface Sounds 1.0 | Kenney | https://kenney.nl/assets/interface-sounds |
 | Music Jingles | Kenney | https://kenney.nl/assets/music-jingles |
-| RPG Audio (A32) | Kenney | https://kenney.nl/assets/rpg-audio |
-| Sci-fi Sounds (A32) | Kenney | https://kenney.nl/assets/sci-fi-sounds |
 | 25 CC0 bang / firework SFX | rubberduck | https://opengameart.org/content/25-cc0-bang-firework-sfx |
 | 40 CC0 water / splash / slime SFX | rubberduck | https://opengameart.org/content/40-cc0-water-splash-slime-sfx |
-| Pirate Game Tune (`pirate1uf.ogg`, 2015) | Tozan | https://opengameart.org/content/pirate-game-tune |
-| OPL2 - Unknown - Drunken Sailor (루프) | TheOuterLinux | https://opengameart.org/content/opl2-unkown-drunken-sailor |
+| Battle at sea (S4) | Thimras | https://opengameart.org/content/battle-at-sea |
+| Chunky Explosion (S4) | Joth | https://opengameart.org/content/chunky-explosion |
+| Muffled Distant Explosion (S4) | NenadSimic | https://opengameart.org/content/muffled-distant-explosion |
+| Explosion somewhere far (S4) | pauliuw | https://opengameart.org/content/explosion-somewhere-far |
+| 100 CC0 metal and wood SFX (S4) | rubberduck | https://opengameart.org/content/100-cc0-metal-and-wood-sfx |
+| Pirate's Orchestra (S4) | Dizzy Crow | https://opengameart.org/content/pirates-orchestra-208 |
+| Pirate Indenture (S4, 루프판) | Eldritch Grim | https://opengameart.org/node/160257 |
 
 | 소리 (`Sfx`) | 앱 파일 | 원본 파일 |
 | --- | --- | --- |
-| 포성 `cannon` | `sfx_cannon_1.ogg` `sfx_cannon_2.ogg` `sfx_cannon_3.ogg` | 25 bang: `cannon_01` `cannon_03` `cannon_04` |
-| 나무 부서짐 `wood` | `sfx_wood_1.ogg` `sfx_wood_2.ogg` `sfx_wood_3.ogg` | Impact: `impactPlank_medium_000` `impactWood_heavy_000` `impactPlank_medium_002` |
+| 가까운 포성 `cannon` (내 배, S4) | `sfx_cannon_1.ogg` `sfx_cannon_2.ogg` `sfx_cannon_3.ogg` | Battle at sea `cannon_fire_1.ogg`: 그대로 / 0.92배 + 25 bang `cannon_03` 35% / 1.05배 + Muffled Distant Explosion 저역 50% |
+| 먼 포성 `cannonFar` (상대 배, S4) | `sfx_cannonFar_1.ogg` `sfx_cannonFar_2.ogg` `sfx_cannonFar_3.ogg` | Battle at sea `cannon_fire_1.ogg` 0.9·0.84·0.96배를 저역만 남기고 잔향(3번은 Muffled Distant Explosion 섞음) |
+| 나무 부서짐 `wood` (S4) | `sfx_wood_1.ogg` `sfx_wood_2.ogg` `sfx_wood_3.ogg` | 100 metal and wood: `wood_breaking_01`+`wood_cracking_02`, `wood_breaking_02`+`wood_cracking_04`, `wood_breaking_01`(0.9배)+`wood_cracking_01` |
 | 물보라 `splash` | `sfx_splash_1.ogg` `sfx_splash_2.ogg` `sfx_splash_3.ogg` | water: `splash_02` `splash_03` `splash_06` |
 | 철판 튕김 `clang` | `sfx_clang_1.ogg` `sfx_clang_2.ogg` `sfx_clang_3.ogg` | Impact: `impactMetal_heavy_000` `001` `002` |
-| 유폭 `boom` | `sfx_boom_1.ogg` `sfx_boom_2.ogg` `sfx_boom_3.ogg` | 25 bang: `bang_04` `bang_05` `cannon_02` |
+| 철판 찌그러짐 `dent` (S4) | `sfx_dent_1.ogg` `sfx_dent_2.ogg` `sfx_dent_3.ogg` | 100 metal and wood: `metal_slam_01` `metal_sheet_03` `metal_sheet_06` |
+| 유폭 `boom` (S4) | `sfx_boom_1.ogg` `sfx_boom_2.ogg` `sfx_boom_3.ogg` | Battle at sea `ship_destroyed_short` 앞 3초, Chunky Explosion, Battle at sea `cannon_hit_1` 0.85배 |
 | 격침 `sink` | `sfx_sink_1.ogg` `sfx_sink_2.ogg` | water: `splash_01` `splash_07` |
 | 승리 악구 `win` | `sfx_win_1.ogg` `sfx_win_2.ogg` `sfx_win_3.ogg` | Jingles: `jingles_STEEL02` `STEEL15` `STEEL10` (음이 올라가는 스틸드럼) |
 | 패배 악구 `lose` | `sfx_lose_1.ogg` `sfx_lose_2.ogg` `sfx_lose_3.ogg` | Jingles: `jingles_STEEL14` `STEEL07` `STEEL16` (음이 내려가는 스틸드럼) |
 | 버튼 누름 `click` | `sfx_click_1.ogg` `sfx_click_2.ogg` `sfx_click_3.ogg` | Interface: `click_001` `select_001` `select_002` |
-| 착탄 쾅 작은 `hit` (A32) | `sfx_hit_1.ogg` `sfx_hit_2.ogg` `sfx_hit_3.ogg` | Sci-fi: `explosionCrunch_000`, 25 bang: `bang_07` `bang_08` |
-| 착탄 쾅 큰 `hitBig` (A32) | `sfx_hitBig_1.ogg` `sfx_hitBig_2.ogg` `sfx_hitBig_3.ogg` | Sci-fi: `explosionCrunch_001` `explosionCrunch_002`, 25 bang: `bang_10` |
-| 잔향 `rumble` (A32) | `sfx_rumble_1.ogg` `sfx_rumble_2.ogg` | Sci-fi: `lowFrequency_explosion_000` `001` |
-| 붕괴 우지끈 `creak` (A32) | `sfx_creak_1.ogg` `sfx_creak_2.ogg` | RPG Audio: `creak1` `creak2` |
+| 착탄 쾅 작은 `hit` (S4) | `sfx_hit_1.ogg` `sfx_hit_2.ogg` `sfx_hit_3.ogg` | Battle at sea `cannon_hit_ship_short` 앞 1.2초, `cannon_hit_cannon_1` 앞 1초, `cannon_hit_1` 앞 1.1초(1.08배) |
+| 착탄 쾅 큰 `hitBig` (S4) | `sfx_hitBig_1.ogg` `sfx_hitBig_2.ogg` `sfx_hitBig_3.ogg` | Battle at sea `cannon_hit_1` 앞 2.3초, `cannon_hit_ship_short` 0.92배, Chunky Explosion + `cannon_hit_cannon_1` |
+| 잔향 `rumble` (S4) | `sfx_rumble_1.ogg` `sfx_rumble_2.ogg` | Muffled Distant Explosion 앞 2.2초, Explosion somewhere far 앞 2.6초 |
+| 붕괴 우지끈 `creak` (S4) | `sfx_creak_1.ogg` `sfx_creak_2.ogg` | 100 metal and wood: `wood_cracking_03`·`wood_breaking_02`·`wood_cracking_04` / `wood_cracking_02`·`wood_breaking_01`·`wood_cracking_01` 을 0.7~0.8배로 낮춰 차례로 겹침 |
 | 해적 피격 `pirateHit` (A32) | `sfx_pirateHit_1.ogg` `sfx_pirateHit_2.ogg` `sfx_pirateHit_3.ogg` | Impact: `impactPunch_heavy_000` `001` `003` |
 | 바다 추락 첨벙 `plunge` (A32) | `sfx_plunge_1.ogg` `sfx_plunge_2.ogg` `sfx_plunge_3.ogg` | water: `splash_04` `splash_05` `splash_11` |
 | 쓰러짐 `ko` (A32) | `sfx_ko_1.ogg` `sfx_ko_2.ogg` | Impact: `impactBell_heavy_002` `003` |
 | 휘파람 `whistle` (A32) | 없음(코드 합성음만) | 맞는 CC0 음원이 없어 `sfx_bank.dart` 로 만든다 |
-| 철판 찌그러짐 `dent`·턴 전환 `turn`·침수 `gurgle`·불 `crackle`·물살 `wake`·별 `star`·레벨업 `levelUp` (A56) | 없음(코드 합성음만) | CC0 음원을 아직 고르지 않아 `sfx_bank.dart` 로 만든다. 고르면 `AudioAssets.variants` 에 넣고 `synthOnly` 에서 뺀다 |
+| 턴 전환 `turn`·침수 `gurgle`·불 `crackle`·물살 `wake`·별 `star`·레벨업 `levelUp` (A56) | 없음(코드 합성음만) | CC0 음원을 아직 고르지 않아 `sfx_bank.dart` 로 만든다. 고르면 `AudioAssets.variants` 에 넣고 `synthOnly` 에서 뺀다 |
 | 바다·바람 환경음 루프 (A56) | 없음(코드 합성음만) | `SfxBank.seaLoop` 4초 루프, `SoloudSoundService.loadAmbience` |
 
 | 곡 (`Music`) | 앱 파일 | 원본 |
 | --- | --- | --- |
-| 항구 `port` | `music_port.ogg` (78초, 1.5MB) | Pirate Game Tune |
-| 전투 `battle` | `music_battle.ogg` (19초 루프, 0.4MB) | OPL2 Drunken Sailor. 폭풍 타임에는 1.2배 |
+| 항구 `port` (S4) | `music_port.ogg` (128초, 모노, 1.1MB) | Pirate's Orchestra (`Pirate's Orchestra.mp3`) |
+| 전투 `battle` (S4) | `music_battle.ogg` (14.5초 루프, 모노, 0.14MB) | Pirate Indenture 루프판 (`pirate_indenture_loop.wav`) |
+
+S4 전에는 포성이 25 bang 폭죽 녹음(`cannon_01·03·04`), 착탄·잔향이 Kenney Sci-fi Sounds(`explosionCrunch`·`lowFrequency_explosion`), 붕괴가 Kenney RPG Audio(`creak1·2`), 곡이 Pirate Game Tune(Tozan)·OPL2 Drunken Sailor(TheOuterLinux)였다. Sci-fi Sounds·RPG Audio 는 이제 쓰지 않는다(`LICENSE_kenney_scifi.txt`·`LICENSE_kenney_rpg.txt` 는 이전 판 기록으로 둔다).
+
+## 폭발·연기 그림 (게임 정리 S4, CC0)
+
+설계서 §10.4 폭발. 사용자 결정(2026-10-13): 사실풍 CC0 연속 프레임 시트를 쓰고 색·크기를 화풍에 맞춘다. 라이선스는 받기 직전에 각 페이지(OpenGameArt License 칸 CC0, Kenney 는 페이지의 ‘Creative Commons CC0’)로 다시 확인했다. 원본은 저장소 밖에서 손질하고 지웠다.
+
+| 출처 (모두 CC0 1.0) | 원작자 | 받은 곳 |
+| --- | --- | --- |
+| 2D Explosion Animations — Frame by frame | Sinestesia | https://opengameart.org/content/2d-explosion-animations-frame-by-frame |
+| 2D Explosion Animations 2 — Frame by frame | Sinestesia | https://opengameart.org/content/2d-explosion-animations-2-frame-by-frame |
+| Smoke Particles | Kenney | https://kenney.nl/assets/smoke-particles (OGA 사본 https://opengameart.org/content/smoke-particle-assets) |
+
+| 앱 파일 (`app/assets/images/fx/`) | 원본 | 손질 |
+| --- | --- | --- |
+| `explosion/blast_light.png` (둘레 작은 불덩이·직사 착탄) | Animations 2 `Half Sized/4.png` | 63장 중 24장을 고르게 솎아 160px 프레임 6×4 시트. 채도 1.15·대비 1.08, 회색 연기는 남색 기가 도는 회갈색으로 |
+| `explosion/blast_medium.png` (중간 착탄) | Animations 2 `Half Sized/3.png` | 위와 같음 |
+| `explosion/blast_heavy.png` (묵직·유폭, 반경 2 이상) | Animations 2 `Half Sized/2.png` (앞 4장 뺌) | 위와 같음 |
+| `explosion/muzzle_side.png` (포구 불꽃) | Animations 1 `Half Sized/explosion 2.png` 앞 30장 | 12장, 160px 6×2 |
+| `smoke/smoke_0~5.png` (연기 기둥·폭발 연기) | Smoke Particles `Black smoke/blackSmoke00·04·08·12·16·20` | 128px 로 줄이고 밝기 무늬만 남겨 회색(104,98,106) 톤 |
+| `smoke/puff_0~5.png` (포구 연기·물안개) | Smoke Particles `White puff/whitePuff00·04·08·12·16·20` | 128px, 흰(236,232,226) 톤 |
+
+앱 용량 증가: 그림 약 1.0MB(시트 4장 0.82MB + 연기 12장 0.18MB). 소리는 `app/assets/audio/` 전체가 3.1MB → 2.2MB 로 줄었다(곡을 모노로 바꾸고 전투 곡이 짧은 루프다).
+
+섬광(`GlowFlash`)과 충격파 고리(`ShockRing`)는 그림 대신 코드로 그린다(`app/lib/game/view/blast_glow.dart`). 파편은 CC0 스프라이트를 찾지 못해 지금처럼 칸 타일을 칸 위치로 정한 조각으로 잘라 튀기고(`collapse_fx.dart` `shardPlan`) 불티를 더했다. 물기둥 연속 프레임도 CC0 로는 없어 기존 그림에 물방울·물안개를 더했다. 예전 `fx/impact/fireball_0~4`·`fx/impact/smoke.png`·`fx/impact/puff_*` 는 폭발에 더 쓰지 않는다(그림 파일은 다음 정리 때 지운다).
 
 ## 소리 (설계서 §10.3, A13, ADR-068)
 

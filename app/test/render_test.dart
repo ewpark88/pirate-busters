@@ -321,8 +321,9 @@ void main() {
         sawShot |= session.playback != null;
       }
       expect(sawShot, isTrue);
-      // 발사 때 포성, 착탄 때 폭음·철판·물보라 중 하나 (설계서 §10.3).
-      expect(sound.played.first, Sfx.cannon);
+      // 발사 때 포성, 착탄 때 폭음·철판·물보라 중 하나 (설계서 §10.3). 허수아비(상대)가
+      // 먼저 쏘므로 먼 포성이다 (S4).
+      expect(sound.played.first, Sfx.cannonFar);
       expect(sound.played.length, greaterThanOrEqualTo(2));
       final recorder = ui.PictureRecorder();
       game.render(ui.Canvas(recorder));
