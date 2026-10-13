@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
-import 'package:pb_ai/pb_ai.dart';
 import 'package:pb_sim/pb_sim.dart';
 import 'package:pirate_busters/battle/auto_end.dart';
 import 'package:pirate_busters/battle/playback.dart';
+import 'package:pirate_busters/battle/script_player.dart';
 import 'package:pirate_busters/battle/session_views.dart';
 import 'package:pirate_busters/battle/shot_flow.dart';
 import 'package:pirate_busters/battle/ui_state.dart';
@@ -11,7 +11,8 @@ import 'package:pirate_busters/battle/ui_state.dart';
 /// 입력을 커맨드로 바꾸고 연출 순서를 정한다 (CLAUDE.md 절대 규칙 3).
 ///
 /// - 사람 턴: [move]·[fire]·[endTurn] 이 지금 턴 시각 `t` 로 커맨드를 낸다.
-/// - 상대 턴: [opponent] 컨트롤러의 턴 묶음을 `t` 타이밍대로 재생한다.
+/// - 상대 턴: [opponent] 컨트롤러의 턴 묶음을 `t` 타이밍대로 재생한다. 그 시계는 탄
+///   연출 동안 멈춘다([ScriptPlayer], A62).
 /// - 연출([playback]) 동안에는 입력을 받지 않는다. 턴 시계는 계속 흐르고, 시뮬레이션이
 ///   탄 비행 시간만큼 턴 제한 시간을 멈춘다.
 class BattleSession extends ChangeNotifier with SessionUiState {
@@ -52,11 +53,10 @@ class BattleSession extends ChangeNotifier with SessionUiState {
   /// 착탄 등 효과를 낼 이벤트. 렌더가 [takeCues] 로 가져간다.
   final List<SimEvent> _cues = [];
 
-  TurnBundle? _script;
+  final ScriptPlayer _script = ScriptPlayer();
 
-  /// AI 상대의 이번 턴 계획기. 프레임마다 후보를 나눠 평가한다 (BALANCE.md A5.1).
-  AiPlanner? _planner;
-  int _scriptIndex = 0;
+  /// 상대 턴 묶음 시계(밀리초). 탄 연출과 그 뒤 쉼 동안 멈춘다 (A62).
+  int get scriptMs => _script.scriptMs;
   int _turnOfClock = 1;
 
   bool get isOver => state.isOver;
@@ -75,19 +75,11 @@ class BattleSession extends ChangeNotifier with SessionUiState {
       state.firesThisTurn < state.rules.firesPerTurn &&
       state.sides[state.activeSide].canFire(slot);
 
-  /// 상대가 곧 쏠 해적과 조준 진행(0~1). 상대 턴 재생에서 발사 1.2초 전부터
-  /// 조준 자세를 보여준다. 궤적 점선은 숨긴다 (설계서 §2.3).
-  ({int slot, double progress})? get opponentAim {
-    final bundle = _script;
-    if (isHumanTurn || bundle == null || playback != null) return null;
-    if (_scriptIndex >= bundle.commands.length) return null;
-    final c = bundle.commands[_scriptIndex];
-    if (c is! FireCommand) return null;
-    final left = c.t - turnMs;
-    final window = aimShowMs;
-    if (left > window) return null;
-    return (slot: c.slot, progress: (1 - left / window).clamp(0.0, 1.0));
-  }
+  /// 상대가 곧 쏠 해적과 조준 진행(0~1). 상대 턴 재생에서 앞 연출이 끝나면 그
+  /// 해적을 보이고, 발사 [aimShowMs] 전부터 조준 자세를 보여준다. 궤적 점선은
+  /// 숨긴다 (설계서 §2.3·§5.5, A62).
+  ({int slot, double progress})? get opponentAim =>
+      isHumanTurn || playback != null ? null : _script.aim(aimShowMs);
 
   /// 쌓인 효과 이벤트를 꺼낸다.
   List<SimEvent> takeCues() {
@@ -107,6 +99,7 @@ class BattleSession extends ChangeNotifier with SessionUiState {
       if (now != null && now.isDone) _finishPlayback(now);
     }
     turnMs += dtMs;
+    if (!isHumanTurn && playback is! ShotPlayback) _script.tick(dtMs);
     if (!isOver && playback == null) {
       if (isHumanTurn && surrenderQueued) {
         surrenderQueued = false;
@@ -192,25 +185,19 @@ class BattleSession extends ChangeNotifier with SessionUiState {
   }
 
   void _playScript() {
-    final ai = opponent;
-    if (_script == null && ai is AiController) {
-      final planner = _planner ??= ai.planner(state);
-      if (!planner.step()) return;
-      _script = planner.bundle;
-    }
-    final bundle = _script ??= opponent?.turnFor(state);
+    final bundle = _script.load(opponent, state);
     if (bundle == null) return;
-    while (playback == null && _scriptIndex < bundle.commands.length) {
-      final c = bundle.commands[_scriptIndex];
-      if (c.t > turnMs) return;
+    while (playback == null) {
+      final c = _script.due;
+      if (c == null) break;
       // 발사 바로 뒤 같은 해적의 TAP 은 그 발사를 계산할 때 함께 넣는다.
-      final tap = followingTap(bundle, _scriptIndex);
-      _scriptIndex += tap == null ? 1 : 2;
+      final tap = followingTap(bundle, _script.index);
+      _script.index += tap == null ? 1 : 2;
       final turn = state.turn;
       _apply(c, followTap: tap);
       if (state.turn != turn || isOver) return;
     }
-    if (playback == null && _scriptIndex >= bundle.commands.length) {
+    if (playback == null && !_script.settling && _script.finished) {
       _apply(EndTurnCommand(t: turnMs));
     }
   }
@@ -223,9 +210,7 @@ class BattleSession extends ChangeNotifier with SessionUiState {
     autoEnd.reset();
     // 고른 진영의 턴이 끝났으면 선택을 푼다(상대 턴에 고른 것은 남는다).
     if (selectedSide != state.activeSide) selected = null;
-    _script = null;
-    _planner = null;
-    _scriptIndex = 0;
+    _script.reset();
   }
 
   /// [followTap]: 컴퓨터 발사 뒤 같은 해적 `TAP`. 그 탭으로 계산해 턴 묶음과 같게 한다.
@@ -290,7 +275,10 @@ class BattleSession extends ChangeNotifier with SessionUiState {
 
   void _finishPlayback(Playback p) {
     playback = null;
-    if (p is ShotPlayback) _cues.addAll(p.takeDue(all: true));
+    if (p is ShotPlayback) {
+      _cues.addAll(p.takeDue(all: true));
+      _script.settle();
+    }
     if (p is MovePlayback) {
       _cues.add(SimEvent(SimEventKind.move, side: p.side, x: p.toX));
     }

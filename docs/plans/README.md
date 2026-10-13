@@ -54,3 +54,4 @@
 | [2026-10-12-A58-transition-ghost.md](2026-10-12-A58-transition-ghost.md) | 화면 전환 잔상 2차: 컷신 fullscreenDialog 제거·컷 fade-through·루트 바탕색 (A58, A42 후속) |
 | [2026-10-12-A60-camera-pan-aim-cancel.md](2026-10-12-A60-camera-pan-aim-cancel.md) | 전투 카메라 손질: 탄 추적 스프링·빈 바다 끌어 보기·당김 취소 버그 (A60) |
 | [2026-10-13-A61-mine-blast-fx.md](2026-10-13-A61-mine-blast-fx.md) | 기뢰·설치탄 폭발 연출: 턴 효과 폭발에 물기둥·폭발·흔들림·카메라 당김·이름표, 크라키 붙는 순간 폭발 (A61) |
+| [2026-10-13-A62-ai-shot-pacing.md](2026-10-13-A62-ai-shot-pacing.md) | 상대 발사 사이 연출 간격: 연출 중 멈추는 묶음 시계·쉼 1.2초·조준 해적 줌인 (A62) |
