@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pb_data/pb_data.dart';
 import 'package:pb_sim/pb_sim.dart';
 import 'package:pirate_busters/app/app_theme.dart';
 import 'package:pirate_busters/app/providers.dart';
 import 'package:pirate_busters/battle/battle_setup.dart';
+import 'package:pirate_busters/campaign/result_celebrate.dart';
 import 'package:pirate_busters/campaign/result_hero.dart';
 import 'package:pirate_busters/campaign/result_parts.dart';
+import 'package:pirate_busters/campaign/result_rewards.dart';
 import 'package:pirate_busters/campaign/rewards.dart';
 import 'package:pirate_busters/campaign/stage_node.dart';
 import 'package:pirate_busters/campaign/stage_spec.dart';
@@ -43,7 +44,6 @@ class StageResultScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
-    final catalog = ref.watch(gameCatalogProvider);
     final growReady =
         reward.firstClear &&
         growOpenedBy(
@@ -136,7 +136,7 @@ class StageResultScreen extends ConsumerWidget {
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            _rewards(l10n, catalog.def, growReady: growReady),
+                            ResultRewards(reward: reward, growReady: growReady),
                             const SizedBox(height: 6),
                             Text(
                               '${l10n.statTurns(summary.turns)} · '
@@ -217,12 +217,13 @@ class StageResultScreen extends ConsumerWidget {
     ];
     return Column(
       children: [
-        // 큰 별 3개가 하나씩 찍힌다 (설계서 §13.5).
         Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             for (final (i, (_, on)) in rows.indexed)
-              PopIn(
+              // 별 도장: 크게 떨어져 찍히고 소리가 난다 (A55).
+              StarStamp(
+                on: on,
                 order: 4 + i * 3,
                 child: Padding(
                   padding: EdgeInsets.fromLTRB(4, i == 1 ? 0 : 10, 4, 0),
@@ -243,53 +244,6 @@ class StageResultScreen extends ConsumerWidget {
               fontSize: 12,
               color: on ? AppColors.text : AppColors.mute,
             ),
-          ),
-      ],
-    );
-  }
-
-  Widget _rewards(
-    AppLocalizations l10n,
-    PirateDef Function(String id) def, {
-    bool growReady = false,
-  }) {
-    const accent = TextStyle(color: Color(0xFFFFC24A), fontSize: 14);
-    return Column(
-      children: [
-        if (reward.gold > 0)
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              MetaIcons.image(MetaIcons.gold, size: 26),
-              const SizedBox(width: 6),
-              Flexible(
-                child: FittedBox(
-                  child: CountUp(
-                    value: reward.gold,
-                    builder: (context, v) =>
-                        OutlinedText(l10n.rewardGold(v), size: 20),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        CountUp(
-          value: reward.xp,
-          builder: (context, v) => OutlinedText(l10n.rewardXp(v), size: 17),
-        ),
-        if (reward.firstClear) Text(l10n.rewardFirstClear, style: accent),
-        if (growReady) Text(l10n.shipGrowReady, style: accent),
-        if (reward.newPirate != null)
-          Text(
-            l10n.rewardPirate(dataText(l10n, def(reward.newPirate!).nameKey)),
-            textAlign: TextAlign.center,
-            style: accent,
-          ),
-        if (reward.leveledUp)
-          OutlinedText(
-            l10n.levelUpTo(reward.levelAfter),
-            size: 18,
-            color: const Color(0xFFFFC24A),
           ),
       ],
     );

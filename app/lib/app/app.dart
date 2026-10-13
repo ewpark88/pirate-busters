@@ -4,11 +4,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pirate_busters/app/app_theme.dart';
 import 'package:pirate_busters/app/providers.dart';
 import 'package:pirate_busters/audio/music_director.dart';
+import 'package:pirate_busters/audio/sound_service.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
 import 'package:pirate_busters/port/port_screen.dart';
 import 'package:pirate_busters/settings/language.dart';
 import 'package:pirate_busters/ui/cards/card_motion.dart';
 import 'package:pirate_busters/ui/kit/kit_motion.dart';
+import 'package:pirate_busters/ui/kit/kit_sound.dart';
 
 /// 앱 루트. 항구(설계서 §13.2)에서 조선소·선원·출항으로 간다. 프롤로그·튜토리얼 분기는 M7 뒤 묶음.
 class PirateBustersApp extends ConsumerWidget {
@@ -38,11 +40,17 @@ class PirateBustersApp extends ConsumerWidget {
       builder: (context, child) => ColoredBox(
         color: AppColors.background,
         child: MusicDirector(
-          child: KitMotion(
-            reduced: ref.watch(lowEndProvider),
-            child: CardMotion(
-              enabled: !ref.watch(lowEndProvider),
-              child: child ?? const SizedBox.shrink(),
+          // 키트 버튼 누름 소리: 효과음 설정을 따른다 (설계서 §10.3, A55).
+          child: KitSound(
+            click: ref.watch(soundOnProvider)
+                ? () => ref.read(soundServiceProvider).play(Sfx.click)
+                : null,
+            child: KitMotion(
+              reduced: ref.watch(lowEndProvider),
+              child: CardMotion(
+                enabled: !ref.watch(lowEndProvider),
+                child: child ?? const SizedBox.shrink(),
+              ),
             ),
           ),
         ),

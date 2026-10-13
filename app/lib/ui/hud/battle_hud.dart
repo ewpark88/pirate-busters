@@ -45,7 +45,7 @@ class BattleHud extends StatelessWidget {
   /// 화면 흔들림 줄이기 (설계서 §13.8): 게이지 흔들림·번쩍임을 뺀다.
   final bool calm;
 
-  /// 버튼 누름 소리 (설계서 §10.3). 화면이 효과음 설정을 따라 낸다.
+  /// 키트 버튼이 아닌 이동 버튼의 누름 소리 (설계서 §10.3). 키트 버튼은 `KitSound`.
   final VoidCallback? onClick;
 
   /// 판이 끝난 뒤 연출(격침)이 끝났다. 끝나야 결과 창을 띄운다 (설계서 §10.4).
@@ -150,10 +150,7 @@ class BattleHud extends StatelessWidget {
                   PbIconButton(
                     tooltip: _hotseat ? l10n.settings : l10n.pause,
                     icon: _hotseat ? PortIcons.gear : MetaIcons.pause,
-                    onPressed: () {
-                      onClick?.call();
-                      onPause(true);
-                    },
+                    onPressed: () => onPause(true),
                   ),
                 ],
               ),
@@ -178,12 +175,7 @@ class BattleHud extends StatelessWidget {
                       height: 50,
                       minWidth: 110,
                       fontSize: 17,
-                      onPressed: session.canAct
-                          ? () {
-                              onClick?.call();
-                              session.endTurn();
-                            }
-                          : null,
+                      onPressed: session.canAct ? session.endTurn : null,
                     ),
                   ],
                 ),

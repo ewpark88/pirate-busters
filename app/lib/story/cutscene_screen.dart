@@ -1,12 +1,14 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:pirate_busters/app/app_theme.dart';
 import 'package:pirate_busters/game/view/backdrop.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
 import 'package:pirate_busters/l10n/data_text.dart';
 import 'package:pirate_busters/story/backdrop_picture.dart';
 import 'package:pirate_busters/story/rig_portrait.dart';
 import 'package:pirate_busters/story/story_data.dart';
+import 'package:pirate_busters/story/type_text.dart';
 import 'package:pirate_busters/ui/hud/hud_style.dart';
 import 'package:pirate_busters/ui/kit/kit_motion.dart';
 import 'package:pirate_busters/ui/kit/nine_slice.dart';
@@ -52,7 +54,15 @@ class CutsceneScreen extends StatefulWidget {
 class _CutsceneScreenState extends State<CutsceneScreen> {
   int _index = 0;
 
+  /// 지금 컷 대사의 한 자씩 나오기 (A55). 다 나오기 전에 누르면 끝까지 보인다.
+  TypeController _typing = TypeController();
+
   void _next() {
+    if (!_typing.done) {
+      _typing.finish();
+      return;
+    }
+    _typing = TypeController();
     if (_index + 1 >= widget.cuts.length) {
       Navigator.of(context).pop();
       return;
@@ -64,7 +74,8 @@ class _CutsceneScreenState extends State<CutsceneScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     return Scaffold(
-      backgroundColor: Colors.black,
+      // 위아래 띠는 검정 단색이 아니라 앱 바탕색 (설계서 §13 공통, A55).
+      backgroundColor: AppColors.background,
       body: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: _next,
@@ -93,6 +104,7 @@ class _CutsceneScreenState extends State<CutsceneScreen> {
                       key: ValueKey(_index),
                       cut: widget.cuts[_index],
                       text: dataText(l10n, widget.cuts[_index].textKey),
+                      typing: _typing,
                     ),
                   ),
                 ),
@@ -112,9 +124,12 @@ class _CutsceneScreenState extends State<CutsceneScreen> {
                   left: 12,
                   height: band,
                   child: Center(
-                    child: Text(
-                      '${_index + 1} / ${widget.cuts.length}',
-                      style: const TextStyle(color: HudColors.text),
+                    child: HudPanel(
+                      padding: const EdgeInsets.fromLTRB(10, 3, 10, 4),
+                      child: Text(
+                        '${_index + 1} / ${widget.cuts.length}',
+                        style: const TextStyle(color: HudColors.text),
+                      ),
                     ),
                   ),
                 ),
@@ -129,10 +144,16 @@ class _CutsceneScreenState extends State<CutsceneScreen> {
 
 /// 컷 한 장: 배경, 해적(우리는 왼쪽·적은 오른쪽), 말풍선 또는 자막.
 class _Scene extends StatelessWidget {
-  const _Scene({required this.cut, required this.text, super.key});
+  const _Scene({
+    required this.cut,
+    required this.text,
+    required this.typing,
+    super.key,
+  });
 
   final StoryCut cut;
   final String text;
+  final TypeController typing;
 
   @override
   Widget build(BuildContext context) => LayoutBuilder(
@@ -149,23 +170,26 @@ class _Scene extends StatelessWidget {
         );
       }
 
-      Widget group({required bool enemy}) => Row(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          for (final c in cut.cast)
-            if (c.enemy == enemy)
-              toned(
-                RigPortrait(
-                  species: c.species,
-                  team: enemy ? 'red' : 'blue',
-                  expr: c.expr,
-                  flip: enemy,
-                  silhouette: c.silhouette,
-                  height: h,
+      Widget group({required bool enemy}) => SlideIn(
+        fromLeft: !enemy,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            for (final c in cut.cast)
+              if (c.enemy == enemy)
+                toned(
+                  RigPortrait(
+                    species: c.species,
+                    team: enemy ? 'red' : 'blue',
+                    expr: c.expr,
+                    flip: enemy,
+                    silhouette: c.silhouette,
+                    height: h,
+                  ),
                 ),
-              ),
-        ],
+          ],
+        ),
       );
       final bubbleWidth = (box.maxWidth * 0.46).clamp(200.0, 480.0);
       return Stack(
@@ -181,7 +205,7 @@ class _Scene extends StatelessWidget {
               right: speaker.enemy ? 24 : null,
               bottom: h + 4,
               width: bubbleWidth,
-              child: _Bubble(text: text, right: speaker.enemy),
+              child: _Bubble(text: text, right: speaker.enemy, typing: typing),
             )
           else
             // 자막은 해적을 가리지 않게 위 가운데에 둔다(에셋 형식은 아래 가운데, 계획서 A12·ADR-063).
@@ -193,7 +217,11 @@ class _Scene extends StatelessWidget {
                   constraints: BoxConstraints(maxWidth: box.maxWidth * 0.64),
                   child: HudPanel(
                     padding: const EdgeInsets.all(12),
-                    child: Text(text, style: const TextStyle(fontSize: 17)),
+                    child: TypeText(
+                      text: text,
+                      controller: typing,
+                      style: const TextStyle(fontSize: 17),
+                    ),
                   ),
                 ),
               ),
@@ -207,10 +235,15 @@ class _Scene extends StatelessWidget {
 /// 말풍선 (에셋 `ui/story/bubble_{left,right}`, 480×130, 꼬리는 말하는 해적 쪽).
 /// 모서리·꼬리는 그대로 두고 몸통만 글자 높이에 맞춰 늘인다.
 class _Bubble extends StatelessWidget {
-  const _Bubble({required this.text, required this.right});
+  const _Bubble({
+    required this.text,
+    required this.right,
+    required this.typing,
+  });
 
   final String text;
   final bool right;
+  final TypeController typing;
 
   @override
   Widget build(BuildContext context) => LayoutBuilder(
@@ -233,8 +266,9 @@ class _Bubble extends StatelessWidget {
           ),
           Padding(
             padding: EdgeInsets.fromLTRB(32 * k, 18 * k, 26 * k, 44 * k),
-            child: Text(
-              text,
+            child: TypeText(
+              text: text,
+              controller: typing,
               style: const TextStyle(fontSize: 16, color: Color(0xFF14161C)),
             ),
           ),

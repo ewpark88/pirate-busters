@@ -11,6 +11,7 @@ import 'package:pirate_busters/meta/progress.dart';
 import 'package:pirate_busters/settings/language.dart';
 import 'package:pirate_busters/story/cutscene_screen.dart';
 import 'package:pirate_busters/story/story_data.dart';
+import 'package:pirate_busters/story/type_text.dart';
 import 'package:pirate_busters/ui/kit/kit_motion.dart';
 
 void main() {
@@ -181,6 +182,10 @@ void main() {
     ) async {
       await pump(tester, const Locale('ko'), motion: true);
       expect(CutsceneScreen.fade, const Duration(milliseconds: 300));
+      // 첫 탭은 한 자씩 나오던 대사를 끝까지 보인다(A55). 두 번째 탭이 다음 컷.
+      await tester.tap(find.text('1 / 5'));
+      await tester.pump();
+      expect(find.text('1 / 5'), findsOneWidget, reason: '아직 첫 컷');
       await tester.tap(find.text('1 / 5'));
       const first = ValueKey(0);
       const second = ValueKey(1);
@@ -210,6 +215,27 @@ void main() {
       expect(find.text('1 / 5'), findsOneWidget);
       await tester.tap(find.text('1 / 5'));
       await tester.pumpAndSettle();
+    });
+
+    testWidgets('대사는 한 자씩 나오고, 누르면 끝까지 보인다 (§15.4, A55)', (tester) async {
+      final typing = TypeController();
+      await tester.pumpWidget(
+        MaterialApp(
+          home: KitMotion(
+            reduced: false,
+            child: TypeText(text: '바다의 심장', controller: typing),
+          ),
+        ),
+      );
+      await tester.pump(const Duration(milliseconds: 60));
+      expect(typing.done, isFalse);
+      typing.finish();
+      await tester.pump();
+      expect(typing.done, isTrue);
+      final rich = tester.widget<Text>(find.byType(Text)).textSpan!;
+      expect(rich.toPlainText(), '바다의 심장');
+      final hidden = (rich as TextSpan).children!.last as TextSpan;
+      expect(hidden.text, isEmpty, reason: '숨은 글자가 남지 않는다');
     });
 
     testWidgets('건너뛰기를 누르면 바로 닫힌다', (tester) async {
