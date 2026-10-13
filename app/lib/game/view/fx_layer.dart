@@ -10,6 +10,9 @@ import 'package:flutter/services.dart';
 import 'package:pb_sim/pb_sim.dart';
 import 'package:pirate_busters/game/anim/rarity_fx.dart';
 import 'package:pirate_busters/game/sprites.dart';
+import 'package:pirate_busters/game/view/blast_glow.dart';
+import 'package:pirate_busters/game/view/blast_sheet.dart';
+import 'package:pirate_busters/game/view/explosion_burst.dart';
 import 'package:pirate_busters/game/view/explosion_fx.dart';
 import 'package:pirate_busters/game/view/hit_weight.dart';
 import 'package:pirate_busters/game/view/impact_accent.dart';
@@ -64,6 +67,9 @@ class FxLayer extends Component {
   static const int busyChildren = 60;
 
   bool get _low => lowEnd?.value ?? false;
+
+  /// 저사양 모드인가 (설계서 §10.4 저사양).
+  bool get low => _low;
 
   /// 저사양이면 [count] 의 절반(올림). 효과가 붐비면 한 번 더 절반.
   int few(int count) {
@@ -121,33 +127,10 @@ class FxLayer extends Component {
     if (r is Future<void>) unawaited(r);
   }
 
-  /// 폭발 (설계서 §10.4): 섬광, 차례로 바뀌는 불덩이(가운데 큰 것과 둘레 작은 것),
-  /// 불티, 파편, 떠오르는 연기, 잠깐 남는 잔불. [radius] 는 폭발 반경(칸), [heavy] 는
-  /// 유폭(화약고·연료통)처럼 큰 폭발이다.
-  void explosion(Vector2 at, {int radius = 1, bool heavy = false}) {
-    final size = 48.0 + radius * 28;
-    final frames = [for (final f in ExplosionFx.fireballFrames) sprites.get(f)];
-    spawn(popSprite('fx/impact/flash.png', at, size * 1.2, 0.18));
-    spawn(Fireball(frames, at, size * 1.1, low: _low));
-    // 둘레의 작은 불덩이 (README v3: 0.16·0.26초에 작은 폭발).
-    for (var i = 0; i < few(heavy ? 4 : 2); i++) {
-      final a = rnd.nextDouble() * math.pi * 2;
-      final off = Vector2(math.cos(a), math.sin(a) * .6) * size * .35;
-      spawn(
-        Fireball(frames, at + off, size * .55, delay: .1 + i * .08, low: _low),
-      );
-    }
-    spawn(ExplosionFx.embers(sprites, rnd, at, count: few(heavy ? 18 : 10)));
-    spawn(ExplosionFx.debris(sprites, rnd, at, count: few(6 + radius * 3)));
-    spawn(ExplosionFx.puffs(sprites, rnd, at, count: few(2 + radius)));
-    spawn(ExplosionFx.rising(sprites, at, size * .7, delay: .3));
-    for (var i = 0; i < few(3); i++) {
-      final dx = (rnd.nextDouble() - .5) * size * .5;
-      spawn(
-        ExplosionFx.flicker(sprites, at + Vector2(dx, 6), 14, .27 + i * .05),
-      );
-    }
-  }
+  /// 폭발 (설계서 §10.4). 그림은 [ExplosionBurst.burst] 가 맡는다. [radius] 는 폭발
+  /// 반경(칸), [heavy] 는 묵직한 한 방·유폭이다.
+  void explosion(Vector2 at, {int radius = 1, bool heavy = false}) =>
+      burst(at, radius: radius, heavy: heavy);
 
   /// 계열별 명중 모양 (설계서 §10.4)과 등급 연출(§10.5). 흔들림·진동은 [jolt] 가
   /// 맡는다. [facing] 은 쏜 배가 보는 방향(강습 베기 방향). [stuck] 은 관통탄이 박혀
@@ -165,10 +148,12 @@ class FxLayer extends Component {
     var kind = AccentKind.impact;
     switch (family) {
       case Family.lob || Family.air || Family.shock:
-        explosion(at, radius: radius);
+        explosion(at, radius: radius, heavy: heavy);
       case Family.direct:
         // 작은 불꽃과 구멍.
-        _pop('fx/impact/spark.png', at, 40, 0.22);
+        spawn(GlowFlash(at, 30));
+        spawn(SheetBlast(BlastSheet.light, sprites, at, 26, low: _low));
+        spawn(ExplosionFx.embers(sprites, rnd, at, count: few(6), reach: .6));
         spawn(popSprite('fx/impact/hole_burnt.png', at, 20, 0.9));
       case Family.pierce:
         // 꿰뚫린 칸: 금과 구멍, 나무 조각.
@@ -207,8 +192,10 @@ class FxLayer extends Component {
         _pop('fx/impact/burst.png', at, 44, 0.25);
         kind = AccentKind.slash;
     }
-    if (heavy && family != Family.skip) {
-      spawn(popSprite('fx/impact/shockwave.png', at, 60.0 + radius * 30, 0.35));
+    // 폭발 계열은 [explosion] 이 충격파를 그린다.
+    const blasts = {Family.lob, Family.air, Family.shock};
+    if (heavy && family != Family.skip && !blasts.contains(family)) {
+      spawn(ShockRing(at, 50.0 + radius * 25));
     }
     spawn(
       ImpactAccent(at, tier, kind: kind, facing: facing, fewer: few(2) == 1),
@@ -217,7 +204,7 @@ class FxLayer extends Component {
 
   /// 흰 섬광과 함께 [file] 을 띄운다. 맞는 순간의 히트스톱 동안 섬광이 멈춰 보인다.
   void _pop(String file, Vector2 at, double size, double life) {
-    spawn(popSprite('fx/impact/flash.png', at, size * 0.9, 0.14));
+    spawn(GlowFlash(at, size * .6));
     spawn(popSprite(file, at, size, life));
   }
 

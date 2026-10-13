@@ -2,29 +2,48 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:pirate_busters/audio/sfx_bank.dart';
 import 'package:pirate_busters/audio/shanty_music.dart';
 import 'package:pirate_busters/audio/sound_service.dart';
-import 'package:pirate_busters/game/view/explosion_fx.dart';
+import 'package:pirate_busters/game/view/blast_glow.dart';
+import 'package:pirate_busters/game/view/blast_sheet.dart';
 import 'package:pirate_busters/settings/settings_store.dart';
 
 void main() {
-  group('폭발 (설계서 §10.4, A13)', () {
-    test('불덩이 그림은 뜨거움 → 불 → 식음 → 속불 연기 → 연기 순으로 한 번씩 바뀐다', () {
-      final frames = [
-        for (var t = 0.0; t < Fireball.life; t += .01) Fireball.frameAt(t),
-      ];
-      expect(frames.first, 0);
-      expect(frames.last, ExplosionFx.fireballFrames.length - 1);
-      for (var i = 1; i < frames.length; i++) {
-        expect(frames[i] - frames[i - 1], inInclusiveRange(0, 1));
+  group('폭발 (설계서 §10.4, A13·S4)', () {
+    test('폭발 시트는 프레임을 처음부터 끝까지 한 장씩 차례로 넘긴다', () {
+      for (final sheet in BlastSheet.all) {
+        final frames = [
+          for (var t = 0.0; t < sheet.life; t += .005) sheet.frameAt(t),
+        ];
+        expect(frames.first, 0, reason: sheet.file);
+        expect(frames.last, sheet.count - 1, reason: sheet.file);
+        for (var i = 1; i < frames.length; i++) {
+          expect(frames[i] - frames[i - 1], inInclusiveRange(0, 1));
+        }
+        expect(frames.toSet(), hasLength(sheet.count), reason: sheet.file);
+        expect(sheet.frameAt(sheet.life * 2), sheet.count - 1);
       }
-      expect(frames.toSet(), {0, 1, 2, 3, 4});
     });
 
-    test('불덩이는 빠르게 커지고 0.4초부터 흐려져 수명 끝에 사라진다', () {
-      expect(Fireball.scaleAt(.1), greaterThan(Fireball.scaleAt(0) + .4));
-      expect(Fireball.scaleAt(.5), greaterThan(Fireball.scaleAt(.3)));
-      expect(Fireball.alphaAt(.2), 1);
-      expect(Fireball.alphaAt(Fireball.life), 0);
-      expect(Fireball.alphaAt(.5), inExclusiveRange(0, 1));
+    test('저사양에서는 짝수 프레임만 써서 프레임 수가 반이 된다', () {
+      const sheet = BlastSheet.medium;
+      final low = {
+        for (var t = 0.0; t < sheet.life; t += .005) sheet.lowFrameAt(t),
+      };
+      expect(low.every((f) => f.isEven), isTrue);
+      expect(low, hasLength(sheet.count ~/ 2));
+    });
+
+    test('폭발은 끝으로 갈수록 퍼지고 마지막 25% 동안 사라진다', () {
+      expect(SheetBlast.spreadAt(1), greaterThan(SheetBlast.spreadAt(0)));
+      expect(SheetBlast.alphaAt(.5), 1);
+      expect(SheetBlast.alphaAt(.9), inExclusiveRange(0, 1));
+      expect(SheetBlast.alphaAt(1), 0);
+    });
+
+    test('섬광은 처음이 가장 밝고 끝에 꺼지며, 충격파는 계속 퍼진다', () {
+      expect(GlowFlash.alphaAt(0), 1);
+      expect(GlowFlash.alphaAt(1), 0);
+      expect(ShockRing.spreadAt(.5), greaterThan(ShockRing.spreadAt(.1)));
+      expect(ShockRing.spreadAt(1), closeTo(1, 1e-9));
     });
   });
 

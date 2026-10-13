@@ -14,6 +14,9 @@ import 'package:pirate_busters/audio/sound_library.dart';
 /// 알림음, 침수 꾸르륵, 불 타는 소리, 배 이동 물살, 별 찍힘, 레벨업.
 enum Sfx {
   cannon,
+
+  /// 먼 포성: 상대가 쏜 포 (설계서 §10.3, 게임 정리 S4).
+  cannonFar,
   wood,
   splash,
   clang,
