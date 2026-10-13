@@ -107,6 +107,17 @@ enum SimEventKind {
   /// 배, [SimEvent.value] = 깎인 내구도, [SimEvent.y] = 남은 내구도(부서지면 0).
   /// 화면이 착탄 순간에 맞춰 내구도를 줄이는 데 쓴다 (A33).
   blockHit,
+
+  /// 강습 해적이 적 배 위에 섰다 (ADR-110). [SimEvent.side]·[SimEvent.slot] = 그
+  /// 해적, [SimEvent.cell] = 적 배에서 밟은 칸.
+  boarded,
+
+  /// 근접 수비: 적 배 위 강습 해적을 그 배 해적이 반격했다. [SimEvent.side]·
+  /// [SimEvent.slot] = 반격한 해적, [SimEvent.value] = 맞은 강습 해적 슬롯.
+  boardDefended,
+
+  /// 적 배 위에 있던 강습 해적이 원래 선실로 돌아왔다. [SimEvent.slot].
+  boardReturned,
 }
 
 /// 턴이 끝난 이유. 순서는 이벤트 값으로 쓰인다.

@@ -45,12 +45,21 @@ class EffectBadges extends Component {
       return Vector2(Coords.x(e.x), -dropHeight);
     }
     final ship = session.state.sides[e.target];
+    // 강습 물기는 적 배 위에 선 해적의 머리 위에 단다 (ADR-110).
+    final boarder = isBoarderBite(e)
+        ? session.state.sides[e.owner].crew.pirates[e.ownerSlot]
+        : null;
+    final cell = boarder?.boardCell ?? e.cell;
     final (x, y) = ship.frame.cellCenter(
-      e.cell % ship.grid.width,
-      e.cell ~/ ship.grid.width,
+      cell % ship.grid.width,
+      cell ~/ ship.grid.width,
     );
-    return Coords.point(x, y);
+    final lift = boarder == null ? 0.0 : Coords.cell / 2 + boarderLift;
+    return Coords.point(x, y) - Vector2(0, lift);
   }
+
+  /// 적 배 위 강습 해적의 머리 위 높이(밟은 칸 윗면 기준, 월드 px).
+  static const double boarderLift = 38;
 
   /// 붙어서 기다리는 효과: 그 해적의 무기 그림 옆에 배지를 단다.
   static bool _attached(EffectKind k) =>
@@ -63,6 +72,12 @@ class EffectBadges extends Component {
     for (final e in session.state.effects) {
       // 떠 있는 기뢰는 WorldMarks 가 수면에 그리고, 펌프 정지는 물어뜯기와 같은 칸이다.
       if (e.kind == EffectKind.floatMine || e.kind == EffectKind.pumpOff) {
+        continue;
+      }
+      // 떨어지거나 쓰러진 강습 해적의 남은 물기는 터지지 않는다.
+      if (isBoarderBite(e) &&
+          session.state.sides[e.owner].crew.pirates[e.ownerSlot].status !=
+              PirateStatus.boarding) {
         continue;
       }
       final at = positionOf(e);

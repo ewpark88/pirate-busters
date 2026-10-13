@@ -7,6 +7,7 @@ import 'package:pirate_busters/battle/battle_session.dart';
 import 'package:pirate_busters/game/anim/rarity_fx.dart';
 import 'package:pirate_busters/game/camera_director.dart';
 import 'package:pirate_busters/game/coords.dart';
+import 'package:pirate_busters/game/cues_boarding.dart';
 import 'package:pirate_busters/game/cues_crew.dart';
 import 'package:pirate_busters/game/cues_unique.dart';
 import 'package:pirate_busters/game/emotion_cues.dart';
@@ -204,12 +205,11 @@ class BattleCues {
         case SimEventKind.pirateHit:
           ships[e.side].playHit(e.slot, facingOf(1 - e.side));
           playSfx(Sfx.pirateHit);
-          final rig = e.slot >= 0 && e.slot < ships[e.side].rigs.length
-              ? ships[e.side].rigs[e.slot]
-              : null;
-          if (rig != null) {
+          // 적 배 위에 선 강습 해적은 그 자리에 숫자를 띄운다 (ADR-110).
+          final head = pirateHead(e);
+          if (head != null) {
             fx.damageNumber(
-              rig.absolutePosition - Vector2(0, Coords.pirateHeight * 0.8),
+              head,
               damageText(e.value),
               tag: tag == null ? null : tagText(tag),
               style: DamageStyle.of(weight, crit: tag == HitTag.crit),
@@ -218,7 +218,7 @@ class BattleCues {
         // 설치탄이 붙거나 기뢰가 터졌다(cues_unique.dart). 다른 턴 효과는 뒤따르는
         // 착탄 이벤트가 그린다.
         case SimEventKind.mineAttached || SimEventKind.effectFired:
-          hitAt = mineCue(e, weight) ?? hitAt;
+          hitAt = effectCue(e, weight) ?? hitAt;
         case SimEventKind.repaired:
           final at = cellWorld(e.side, e.cell);
           fx.repair(at, tier: tier);
@@ -230,20 +230,7 @@ class BattleCues {
             SimEventKind.stormStart ||
             SimEventKind.divide:
           break;
-        // 고유 효과 연출 (설계서 §4.8, ADR-075·078).
-        case SimEventKind.ignited ||
-            SimEventKind.burned ||
-            SimEventKind.chained ||
-            SimEventKind.statusApplied ||
-            SimEventKind.mineFloated ||
-            SimEventKind.steered ||
-            SimEventKind.supported ||
-            SimEventKind.intercepted ||
-            SimEventKind.barrierPlaced ||
-            SimEventKind.barrierHit ||
-            SimEventKind.revived ||
-            SimEventKind.healed:
-          dispatchUnique(e, shown);
+
         case SimEventKind.flood:
           // 턴 끝 침수가 늘면 배 둘레 수면에 물방울이 튄다 (설계서 §10.4). 펌프로
           // 줄면(음수) 튀지 않는다.
@@ -263,10 +250,14 @@ class BattleCues {
           playSfx(Sfx.rumble);
         // 해적이 바다로 떨어지면 첨벙, 쓰러지면 띵 (§10.3, A32).
         case SimEventKind.pirateFell:
+          boarderFell(e);
           pirateFell(e);
         case SimEventKind.pirateDown:
           pirateDown(e);
           playSfx(Sfx.ko);
+        // 고유 효과·강습 체류 연출 (설계서 §4.8, ADR-075·078·110).
+        case _:
+          dispatchUnique(e, shown);
       }
     }
     hullNumber(hitAt, hull, weight, tag: shieldTag);

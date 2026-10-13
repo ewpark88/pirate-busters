@@ -136,7 +136,8 @@ void sweepDeck(MatchState state, SideState target, int flood) {
 }
 
 /// 랍: 쓰러뜨릴 때마다 가장 가까운 배 위 해적으로 뛰어 해적 피해를 준다(사다리 횟수).
-void leapKills(
+/// 마지막에 벤 자리의 세로줄을 돌려준다.
+int leapKills(
   MatchState state,
   SideState target,
   PirateSpec spec,
@@ -156,15 +157,16 @@ void leapKills(
         downed = true;
       }
     }
-    if (!downed) return;
+    if (!downed) return lx;
     final slot = nearestAboard(target, lx, ly);
-    if (slot < 0) return;
+    if (slot < 0) return lx;
     since = events.length;
     final c = target.cabins[slot];
     lx = c.x;
     ly = c.y;
     target.crew.damage(slot, spec.pirateDamage, target.side, events);
   }
+  return lx;
 }
 
 /// [cx], [cy] 에서 가장 가까운 배 위 해적 슬롯(같으면 낮은 슬롯), 없으면 −1.

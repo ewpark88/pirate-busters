@@ -1,4 +1,5 @@
 import 'package:pb_sim/src/combat/barrier_effects.dart';
+import 'package:pb_sim/src/combat/boarding.dart';
 import 'package:pb_sim/src/combat/effect_runner.dart';
 import 'package:pb_sim/src/match/boss_gimmick.dart';
 import 'package:pb_sim/src/match/judge.dart';
@@ -8,7 +9,8 @@ import 'package:pb_sim/src/match/sim_event.dart';
 import 'package:pb_sim/src/ship/motion.dart';
 
 /// 턴 시작 (설계서 §2.3): 폭풍 타임 시작(양쪽 연료·후퇴 한계) → 내 연료 회복 →
-/// 해적 복귀 → 턴 시작 효과(설치탄·투하·물기) → 즉시 판정.
+/// 해적 복귀 → 적 배 위 강습 해적 복귀·근접 수비 → 턴 시작 효과(설치탄·투하·물기)
+/// → 즉시 판정.
 void beginTurn(MatchState state) {
   final side = state.activeSide;
   final turn = state.turn;
@@ -35,6 +37,7 @@ void beginTurn(MatchState state) {
   state.sides[side]
     ..moveFallenSeats()
     ..crew.startOwnTurn(side, state.events);
+  boardingTurnStart(state);
   runTurnEffects(state);
   judgeInstant(state);
 }

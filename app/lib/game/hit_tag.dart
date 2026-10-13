@@ -15,6 +15,12 @@ enum HitTag {
   bite,
   repair,
 
+  /// 강습 해적 적 갑판 체류 (설계서 §2.3, ADR-110): 올라탐, 근접 수비 반격, 흔들려
+  /// 떨어짐.
+  boarded,
+  repel,
+  shakenOff,
+
   // 고유 효과 (설계서 §4.8, ADR-075·078).
   seal,
   pull,

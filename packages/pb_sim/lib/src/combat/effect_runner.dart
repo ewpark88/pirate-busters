@@ -1,4 +1,5 @@
 import 'package:pb_sim/src/combat/ammo_rules.dart';
+import 'package:pb_sim/src/combat/boarding.dart';
 import 'package:pb_sim/src/combat/impact.dart';
 import 'package:pb_sim/src/combat/launch.dart';
 import 'package:pb_sim/src/combat/unique_turns.dart';
@@ -8,6 +9,7 @@ import 'package:pb_sim/src/match/rules.dart';
 import 'package:pb_sim/src/match/sim_event.dart';
 import 'package:pb_sim/src/match/turn_effects.dart';
 import 'package:pb_sim/src/math/fx.dart';
+import 'package:pb_sim/src/pirate/crew.dart';
 import 'package:pb_sim/src/world/world.dart';
 
 /// 턴 시작: [MatchState.activeSide] 진영의 턴에 세는 효과를 1 줄이고, 0 이 된 것을
@@ -33,6 +35,11 @@ void _fire(MatchState state, TurnEffect e) {
   if (e.kind == EffectKind.floatMine || e.kind == EffectKind.pumpOff) return;
   final target = state.sides[e.target];
   final grid = target.grid;
+  // 강습 물기는 쏜 해적이 적 배 위에 서 있을 때만, 밟은 칸 중심으로 문다 (ADR-110).
+  final boarder = isBoarderBite(e)
+      ? state.sides[e.owner].crew.pirates[e.ownerSlot]
+      : null;
+  if (boarder != null && boarder.status != PirateStatus.boarding) return;
   final ms = realMs(state, 0);
   state.events.add(
     SimEvent(
@@ -46,8 +53,9 @@ void _fire(MatchState state, TurnEffect e) {
   );
   switch (e.kind) {
     case EffectKind.mineBlast || EffectKind.biteAgain:
-      final cx = e.cell % grid.width;
-      final cy = e.cell ~/ grid.width;
+      final (cx, cy) = boarder != null
+          ? boardPosOf(grid, boarder.boardCell)
+          : (e.cell % grid.width, e.cell ~/ grid.width);
       final (x, y) = fromShipLocal(
         state,
         e.target,
@@ -58,15 +66,23 @@ void _fire(MatchState state, TurnEffect e) {
       final mine = e.kind == EffectKind.mineBlast;
       resolveImpact(
         target,
-        spec: e.spec,
+        // 강습 물기는 특성·세트와 상관없이 반경 1칸이다 (설계서 §4.8).
+        spec: boarder == null
+            ? e.spec
+            : e.spec.withDamage(
+                blockDamage: e.spec.blockDamage,
+                pirateDamage: e.spec.pirateDamage,
+                blastRadius: 1,
+              ),
         cx: cx,
         cy: cy,
         x: x,
         y: y,
         events: state.events,
         rng: state.rng,
-        // 물기는 해적만 문다.
+        // 물기는 해적만 문다. 문 강습 해적 자신(같은 배 위)은 맞지 않는다.
         blockPercent: mine ? 100 : 0,
+        hitBoarders: mine,
       );
       if (mine && e.spec.ammoValue2 > 0) {
         final flood = target.flood + e.spec.ammoValue2;

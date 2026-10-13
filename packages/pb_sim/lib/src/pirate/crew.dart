@@ -17,6 +17,10 @@ enum PirateStatus {
 
   /// 쓰러졌다(KO).
   down,
+
+  /// 강습 해적이 적 배 위에 서 있다 (설계서 §2.3, §4.8, ADR-110). 쏠 수 없고,
+  /// 살아 있는 해적으로 센다.
+  boarding,
 }
 
 /// 출전 해적 한 명의 전투 상태. 선실 슬롯 번호 = 출전 순서.
@@ -34,6 +38,10 @@ class PirateState {
   /// 끝날 때마다 1 줄어서, 같은 턴에 다시 쏘지 못하고 `cooldownTurns` 만큼 내 턴을
   /// 건너뛴다 (설계서 §2.3).
   int cooldown = 0;
+
+  /// 적 배 위에 섰을 때 밟은 칸(적 배 칸 번호, 그 위에 선다). 아니면 −1.
+  /// [PirateStatus.boarding] 일 때만 해시에 들어간다.
+  int boardCell = -1;
 }
 
 /// 한 진영의 출전 해적 (설계서 §2.3, §3.1). 모두 판 시작부터 선실에 타고 교대는
@@ -44,6 +52,9 @@ class Crew {
 
   /// 슬롯 순서의 해적.
   final List<PirateState> pirates;
+
+  /// 이 배에 올라온 강습 해적의 진영 해적 (ADR-110). 처음 올라올 때 정한다.
+  Crew? foe;
 
   int get size => pirates.length;
 
@@ -109,12 +120,25 @@ class Crew {
     events.add(SimEvent(SimEventKind.pirateDown, side: side, slot: slot));
   }
 
-  /// 선실이 부서지거나 무너졌다. 타 있던 해적이 다치고 바다로 떨어진다.
+  /// 선실이 부서지거나 무너졌다. 타 있던 해적이 다치고 바다로 떨어진다. 적 배 위에
+  /// 선 강습 해적은 내 선실이 부서져도 떨어지지 않는다([fallFromBoard]).
   void fall(int slot, int side, List<SimEvent> events) {
     final p = pirateAt(slot);
     if (p == null || p.status != PirateStatus.aboard) return;
+    _drop(p, slot, side, events);
+  }
+
+  /// 적 배 위에 선 강습 해적이 흔들리거나 받침을 잃어 바다로 떨어진다 (설계서 §2.3,
+  /// ADR-110). 밟은 칸([PirateState.boardCell])은 화면이 떨어지는 자리로 쓰게 남긴다.
+  void fallFromBoard(int slot, int side, List<SimEvent> events) {
+    final p = pirateAt(slot);
+    if (p == null || p.status != PirateStatus.boarding) return;
+    _drop(p, slot, side, events);
+  }
+
+  void _drop(PirateState p, int slot, int side, List<SimEvent> events) {
     damage(slot, roundDiv(p.spec.hp * fallDamagePercent, 100), side, events);
-    if (p.status != PirateStatus.aboard) return;
+    if (p.status == PirateStatus.down) return;
     p.status = PirateStatus.swimming;
     events.add(SimEvent(SimEventKind.pirateFell, side: side, slot: slot));
   }
@@ -124,7 +148,9 @@ class Crew {
     for (var slot = 0; slot < pirates.length; slot++) {
       final p = pirates[slot];
       if (p.status != PirateStatus.swimming) continue;
-      p.status = PirateStatus.aboard;
+      p
+        ..status = PirateStatus.aboard
+        ..boardCell = -1;
       events.add(SimEvent(SimEventKind.pirateReturned, side: side, slot: slot));
     }
   }

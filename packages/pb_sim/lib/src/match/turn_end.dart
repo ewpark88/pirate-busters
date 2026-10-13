@@ -1,3 +1,4 @@
+import 'package:pb_sim/src/combat/boarding.dart';
 import 'package:pb_sim/src/combat/fire.dart';
 import 'package:pb_sim/src/combat/module_effects.dart';
 import 'package:pb_sim/src/combat/unique_turns.dart';
@@ -9,6 +10,8 @@ import 'package:pb_sim/src/match/match_state.dart';
 void endTurnUpkeep(MatchState state) {
   final ship = state.sides[state.activeSide];
   burnAtTurnEnd(ship, state.rng, state.events);
+  // 불타 없어진 칸을 밟고 선 상대 강습 해적은 떨어진다 (ADR-110).
+  dropUnsupportedBoarders(ship, state.events);
   judgeInstant(state);
   if (state.isOver) return;
   endTurnWater(

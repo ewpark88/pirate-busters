@@ -81,6 +81,7 @@ class _PirateCardState extends State<_PirateCard> {
     final note = switch (pirate.status) {
       PirateStatus.down => l10n.pirateDown,
       PirateStatus.swimming => l10n.pirateSwimming,
+      PirateStatus.boarding => l10n.pirateBoarding,
       PirateStatus.aboard when side.isCabinFlooded(widget.slot) =>
         l10n.cabinFlooded,
       // 킹에게 봉쇄된 선실 (설계서 §4.8, ADR-075).

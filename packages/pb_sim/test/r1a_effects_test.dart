@@ -82,7 +82,8 @@ class _Recorder implements Controller {
 }
 
 /// R1a-1 섞인 판(시드 4242, 스크립트 35·36)의 기대 해시. 의도한 규칙 변경일 때만 갱신한다.
-const int _mixedHash = 2806074734;
+/// A64(ADR-110): 킹이 적 배 위에 서는 규칙으로 바뀌었다.
+const int _mixedHash = 494319805;
 
 List<SimEvent> _of(Match m, SimEventKind kind) =>
     m.state.events.where((e) => e.kind == kind).toList();

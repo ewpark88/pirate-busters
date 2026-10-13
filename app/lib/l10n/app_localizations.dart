@@ -236,6 +236,12 @@ abstract class AppLocalizations {
   /// **'Swimming'**
   String get pirateSwimming;
 
+  /// No description provided for @pirateBoarding.
+  ///
+  /// In en, this message translates to:
+  /// **'On enemy ship'**
+  String get pirateBoarding;
+
   /// No description provided for @wind.
   ///
   /// In en, this message translates to:
@@ -2665,6 +2671,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'BITE'**
   String get hitTagBite;
+
+  /// No description provided for @hitTagBoarded.
+  ///
+  /// In en, this message translates to:
+  /// **'BOARDED!'**
+  String get hitTagBoarded;
+
+  /// No description provided for @hitTagRepel.
+  ///
+  /// In en, this message translates to:
+  /// **'REPEL!'**
+  String get hitTagRepel;
+
+  /// No description provided for @hitTagShakenOff.
+  ///
+  /// In en, this message translates to:
+  /// **'SHAKEN OFF!'**
+  String get hitTagShakenOff;
 
   /// No description provided for @hitTagRepair.
   ///

@@ -102,7 +102,8 @@ class _Recorder implements Controller {
 /// R1a-2 섞인 판(시드 777, 스크립트 34·35)의 기대 해시. 의도한 규칙 변경일 때만 갱신한다.
 /// A51(ADR-102): 물수제비가 얕게 닿을 때만 튕겨 무작위 조준으로는 거의 튕기지 않으므로
 /// 스크립트를 34·35 로 옮기고, 튕김은 `ammo_test`·`a51_skip_test` 에서 본다.
-const int _mixedHash = 679377806;
+/// A64(ADR-110): 강습 해적(킹·크래비·랍)이 적 배 위에 서고 떨어지는 규칙으로 바뀌었다.
+const int _mixedHash = 1048040409;
 
 List<SimEvent> _of(Match m, SimEventKind kind) =>
     m.state.events.where((e) => e.kind == kind).toList();

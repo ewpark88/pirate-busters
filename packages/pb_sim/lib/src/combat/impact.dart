@@ -1,4 +1,5 @@
 import 'package:pb_sim/src/combat/block_damage.dart';
+import 'package:pb_sim/src/combat/boarding.dart';
 import 'package:pb_sim/src/combat/crack_spread.dart';
 import 'package:pb_sim/src/combat/module_effects.dart';
 import 'package:pb_sim/src/match/boss_gimmick.dart';
@@ -41,6 +42,7 @@ void resolveImpact(
   required XorShift32 rng,
   int blockPercent = 100,
   int centerPiratePercent = 100,
+  bool hitBoarders = true,
 }) {
   final grid = target.grid;
   final side = target.side;
@@ -92,12 +94,25 @@ void resolveImpact(
     crew.damage(slot, dmg, side, events);
   }
   _hitSwimmers(target, x, y, r, events);
+  // 이 배에 선 상대 강습 해적도 맞는다(그 강습 해적의 물기는 빼고, ADR-110).
+  if (hitBoarders) {
+    strikeBoarders(
+      target,
+      cx,
+      cy,
+      r,
+      events,
+      center: spec.pirateDamage * centerPiratePercent ~/ 100,
+      edge: _falloff(spec.pirateDamage, false, edge),
+    );
+  }
   for (var slot = 0; slot < crew.size; slot++) {
     final c = target.cabins[slot];
     if (hadCabin[slot] && !grid.hasBlock(c.x, c.y)) {
       crew.fall(slot, side, events);
     }
   }
+  dropUnsupportedBoarders(target, events);
 }
 
 /// 탄이 [target] 쪽 바다 ([x], 0) 에 떨어졌다. 블록은 다치지 않고, 가까이

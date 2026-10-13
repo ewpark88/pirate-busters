@@ -119,6 +119,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pirateSwimming => 'Swimming';
 
   @override
+  String get pirateBoarding => 'On enemy ship';
+
+  @override
   String get wind => 'Wind';
 
   @override
@@ -1507,6 +1510,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get hitTagBite => 'BITE';
+
+  @override
+  String get hitTagBoarded => 'BOARDED!';
+
+  @override
+  String get hitTagRepel => 'REPEL!';
+
+  @override
+  String get hitTagShakenOff => 'SHAKEN OFF!';
 
   @override
   String get hitTagRepair => 'REPAIR';

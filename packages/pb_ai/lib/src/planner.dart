@@ -116,7 +116,8 @@ class AiPlanner {
         final dx = sign * k * AiDials.positionStepCells * 10;
         final reach = moveReach(_me, state.rules, state.turn, dx, 20000);
         if (reach != dx * moveStep) continue;
-        if (level.index >= AiLevel.hard.index) {
+        // 내 배에 선 강습 해적을 흔들어 떨어뜨릴 때는 비축 연료를 쓴다 (A5.5, ADR-110).
+        if (level.index >= AiLevel.hard.index && !hasBoarders(_me)) {
           final cost = reach.abs() * _me.fuelPerCell ~/ cellUnit;
           if (_me.fuel - cost < AiDials.fuelReserve * SideState.fuelUnit) {
             continue;
