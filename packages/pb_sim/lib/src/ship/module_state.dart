@@ -42,12 +42,4 @@ class ShipModules {
     }
     return null;
   }
-
-  /// 칸 ([x], [y]) 에 남아 있는 [kind] 모듈이 있다.
-  bool hasAt(int x, int y, ModuleKind kind) {
-    for (final m in list) {
-      if (m.x == x && m.y == y && m.kind == kind && m.intact) return true;
-    }
-    return false;
-  }
 }

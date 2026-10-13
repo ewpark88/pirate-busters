@@ -257,6 +257,20 @@ void main() {
     expect(davy, lessThan(plain));
   });
 
+  test('데비도 다른 강습 해적처럼 다음 상대 턴 시작에 한 번 더 문다', () {
+    final m = _duel(
+      _assault('davy', ability: Ability.summon, abilityValue: 3),
+    );
+    _land(m, 5, 2);
+    expect(m.state.effects.where(isBoarderBite), hasLength(1));
+    final enemy = m.state.sides[1].crew;
+    final hp = enemy.pirates[1].hp;
+    m.apply(const EndTurnCommand(t: 9000));
+    _passTo(m, 1);
+    expect(_of(m, SimEventKind.effectFired), hasLength(1));
+    expect(enemy.pirates[1].hp, lessThan(hp), reason: '(5,2) 를 문다');
+  });
+
   test('강습 해적이 섞인 판은 같은 커맨드·재생이면 같은 해시로 끝난다 (결정론)', () {
     final pirates = PirateCatalog([
       _assault('sharky', value: 2),
