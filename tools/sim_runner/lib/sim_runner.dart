@@ -10,6 +10,7 @@ import 'dart:isolate';
 
 import 'package:pb_ai/pb_ai.dart';
 import 'package:pb_data/pb_data.dart';
+import 'package:pb_sim/pb_sim.dart';
 import 'package:sim_runner/src/game.dart';
 import 'package:sim_runner/src/report.dart';
 
@@ -27,7 +28,11 @@ const String usage = '''
   --csv PATH       CSV 로도 쓴다
   --data DIR       게임 데이터 폴더 (기본 app/assets/game)
   --pirates IDS    덱 풀: 쉼표로 나눈 해적 id (기본 전체)
-  --blueprints IDS 설계도 풀: 쉼표로 나눈 추천 설계도 id (기본 전체)''';
+  --blueprints IDS 설계도 풀: 쉼표로 나눈 추천 설계도 id (기본 전체)
+  --max-turns N    턴 제한(양쪽 합) 실험값 (기본 규칙 값, BALANCE.md A2.4)
+  --step N         AI 위치 후보 간격(칸) 실험값 (기본 BALANCE.md A5.5)
+  --goal-moves 1   AI 위치 후보에 잔잔한 구간 목표를 더하는 실험 (기본 0)
+  --wave-zones 1   모든 난이도가 파도 구간을 보는 실험 (기본 BALANCE.md A5.5)''';
 
 /// 인자.
 class SimOptions {
@@ -41,6 +46,10 @@ class SimOptions {
     this.dataDir = 'app/assets/game',
     this.pirates,
     this.blueprints,
+    this.maxTurns,
+    this.step,
+    this.goalMoves = false,
+    this.waveZones = false,
   }) : right = right ?? left,
        jobs = jobs ?? Platform.numberOfProcessors;
 
@@ -69,8 +78,33 @@ class SimOptions {
       dataDir: m['data'] ?? 'app/assets/game',
       pirates: m['pirates']?.split(','),
       blueprints: m['blueprints']?.split(','),
+      maxTurns: m.containsKey('max-turns') ? int.parse(m['max-turns']!) : null,
+      step: m.containsKey('step') ? int.parse(m['step']!) : null,
+      goalMoves: m['goal-moves'] == '1',
+      waveZones: m['wave-zones'] == '1',
     );
   }
+
+  /// 실험값 (S5 제안서). null·false 면 기준 수치 그대로.
+  final int? maxTurns;
+  final int? step;
+  final bool goalMoves;
+  final bool waveZones;
+
+  /// 실험값을 씌운 [level] 다이얼.
+  AiDials dialsFor(AiLevel level) => AiDials.of(level).copyWith(
+    goalMoves: goalMoves,
+    stepCells: step,
+    waveZones: waveZones ? true : null,
+  );
+
+  /// 실험값을 씌운 매치 규칙.
+  MatchRules get rules => maxTurns == null
+      ? const MatchRules()
+      : MatchRules.fromJson({
+          ...const MatchRules().toJson(),
+          'maxTurns': maxTurns,
+        });
 
   final int games;
   final int seed;
@@ -102,11 +136,14 @@ GameFactory factoryFrom(
   DataTexts t, {
   List<String>? pirates,
   List<String>? blueprints,
+  SimOptions? options,
 }) => GameFactory(
   GameData.parse(ammoJson: t.ammo, piratesJson: t.pirates),
   parsePresets(jsonDecode(t.blueprints)),
   pirates: pirates,
   blueprints: blueprints,
+  rules: options?.rules ?? const MatchRules(),
+  dialsFor: options?.dialsFor ?? AiDials.of,
 );
 
 /// 판 [from] 부터 [to] 전까지 둔다.
@@ -115,6 +152,7 @@ List<GameResult> runRange(DataTexts data, SimOptions o, int from, int to) {
     data,
     pirates: o.pirates,
     blueprints: o.blueprints,
+    options: o,
   );
   return [
     for (var i = from; i < to; i++)

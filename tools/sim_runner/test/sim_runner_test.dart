@@ -20,6 +20,26 @@ void main() {
     expect(() => SimOptions.parse(['--left', 'god']), throwsFormatException);
   });
 
+  test('실험 옵션: 기본은 기준 수치이고, 주면 턴 제한·AI 다이얼에 씌운다 (S5 제안서)', () {
+    final base = SimOptions.parse([]);
+    expect(base.rules.maxTurns, const MatchRules().maxTurns);
+    expect(base.dialsFor(AiLevel.hard).stepCells, AiDials.positionStepCells);
+    expect(base.dialsFor(AiLevel.normal).waveZones, isFalse);
+    final o = SimOptions.parse([
+      '--max-turns',
+      '30',
+      '--step',
+      '3',
+      '--goal-moves',
+      '1',
+      '--wave-zones',
+      '1',
+    ]);
+    expect(o.rules.maxTurns, 30);
+    final d = o.dialsFor(AiLevel.normal);
+    expect((d.stepCells, d.goalMoves, d.waveZones), (3, true, true));
+  });
+
   test('판 구성은 시드로 정해지고 덱은 코스트 한도 안 5명(선실 4 + 망대)이다 (§4.5)', () {
     for (var seed = 1; seed < 40; seed++) {
       final a = factory.setupFor(seed, const [AiLevel.normal, AiLevel.normal]);

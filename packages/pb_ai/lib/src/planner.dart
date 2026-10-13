@@ -1,5 +1,6 @@
 import 'package:pb_ai/src/aim_solver.dart';
 import 'package:pb_ai/src/dials.dart';
+import 'package:pb_ai/src/move_goal.dart';
 import 'package:pb_ai/src/turn_choice.dart';
 import 'package:pb_sim/pb_sim.dart';
 
@@ -96,7 +97,8 @@ class AiPlanner {
   ];
 
   /// 위치 후보(시작 위치 기준 오프셋): 지금 자리 + 1칸 간격 앞뒤. 연료·한계 안
-  /// (BALANCE.md A5.5). 연료는 내 턴마다 가득 차므로 아껴 두지 않는다.
+  /// (BALANCE.md A5.5). 연료는 내 턴마다 가득 차므로 아껴 두지 않는다. 멀리 있는 목표는
+  /// [goal] 쪽으로 다가가는 점수로 턴마다 조금씩 간다.
   List<int> _positionCandidates() {
     final now = _me.offset;
     final out = [now];
@@ -105,14 +107,21 @@ class AiPlanner {
     for (var k = 1; out.length < n && k <= n; k++) {
       for (final sign in const [1, -1]) {
         if (out.length >= n) break;
-        final dx = sign * k * AiDials.positionStepCells * 10;
+        final dx = sign * k * dials.stepCells * 10;
         final reach = moveReach(_me, other, state.rules, dx, 20000);
         if (reach != dx * moveStep) continue;
         out.add(now + reach);
       }
     }
+    // 실험: 멀리 있는 잔잔한 구간을 바로 가는 후보 (S5 제안서).
+    if (dials.goalMoves && dials.waveZones && n > 0 && !out.contains(goal)) {
+      out.add(goal);
+    }
     return out;
   }
+
+  /// 이번 턴 이동 목표: 갈 수 있는 가장 잔잔한 자리 (설계서 §5.5, [MoveGoal]).
+  late final int goal = MoveGoal.calmTarget(state, side);
 
   /// 위치 [pi] 로 옮긴 뒤 첫 발의 발사 시각(커맨드 t, 효과 시각이 아닌 턴 시각).
   int fireT(int pi) => dials.thinkMs + moveMs(pi);
