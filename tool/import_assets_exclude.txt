@@ -87,3 +87,7 @@ ui/meta/meta/skin.png
 ui/meta/meta/stamp.png
 ui/meta/meta/starter.png
 ui/meta/meta/terms.png
+
+# S2·S3·S4 앱 사후 점검에서 지운 그림 (fix/app-post-review)
+fx/explosion.png
+fx/impact/spark.png
