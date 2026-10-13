@@ -13,6 +13,27 @@ FireCommand aimAt(
   int t = 1000,
   int power = maxFirePower,
   bool highArc = false,
+}) =>
+    tryAimAt(
+      state,
+      slot: slot,
+      tx: tx,
+      ty: ty,
+      t: t,
+      power: power,
+      highArc: highArc,
+    ) ??
+    (throw StateError('($tx, $ty) 에 닿는 궤적이 없다'));
+
+/// [aimAt] 과 같고, 닿는 궤적이 없으면 null.
+FireCommand? tryAimAt(
+  MatchState state, {
+  required int slot,
+  required int tx,
+  required int ty,
+  int t = 1000,
+  int power = maxFirePower,
+  bool highArc = false,
 }) {
   final target = 1 - state.activeSide;
   final ms = realMs(state, effectiveMs(state, t));
@@ -54,5 +75,5 @@ FireCommand aimAt(
     }
     if (found != null && !highArc) return found;
   }
-  return found ?? (throw StateError('($tx, $ty) 에 닿는 궤적이 없다'));
+  return found;
 }
