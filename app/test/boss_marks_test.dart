@@ -45,12 +45,11 @@ void main() {
       expect(BossMark.showsOn(1, bossSide: 1, over: true), isFalse);
     });
 
-    testWidgets('기믹 없는 보스도 배너가 뜨고 기믹 줄은 없다', (tester) async {
+    testWidgets('보스 배너가 뜨고 시간이 지나면 사라진다', (tester) async {
       await tester.pumpWidget(_app(const BossBanner()));
       await tester.pump(const Duration(milliseconds: 500));
       final l10n = AppLocalizations.of(tester.element(find.byType(BossBanner)));
       expect(find.text(l10n.bossBanner), findsOneWidget);
-      expect(find.text(l10n.gimmick_bow_iron_shield), findsNothing);
       await tester.pump(BossBanner.shown);
       await tester.pumpAndSettle();
     });

@@ -7,13 +7,14 @@ import 'package:pirate_busters/l10n/data_text.dart';
 import 'package:pirate_busters/ui/kit/kit_art.dart';
 import 'package:pirate_busters/ui/kit/pb_panel.dart';
 
-/// 전투 준비의 선실 배치 (설계서 §13.3): 덱 순서가 선실 번호다(선원 화면과 같다).
-/// 아래에 코스트 사용량 / 한도를 둔다.
+/// 전투 준비의 선실·망대 배치 (설계서 §13.3): 덱 순서가 자리 번호다(선원 화면과 같다,
+/// 선실 다음이 망대). 아래에 코스트 사용량 / 한도를 둔다.
 class PrepCabins extends ConsumerWidget {
   const PrepCabins({
     required this.deck,
     required this.used,
     required this.limit,
+    required this.seats,
     required this.cabins,
     super.key,
   });
@@ -21,6 +22,11 @@ class PrepCabins extends ConsumerWidget {
   final List<String> deck;
   final int used;
   final int limit;
+
+  /// 해적이 탈 자리 수(선실 + 망대, 설계도 `seatCount`).
+  final int seats;
+
+  /// 그중 선실 수. 그 뒤 자리는 망대다.
   final int cabins;
 
   @override
@@ -35,13 +41,13 @@ class PrepCabins extends ConsumerWidget {
           Expanded(
             child: ListView(
               children: [
-                for (var i = 0; i < cabins; i++)
+                for (var i = 0; i < seats; i++)
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 1),
                     child: Row(
                       children: [
                         OutlinedText(
-                          '${i + 1}',
+                          i < cabins ? '${i + 1}' : l10n.prepNest,
                           size: 14,
                           color: AppColors.gold,
                         ),

@@ -14,9 +14,11 @@ void main() {
     expect(en.prepCost(6, 15), 'Cost 6 / 15');
   });
 
-  test('결과 화면 침수량은 내 것과 상대 것이 뒤바뀌지 않는다', () {
-    final text = en.statFlood(12, 40);
-    expect(text.indexOf('12'), lessThan(text.indexOf('40')));
+  test('턴 제한 체력 비교는 내 것과 상대 것이 뒤바뀌지 않는다', () {
+    for (final l in [ko, en]) {
+      final text = l.timeVerdictHp('12', '40');
+      expect(text.indexOf('12'), lessThan(text.indexOf('40')));
+    }
   });
 
   test('결과 화면 피해와 부순 블록 수가 뒤바뀌지 않는다', () {

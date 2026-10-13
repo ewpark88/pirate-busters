@@ -280,7 +280,6 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
         if (_session.bossSide != null)
           Positioned.fill(
             child: BossBanner(
-              gimmick: widget.stage?.gimmick,
               // 배너가 떠 있는 동안 첫 턴 시계를 멈춘다 (A41 점검).
               onDone: () => _game.gate.held = false,
             ),

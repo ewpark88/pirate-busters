@@ -39,15 +39,20 @@ class CrewScreen extends ConsumerStatefulWidget {
 class _CrewScreenState extends ConsumerState<CrewScreen> {
   late final List<String?> _slots;
   late final HullSpec _hull;
+
+  /// 선원 화면이 열려 있는 동안 설계도는 바뀌지 않는다(조선소는 다른 화면).
+  late final Blueprint _ship;
   CrewFilter _filter = const CrewFilter();
 
   @override
   void initState() {
     super.initState();
     final fleet = ref.read(fleetStoreProvider);
-    // 선실 수는 지은 확장 단계를 따른다 (설계서 §3.1).
-    _hull = ref.read(progressProvider).ship.hull;
-    final size = _hull.cabinSlots;
+    final progress = ref.read(progressProvider);
+    _hull = progress.ship.hull;
+    _ship = myBlueprint(fleet, ref.read(gameCatalogProvider), progress.ship);
+    // 자리 수는 지은 배의 선실 + 망대 (설계서 §3.3, §13.7).
+    final size = _ship.seatCount;
     final deck = fleet.deck ?? BattleSetup.starterDeck;
     _slots = [for (var i = 0; i < size; i++) i < deck.length ? deck[i] : null];
   }
@@ -151,12 +156,7 @@ class _CrewScreenState extends ConsumerState<CrewScreen> {
       for (var i = 0; i < listed.length; i++)
         if (_filter.matches(specs[i])) listed[i],
     ];
-    // 선원 화면이 열려 있는 동안 설계도는 바뀌지 않는다(조선소는 다른 화면).
-    final ship = myBlueprint(
-      ref.read(fleetStoreProvider),
-      catalog,
-      progress.ship,
-    );
+    final ship = _ship;
     return PbScaffold(
       title: l10n.menuCrew,
       body: Padding(
@@ -193,6 +193,16 @@ class _CrewScreenState extends ConsumerState<CrewScreen> {
                           slots: _slots,
                           pirateOf: catalog.data.pirate,
                         ),
+                        // 망대 안내 (설계서 §13.7, §3.3).
+                        if (ship.seatCount > ship.cabins.length)
+                          Text(
+                            l10n.crewNestHint(ship.seatCount),
+                            key: const ValueKey('crew-nest-hint'),
+                            style: const TextStyle(
+                              color: AppColors.gold,
+                              fontSize: 12,
+                            ),
+                          ),
                         const SizedBox(height: 6),
                         CostBar(
                           used: used,

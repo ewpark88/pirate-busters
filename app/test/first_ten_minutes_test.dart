@@ -1,11 +1,8 @@
-import 'dart:ui';
-
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pb_sim/pb_sim.dart';
 import 'package:pirate_busters/battle/battle_session.dart';
 import 'package:pirate_busters/battle/battle_setup.dart';
 import 'package:pirate_busters/game/camera_director.dart';
-import 'package:pirate_busters/l10n/app_localizations.dart';
 import 'package:pirate_busters/meta/progress.dart';
 import 'package:pirate_busters/port/port_goal_card.dart';
 import 'package:pirate_busters/ui/hud/tutorial_finger.dart';
@@ -44,7 +41,7 @@ void main() {
       expect(collapsed.length, greaterThanOrEqualTo(6));
     });
 
-    test('손가락 안내: 카드 누르기 → 당기기, 튜토리얼 2 는 이동부터', () {
+    test('손가락 안내: 카드 누르기 → 당기기, 튜토리얼 2·3 은 이동부터', () {
       final s1 = _tutorial(1);
       expect(TutorialFinger.cueOf(s1, 1), FingerCue.tapCard);
       s1.selected = 0;
@@ -55,6 +52,16 @@ void main() {
       expect(TutorialFinger.cueOf(s2, 2), FingerCue.move);
       s2.state.sides[s2.activeSide].offset = 1000;
       expect(TutorialFinger.cueOf(s2, 2), FingerCue.tapCard);
+      final s3 = _tutorial(3);
+      expect(TutorialFinger.cueOf(s3, 3), FingerCue.move, reason: '파도 구간');
+    });
+
+    test('튜토리얼 2 는 잔잔한 바다에 바람, 3 은 파도 구간이 있다 (설계서 §13.1)', () {
+      final t2 = testCampaign.sea(1).stages[1];
+      final t3 = testCampaign.sea(1).stages[2];
+      expect((t2.tutorialStep, t2.calmSea), (2, true));
+      expect(t2.maxWind, greaterThan(0));
+      expect((t3.tutorialStep, t3.calmSea), (3, false));
     });
 
     test('당기기 안내는 해적 몸에서 시작해 뒤·아래로 뻗는다', () {
@@ -77,17 +84,11 @@ void main() {
       expect(CameraDirector.anchorSide(s, 0), 0);
     });
 
-    test('다음 목표: 튜토리얼을 끝냈으면 안 깬 첫 지도 스테이지, 배 확장은 없다', () async {
-      final l10n = await AppLocalizations.delegate.load(const Locale('ko'));
+    test('다음 목표: 튜토리얼을 끝냈으면 안 깬 첫 지도 스테이지', () {
       const fresh = PlayerProgress();
       expect(PortGoalCard.nextStage(testCampaign, fresh, 1)!.id, 't-1');
       const after = PlayerProgress(tutorialDone: 3, stars: {'1-1': 2});
       expect(PortGoalCard.nextStage(testCampaign, after, 1)!.id, '1-2');
-      // 슬루프 하나라 키울 배가 없다 (ADR-111).
-      expect(
-        PortGoalCard.shipLine(l10n, testCampaign, after),
-        l10n.goalShipDone,
-      );
     });
   });
 }

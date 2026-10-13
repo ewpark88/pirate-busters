@@ -13,8 +13,6 @@ void main() {
   group('메타 아이콘·모듈 그림 (에셋 v0.23, ADR-063)', () {
     test('HUD·결과·설정·항구·전투 준비가 쓰는 아이콘 그림이 모두 있다', () {
       final paths = [
-        MetaIcons.hull,
-        MetaIcons.flood,
         MetaIcons.crew,
         MetaIcons.turns,
         MetaIcons.timer,
@@ -22,7 +20,6 @@ void main() {
         MetaIcons.endTurn,
         MetaIcons.pause,
         MetaIcons.surrender,
-        MetaIcons.outOfRange,
         MetaIcons.cancel,
         MetaIcons.moveForward,
         MetaIcons.moveBack,

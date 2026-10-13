@@ -8,15 +8,16 @@ import 'package:pirate_busters/game/finale_director.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
 import 'package:pirate_busters/ui/hud/foe_alert.dart';
 import 'package:pirate_busters/ui/hud/hud_style.dart';
+import 'package:pirate_busters/ui/hud/time_verdict_bar.dart';
 import 'package:pirate_busters/ui/kit/kit_art.dart';
 import 'package:pirate_busters/ui/kit/kit_motion.dart';
 
-/// 전장 배너 (설계서 §10.4 격침·마무리, §13.4 상대 턴·턴 전환, A54).
+/// 전장 배너 (설계서 §10.4 판 끝·마무리, §13.4 상대 턴·턴 전환, A54).
 ///
-/// - 턴이 바뀌면 ‘내 턴!’ / ‘상대 턴’, 폭풍 타임이 시작되면 ‘폭풍 타임!’과 잠깐
-///   어두워지는 화면을 [turnShown] 동안 띄운다.
-/// - 상대 턴 동안에는 ‘상대 턴’ 패널과 상대 턴 읽기(A34)를 시간 판정 띠 아래에 둔다.
-/// - 판이 끝나면 결과 화면 전에 ‘격침!’·‘전멸!’·‘시간 판정’(양쪽 침수 비교)을 띄운다.
+/// - 턴이 바뀌면 ‘내 턴!’ / ‘상대 턴’ 을 [turnShown] 동안 띄운다.
+/// - 상대 턴 동안에는 ‘상대 턴’ 패널과 상대 턴 읽기(A34)를 턴 제한 안내 띠 아래에 둔다.
+/// - 판이 끝나면 결과 화면 전에 ‘선장실 파괴!’·‘전멸!’·‘시간 판정’(양쪽 남은 해적
+///   체력 비교)을 띄운다.
 ///
 /// 터치를 막지 않고, 판정과 무관하다.
 class BattleBanners extends StatefulWidget {
@@ -89,11 +90,6 @@ class _BattleBannersState extends State<BattleBanners> {
     return IgnorePointer(
       child: Stack(
         children: [
-          if (turn?.kind == BattleBannerKind.storm && !over)
-            // 폭풍 타임: 화면이 잠깐 어두워진다.
-            const Positioned.fill(
-              child: ColoredBox(color: Color(0x55000814)),
-            ),
           if (!widget.myTurn && !over)
             Align(
               alignment: BattleBanners.foeTurnAlignment,
@@ -137,7 +133,6 @@ class _BattleBannersState extends State<BattleBanners> {
   }
 
   Widget _end(BuildContext context, AppLocalizations l10n, BattleBanner b) {
-    // 선장실 파괴 전용 문구는 S3 에서 붙인다(지금은 격침 배너 문구).
     final title = switch (b.kind) {
       BattleBannerKind.annihilation => l10n.bannerAnnihilation,
       BattleBannerKind.draw => l10n.resultDraw,
@@ -148,13 +143,40 @@ class _BattleBannersState extends State<BattleBanners> {
       alignment: const Alignment(0, -0.1),
       child: PopIn(
         key: ValueKey('end-banner-${b.serial}'),
-        child: OutlinedText(
-          title,
-          size: 56,
-          color: HudColors.warn,
-          font: AppFonts.display,
-          stroke: 7,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            OutlinedText(
+              title,
+              size: 56,
+              color: HudColors.warn,
+              font: AppFonts.display,
+              stroke: 7,
+            ),
+            if (b.kind == BattleBannerKind.timeDecision ||
+                b.kind == BattleBannerKind.draw)
+              _hpCompare(l10n),
+          ],
         ),
+      ),
+    );
+  }
+
+  /// 턴 제한으로 끝나면 양쪽 남은 해적 체력을 나란히 (설계서 §10.4 마무리).
+  /// 사람 한 명이면 그쪽이 ‘나’, 아니면 왼쪽 배가 ‘나’ 자리다.
+  Widget _hpCompare(AppLocalizations l10n) {
+    final session = widget.session;
+    final state = session.state;
+    final me = session.humanSides.length == 1 ? session.humanSides.first : 0;
+    return HudPanel(
+      key: const ValueKey('end-hp-compare'),
+      borderColor: HudColors.warn,
+      child: Text(
+        l10n.timeVerdictHp(
+          '${TimeVerdictBar.crewPercent(state, me)}',
+          '${TimeVerdictBar.crewPercent(state, 1 - me)}',
+        ),
+        style: const TextStyle(fontSize: 20),
       ),
     );
   }

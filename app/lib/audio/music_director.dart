@@ -18,7 +18,7 @@ class MusicOnNotifier extends Notifier<bool> {
   }
 }
 
-/// 지금 틀 곡과 빠르기. 항구는 항구 곡, 전투는 전투 곡(폭풍 타임에 빠르게, §10.3).
+/// 지금 틀 곡과 빠르기. 항구는 항구 곡, 전투는 전투 곡 (§10.3).
 final musicTrackProvider =
     NotifierProvider<MusicTrackNotifier, (Music?, double)>(
       MusicTrackNotifier.new,
@@ -35,9 +35,6 @@ class MusicTrackNotifier extends Notifier<(Music?, double)> {
     if (state != (track, speed)) state = (track, speed);
   }
 }
-
-/// 폭풍 타임의 음악 빠르기 배율.
-const double stormMusicSpeed = 1.2;
 
 /// 앱 루트에서 곡·설정이 바뀔 때마다 [SoundService] 에 넘긴다.
 class MusicDirector extends ConsumerStatefulWidget {

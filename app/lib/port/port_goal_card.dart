@@ -4,16 +4,14 @@ import 'package:pirate_busters/campaign/campaign_catalog.dart';
 import 'package:pirate_busters/campaign/stage_node.dart';
 import 'package:pirate_busters/campaign/stage_spec.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
-import 'package:pirate_busters/meta/my_ship.dart';
 import 'package:pirate_busters/meta/progress.dart';
-import 'package:pirate_busters/meta/ship_upgrades.dart';
 import 'package:pirate_busters/ui/kit/kit_motion.dart';
 import 'package:pirate_busters/ui/kit/pb_button.dart';
 import 'package:pirate_busters/ui/kit/pb_panel.dart';
 import 'package:pirate_busters/ui/meta_icons.dart';
 
-/// 항구 ‘다음 목표’ 카드 (설계서 §13.2): 다음 스테이지 바로 가기, 별 진행, 배 확장까지
-/// 남은 것. 다음에 할 일이 늘 보이게 한다.
+/// 항구 ‘다음 목표’ 카드 (설계서 §13.2): 다음 스테이지 바로 가기와 별 진행. 다음에
+/// 할 일이 늘 보이게 한다.
 class PortGoalCard extends StatelessWidget {
   const PortGoalCard({
     required this.progress,
@@ -36,18 +34,6 @@ class PortGoalCard extends StatelessWidget {
       if (!p.hasCleared(s.id)) return s;
     }
     return null;
-  }
-
-  /// 배 확장 안내 한 줄 (설계서 §3.1).
-  static String shipLine(
-    AppLocalizations l10n,
-    CampaignCatalog c,
-    PlayerProgress p,
-  ) {
-    if (openedStageOf(p, c) > p.ship.stage) return l10n.shipGrowReady;
-    final next = p.ship.stage + 1;
-    if (!ShipUpgrades.stageClears.containsKey(next)) return l10n.goalShipDone;
-    return l10n.goalShipNeed(stageClearFor(next, c));
   }
 
   @override
@@ -98,11 +84,6 @@ class PortGoalCard extends StatelessWidget {
                     style: const TextStyle(fontSize: 13, color: AppColors.text),
                   ),
                 ],
-              ),
-              const SizedBox(height: 4),
-              Text(
-                shipLine(l10n, campaign, progress),
-                style: const TextStyle(fontSize: 13, color: AppColors.gold),
               ),
             ],
           ),

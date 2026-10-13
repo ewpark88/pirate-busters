@@ -7,8 +7,6 @@ abstract final class MetaIcons {
   static const String _dir = 'assets/images/ui/meta';
 
   // 전투 HUD (§13.4).
-  static const String hull = '$_dir/hud/hull.png';
-  static const String flood = '$_dir/hud/flood.png';
   static const String crew = '$_dir/hud/crew.png';
   static const String turns = '$_dir/hud/turns.png';
   static const String timer = '$_dir/hud/timer.png';
@@ -16,7 +14,6 @@ abstract final class MetaIcons {
   static const String endTurn = '$_dir/hud/end_turn.png';
   static const String pause = '$_dir/hud/pause.png';
   static const String surrender = '$_dir/hud/surrender.png';
-  static const String outOfRange = '$_dir/hud/out_of_range.png';
   static const String cancel = '$_dir/hud/cancel.png';
   static const String moveForward = '$_dir/hud/move_fwd.png';
   static const String moveBack = '$_dir/hud/move_back.png';

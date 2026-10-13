@@ -88,21 +88,26 @@ void main() {
       expect(shot.live[0].hp, before[0].hp, reason: '쏜 배는 그대로');
     });
 
-    test('쏜 직후에는 선체 막대가 그대로이고, 탄이 닿은 뒤에 실제 값으로 준다', () {
+    test('해적 체력·선장실 막대는 탄이 닿을 때만 줄고, 끝나면 실제 값이다', () {
       final s = _hitting();
       expect(s, isNotNull, reason: '맞히는 조준을 찾지 못했다');
-      final grid = s!.state.sides[1].grid;
-      final real = grid.totalHp / grid.initialTotalHp;
-      expect(s.visibleHull(1), 1, reason: '발사 순간(탄은 아직 공중)');
-      var last = 1.0;
+      final side = s!.state.sides[1];
+      final crew = side.crew.hpLeft / side.crew.hpStart;
+      final cabin = captainHp(side) / captainMaxHp(side);
+      expect(s.visibleCrewHp(1), greaterThanOrEqualTo(crew));
+      expect(s.visibleCaptain(1), greaterThanOrEqualTo(cabin));
+      var lastCrew = s.visibleCrewHp(1);
+      var lastCabin = s.visibleCaptain(1);
       var guard = 0;
       while (s.playback != null && guard++ < 1000) {
         s.update(30);
-        final v = s.visibleHull(1);
-        expect(v, lessThanOrEqualTo(last + 1e-9), reason: '줄기만 한다');
-        last = v;
+        expect(s.visibleCrewHp(1), lessThanOrEqualTo(lastCrew + 1e-9));
+        expect(s.visibleCaptain(1), lessThanOrEqualTo(lastCabin + 1e-9));
+        lastCrew = s.visibleCrewHp(1);
+        lastCabin = s.visibleCaptain(1);
       }
-      expect(s.visibleHull(1), closeTo(real, 1e-9));
+      expect(s.visibleCrewHp(1), closeTo(crew, 1e-9));
+      expect(s.visibleCaptain(1), closeTo(cabin, 1e-9));
     });
   });
 

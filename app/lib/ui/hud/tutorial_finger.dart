@@ -45,7 +45,8 @@ class TutorialFinger extends StatefulWidget {
       return null;
     }
     final me = session.state.sides[session.activeSide];
-    if (step == 2 && me.offset == 0 && me.shotsFired == 0) {
+    // 2판(이동과 바람)·3판(파도 구간)은 먼저 이동 버튼을 가리킨다 (설계서 §13.1).
+    if (step >= 2 && me.offset == 0 && me.shotsFired == 0) {
       return FingerCue.move;
     }
     if (me.shotsFired > 0 || session.aim != null) return null;

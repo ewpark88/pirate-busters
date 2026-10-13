@@ -14,9 +14,9 @@ import 'package:pirate_busters/platform/analytics.dart';
 import 'package:pirate_busters/ui/kit/pb_button.dart';
 import 'package:pirate_busters/ui/meta_icons.dart';
 
-/// 침수량 막대 하나 (설계서 §13.5 시간 판정). [percent] 0~100.
-class FloodBar extends StatelessWidget {
-  const FloodBar({required this.percent, required this.color, super.key});
+/// 남은 해적 체력 막대 하나 (설계서 §13.5 턴 제한). [percent] 0~100.
+class HpBar extends StatelessWidget {
+  const HpBar({required this.percent, required this.color, super.key});
 
   final int percent;
   final Color color;

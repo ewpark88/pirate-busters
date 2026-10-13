@@ -8,7 +8,7 @@ import 'package:pirate_busters/ui/hud/side_status.dart';
 import 'package:pirate_busters/ui/hud/turn_timer.dart';
 import 'package:pirate_busters/ui/meta_icons.dart';
 
-/// 위 가운데: 남은 턴, 누구 턴, 턴 타이머, 바람 / 위 양쪽: 선체·침수·선원 (설계서 §13.4).
+/// 위 가운데: 남은 턴, 누구 턴, 턴 타이머, 바람 / 위 양쪽: 해적 체력·선장실·선원 (설계서 §13.4).
 class TopBar extends StatelessWidget {
   const TopBar({
     required this.session,
@@ -26,13 +26,16 @@ class TopBar extends StatelessWidget {
   final bool calm;
 
   Widget _side(int side) {
-    final hull = session.visibleHull(side);
+    final crewHp = session.visibleCrewHp(side);
+    final captain = session.visibleCaptain(side);
     return HitClear(
-      value: hull,
+      // 해적 체력이나 선장실이 깎이는 순간 잠깐 또렷해진다 (§13.4).
+      value: crewHp + captain,
       opacity: opacity,
       child: ShipStatusPanel(
         side: session.state.sides[side],
-        hull: hull,
+        crewHp: crewHp,
+        captain: captain,
         calm: calm,
       ),
     );
