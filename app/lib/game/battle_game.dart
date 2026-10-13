@@ -235,12 +235,19 @@ class BattleGame extends FlameGame with BattleTexts {
     final me = CameraDirector.anchorSide(session.state, viewSide);
     final aim = session.aim;
     final shot = session.playback;
-    director.focusFeet = focusFeetOf(_ships[viewSide], session.focusSlot);
+    // 상대 턴에는 곧 쏠 상대 해적을 비춘다: 누가 쏘는지 보인다 (설계서 §2.3, A62).
+    final foe = session.opponentAim;
+    final foeSide = foe != null && session.isAboard(foe.slot)
+        ? session.activeSide
+        : null;
+    director.focusFeet = foeSide != null
+        ? focusFeetOf(_ships[foeSide], foe!.slot)
+        : focusFeetOf(_ships[viewSide], session.focusSlot);
     director.shipTop = -session.state.sides[me].grid.height * Coords.cell;
     final goal = director.target(
       myX: shipOnSea(_ships[me]).x,
       enemyX: shipOnSea(_ships[1 - me]).x,
-      facing: facingOf(me),
+      facing: facingOf(foeSide ?? me),
       projectile: _shot.projectile,
       targetX: shot is ShotPlayback ? shipOnSea(_ships[1 - shot.side]).x : null,
       aimStretch: aim?.stretch ?? 0,

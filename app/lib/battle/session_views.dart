@@ -52,8 +52,13 @@ extension BattleSessionViews on BattleSession {
     return ai is AiController ? AiDials.of(ai.level).thinkMs : 1200;
   }
 
-  /// 남은 턴 시간(밀리초). 탄 비행 연출 중에는 줄지 않는다.
+  /// 남은 턴 시간(밀리초). 탄 비행 연출 중에는 줄지 않는다. 상대 컨트롤러 턴은
+  /// 묶음 시계로 잰다: 연출과 그 뒤 쉼 동안 멈춘다 (A62).
   int get remainingMs {
+    if (!isHumanTurn && opponent != null) {
+      final left = state.rules.turnTimeFor(state.turn) - scriptMs;
+      return left < 0 ? 0 : left;
+    }
     final shot = playback;
     final flightLeft = shot is ShotPlayback
         ? shot.durationMs - shot.elapsedMs

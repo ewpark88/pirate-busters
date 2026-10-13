@@ -305,9 +305,11 @@ void main() {
       speciesOf: testCatalog.speciesOf,
       opponent: const AiController(level: AiLevel.easy),
     );
-    // 같은 걸음에 같은 커맨드를 넣는다: 내 턴이면 쏠 수 있는 해적이 한 발 쏜다.
-    void act(BattleSession s, int step) {
-      if (step % 90 != 0 || !s.isHumanTurn || s.playback != null) return;
+    // 같은 턴 시각에 같은 커맨드를 넣는다: 내 턴 1초가 지나면 쏠 수 있는 해적이 한
+    // 발 쏜다. 시작 대기·턴 전환 멈춤(A54)으로 걸음 수는 달라도 턴 시각은 같다.
+    void act(BattleSession s) {
+      if (!s.isHumanTurn || s.playback != null || s.turnMs < 1000) return;
+      if (s.state.firesThisTurn > 0) return;
       for (var slot = 0; slot < 4; slot++) {
         if (s.canFire(slot)) {
           s.fire(slot, 40000, 8000);
@@ -316,10 +318,12 @@ void main() {
       }
     }
 
-    const steps = 900;
+    // 3턴(상대 턴)이 막 시작된 상태를 비교한다.
+    const steps = 3000;
+    bool done(BattleSession s) => s.state.turn >= 3 || s.isOver;
     final plain = start();
-    for (var i = 0; i < steps; i++) {
-      act(plain, i);
+    for (var i = 0; i < steps && !done(plain); i++) {
+      act(plain);
       plain
         ..update(33)
         ..takeCues();
@@ -335,13 +339,14 @@ void main() {
       // ignore: invalid_use_of_internal_member
       game.mount();
       await game.ready();
-      for (var i = 0; i < steps; i++) {
-        act(shown, i);
+      for (var i = 0; i < steps && !done(shown); i++) {
+        act(shown);
         // 히트스톱·카메라·입자가 도는 전장. dt 0.033초 = 세션 33ms.
         game.update(0.033);
       }
     });
-    expect(plain.state.turn, greaterThan(1), reason: '턴이 넘어갈 만큼 진행했다');
+    expect(plain.state.turn, 3, reason: '턴이 넘어갈 만큼 진행했다');
+    expect(shown.state.turn, 3);
     expect(hashMatchState(shown.state), hashMatchState(plain.state));
     expect(tester.takeException(), isNull);
   });
