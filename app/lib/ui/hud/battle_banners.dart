@@ -148,6 +148,9 @@ class _BattleBannersState extends State<BattleBanners> {
       Localizations.localeOf(context).toLanguageTag(),
     );
     String flood(int side) => format.format(sides[side].flood / 10);
+    // 사람 한 명이면 그쪽이 ‘나’(앞), 핫시트는 진영 1 이 앞 (TimeVerdictBar 와 같다).
+    final humans = widget.session.humanSides;
+    final me = humans.length == 1 ? humans.first : 0;
     final title = switch (b.kind) {
       BattleBannerKind.sunk => l10n.sunkBanner,
       BattleBannerKind.annihilation => l10n.bannerAnnihilation,
@@ -176,7 +179,7 @@ class _BattleBannersState extends State<BattleBanners> {
               HudPanel(
                 key: const ValueKey('flood-compare'),
                 child: Text(
-                  l10n.bannerFloodCompare(flood(0), flood(1)),
+                  l10n.bannerFloodCompare(flood(me), flood(1 - me)),
                   style: const TextStyle(
                     fontSize: 22,
                     color: Color(0xFF9CC8F0),

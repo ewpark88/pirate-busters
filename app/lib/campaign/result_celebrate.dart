@@ -179,9 +179,14 @@ class _LevelUpBannerState extends ConsumerState<LevelUpBanner>
   @override
   int get order => widget.order;
 
+  bool _cued = false;
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    // 소리는 한 번만 (의존성이 다시 바뀌어도 두 번 울리지 않게, A55 검토).
+    if (_cued) return;
+    _cued = true;
     if (!KitMotion.reducedOf(context)) {
       // 튀어 나오는 순간 소리 (시계 시작과 같은 때).
       Timer(PopIn.step * widget.order, () {

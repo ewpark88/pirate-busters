@@ -165,7 +165,10 @@ class SoloudSoundService implements SoundService {
   void playMusic(Music? track, {double speed = 1}) {
     final h = _handle;
     if (track == _track && h != null) {
-      _soloud.fadeRelativePlaySpeed(h, speed, speedRamp);
+      _soloud
+        ..fadeRelativePlaySpeed(h, speed, speedRamp)
+        // 같은 곡으로 다시 하면 덕킹을 푼다 (A56 검토).
+        ..fadeVolume(h, musicVolume, duckFade);
       return;
     }
     if (h != null) {

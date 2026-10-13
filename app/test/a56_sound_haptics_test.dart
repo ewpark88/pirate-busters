@@ -156,4 +156,84 @@ void main() {
       session.dispose();
     });
   });
+
+  group('A54·A56 판 끝 순서·턴 멈춤·진동 끄기 (설계서 §10.4, §13.4)', () {
+    Future<FinaleDirector> director(
+      BattleSession s, {
+      ValueNotifier<bool>? settled,
+      StartGate? gate,
+      ValueNotifier<BattleBanner?>? banner,
+      ValueNotifier<bool>? vibration,
+    }) async => FinaleDirector(
+      session: s,
+      ships: const [],
+      fx: FxLayer(sprites: await _Sprites.make(), vibration: vibration),
+      stop: HitStop(),
+      gate: gate ?? StartGate(),
+      settled: settled ?? ValueNotifier(false),
+      playSfx: (_) {},
+      viewSide: () => 0,
+      lowEnd: ValueNotifier(false),
+      banner: banner ?? ValueNotifier(null),
+    );
+
+    testWidgets('판이 끝나면 배너를 먼저 띄우고, 배너 시간이 지난 뒤에야 결과로 넘어간다', (
+      tester,
+    ) async {
+      final s = _session();
+      s.state
+        ..outcome = MatchOutcome.sunk
+        ..winner = 0;
+      final settled = ValueNotifier(false);
+      final banner = ValueNotifier<BattleBanner?>(null);
+      final d = await director(s, settled: settled, banner: banner);
+      d.update(.016, const []);
+      expect(banner.value?.kind, BattleBannerKind.sunk);
+      expect(settled.value, isFalse, reason: '배너가 떠 있는 동안');
+      d.update(FinaleDirector.endBannerSec / 2, const []);
+      expect(settled.value, isFalse);
+      d.update(FinaleDirector.endBannerSec, const []);
+      expect(settled.value, isTrue, reason: '배너 뒤 결과');
+      await tester.pump(const Duration(milliseconds: 300));
+      s.dispose();
+    });
+
+    testWidgets('턴이 시작되면 판 시계가 0.5초 서고 내 턴 배너가 뜬다', (tester) async {
+      final s = _session();
+      final gate = StartGate();
+      for (var i = 0; i < StartGate.steadyFrames; i++) {
+        gate.tick(.016);
+      }
+      final banner = ValueNotifier<BattleBanner?>(null);
+      (await director(s, gate: gate, banner: banner)).update(.016, const [
+        SimEvent(SimEventKind.turnStart, side: 0, value: 3),
+      ]);
+      expect(banner.value?.kind, BattleBannerKind.myTurn);
+      expect(gate.tick(.1), isFalse, reason: '멈춤 중');
+      expect(gate.tick(.5), isFalse);
+      expect(gate.tick(.016), isTrue);
+      s.dispose();
+    });
+
+    testWidgets('진동을 끄면 발사·판 끝 진동이 울리지 않는다', (tester) async {
+      var vibrations = 0;
+      tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+        SystemChannels.platform,
+        (call) async {
+          if (call.method == 'HapticFeedback.vibrate') vibrations++;
+          return null;
+        },
+      );
+      final s = _session();
+      final d = await director(s, vibration: ValueNotifier(false));
+      d.update(.016, const [SimEvent(SimEventKind.fire, side: 0)]);
+      s.state
+        ..outcome = MatchOutcome.sunk
+        ..winner = 0;
+      d.update(.016, const []);
+      await tester.pump(const Duration(milliseconds: 300));
+      expect(vibrations, 0);
+      s.dispose();
+    });
+  });
 }

@@ -62,6 +62,7 @@ class _CutsceneScreenState extends State<CutsceneScreen> {
       _typing.finish();
       return;
     }
+    // 나가는 컷이 페이드 동안 이전 컨트롤러를 아직 듣고 있어 여기서 버리지 않는다.
     _typing = TypeController();
     if (_index + 1 >= widget.cuts.length) {
       Navigator.of(context).pop();

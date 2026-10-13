@@ -90,7 +90,9 @@ class FinaleDirector {
   /// 전장이 닫힐 때: 환경음을 멈춘다.
   void dispose() {
     soundOn?.removeListener(_ambience);
-    sound.ambience(on: false);
+    sound
+      ..ambience(on: false)
+      ..duck(on: false);
   }
 
   /// 부서진 모듈 종류 번호의 유폭 반경(0 이면 터지지 않음). 유폭 진동에 쓴다.
