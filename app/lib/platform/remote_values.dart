@@ -38,19 +38,17 @@ class MemoryRemoteValues implements RemoteValues {
   }
 }
 
-/// 원격 값으로 매치 규칙을 덮어쓴다 (설계서 §7.4). 키는 `turn_`·`fuel_`·`range_` 접두사
-/// + 규칙 필드 이름(예: `turn_maxTurns`, `fuel_fuelPerTurn`).
+/// 원격 값으로 매치 규칙을 덮어쓴다 (설계서 §7.4). 키는 `turn_` 접두사 + 규칙 필드
+/// 이름(예: `turn_maxTurns`, `turn_waveZoneWidth`).
 /// 값이 규칙 검사에 걸리면 기본 규칙을 쓴다.
 MatchRules applyRemoteRules(MatchRules base, RemoteValues remote) {
   final json = base.toJson();
   var changed = false;
   for (final key in json.keys) {
-    for (final prefix in const ['turn_', 'fuel_', 'range_']) {
-      final v = remote.intOr('$prefix$key');
-      if (v != null) {
-        json[key] = v;
-        changed = true;
-      }
+    final v = remote.intOr('turn_$key');
+    if (v != null) {
+      json[key] = v;
+      changed = true;
     }
   }
   if (!changed) return base;

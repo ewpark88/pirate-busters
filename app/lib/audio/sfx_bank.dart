@@ -55,15 +55,6 @@ abstract final class SfxBank {
             ..noise(.2, 3000, 800, vol: .2, seed: 12)
             ..noise(.5, 900, 150, vol: .18, q: .8, seed: 13, delay: .15))
           .toWav(gain: masterGain),
-    // 격침: 낮게 꺼지는 신음 + 물이 차오르는 꾸르륵.
-    Sfx.sink =>
-      (PcmSynth(durationSec: 2.2)
-            ..tone(140, 45, 2, wave: Wave.triangle, vol: .2)
-            ..noise(2, 700, 120, vol: .22, q: .7, seed: 14)
-            ..tone(520, 260, .12, vol: .06, delay: .5)
-            ..tone(460, 230, .12, vol: .06, delay: .9)
-            ..tone(400, 200, .12, vol: .05, delay: 1.3))
-          .toWav(gain: masterGain),
     // 승리 악구: 솔-도-미-솔 올라가는 나팔.
     Sfx.win => _phrase(const [392, 523.25, 659.25, 783.99], .16, Wave.square),
     // 패배 악구: 내려가는 단조.
@@ -152,10 +143,6 @@ abstract final class SfxBank {
               delay: .12,
             ))
           .toWav(gain: masterGain),
-    // 침수 꾸르륵: 올라가는 물방울 네 개와 낮은 물소리.
-    Sfx.gurgle => _gurgle(),
-    // 불 타는 소리: 짧게 탁탁 튀는 불티.
-    Sfx.crackle => _crackle(),
     // 배 이동 물살: 쏴 하고 밀리는 물.
     Sfx.wake => (PcmSynth(
       durationSec: .6,
@@ -181,22 +168,6 @@ abstract final class SfxBank {
       Wave.triangle,
     ),
   };
-
-  static Uint8List _gurgle() {
-    final s = PcmSynth(durationSec: .8)..noise(.7, 400, 180, q: .8, seed: 26);
-    for (var i = 0; i < 4; i++) {
-      s.tone(280 + i * 40, 560 + i * 60, .07, vol: .07, delay: .05 + i * .15);
-    }
-    return s.toWav(gain: masterGain);
-  }
-
-  static Uint8List _crackle() {
-    final s = PcmSynth(durationSec: .6);
-    for (var i = 0; i < 7; i++) {
-      s.noise(.03, 3200, 1800, q: 4, seed: 30 + i, delay: i * .08);
-    }
-    return s.toWav(gain: masterGain);
-  }
 
   /// 전투 바다·바람 환경음 4초 루프 (설계서 §10.3, A56): 엇갈린 너울 소리.
   static Uint8List seaLoop() {

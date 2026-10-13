@@ -23,7 +23,6 @@ abstract final class AudioAssets {
     Sfx.splash: 3,
     Sfx.clang: 3,
     Sfx.boom: 3,
-    Sfx.sink: 2,
     Sfx.win: 3,
     Sfx.lose: 3,
     Sfx.click: 3,
@@ -43,8 +42,6 @@ abstract final class AudioAssets {
     Sfx.tick,
     // A56: CC0 음원을 아직 고르지 못해 합성음으로 둔다(docs/ASSETS.md).
     Sfx.turn,
-    Sfx.gurgle,
-    Sfx.crackle,
     Sfx.wake,
     Sfx.star,
     Sfx.levelUp,

@@ -33,19 +33,23 @@ class GlowFlash extends PositionComponent {
     final t = (_age - delay) / life;
     if (t < 0) return;
     final r = radius * (.6 + .4 * t);
-    final a = alphaAt(t);
-    _paint.shader = Gradient.radial(
-      Offset.zero,
-      r,
-      [
-        Color.fromRGBO(255, 252, 235, a),
-        Color.fromRGBO(255, 190, 90, a * .55),
-        const Color(0x00FF8030),
-      ],
-      const [0, .45, 1],
-    );
-    canvas.drawCircle(Offset.zero, r, _paint);
+    // 반지름 1 짜리 빛을 한 번만 만들어 키워 그린다. 밝기는 붓의 투명도로 곱한다.
+    _paint
+      ..shader = _unit
+      ..color = Color.fromRGBO(255, 255, 255, alphaAt(t));
+    canvas
+      ..save()
+      ..scale(r)
+      ..drawCircle(Offset.zero, 1, _paint)
+      ..restore();
   }
+
+  static final Shader _unit = Gradient.radial(
+    Offset.zero,
+    1,
+    const [Color(0xFFFFFCEB), Color(0x8CFFBE5A), Color(0x00FF8030)],
+    const [0, .45, 1],
+  );
 }
 
 /// 묵직한 한 방의 충격파 (설계서 §10.4): 얇아지며 퍼지는 흰 고리. 예전 톱니 고리

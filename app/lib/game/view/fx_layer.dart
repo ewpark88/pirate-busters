@@ -183,7 +183,7 @@ class FxLayer extends Component {
         _pop('fx/impact/shockwave.png', at, 72, 0.3);
         spawn(ExplosionFx.puffs(sprites, rnd, at, count: few(2)));
       case Family.underwater:
-        // 물기둥과 침수 구멍.
+        // 물기둥과 구멍.
         final sea = Vector2(at.x, 0);
         _pop('fx/collapse/water_spike.png', sea - Vector2(0, 34), 70, 0.5);
         spawn(popSprite('fx/collapse/foam_ring.png', sea, 64, 0.6));

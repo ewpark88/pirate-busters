@@ -15,7 +15,7 @@ import 'package:pirate_busters/ui/labels.dart';
 /// 상세 창에서 고른 일.
 enum PirateDetailAction { board, unboard }
 
-/// 해적 상세 (설계서 §13.7, A63): 그림·등급·계열·코스트·체력·쉬는 턴·탄종·사거리·
+/// 해적 상세 (설계서 §13.7, A63): 그림·등급·계열·코스트·체력·탄종·
 /// 설명·이야기. 해적보감(§13.9)이 생기기 전까지 그 자리를 대신하고, 레벨업은 R4.
 /// [canBoard]·[canUnboard] 가 켜지면 태우기·내리기 버튼을 둔다.
 Future<PirateDetailAction?> showPirateDetail(

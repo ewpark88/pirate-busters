@@ -59,6 +59,12 @@ class WindSpray extends Component {
     if (cap == 0) return;
     // 물마루 하나에서 한 번에 두세 방울씩, 상한까지 고르게 채운다.
     _due += dt * cap * 1.6;
+    // 더 띄울 수 없으면 물마루 목록을 만들지 않는다(매 프레임 할당 줄이기).
+    if (_drops.length >= cap) {
+      if (_due > 4) _due = 0;
+      return;
+    }
+    if (_due < 1) return;
     final crests = shape.crests(-seaHalfWidth, seaHalfWidth).toList();
     if (crests.isEmpty) return;
     while (_due >= 1 && _drops.length < cap) {
