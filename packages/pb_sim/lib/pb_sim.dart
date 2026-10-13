@@ -6,6 +6,15 @@
 library;
 
 export 'src/combat/ammo_rules.dart' show armShot, flockDropHeight, steerHoming;
+export 'src/combat/boarding.dart'
+    show
+        boardDefenseDamage,
+        boardDefenseRadius,
+        boardPosOf,
+        deckCellAt,
+        hasBoarders,
+        isBoarderBite,
+        shakeOffDistance;
 export 'src/combat/crack_spread.dart';
 export 'src/combat/flight.dart' show predictFirstHit;
 export 'src/combat/hit_effects.dart' show Reach, reachOf;

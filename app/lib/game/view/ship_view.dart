@@ -190,10 +190,10 @@ class ShipView extends PositionComponent with HasGameReference {
               _localX(_width + 1 + slot * 0.6),
               sea + bob,
             );
-          case PirateStatus.down:
+          case PirateStatus.down || PirateStatus.boarding:
             break;
         }
-        rig.alpha += ((status == PirateStatus.down ? 0 : 1) - rig.alpha) * k;
+        rig.alpha += ((status.showsAtHome ? 1 : 0) - rig.alpha) * k;
       } else if (shot.side == side &&
           shot.slot == slot &&
           crew.pirates[slot].spec.ammo == AmmoType.assault) {

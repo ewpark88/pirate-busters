@@ -17,6 +17,9 @@ class TurnChooser {
   /// 사거리 밖 해적 1명당, 닿는 간격까지 남은 1칸마다 빼는 점수 (A5.3 방어 점수의 연장).
   static const int approachPerCell = 5;
 
+  /// 내 배에 선 상대 강습 해적을 흔들어 떨어뜨리는 이동의 가점 (설계서 §2.3, ADR-110).
+  static const int shakeOffBonus = 120;
+
   /// 콤보: 첫 발이 부순 칸 옆에 떨어지는 두 번째 발 보너스.
   static const int comboBonus = 20;
 
@@ -175,6 +178,9 @@ class TurnChooser {
       }
       score += reachPenalty;
       if (spec.range == RangeGrade.short) score += p.personality.rush;
+    }
+    if (hasBoarders(_me) && (offset - now).abs() >= shakeOffDistance) {
+      score += shakeOffBonus;
     }
     // 앞서는 시간 판정 모드는 멀리 물러난다.
     if (_timeMode && _leading) score += (now - offset) ~/ 100;

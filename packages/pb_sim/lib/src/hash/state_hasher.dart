@@ -1,4 +1,6 @@
+import 'package:pb_sim/src/combat/boarding.dart';
 import 'package:pb_sim/src/match/match_state.dart';
+import 'package:pb_sim/src/pirate/crew.dart';
 
 /// FNV-1a 32비트 해시 누적기. int 는 64비트 리틀 엔디언 8바이트로 먹인다.
 class Fnv1a32 {
@@ -74,6 +76,8 @@ int hashMatchState(MatchState state) {
         ..addInt(p.status.index)
         ..addInt(p.cooldown)
         ..addInt(p.revived ? 1 : 0);
+      // 적 배 위 자리는 서 있을 때만 넣는다(강습이 없는 판의 해시 유지, ADR-110).
+      if (p.status == PirateStatus.boarding) h.addInt(p.boardCell);
     }
     for (final fired in side.crew.firedThisTurn) {
       h.addInt(fired ? 1 : 0);
@@ -91,6 +95,8 @@ int hashMatchState(MatchState state) {
       ..addInts(side.status.hashValues)
       ..addInts(side.fireTurns)
       ..addInts(side.fireExtra);
+    // 흔들기 이동 합은 상대 강습 해적이 서 있을 때만 넣는다 (ADR-110).
+    if (hasBoarders(side)) h.addInt(side.status.shakeMoved);
   }
   h.addInt(state.effects.length);
   for (final e in state.effects) {

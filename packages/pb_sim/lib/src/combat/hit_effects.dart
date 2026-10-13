@@ -1,5 +1,6 @@
 import 'package:pb_sim/src/combat/ability_effects.dart';
 import 'package:pb_sim/src/combat/barrier_effects.dart';
+import 'package:pb_sim/src/combat/boarding.dart';
 import 'package:pb_sim/src/combat/fire.dart';
 import 'package:pb_sim/src/combat/impact.dart';
 import 'package:pb_sim/src/combat/support_effects.dart';
@@ -44,6 +45,8 @@ bool onHullHit(
       _ammoHit(state, p, target, cx: cx, cy: cy, x: x, y: y);
   if (target.side != p.side) {
     applyHitAbility(state, p, target, cx: cx, cy: cy);
+    // 강습 해적은 착지한 적 배 위에 선다 (설계서 §4.8, ADR-110).
+    settleBoarder(state, p, target, cx);
   }
   return done;
 }

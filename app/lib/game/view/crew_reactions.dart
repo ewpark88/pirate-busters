@@ -1,4 +1,5 @@
 import 'package:flame/components.dart';
+import 'package:pb_sim/pb_sim.dart';
 
 /// 해적 반응 (설계서 §10.4, A32): 맞으면 맞은 반대쪽으로 밀렸다가 돌아오고, 바다로
 /// 떨어지면 포물선을 그리며 날아가 수면에 닿는다. 그리기만 한다. 판정은 끝났다.
@@ -49,4 +50,12 @@ class _Fall {
   final Vector2 from;
   final void Function() onLand;
   double t = 0;
+}
+
+/// 강습 체류 (설계서 §2.3, ADR-110).
+extension HomeShown on PirateStatus {
+  /// 자기 배 쪽(선실·뱃머리 앞 바다)에 그리는가. 쓰러졌거나 적 배 위에 선 해적은
+  /// 자기 배에 그리지 않는다(적 배 위 해적은 상대 배가 그린다).
+  bool get showsAtHome =>
+      this == PirateStatus.aboard || this == PirateStatus.swimming;
 }

@@ -2,6 +2,7 @@
 library;
 
 import 'package:pb_sim/src/combat/ability_effects.dart';
+import 'package:pb_sim/src/combat/boarding.dart';
 import 'package:pb_sim/src/combat/hit_effects.dart';
 import 'package:pb_sim/src/combat/impact.dart';
 import 'package:pb_sim/src/combat/unique_moves.dart';
@@ -99,7 +100,9 @@ bool? uniqueHullHit(
     case Ability.leap:
       final before = state.events.length;
       impact(spec);
-      leapKills(state, target, spec, cx, cy, before);
+      final column = leapKills(state, target, spec, cx, cy, before);
+      // 마지막에 벤 해적의 선실 위에 선다 (ADR-110).
+      boardShooter(state, p, target, column);
       return true;
     case Ability.summon:
       impact(spec);

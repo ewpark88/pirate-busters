@@ -1,5 +1,6 @@
 import 'package:pb_sim/src/combat/ability_effects.dart';
 import 'package:pb_sim/src/combat/ammo_rules.dart';
+import 'package:pb_sim/src/combat/boarding.dart';
 import 'package:pb_sim/src/combat/flight.dart';
 import 'package:pb_sim/src/combat/launch.dart';
 import 'package:pb_sim/src/combat/module_effects.dart';
@@ -188,6 +189,8 @@ class Match {
     );
     // 지나간 떠 있는 기뢰가 터진다(젤리, 설계서 §4.8).
     triggerFloatMines(state, side.side, from);
+    // 배를 흔들어 선 강습 해적을 떨어뜨린다 (설계서 §2.3, ADR-110).
+    shakeOffBoarders(state, side, from);
     judgeInstant(state);
     if (state.isOver) _endTurn(TurnEndReason.matchOver);
   }
@@ -251,6 +254,10 @@ class Match {
     );
     state.pausedMs +=
         roundDiv(ticks * 1000, simTickHz) + breakPauseOf(state, from: before);
+    // 화재·붕괴처럼 착탄 밖에서 밟은 블록이 없어졌으면 떨어진다 (ADR-110).
+    for (final s in state.sides) {
+      dropUnsupportedBoarders(s, state.events);
+    }
     judgeInstant(state);
     if (!closeTurn) return;
     // 2발을 다 쏴도 턴은 닫지 않는다: 유예 뒤 END_TURN 은 컨트롤러가 낸다

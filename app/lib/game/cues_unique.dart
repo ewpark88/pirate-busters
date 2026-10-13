@@ -3,6 +3,7 @@ import 'package:pb_sim/pb_sim.dart';
 import 'package:pirate_busters/audio/sound_service.dart';
 import 'package:pirate_busters/game/battle_cues.dart';
 import 'package:pirate_busters/game/coords.dart';
+import 'package:pirate_busters/game/cues_boarding.dart';
 import 'package:pirate_busters/game/hit_tag.dart';
 import 'package:pirate_busters/game/view/fx_layer.dart';
 import 'package:pirate_busters/game/view/fx_text.dart';
@@ -89,6 +90,10 @@ extension UniqueCues on BattleCues {
         final at = cabinWorld(e.side, e.slot);
         fx.repair(at);
         tagOnce(HitTag.heal, at);
+      case SimEventKind.boarded ||
+          SimEventKind.boardDefended ||
+          SimEventKind.boardReturned:
+        boardingCue(e, shown);
       case _:
         break;
     }

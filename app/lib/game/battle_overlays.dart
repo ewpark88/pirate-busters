@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:pirate_busters/audio/sound_service.dart';
 import 'package:pirate_busters/battle/battle_session.dart';
 import 'package:pirate_busters/game/countdown_cue.dart';
+import 'package:pirate_busters/game/view/boarder_view.dart';
 import 'package:pirate_busters/game/view/foe_aim_mark.dart';
 import 'package:pirate_busters/game/view/last_impact_mark.dart';
 import 'package:pirate_busters/game/view/ship_view.dart';
@@ -21,4 +22,6 @@ List<Component> battleOverlays(
   CountdownCue(session: session, play: play, vibration: vibration),
   WindStreaks(session: session, lowEnd: lowEnd, priority: -20),
   LastImpactMark(session: session, priority: 15),
+  // 적 배 위에 선 강습 해적 (설계서 §2.3, ADR-110). 배(0)와 앞 바다(10) 사이.
+  BoarderView(session: session, ships: ships, priority: 5),
 ];

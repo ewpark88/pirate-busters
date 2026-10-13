@@ -23,6 +23,11 @@ class SideStatus {
   /// 이 턴에는 바람이 없다(램프). 역전보다 앞선다.
   int windIgnoreTurn = 0;
 
+  /// 이번 자기 턴에 움직인 거리 합(1/1000칸, 앞뒤 모두 더함). 배에 선 상대 강습
+  /// 해적을 흔드는 데 쓴다 (설계서 §2.3, ADR-110). 턴 시작에 0 이 된다. 상대 강습
+  /// 해적이 서 있을 때만 해시에 들어간다([hashValues] 밖).
+  int shakeMoved = 0;
+
   /// 해시용 값 목록(순서 고정).
   List<int> get hashValues => [
     moveLockTurn,

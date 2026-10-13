@@ -94,6 +94,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get pirateSwimming => '헤엄 중';
 
   @override
+  String get pirateBoarding => '적 배 위';
+
+  @override
   String get wind => '바람';
 
   @override
@@ -1420,6 +1423,15 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get hitTagBite => '물어뜯기';
+
+  @override
+  String get hitTagBoarded => '올라탐!';
+
+  @override
+  String get hitTagRepel => '반격!';
+
+  @override
+  String get hitTagShakenOff => '털어냄!';
 
   @override
   String get hitTagRepair => '수리';
