@@ -3,8 +3,9 @@ import 'package:pb_data/src/json_reader.dart';
 import 'package:pb_data/src/species_keys.dart';
 import 'package:pb_sim/pb_sim.dart';
 
-/// 등급 배율(‰): 일반 1.00 · 희귀 1.10 · 영웅 1.25 · 전설 1.45 · 신화 1.65 (BALANCE.md A4.3, 부록 A4.4).
-/// 체력·블록 피해·해적 피해에 곱한다. 레벨 배율은 R4(MVP 는 Lv1).
+/// 등급 배율(‰): 일반 1.00 · 희귀 1.10 · 영웅 1.25 · 전설 1.45 · 신화 1.65
+/// (BALANCE.md A4.3 등급 배율). 체력·블록 피해·해적 피해에 곱한다.
+/// 레벨 배율은 보류(MVP 는 Lv1).
 const List<int> rarityPermille = [1000, 1100, 1250, 1450, 1650];
 
 /// 해적 한 명의 데이터 정의 (설계서 §4.3). 글자는 문자열 키로만 가진다(§14.3).

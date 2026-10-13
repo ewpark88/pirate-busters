@@ -1,25 +1,24 @@
 import 'package:pb_sim/src/match/match_state.dart';
 import 'package:pb_sim/src/ship/module.dart';
 
-/// 즉시 승리 판정 (설계서 §2.7): 전멸 → 선장실 파괴 순. 같은 조건을 양쪽이 같은
-/// 순간 채우면 무승부(winner −1), 다른 조건이면 먼저 보는 조건의 패자가 진다.
+/// 즉시 승리 판정 (설계서 §2.7): 전멸 또는 선장실 파괴를 채운 쪽이 진다. 양쪽이 같은
+/// 순간 채우면 조건 종류가 달라도 무승부(winner −1, ADR-113). 결과 종류는 전멸이
+/// 하나라도 있으면 전멸, 아니면 선장실 파괴다.
 void judgeInstant(MatchState state) {
-  for (final outcome in const [
-    MatchOutcome.annihilation,
-    MatchOutcome.captainLost,
-  ]) {
-    final lost = [
-      for (final s in state.sides)
-        outcome == MatchOutcome.annihilation
-            ? s.crew.allDown
-            : !s.captainStanding,
-    ];
-    if (!lost[0] && !lost[1]) continue;
-    state
-      ..outcome = outcome
-      ..winner = lost[0] && lost[1] ? -1 : (lost[0] ? 1 : 0);
-    return;
-  }
+  final wiped = [for (final s in state.sides) s.crew.allDown];
+  final lost = [
+    for (var i = 0; i < 2; i++) wiped[i] || !state.sides[i].captainStanding,
+  ];
+  if (!lost[0] && !lost[1]) return;
+  final losers = [
+    for (var i = 0; i < 2; i++)
+      if (lost[i]) i,
+  ];
+  state
+    ..outcome = losers.any((i) => wiped[i])
+        ? MatchOutcome.annihilation
+        : MatchOutcome.captainLost
+    ..winner = losers.length == 2 ? -1 : 1 - losers.single;
 }
 
 /// 턴 제한 판정의 앞선 쪽 (설계서 §2.7): 남은 해적 체력 비율이 높은 쪽, 같으면
