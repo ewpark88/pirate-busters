@@ -123,7 +123,7 @@ void main() {
         seenStories: ['sea_1_intro'],
       ),
     );
-    expect(find.image(const AssetImage(PortIcons.lock)), findsNWidgets(5));
+    expect(find.image(const AssetImage(PortIcons.lock)), findsNWidgets(11));
     await _pump(
       tester,
       const CampaignMapScreen(),
@@ -133,7 +133,7 @@ void main() {
         seenStories: ['sea_1_intro'],
       ).recordStage('1-1', 2),
     );
-    expect(find.image(const AssetImage(PortIcons.lock)), findsNWidgets(4));
+    expect(find.image(const AssetImage(PortIcons.lock)), findsNWidgets(10));
     expect(find.image(const AssetImage(MetaIcons.starOn)), findsNWidgets(2));
   });
 

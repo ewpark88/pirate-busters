@@ -1,5 +1,6 @@
 import 'package:pb_ai/src/aim_solver.dart';
 import 'package:pb_ai/src/dials.dart';
+import 'package:pb_ai/src/move_goal.dart';
 import 'package:pb_ai/src/planner.dart';
 import 'package:pb_sim/pb_sim.dart';
 
@@ -100,7 +101,11 @@ class TurnChooser {
     final level = waveLevelOf(_state, p.side);
     _me.offset = now;
     var score = 0;
-    if (p.dials.waveZones) score -= level * AiDials.wavePenaltyPerLevel;
+    if (p.dials.waveZones) {
+      score -= level * AiDials.wavePenaltyPerLevel;
+      // 지금 후보 밖의 잔잔한 구간도 턴마다 그쪽으로 다가간다 (S5, [MoveGoal]).
+      score += MoveGoal.progressScore(now, offset, p.goal);
+    }
     if (level == 0) score += _w.calmStand;
     if (gap <= Personality.rushGapCells * cellUnit) score += _w.rush;
     if (hasBoarders(_me) && (offset - now).abs() >= shakeOffDistance) {
