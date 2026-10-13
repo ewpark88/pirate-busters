@@ -501,7 +501,7 @@
       }
     }
   },
-  "crewHint": "Drag pirates into the cabins",
+  "crewHint": "Hold a pirate, then drag it into a cabin",
   "deckFamilies": "Types",
   "deckRanges": "Range",
   "preferNear": "Fights close",
@@ -617,7 +617,7 @@
   "resultMvp": "MVP",
   "statTurns": "Turns used {turns}",
   "statShots": "{shots} shots",
-  "statFlood": "Flooding you {mine}% · enemy {enemy}%",
+  "statFlood": "Flooding you {mine}% : enemy {enemy}%",
   "@statFlood": {
     "placeholders": {
       "mine": {},
@@ -850,5 +850,61 @@
   "goalShipNeed": "Grow ship: clear {stage}",
   "goalShipDone": "Ship fully grown",
   "goalAllClear": "Every stage here is cleared!",
-  "emphasisMast": "Mast down!"
+  "emphasisMast": "Mast down!",
+  "crewFilterRarity": "Rarity",
+  "crewFilterFamily": "Type",
+  "crewFilterAmmo": "Shot",
+  "crewFilterReset": "Reset",
+  "crewFilterCount": "{shown}/{total}",
+  "@crewFilterCount": {
+    "placeholders": {
+      "shown": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "crewFilterEmpty": "No pirates match",
+  "ammoKindExplosive": "Blast",
+  "ammoKindFire": "Fire",
+  "ammoKindSplit": "Split",
+  "ammoKindBurst": "Burst",
+  "ammoKindSniper": "Sniper",
+  "ammoKindChain": "Chain",
+  "ammoKindPierce": "Pierce",
+  "ammoKindSkip": "Skip",
+  "ammoKindMine": "Mine",
+  "ammoKindFlock": "Drop",
+  "ammoKindHoming": "Homing",
+  "ammoKindAssault": "Assault",
+  "ammoKindSupport": "Support",
+  "pirateCost": "Cost {n}",
+  "@pirateCost": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "pirateHp": "HP {n}",
+  "@pirateHp": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "pirateRange": "Range {range}",
+  "@pirateRange": {
+    "placeholders": {
+      "range": {
+        "type": "String"
+      }
+    }
+  },
+  "pirateBoard": "Board",
+  "pirateUnboard": "Unboard",
+  "pirateClose": "Close"
 }

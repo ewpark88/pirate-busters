@@ -95,7 +95,7 @@ void main() {
     await tester.pump(const Duration(seconds: 3));
   });
 
-  testWidgets('선원: 해적을 빈 선실로 끌어다 놓으면 덱에 들고 저장된다', (tester) async {
+  testWidgets('선원: 해적을 길게 눌러 빈 선실로 끌어다 놓으면 덱에 들고 저장된다', (tester) async {
     // 큰 슬루프(선실 4칸)를 지은 진행 (설계서 §3.1). 보유하지 않은 해적도 보이게
     // 해적 전원 보기로 연다(운영자 모드와 같은 목록, ADR-099).
     final store = await _pump(
@@ -109,8 +109,15 @@ void main() {
       'pirate_p06_name',
     );
     final from = tester.getCenter(find.text(name));
-    final to = tester.getCenter(find.text('3'));
-    await tester.dragFrom(from, to - from);
+    final to = tester.getCenter(find.byKey(const ValueKey('crew-cabin-2')));
+    // 길게 눌러야 끌려 나온다 (A63).
+    final g = await tester.startGesture(from);
+    await tester.pump(const Duration(milliseconds: 400));
+    await g.moveTo(Offset.lerp(from, to, .5)!);
+    await tester.pump();
+    await g.moveTo(to);
+    await tester.pump();
+    await g.up();
     await tester.pumpAndSettle();
     expect(store.deck, ['p01_octo', 'p36_tok', 'p06_pang']);
   });

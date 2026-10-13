@@ -50,6 +50,11 @@ class ShipGridView extends StatelessWidget {
       'assets/images/ship/tiles_v2/${m.name}_${BattleSprites.variantOf(x, y)}.png',
   };
 
+  /// 격자 높이 [h]·칸 크기 [cell] 에서 칸 (x, y) 의 화면 자리. y=0 이 용골이라
+  /// 위아래를 뒤집는다. 선원 화면 선실 배지도 같은 자리를 쓴다 (A63).
+  static Rect cellRect(int h, double cell, int x, int y) =>
+      Rect.fromLTWH(x * cell, (h - 1 - y) * cell, cell, cell);
+
   static String moduleImage(ModuleKind kind) =>
       'assets/images/${BattleSprites.moduleFile(kind)}';
 
@@ -57,8 +62,7 @@ class ShipGridView extends StatelessWidget {
   Widget build(BuildContext context) {
     final h = model.height;
     final k = cell / 32;
-    Rect at(int x, int y) =>
-        Rect.fromLTWH(x * cell, (h - 1 - y) * cell, cell, cell);
+    Rect at(int x, int y) => cellRect(h, cell, x, y);
     return SizedBox(
       width: cell * model.width,
       height: cell * h,

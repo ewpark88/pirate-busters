@@ -9,85 +9,9 @@ import 'package:pirate_busters/ui/cards/card_icons.dart';
 import 'package:pirate_busters/ui/cards/rarity_card.dart';
 import 'package:pirate_busters/ui/hud/ammo_label.dart';
 import 'package:pirate_busters/ui/kit/kit_art.dart';
+import 'package:pirate_busters/ui/kit/kit_motion.dart';
 import 'package:pirate_busters/ui/kit/pb_panel.dart';
 import 'package:pirate_busters/ui/labels.dart';
-
-/// 선실 슬롯 하나: 해적을 끌어다 놓는 곳. 누르면 비운다.
-class CabinSlot extends StatelessWidget {
-  const CabinSlot({
-    required this.slot,
-    required this.pirate,
-    required this.species,
-    required this.canAccept,
-    required this.onAccept,
-    required this.onTap,
-    super.key,
-  });
-
-  final int slot;
-  final PirateDef? pirate;
-  final String Function(String id) species;
-  final bool Function(String id) canAccept;
-  final void Function(String id) onAccept;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) => DragTarget<String>(
-    onWillAcceptWithDetails: (d) => canAccept(d.data),
-    onAcceptWithDetails: (d) => onAccept(d.data),
-    builder: (context, candidates, rejected) {
-      final p = pirate;
-      final color = rejected.isNotEmpty
-          ? const Color(0xFFE0402F)
-          : candidates.isNotEmpty
-          ? const Color(0xFFFFC24A)
-          : AppColors.gold;
-      return GestureDetector(
-        onTap: onTap,
-        child: Container(
-          width: 68,
-          height: 96,
-          margin: const EdgeInsets.only(right: 3),
-          decoration: BoxDecoration(
-            color: p == null
-                ? const Color(0x661E2129)
-                : const Color(0xFF1E2129),
-            borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: color, width: 2.5),
-          ),
-          child: p == null
-              ? Center(
-                  child: OutlinedText(
-                    '${slot + 1}',
-                    size: 28,
-                    color: AppColors.mute,
-                    font: AppFonts.display,
-                  ),
-                )
-              : Draggable<String>(
-                  data: p.id,
-                  feedback: _Face(p),
-                  child: _Face(p),
-                ),
-        ),
-      );
-    },
-  );
-}
-
-/// 선실에 탄 해적: 등급 프레임 카드 (설계서 §10.5).
-class _Face extends StatelessWidget {
-  const _Face(this.pirate);
-
-  final PirateDef pirate;
-
-  @override
-  Widget build(BuildContext context) => SizedBox(
-    width: 64,
-    height: 91,
-    child: RarityCard(rarity: pirate.rarity, species: pirate.species),
-  );
-}
 
 /// 코스트 사용량 / 한도 막대 (설계서 §4.5, §13.7).
 class CostBar extends StatelessWidget {
@@ -173,7 +97,8 @@ class DeckEvalView extends StatelessWidget {
   }
 }
 
-/// 보유 해적 목록의 카드 한 장. 끌어서 선실에 놓는다.
+/// 보유 해적 목록의 카드 한 장. 누르면 상세, 길게 눌러 끌면 선실에 놓는다 (A63).
+/// 그냥 밀면 목록이 스크롤된다: 즉시 끌기는 세로 스크롤을 가로챘다.
 class PirateTile extends StatelessWidget {
   const PirateTile({
     required this.def,
@@ -187,6 +112,9 @@ class PirateTile extends StatelessWidget {
   final PirateSpec spec;
   final bool inDeck;
   final VoidCallback onTap;
+
+  /// 이만큼 누르고 있어야 끌려 나온다.
+  static const Duration longPressDelay = Duration(milliseconds: 200);
 
   @override
   Widget build(BuildContext context) {
@@ -243,12 +171,23 @@ class PirateTile extends StatelessWidget {
         ),
       ),
     );
-    return GestureDetector(
+    return Pressable(
       onTap: onTap,
-      child: Draggable<String>(
+      child: LongPressDraggable<String>(
         data: def.id,
+        delay: longPressDelay,
         maxSimultaneousDrags: inDeck ? 0 : 1,
-        feedback: SizedBox(width: 80, height: 110, child: card),
+        // 들어 올린 카드: 살짝 크게, 그림자를 짙게.
+        feedback: Transform.scale(
+          scale: 1.08,
+          child: DecoratedBox(
+            decoration: const BoxDecoration(
+              boxShadow: [BoxShadow(color: Color(0xAA000000), blurRadius: 12)],
+            ),
+            child: SizedBox(width: 80, height: 110, child: card),
+          ),
+        ),
+        childWhenDragging: Opacity(opacity: 0.3, child: card),
         child: card,
       ),
     );

@@ -840,7 +840,7 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
-  String get crewHint => '해적을 선실로 끌어다 놓으세요';
+  String get crewHint => '해적을 길게 눌러 선실로 끌어다 놓으세요';
 
   @override
   String get deckFamilies => '계열';
@@ -1154,7 +1154,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String statFlood(Object mine, Object enemy) {
-    return '침수 나 $mine% · 상대 $enemy%';
+    return '침수 나 $mine% : 상대 $enemy%';
   }
 
   @override
@@ -1659,4 +1659,87 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get emphasisMast => '돛대 부러짐!';
+
+  @override
+  String get crewFilterRarity => '등급';
+
+  @override
+  String get crewFilterFamily => '계열';
+
+  @override
+  String get crewFilterAmmo => '탄종';
+
+  @override
+  String get crewFilterReset => '초기화';
+
+  @override
+  String crewFilterCount(int shown, int total) {
+    return '$shown/$total명';
+  }
+
+  @override
+  String get crewFilterEmpty => '조건에 맞는 해적이 없습니다';
+
+  @override
+  String get ammoKindExplosive => '폭발';
+
+  @override
+  String get ammoKindFire => '화염';
+
+  @override
+  String get ammoKindSplit => '분열';
+
+  @override
+  String get ammoKindBurst => '연사';
+
+  @override
+  String get ammoKindSniper => '저격';
+
+  @override
+  String get ammoKindChain => '연쇄';
+
+  @override
+  String get ammoKindPierce => '관통';
+
+  @override
+  String get ammoKindSkip => '튕김';
+
+  @override
+  String get ammoKindMine => '설치';
+
+  @override
+  String get ammoKindFlock => '투하';
+
+  @override
+  String get ammoKindHoming => '유도';
+
+  @override
+  String get ammoKindAssault => '강습';
+
+  @override
+  String get ammoKindSupport => '보급';
+
+  @override
+  String pirateCost(int n) {
+    return '코스트 $n';
+  }
+
+  @override
+  String pirateHp(int n) {
+    return '체력 $n';
+  }
+
+  @override
+  String pirateRange(String range) {
+    return '사거리 $range';
+  }
+
+  @override
+  String get pirateBoard => '태우기';
+
+  @override
+  String get pirateUnboard => '내리기';
+
+  @override
+  String get pirateClose => '닫기';
 }
