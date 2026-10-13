@@ -14,8 +14,8 @@ import 'package:pirate_busters/ui/kit/kit_motion.dart';
 
 /// 결과 연출 소리 (설계서 §10.3 별 찍힘·레벨업). 효과음 설정을 따른다.
 abstract final class ResultSfx {
-  static const Sfx star = Sfx.tick;
-  static const Sfx levelUp = Sfx.win;
+  static const Sfx star = Sfx.star;
+  static const Sfx levelUp = Sfx.levelUp;
   static const Sfx reveal = Sfx.clang;
 
   static void play(WidgetRef ref, Sfx sfx) {

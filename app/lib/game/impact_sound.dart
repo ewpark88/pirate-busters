@@ -10,6 +10,8 @@ List<(Sfx, double)> impactLayers(HitWeight weight, {required bool iron}) => [
     HitLevel.heavy => (Sfx.hitBig, 1.0),
   },
   if (iron) (Sfx.clang, 0.8) else (Sfx.wood, 0.6),
+  // 철판은 중간 이상 한 방이면 우그러지는 소리도 (§10.3 철판 찌그러짐, A56).
+  if (iron && weight.level != HitLevel.light) (Sfx.dent, 0.7),
   if (weight.isHeavy) (Sfx.rumble, 0.8),
 ];
 

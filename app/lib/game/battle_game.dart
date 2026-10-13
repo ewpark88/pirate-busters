@@ -56,8 +56,7 @@ class BattleGame extends FlameGame with BattleTexts {
   /// 판이 끝난 뒤 연출(격침)까지 끝났다. 결과 창은 이것을 기다린다 (설계서 §10.4).
   final ValueNotifier<bool> settled = ValueNotifier(false);
 
-  /// 판의 끝과 턴 사이 연출 (설계서 §10.4, §13.4, A54)과 HUD 가 그리는 배너.
-  late final FinaleDirector finale;
+  FinaleDirector? finale; // 판 끝·턴 사이 연출 (§10.4, §13.4, A54)
   final ValueNotifier<BattleBanner?> banner = ValueNotifier(null);
 
   /// 저사양(셰이더 끔, §10.2)·효과음·진동·흔들림 줄이기(§13.8). 화면이 설정을 넣는다.
@@ -73,8 +72,7 @@ class BattleGame extends FlameGame with BattleTexts {
   late final FxLayer _fx;
   late final BattleCues _cues;
 
-  /// 연출 연결(테스트가 이벤트를 직접 넘길 때 쓴다).
-  @visibleForTesting
+  @visibleForTesting // 테스트가 이벤트를 직접 넘긴다
   BattleCues get cues => _cues;
   double _pinchStart = 1;
 
@@ -179,6 +177,8 @@ class BattleGame extends FlameGame with BattleTexts {
       viewSide: () => viewSide,
       lowEnd: lowEnd,
       banner: banner,
+      sound: sound,
+      soundOn: soundOn,
     );
     overview.addListener(() => director.overview = overview.value);
     // 저사양 모드에서는 등급 고리의 입자와 외곽 빛을 줄인다 (설계서 §12).
@@ -194,6 +194,12 @@ class BattleGame extends FlameGame with BattleTexts {
 
     lowEnd.addListener(applyLowEnd);
     applyLowEnd();
+  }
+
+  @override
+  void onRemove() {
+    finale?.dispose(); // 다 읽기 전에 닫혀도 된다
+    super.onRemove();
   }
 
   /// 흔들림 시계, 효과음 묶음·휘파람(§10.3, A32), 그리기 전 타이머 멈춤(A33).
@@ -213,9 +219,8 @@ class BattleGame extends FlameGame with BattleTexts {
       if (e.kind == SimEventKind.turnEnd) onTurnEnd?.call(e);
     }
     _cues.dispatch(cues);
-    finale.update(dt, cues);
-    // 명중 순간(한 방 크기에 비례해 0.05~0.16초)은 연출만 멈춘다. 시뮬레이션은 위에서
-    // 이미 진행했다. 묵직한 한 방은 멈춘 동안에도 화면이 떨린다 (§10.4, A32).
+    finale?.update(dt, cues);
+    // 명중 순간은 연출만 멈추고, 묵직하면 멈춘 동안에도 떨린다 (§10.4, A32).
     final trembling = _cues.stop.trembling;
     final visual = _cues.stop.visualDt(dt);
     _shakeT += trembling ? dt : visual;
@@ -274,8 +279,7 @@ class BattleGame extends FlameGame with BattleTexts {
   void pinchStart() => _pinchStart = director.userZoom;
   void pinchUpdate(double scale) => director.setUserZoom(_pinchStart * scale);
 
-  /// 비행 중 탭 → `TAP` (설계서 §2.2). [screen] 이 탄보다 위면 위(+1), 아래면
-  /// 아래(−1)로 꺾는다(알바, §4.8).
+  /// 비행 중 탭 → `TAP` (§2.2). 탄보다 위면 위(+1), 아래면 아래(−1)로(알바, §4.8).
   void tap([Vector2? screen]) {
     final shot = _shot.projectile;
     final up = screen != null && shot != null;

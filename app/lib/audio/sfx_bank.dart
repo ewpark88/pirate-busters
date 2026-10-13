@@ -125,7 +125,82 @@ abstract final class SfxBank {
             ..tone(2200, 1800, .03, wave: Wave.triangle, vol: .16)
             ..noise(.025, 5200, 3200, vol: .07, seed: 23))
           .toWav(gain: masterGain),
+    // A56 (설계서 §10.3). 맞는 CC0 음원이 없어 합성한다.
+    // 철판 찌그러짐: 낮게 우그러지는 금속음.
+    Sfx.dent =>
+      (PcmSynth(durationSec: .4)
+            ..noise(.25, 900, 300, vol: .2, q: 3, seed: 24)
+            ..tone(260, 170, .22, wave: Wave.square, vol: .05)
+            ..tone(620, 540, .3, vol: .06))
+          .toWav(gain: masterGain),
+    // 턴 전환 알림음: 맑은 두 음 딩-동.
+    Sfx.turn =>
+      (PcmSynth(durationSec: .6)
+            ..tone(880, 880, .3, wave: Wave.triangle, vol: .08)
+            ..tone(
+              1318.5,
+              1318.5,
+              .4,
+              wave: Wave.triangle,
+              vol: .07,
+              delay: .12,
+            ))
+          .toWav(gain: masterGain),
+    // 침수 꾸르륵: 올라가는 물방울 네 개와 낮은 물소리.
+    Sfx.gurgle => _gurgle(),
+    // 불 타는 소리: 짧게 탁탁 튀는 불티.
+    Sfx.crackle => _crackle(),
+    // 배 이동 물살: 쏴 하고 밀리는 물.
+    Sfx.wake => (PcmSynth(
+      durationSec: .6,
+    )..noise(.55, 900, 450, vol: .14, q: .9, seed: 25)).toWav(gain: masterGain),
+    // 별 찍힘: 쿵 하는 바닥에 반짝이는 높은 음.
+    Sfx.star =>
+      (PcmSynth(durationSec: .45)
+            ..tone(180, 90, .12, vol: .18)
+            ..tone(
+              1046.5,
+              1046.5,
+              .25,
+              wave: Wave.triangle,
+              vol: .1,
+              delay: .03,
+            )
+            ..tone(1568, 1568, .3, vol: .05, delay: .05))
+          .toWav(gain: masterGain),
+    // 레벨업: 빠르게 올라가는 네 음.
+    Sfx.levelUp => _phrase(
+      const [523.25, 659.25, 783.99, 1046.5],
+      .09,
+      Wave.triangle,
+    ),
   };
+
+  static Uint8List _gurgle() {
+    final s = PcmSynth(durationSec: .8)..noise(.7, 400, 180, q: .8, seed: 26);
+    for (var i = 0; i < 4; i++) {
+      s.tone(280 + i * 40, 560 + i * 60, .07, vol: .07, delay: .05 + i * .15);
+    }
+    return s.toWav(gain: masterGain);
+  }
+
+  static Uint8List _crackle() {
+    final s = PcmSynth(durationSec: .6);
+    for (var i = 0; i < 7; i++) {
+      s.noise(.03, 3200, 1800, q: 4, seed: 30 + i, delay: i * .08);
+    }
+    return s.toWav(gain: masterGain);
+  }
+
+  /// 전투 바다·바람 환경음 4초 루프 (설계서 §10.3, A56): 엇갈린 너울 소리.
+  static Uint8List seaLoop() {
+    final s = PcmSynth(durationSec: 4);
+    for (var i = 0; i < 5; i++) {
+      s.noise(1.2, 380, 200, vol: .08, q: .7, seed: 40 + i, delay: i * .7);
+    }
+    s.noise(3.6, 1400, 900, vol: .03, q: .5, seed: 50, delay: .2);
+    return s.toWav(gain: masterGain);
+  }
 
   /// 음 [hz] 를 [step] 초 간격으로 이어 부는 짧은 악구. 마지막 음은 길게 끈다.
   static Uint8List _phrase(List<double> hz, double step, Wave wave) {

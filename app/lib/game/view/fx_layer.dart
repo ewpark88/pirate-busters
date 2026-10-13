@@ -40,6 +40,25 @@ class FxLayer extends Component {
     if (vibration?.value ?? true) unawaited(impact());
   }
 
+  /// 발사·격침·승패·유폭 진동 (설계서 §10.4 진동, A56). 진동 설정을 따른다.
+  /// [long] 은 격침·승패의 긴 진동(묵직 두 번), [twice] 는 유폭의 짧은 두 번.
+  void buzz({bool long = false, bool twice = false}) {
+    if (!long && !twice) {
+      _haptic(HapticFeedback.lightImpact);
+      return;
+    }
+    final kind = long
+        ? HapticFeedback.heavyImpact
+        : HapticFeedback.mediumImpact;
+    _haptic(kind);
+    _haptic(
+      () => Future<void>.delayed(
+        Duration(milliseconds: long ? 180 : 110),
+        kind,
+      ),
+    );
+  }
+
   /// 떠 있는 효과가 이보다 많으면 새 입자를 절반으로 줄인다(연쇄 폭발·연사로
   /// 붐빌 때 입자 총량 상한, 설계서 §10.4 저사양, A57).
   static const int busyChildren = 60;

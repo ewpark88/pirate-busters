@@ -182,6 +182,12 @@ class _RecordingSound implements SoundService {
 
   @override
   void playMusic(Music? track, {double speed = 1}) {}
+
+  @override
+  void duck({required bool on}) {}
+
+  @override
+  void ambience({required bool on}) {}
 }
 
 /// 1×1 그림 하나로 모든 스프라이트를 대신하는 가짜. 진동만 본다.

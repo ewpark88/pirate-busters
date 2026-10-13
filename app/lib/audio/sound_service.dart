@@ -10,7 +10,8 @@ import 'package:pirate_busters/audio/sound_library.dart';
 
 /// 효과음 (설계서 §10.3): 포성, 나무 부서짐, 물보라, 철판 튕김, 유폭, 격침, 승리·패배
 /// 악구, 버튼 누름. A32: 착탄 쾅(작은·큰)과 잔향, 붕괴 우지끈, 해적 피격·바다 추락
-/// 첨벙·쓰러짐, 내려오는 탄의 휘파람. A34: 남은 5초 째깍.
+/// 첨벙·쓰러짐, 내려오는 탄의 휘파람. A34: 남은 5초 째깍. A56: 철판 찌그러짐, 턴 전환
+/// 알림음, 침수 꾸르륵, 불 타는 소리, 배 이동 물살, 별 찍힘, 레벨업.
 enum Sfx {
   cannon,
   wood,
@@ -30,6 +31,13 @@ enum Sfx {
   ko,
   whistle,
   tick,
+  dent,
+  turn,
+  gurgle,
+  crackle,
+  wake,
+  star,
+  levelUp,
 }
 
 /// 배경음악 (설계서 §10.3): 항구 한 곡, 전투 한 곡.
@@ -48,8 +56,14 @@ abstract interface class SoundService {
   Future<void> loadMusic(Map<Music, Uint8List> wavs);
 
   /// [track] 을 되풀이해 튼다(null 이면 멈춘다). 같은 곡이면 [speed] 만 바꾼다
-  /// (폭풍 타임에 빠르게, §10.3).
+  /// (폭풍 타임에 빠르게, §10.3). 곡이 바뀌면 짧게 겹쳐 넘긴다(A56).
   void playMusic(Music? track, {double speed = 1});
+
+  /// 승패 악구·격침 배너 동안 음악을 줄인다(덕킹, §10.3, A56). 곡이 바뀌면 풀린다.
+  void duck({required bool on});
+
+  /// 전투 중 낮은 바다·바람 환경음 (§10.3, A56). 효과음 설정을 따른다.
+  void ambience({required bool on});
 }
 
 /// 소리를 내지 않는다. 테스트와 소리 초기화 실패 때 쓴다.
@@ -67,6 +81,12 @@ class SilentSoundService implements SoundService {
 
   @override
   void playMusic(Music? track, {double speed = 1}) {}
+
+  @override
+  void duck({required bool on}) {}
+
+  @override
+  void ambience({required bool on}) {}
 }
 
 /// flutter_soloud 저지연 재생. 소리마다 변형을 돌려 쓰고 음높이를 조금씩 흔든다.
@@ -135,20 +155,74 @@ class SoloudSoundService implements SoundService {
     }
   }
 
+  /// 곡을 겹쳐 넘기는 시간, 폭풍 빠르기가 바뀌는 시간, 덕킹 배율 (§10.3, A56).
+  static const Duration crossfade = Duration(milliseconds: 600);
+  static const Duration speedRamp = Duration(seconds: 1);
+  static const double duckLevel = .35;
+  static const Duration duckFade = Duration(milliseconds: 250);
+
   @override
   void playMusic(Music? track, {double speed = 1}) {
     final h = _handle;
     if (track == _track && h != null) {
-      _soloud.setRelativePlaySpeed(h, speed);
+      _soloud.fadeRelativePlaySpeed(h, speed, speedRamp);
       return;
     }
-    if (h != null) unawaited(_soloud.stop(h));
+    if (h != null) {
+      // 이전 곡은 줄어들며 멈추고, 새 곡은 0 에서 커진다.
+      _soloud
+        ..fadeVolume(h, 0, crossfade)
+        ..scheduleStop(h, crossfade);
+    }
     _handle = null;
     _track = track;
     final src = track == null ? null : _music[track];
     if (src == null) return;
-    final handle = _soloud.play(src, volume: musicVolume, looping: true);
+    final handle = _soloud.play(src, volume: 0, looping: true);
     _handle = handle;
+    _soloud.fadeVolume(handle, musicVolume, crossfade);
     if (speed != 1) _soloud.setRelativePlaySpeed(handle, speed);
+  }
+
+  @override
+  void duck({required bool on}) {
+    final h = _handle;
+    if (h == null) return;
+    _soloud.fadeVolume(h, musicVolume * (on ? duckLevel : 1), duckFade);
+  }
+
+  AudioSource? _sea;
+  SoundHandle? _seaHandle;
+
+  /// 환경음 음량: 배경음악보다 작게.
+  static const double ambienceVolume = .18;
+
+  /// 바다·바람 환경음 루프를 불러온다. 실패하면 환경음 없이 진행한다.
+  Future<void> loadAmbience(Uint8List wav) async {
+    try {
+      if (!_soloud.isInitialized) await _soloud.init();
+      _sea = await _soloud.loadMem('sea_loop.wav', wav);
+    } on Object catch (e) {
+      debugPrint('환경음 초기화 실패: $e');
+    }
+  }
+
+  @override
+  void ambience({required bool on}) {
+    final h = _seaHandle;
+    if (!on) {
+      if (h != null) {
+        _soloud
+          ..fadeVolume(h, 0, crossfade)
+          ..scheduleStop(h, crossfade);
+      }
+      _seaHandle = null;
+      return;
+    }
+    final src = _sea;
+    if (h != null || src == null) return;
+    final handle = _soloud.play(src, volume: 0, looping: true);
+    _seaHandle = handle;
+    _soloud.fadeVolume(handle, ambienceVolume, crossfade);
   }
 }

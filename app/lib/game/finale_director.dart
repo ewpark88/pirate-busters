@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:pb_sim/pb_sim.dart';
 import 'package:pirate_busters/audio/sound_service.dart';
 import 'package:pirate_busters/battle/battle_session.dart';
+import 'package:pirate_busters/game/battle_cues.dart';
 import 'package:pirate_busters/game/coords.dart';
 import 'package:pirate_busters/game/emotion_cues.dart';
 import 'package:pirate_busters/game/hit_stop.dart';
@@ -57,7 +58,13 @@ class FinaleDirector {
     required this.viewSide,
     required this.lowEnd,
     required this.banner,
-  });
+    this.sound = const SilentSoundService(),
+    this.soundOn,
+    this.blastOf = BattleCues.blastRadius,
+  }) {
+    soundOn?.addListener(_ambience);
+    _ambience();
+  }
 
   final BattleSession session;
   final List<ShipView> ships;
@@ -72,6 +79,28 @@ class FinaleDirector {
   /// 지금 배너. HUD 가 그린다.
   final ValueNotifier<BattleBanner?> banner;
 
+  /// 판 끝 배너 동안 음악 줄이기(덕킹)와 바다·바람 환경음 (§10.3, A56).
+  final SoundService sound;
+
+  /// 효과음 설정. 환경음이 따른다. 없으면 켜진 것으로 본다.
+  final ValueListenable<bool>? soundOn;
+
+  void _ambience() => sound.ambience(on: soundOn?.value ?? true);
+
+  /// 전장이 닫힐 때: 환경음을 멈춘다.
+  void dispose() {
+    soundOn?.removeListener(_ambience);
+    sound.ambience(on: false);
+  }
+
+  /// 부서진 모듈 종류 번호의 유폭 반경(0 이면 터지지 않음). 유폭 진동에 쓴다.
+  final int Function(int kindIndex) blastOf;
+
+  /// 이동 물살 소리 간격(초): 버튼을 누르고 있는 동안 너무 자주 내지 않는다.
+  static const double wakeGapSec = .45;
+  double _clock = 0;
+  double _lastWake = -1;
+
   static const double endBannerSec = 1.2;
   static const double timeBannerSec = 2.2;
   static const double turnPauseSec = 0.5;
@@ -85,6 +114,7 @@ class FinaleDirector {
 
   /// 한 프레임. [dt] 는 실제 초, [cues] 는 이번 프레임에 재생된 이벤트.
   void update(double dt, List<SimEvent> cues) {
+    _clock += dt;
     cues.forEach(_onCue);
     final state = session.state;
     if (!state.isOver) return;
@@ -100,6 +130,8 @@ class FinaleDirector {
     }
     final winner = state.winner;
     playSfx(winner >= 0 && winner == viewSide() ? Sfx.win : Sfx.lose);
+    sound.duck(on: true);
+    fx.buzz(long: true);
     final kind = endKindOf(state);
     if (kind == null) {
       settled.value = true;
@@ -130,6 +162,7 @@ class FinaleDirector {
       stop.slow(EmotionCues.slowFor(lowEnd: lowEnd.value));
     } else if (e.kind == SimEventKind.turnStart && !state.isOver) {
       gate.pause(turnPauseSec);
+      playSfx(Sfx.turn);
       _show(
         session.humanSides.contains(e.side)
             ? BattleBannerKind.myTurn
@@ -137,6 +170,26 @@ class FinaleDirector {
       );
     } else if (e.kind == SimEventKind.stormStart && !state.isOver) {
       _show(BattleBannerKind.storm);
+      playSfx(Sfx.rumble);
+    } else {
+      _onSoundCue(e);
+    }
+  }
+
+  /// 소리·진동만 내는 이벤트 (설계서 §10.3·§10.4, A56).
+  void _onSoundCue(SimEvent e) {
+    final k = e.kind;
+    if (k == SimEventKind.fire && session.humanSides.contains(e.side)) {
+      fx.buzz();
+    } else if (k == SimEventKind.flood && e.value > 0) {
+      playSfx(Sfx.gurgle);
+    } else if (k == SimEventKind.ignited) {
+      playSfx(Sfx.crackle);
+    } else if (k == SimEventKind.move && _clock - _lastWake >= wakeGapSec) {
+      _lastWake = _clock;
+      playSfx(Sfx.wake);
+    } else if (k == SimEventKind.moduleDestroyed && blastOf(e.value) > 0) {
+      fx.buzz(twice: true);
     }
   }
 

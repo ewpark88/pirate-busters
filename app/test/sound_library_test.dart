@@ -38,6 +38,12 @@ class _MusicRecorder implements SoundService {
 
   @override
   void playMusic(Music? track, {double speed = 1}) => tracks.add(track);
+
+  @override
+  void duck({required bool on}) {}
+
+  @override
+  void ambience({required bool on}) {}
 }
 
 void main() {
