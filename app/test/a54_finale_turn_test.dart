@@ -81,7 +81,7 @@ void main() {
         _app(BattleBanners(session: session, banner: banner, myTurn: true)),
       );
       await tester.pump(const Duration(milliseconds: 400));
-      expect(find.text('시간 판정'), findsOneWidget);
+      expect(find.text('턴 제한 판정'), findsOneWidget);
       expect(find.byKey(const ValueKey('end-hp-compare')), findsOneWidget);
       expect(find.text('나 100% : 상대 100%'), findsOneWidget);
     });
