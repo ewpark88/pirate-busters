@@ -5,10 +5,17 @@ import 'package:pb_sim/src/world/world.dart';
 
 /// 월드 x [x](1/1000칸)가 속한 파도 구간 번호: 가운데에서 떨어진 정도 (설계서 §2.6).
 /// 좌우 대칭이다. 바깥 구간 너머는 마지막 구간으로 본다.
-int waveZoneIndex(MatchState state, int x) {
-  final i = x.abs() ~/ state.rules.waveZoneWidth;
-  final last = state.waveZones.length - 1;
-  return i > last ? last : i;
+int waveZoneIndex(MatchState state, int x) => zoneIndexAt(
+  x,
+  width: state.rules.waveZoneWidth,
+  zones: state.waveZones.length,
+);
+
+/// 폭 [width] 인 구간 [zones] 개에서 x [x] 가 속한 구간 번호(가운데에서 떨어진 정도).
+/// 화면도 같은 나눔을 쓴다.
+int zoneIndexAt(int x, {required int width, required int zones}) {
+  final i = x.abs() ~/ width;
+  return i >= zones ? zones - 1 : i;
 }
 
 /// [side] 배가 선 자리의 파도 세기(0~3): 뱃머리 칸이 선 구간의 세기 (BALANCE.md A2.5).

@@ -1,7 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:pb_sim/pb_sim.dart';
 
-/// 카드에 붙이는 아이콘 (에셋 v0.22, 설계서 §13.4·§13.7): 코스트 · 세트.
+/// 카드에 붙이는 아이콘 (에셋 v0.22, 설계서 §13.4·§13.7): 코스트 · 세트(보류, 그림만 둔다).
 /// 글자가 아니라 그림이라 두 언어에서 같다.
 abstract final class CardIcons {
   static const String _dir = 'assets/images/ui/icons';
@@ -59,18 +59,15 @@ abstract final class CardIcons {
     return id == null ? null : '$_dir/set_$id.png';
   }
 
-  /// 코스트 · 세트 아이콘을 세로로 놓는다. [size] 는 아이콘 한 변.
-  static Widget column(PirateSpec spec, String species, {double size = 13}) {
-    final setIcon = set(species);
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        for (final path in [cost(spec.cost), ?setIcon])
-          Padding(
-            padding: EdgeInsets.all(size / 12),
-            child: Image.asset(path, width: size, height: size),
-          ),
-      ],
-    );
-  }
+  /// 카드 옆 아이콘 줄. 지금은 코스트 하나다: 세트 효과는 보류라(설계서 부록 A,
+  /// ADR-111) 세트 아이콘은 카드에 보이지 않는다. [size] 는 아이콘 한 변.
+  static Widget column(PirateSpec spec, {double size = 13}) => Column(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      Padding(
+        padding: EdgeInsets.all(size / 12),
+        child: Image.asset(cost(spec.cost), width: size, height: size),
+      ),
+    ],
+  );
 }

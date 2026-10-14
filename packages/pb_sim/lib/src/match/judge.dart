@@ -27,9 +27,8 @@ void judgeInstant(MatchState state) {
 int timeLeader(MatchState state) {
   final a = state.sides[0];
   final b = state.sides[1];
-  final ra = a.crew.hpLeft * b.crew.hpStart;
-  final rb = b.crew.hpLeft * a.crew.hpStart;
-  if (ra != rb) return ra > rb ? 0 : 1;
+  final crew = crewLeader(state);
+  if (crew >= 0) return crew;
   final ca = captainHp(a) * captainMaxHp(b);
   final cb = captainHp(b) * captainMaxHp(a);
   if (ca != cb) return ca > cb ? 0 : 1;
@@ -59,4 +58,27 @@ void judgeTime(MatchState state) {
   state
     ..outcome = MatchOutcome.timeDecision
     ..winner = timeLeader(state);
+}
+
+/// 남은 해적 체력 비율(정확한 비)이 높은 쪽, 같으면 −1. 턴 제한 판정의 첫 기준이다
+/// (설계서 §2.7).
+int crewLeader(MatchState state) {
+  final a = state.sides[0].crew;
+  final b = state.sides[1].crew;
+  final ra = a.hpLeft * b.hpStart;
+  final rb = b.hpLeft * a.hpStart;
+  if (ra == rb) return -1;
+  return ra > rb ? 0 : 1;
+}
+
+/// 해적 체력 비율이 같아 선장실 내구도로 앞선 쪽이 갈렸는가 (설계서 §2.7). 화면이
+/// 판정 이유를 적는 데 쓴다.
+bool leadByCaptain(MatchState state) =>
+    crewLeader(state) < 0 && timeLeader(state) >= 0;
+
+/// [side] 의 남은 해적 체력 비율(%, 내림). 화면 표시용이고 판정은 [crewLeader] 의
+/// 정확한 비로 한다.
+int crewHpPercent(MatchState state, int side) {
+  final crew = state.sides[side].crew;
+  return crew.hpStart == 0 ? 0 : crew.hpLeft * 100 ~/ crew.hpStart;
 }

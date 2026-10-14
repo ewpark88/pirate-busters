@@ -42,6 +42,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get timeVerdictByHull => 'HP tied: captain\'s cabin decides';
 
   @override
+  String timeVerdictHpPlayers(String first, String second) {
+    return 'P1 $first% : P2 $second%';
+  }
+
+  @override
   String get yourTurn => 'Your turn';
 
   @override

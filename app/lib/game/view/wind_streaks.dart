@@ -5,14 +5,23 @@ import 'package:flame/components.dart';
 import 'package:flutter/foundation.dart';
 import 'package:pirate_busters/battle/battle_session.dart';
 import 'package:pirate_busters/game/view/sea_view.dart';
+import 'package:pirate_busters/game/view/wind_feel.dart';
 
-/// 전장 하늘의 바람 줄 (설계서 §2.3·§10.2 ‘바람’, A35): 지금 턴 바람(역풍·무풍
-/// 상태 적용, §4.8) 방향으로 가는 줄이 흐른다. 단계가 높을수록 줄이 많고 빠르고
-/// 길며, 무풍이면 없다. 저사양이면 줄 수를 절반으로 줄인다. 그리기만 한다.
+/// 전장 하늘의 바람 줄 (설계서 §2.4·§10.2 ‘바람’, A35): 바람 방향으로 가는 줄이
+/// 흐른다. 단계가 높을수록 줄이 많고 빠르고 길며, 무풍이면 없다. [feel] 이 있으면
+/// 구름·포말·물보라와 같은 부드러운 바람을 따라 턴이 바뀔 때 한 번에 꺾이지 않는다. 저사양이면 줄 수를 절반으로 줄인다. 그리기만 한다.
 class WindStreaks extends Component {
-  WindStreaks({required this.session, this.lowEnd, super.priority});
+  WindStreaks({
+    required this.session,
+    this.feel,
+    this.lowEnd,
+    super.priority,
+  });
 
   final BattleSession session;
+
+  /// 부드럽게 따라가는 바람. 없으면 지금 턴 바람을 그대로 쓴다.
+  final WindFeel? feel;
   final ValueListenable<bool>? lowEnd;
 
   /// 단계당 줄 수(전장 전체), 하늘 높이 범위(월드 px, 위가 −).
@@ -38,7 +47,10 @@ class WindStreaks extends Component {
   @visibleForTesting
   int get count => _streaks.length;
 
-  int get _wind => session.state.wind;
+  /// 지금 느끼는 바람(−3~+3).
+  double get _value => feel?.value ?? session.state.wind.toDouble();
+
+  int get _wind => _value.round();
 
   @override
   void update(double dt) {
@@ -57,7 +69,8 @@ class WindStreaks extends Component {
         ),
       );
     }
-    final v = _wind.sign * speedFor(_wind) * dt;
+    final w = _value;
+    final v = w.abs() < .05 ? 0.0 : w.sign * (70 + 90 * w.abs()) * dt;
     for (final s in _streaks) {
       s.x += v * s.pace;
       if (s.x > seaHalfWidth) s.x -= seaHalfWidth * 2;

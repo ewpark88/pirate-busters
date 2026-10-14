@@ -94,8 +94,9 @@ void main() {
       final side = s!.state.sides[1];
       final crew = side.crew.hpLeft / side.crew.hpStart;
       final cabin = captainHp(side) / captainMaxHp(side);
-      expect(s.visibleCrewHp(1), greaterThanOrEqualTo(crew));
-      expect(s.visibleCaptain(1), greaterThanOrEqualTo(cabin));
+      // 발사 순간(탄은 아직 공중)에는 쏘기 전 값 그대로다(첫 발이라 가득).
+      expect(s.visibleCrewHp(1), 1, reason: '발사 순간 해적 체력');
+      expect(s.visibleCaptain(1), 1, reason: '발사 순간 선장실');
       var lastCrew = s.visibleCrewHp(1);
       var lastCabin = s.visibleCaptain(1);
       var guard = 0;

@@ -27,11 +27,15 @@ class SeaZones {
   /// 가장 센 세기(거침).
   static const int maxLevel = 3;
 
-  /// 월드 x [x](px)가 속한 구간 번호. 바깥 구간 너머는 마지막 구간이다.
-  int indexAt(double x) {
-    final i = (x.abs() / width).floor();
-    return i >= levels.length ? levels.length - 1 : i;
-  }
+  /// 월드 x [x](px)가 속한 구간 번호. 바깥 구간 너머는 마지막 구간이다. 나눔은
+  /// 시뮬과 같은 pb_sim `zoneIndexAt` 을 쓴다.
+  int indexAt(double x) => zoneIndexAt(
+    (x * cellUnit / Coords.cell).truncate(),
+    width: _simWidth,
+    zones: levels.length,
+  );
+
+  late final int _simWidth = (width * cellUnit / Coords.cell).round();
 
   /// [x] 의 구간 세기(0~3).
   int levelAt(double x) => levels[indexAt(x)];

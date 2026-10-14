@@ -259,15 +259,15 @@ class CameraDirector {
     // 모두 보인다 (설계서 §2.1).
     final zoomT = ((w - baseWidth) / (maxWidth - baseWidth)).clamp(0.0, 1.0);
     // 상대가 가까이 오면 두 배 가운데로 옮긴다(배 가운데 거리 − 배 폭 ≈ 간격).
-    final gap = (myX - enemyX).abs() - 12 * Coords.cell;
+    final gap = (myX - enemyX).abs() - cameraShipSpan;
     final t = math.max(zoomT, 1 - smooth01(gap / closeGap));
     final near = myX + facing * ahead;
     final mid = (myX + enemyX) / 2;
     // 끌기는 두 배 뒤쪽 바다 끝(4칸)과 여백까지 (§2.1, §2.5).
     final x = pan.apply(
       near + (mid - near) * t,
-      math.min(myX, enemyX) - 6 * Coords.cell,
-      math.max(myX, enemyX) + 6 * Coords.cell,
+      math.min(myX, enemyX) - cameraPanMargin,
+      math.max(myX, enemyX) + cameraPanMargin,
     );
     return (Vector2(x, idleYFor(w, aspect)), w);
   }

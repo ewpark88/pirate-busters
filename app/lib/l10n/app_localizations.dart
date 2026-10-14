@@ -128,6 +128,12 @@ abstract class AppLocalizations {
   /// **'HP tied: captain\'s cabin decides'**
   String get timeVerdictByHull;
 
+  /// No description provided for @timeVerdictHpPlayers.
+  ///
+  /// In en, this message translates to:
+  /// **'P1 {first}% : P2 {second}%'**
+  String timeVerdictHpPlayers(String first, String second);
+
   /// No description provided for @yourTurn.
   ///
   /// In en, this message translates to:

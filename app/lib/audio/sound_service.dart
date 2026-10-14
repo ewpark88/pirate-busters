@@ -7,7 +7,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_soloud/flutter_soloud.dart';
 import 'package:pirate_busters/audio/sound_library.dart';
-import 'package:pirate_busters/audio/wind_voice.dart';
+import 'package:pirate_busters/audio/wind_loop.dart';
 
 /// 효과음 (설계서 §10.3): 포성, 나무 부서짐, 물보라, 철판 튕김, 유폭, 승리·패배
 /// 악구, 버튼 누름. A32: 착탄 쾅(작은·큰)과 잔향, 붕괴 우지끈, 해적 피격·바다 추락

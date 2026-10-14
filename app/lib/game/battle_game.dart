@@ -143,7 +143,14 @@ class BattleGame extends FlameGame with BattleTexts {
       _shot,
       EffectBadges(session: session, weapons: weapons, priority: 25)
         ..turnsText = (turns) => turnsText(turns),
-      ...battleOverlays(session, _ships, playSfx, vibrationOn, lowEnd),
+      ...battleOverlays(
+        session,
+        _ships,
+        playSfx,
+        vibrationOn,
+        lowEnd,
+        feel: wind,
+      ),
       WindSound(session: session, sound: sound),
       _fx,
     ]);
