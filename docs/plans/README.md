@@ -64,3 +64,4 @@
 | [2026-10-13-s5-playtest-checklist.md](2026-10-13-s5-playtest-checklist.md) | S5 손맛 점검표: 10판 기록, 항목별 1~5점(재미·판 길이·바람·파도·이동·망대·충격탄·전설·타격감·소리), S2~S4 사람 확인 모음 |
 | [2026-10-13-s5-balance-proposal.md](2026-10-13-s5-balance-proposal.md) | S5 준비: AI 이동 목표(잔잔한 구간)·sim_runner 실험 옵션·전후 1,000판 측정과 BALANCE 변경안(턴 제한 30 등, 승인 대기) |
 | [2026-10-13-arb-glossary.md](2026-10-13-arb-glossary.md) | 문구 검수(ko·en ARB 전체): 옛 규칙·용어 섞임·번역투 고친 목록, 정리할 옛 키, ko·en 용어표 |
+| [2026-10-14-restart-3-sessions.md](2026-10-14-restart-3-sessions.md) | 다시 시작하기: 조율자 + 세션 3개(A 해역 1 다듬기·B 화면 후속·C 코드 품질) 붙여 넣을 문구와 공통 규칙 |
