@@ -6,7 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pb_sim/pb_sim.dart';
 import 'package:pirate_busters/audio/sound_service.dart';
-import 'package:pirate_busters/audio/wind_voice.dart';
+import 'package:pirate_busters/audio/wind_loop.dart';
 import 'package:pirate_busters/battle/battle_session.dart';
 import 'package:pirate_busters/battle/session_views.dart';
 import 'package:pirate_busters/game/battle_game.dart';

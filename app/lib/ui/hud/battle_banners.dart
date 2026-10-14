@@ -2,13 +2,13 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:pb_sim/pb_sim.dart';
 import 'package:pirate_busters/app/app_theme.dart';
 import 'package:pirate_busters/battle/battle_session.dart';
 import 'package:pirate_busters/game/finale_director.dart';
 import 'package:pirate_busters/l10n/app_localizations.dart';
 import 'package:pirate_busters/ui/hud/foe_alert.dart';
 import 'package:pirate_busters/ui/hud/hud_style.dart';
-import 'package:pirate_busters/ui/hud/time_verdict_bar.dart';
 import 'package:pirate_busters/ui/kit/kit_art.dart';
 import 'package:pirate_busters/ui/kit/kit_motion.dart';
 
@@ -163,20 +163,34 @@ class _BattleBannersState extends State<BattleBanners> {
   }
 
   /// 턴 제한으로 끝나면 양쪽 남은 해적 체력을 나란히 (설계서 §10.4 마무리).
-  /// 사람 한 명이면 그쪽이 ‘나’, 아니면 왼쪽 배가 ‘나’ 자리다.
+  /// 사람 한 명이면 그쪽이 ‘나’, 둘이 번갈아 두는 판은 플레이어 1·2(왼쪽·오른쪽)로
+  /// 적는다. 체력 비율이 같아 선장실로 가렸으면 그 이유를 한 줄 더한다 (§2.7).
   Widget _hpCompare(AppLocalizations l10n) {
     final session = widget.session;
     final state = session.state;
-    final me = session.humanSides.length == 1 ? session.humanSides.first : 0;
+    final one = session.humanSides.length == 1;
+    final me = one ? session.humanSides.first : 0;
+    final mine = '${crewHpPercent(state, me)}';
+    final theirs = '${crewHpPercent(state, 1 - me)}';
     return HudPanel(
       key: const ValueKey('end-hp-compare'),
       borderColor: HudColors.warn,
-      child: Text(
-        l10n.timeVerdictHp(
-          '${TimeVerdictBar.crewPercent(state, me)}',
-          '${TimeVerdictBar.crewPercent(state, 1 - me)}',
-        ),
-        style: const TextStyle(fontSize: 20),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            one
+                ? l10n.timeVerdictHp(mine, theirs)
+                : l10n.timeVerdictHpPlayers(mine, theirs),
+            style: const TextStyle(fontSize: 20),
+          ),
+          if (leadByCaptain(state))
+            Text(
+              l10n.timeVerdictByHull,
+              key: const ValueKey('end-by-captain'),
+              style: const TextStyle(fontSize: 14, color: HudColors.warn),
+            ),
+        ],
       ),
     );
   }

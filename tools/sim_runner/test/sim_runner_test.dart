@@ -72,6 +72,21 @@ void main() {
     expect(a.every((r) => r.turns > 0 && r.turns <= 30), isTrue);
   });
 
+  test('기본 isolate 수는 코어 수와 상한 중 작은 값이다 (메모리·다른 작업 몫)', () {
+    expect(defaultJobs(4), 4);
+    expect(defaultJobs(16), maxDefaultJobs);
+    expect(SimOptions().jobs, lessThanOrEqualTo(maxDefaultJobs));
+  });
+
+  test('isolate 수를 바꿔도 같은 시드면 리포트가 같다', () async {
+    SimOptions o(int jobs) =>
+        SimOptions(games: 6, seed: 11, jobs: jobs, dataDir: _dataDir);
+    final one = await runAll(o(1));
+    final three = await runAll(o(3));
+    expect(three.text(), one.text());
+    expect(three.csv(), one.csv());
+  });
+
   test('발사마다 상대 배에 닿았는지 세고, 계열별 명중률로 묶는다 (A51)', () {
     const o = _Opts();
     final results = runRange(data, o.options, 0, 4);

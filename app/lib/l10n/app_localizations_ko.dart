@@ -30,6 +30,11 @@ class AppLocalizationsKo extends AppLocalizations {
   String get timeVerdictByHull => '체력 같음: 선장실 비교';
 
   @override
+  String timeVerdictHpPlayers(String first, String second) {
+    return '플레이어 1 $first% : 플레이어 2 $second%';
+  }
+
+  @override
   String get yourTurn => '내 턴';
 
   @override

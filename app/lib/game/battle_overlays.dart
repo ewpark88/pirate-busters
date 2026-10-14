@@ -7,6 +7,7 @@ import 'package:pirate_busters/game/view/boarder_view.dart';
 import 'package:pirate_busters/game/view/foe_aim_mark.dart';
 import 'package:pirate_busters/game/view/last_impact_mark.dart';
 import 'package:pirate_busters/game/view/ship_view.dart';
+import 'package:pirate_busters/game/view/wind_feel.dart';
 import 'package:pirate_busters/game/view/wind_streaks.dart';
 
 /// 전장에 겹치는 읽기 도우미 부품 (설계서 §2.3, §10.2, §13.4): 상대가 조준하는
@@ -16,11 +17,12 @@ List<Component> battleOverlays(
   List<ShipView> ships,
   void Function(Sfx sfx) play,
   ValueListenable<bool>? vibration,
-  ValueListenable<bool>? lowEnd,
-) => [
+  ValueListenable<bool>? lowEnd, {
+  WindFeel? feel,
+}) => [
   FoeAimMark(session: session, ships: ships, priority: 26),
   CountdownCue(session: session, play: play, vibration: vibration),
-  WindStreaks(session: session, lowEnd: lowEnd, priority: -20),
+  WindStreaks(session: session, feel: feel, lowEnd: lowEnd, priority: -20),
   LastImpactMark(session: session, priority: 15),
   // 적 배 위에 선 강습 해적 (설계서 §2.3, ADR-110). 배(0)와 앞 바다(10) 사이.
   BoarderView(session: session, ships: ships, priority: 5),

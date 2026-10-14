@@ -1,6 +1,8 @@
 import 'dart:math' as math;
 
 import 'package:flame/components.dart';
+import 'package:pb_sim/pb_sim.dart' show HullSpec, MatchRules;
+import 'package:pirate_busters/game/coords.dart';
 
 /// 임계 감쇠 스프링 한 축 (렌더 전용, A60). 목표가 갑자기 바뀌어도 속도를 들고 가서
 /// 화면이 휙 꺾이지 않는다. `omega` 가 클수록 빨리 붙는다(1차 추종의 rate 와 같은 눈금).
@@ -118,3 +120,12 @@ class PunchZoom {
 
   void update(double dt) => _t += dt;
 }
+
+/// 배 한 척의 폭(월드 px): 슬루프 격자 폭 (설계서 §3.1). 카메라가 두 배 사이 간격을
+/// 어림하는 데 쓴다.
+final double cameraShipSpan = HullSpec.sloop.width * Coords.cell;
+
+/// 화면 끌기가 두 배 뒤쪽으로 갈 수 있는 거리(월드 px): 바다 끝(시작 위치 뒤
+/// `MatchRules.backRoom`, 설계서 §2.5)에 2칸 여백.
+final double cameraPanMargin =
+    Coords.x(const MatchRules().backRoom) + 2 * Coords.cell;
