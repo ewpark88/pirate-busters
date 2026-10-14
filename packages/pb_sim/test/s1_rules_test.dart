@@ -131,8 +131,14 @@ void main() {
       expect(timeLeader(s), -1);
       s.sides[1].grid.damage(1, 1, 10);
       expect(timeLeader(s), 0, reason: '체력은 같고 선장실이 덜 깎였다');
+      expect(crewLeader(s), -1);
+      expect(leadByCaptain(s), isTrue, reason: '화면이 선장실로 가렸다고 적는다');
       s.sides[0].crew.damage(0, 50, 0, s.events);
       expect(timeLeader(s), 1, reason: '체력 비율이 먼저다');
+      expect(leadByCaptain(s), isFalse);
+      // 표시용 %: 1150/1200 = 95.8% → 95 (내림).
+      expect(crewHpPercent(s, 0), 95);
+      expect(crewHpPercent(s, 1), 100);
       // 왼쪽은 4명(1200), 오른쪽은 3명(900, 샘플 덱): 비율로 비교한다.
       expect(s.sides[0].crew.hpStart, isNot(s.sides[1].crew.hpStart));
     });

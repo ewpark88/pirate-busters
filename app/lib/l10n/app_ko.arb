@@ -5,6 +5,7 @@
   "timeVerdict": "턴 제한까지 {count}턴 · 해적 체력 많은 쪽 승리",
   "timeVerdictHp": "나 {mine}% : 상대 {theirs}%",
   "timeVerdictByHull": "체력 같음: 선장실 비교",
+  "timeVerdictHpPlayers": "플레이어 1 {first}% : 플레이어 2 {second}%",
   "yourTurn": "내 턴",
   "enemyTurn": "상대 턴",
   "playerTurn": "플레이어 {side} 턴",

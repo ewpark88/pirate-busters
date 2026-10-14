@@ -16,6 +16,17 @@
     }
   },
   "timeVerdictByHull": "HP tied: captain's cabin decides",
+  "timeVerdictHpPlayers": "P1 {first}% : P2 {second}%",
+  "@timeVerdictHpPlayers": {
+    "placeholders": {
+      "first": {
+        "type": "String"
+      },
+      "second": {
+        "type": "String"
+      }
+    }
+  },
   "@turnsLeft": {
     "placeholders": {
       "count": {

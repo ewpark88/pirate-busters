@@ -18,6 +18,7 @@ class MatchSummary {
     this.myTurns,
     this.crewPercent = 0,
     this.foeCrewPercent = 0,
+    this.byCaptain = false,
   });
 
   /// 끝난 판의 상태에서 [side] 기준으로 만든다.
@@ -51,17 +52,19 @@ class MatchSummary {
           ? crew[mvpSlot].spec.id
           : null,
       myTurns: ownTurnsOf(state, side),
-      crewPercent: _crewPercent(me),
-      foeCrewPercent: _crewPercent(state.sides[1 - side]),
+      crewPercent: crewHpPercent(state, side),
+      foeCrewPercent: crewHpPercent(state, 1 - side),
+      byCaptain:
+          state.outcome == MatchOutcome.timeDecision && leadByCaptain(state),
     );
   }
-
-  static int _crewPercent(SideState s) =>
-      s.crew.hpStart == 0 ? 0 : s.crew.hpLeft * 100 ~/ s.crew.hpStart;
 
   /// 내·상대 남은 해적 체력 비율(%, 턴 제한 판정의 기준, 설계서 §2.7·§13.5).
   final int crewPercent;
   final int foeCrewPercent;
+
+  /// 턴 제한 판정에서 해적 체력 비율이 같아 선장실 내구도로 가렸다 (설계서 §2.7).
+  final bool byCaptain;
 
   final bool won;
 

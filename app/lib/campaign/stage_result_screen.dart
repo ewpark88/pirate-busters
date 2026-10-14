@@ -195,6 +195,16 @@ class StageResultScreen extends ConsumerWidget {
             percent: summary.foeCrewPercent,
             color: const Color(0xFFE06A5A),
           ),
+          // 체력 비율이 같아 선장실 내구도로 가렸으면 그 이유 (설계서 §2.7).
+          if (summary.byCaptain)
+            Padding(
+              key: const ValueKey('result-by-captain'),
+              padding: const EdgeInsets.only(top: 4),
+              child: Text(
+                l10n.timeVerdictByHull,
+                style: const TextStyle(color: AppColors.text, fontSize: 12),
+              ),
+            ),
         ],
       ),
     ),
