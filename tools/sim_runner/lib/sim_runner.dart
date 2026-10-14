@@ -18,13 +18,14 @@ export 'src/game.dart';
 export 'src/report.dart';
 
 /// CLI 사용법 문구.
-const String usage = '''
+const String usage =
+    '''
 사용법: dart run sim_runner [옵션]
   --games N        판 수 (기본 1000)
   --seed S         첫 시드 (기본 1). 판 i 의 시드는 S + i
   --left LEVEL     왼쪽 AI 난이도 easy|normal|hard|hell (기본 normal)
   --right LEVEL    오른쪽 AI 난이도 (기본 --left 와 같음). 다르면 판마다 좌우를 바꾼다
-  --jobs J         isolate 수 (기본 CPU 수)
+  --jobs J         isolate 수 (기본 CPU 수와 $maxDefaultJobs 중 작은 값)
   --csv PATH       CSV 로도 쓴다
   --data DIR       게임 데이터 폴더 (기본 app/assets/game)
   --pirates IDS    덱 풀: 쉼표로 나눈 해적 id (기본 전체)
@@ -33,6 +34,13 @@ const String usage = '''
   --step N         AI 위치 후보 간격(칸) 실험값 (기본 BALANCE.md A5.5)
   --goal-moves 1   AI 위치 후보에 잔잔한 구간 목표를 더하는 실험 (기본 0)
   --wave-zones 1   모든 난이도가 파도 구간을 보는 실험 (기본 BALANCE.md A5.5)''';
+
+/// 기본 isolate 수의 상한. 1,000판(16 isolate)도 메모리는 300MB 안쪽이지만, 코어를 다 쓰면
+/// 같은 기계의 다른 작업(앱 빌드·테스트)이 밀린다. 더 쓰려면 `--jobs` 로 준다.
+const int maxDefaultJobs = 8;
+
+/// [cores] 개 코어에서의 기본 isolate 수.
+int defaultJobs(int cores) => cores < maxDefaultJobs ? cores : maxDefaultJobs;
 
 /// 인자.
 class SimOptions {
@@ -51,7 +59,7 @@ class SimOptions {
     this.goalMoves = false,
     this.waveZones = false,
   }) : right = right ?? left,
-       jobs = jobs ?? Platform.numberOfProcessors;
+       jobs = jobs ?? defaultJobs(Platform.numberOfProcessors);
 
   /// 인자를 읽는다. 잘못되면 [FormatException].
   factory SimOptions.parse(List<String> args) {
