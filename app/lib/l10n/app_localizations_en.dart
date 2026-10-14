@@ -877,8 +877,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mission_no_pirate_down => 'Win with no pirate knocked out';
 
   @override
-  String mission_hull_above(Object percent) {
-    return 'Win with hull at $percent% or more';
+  String mission_crew_hp_above(Object percent) {
+    return 'Win with crew HP at $percent% or more';
   }
 
   @override

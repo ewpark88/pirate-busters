@@ -1598,11 +1598,11 @@ abstract class AppLocalizations {
   /// **'Win with no pirate knocked out'**
   String get mission_no_pirate_down;
 
-  /// No description provided for @mission_hull_above.
+  /// No description provided for @mission_crew_hp_above.
   ///
   /// In en, this message translates to:
-  /// **'Win with hull at {percent}% or more'**
-  String mission_hull_above(Object percent);
+  /// **'Win with crew HP at {percent}% or more'**
+  String mission_crew_hp_above(Object percent);
 
   /// No description provided for @mission_turns_within.
   ///

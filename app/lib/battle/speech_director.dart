@@ -36,8 +36,8 @@ class SpeechDirector {
   /// 종류마다 줄 수 (ARB `bark_<종류>_1..n`).
   static const int lines = 4;
 
-  /// 상대 선체가 이 비율(%) 아래로 내려가면 한 번 말한다.
-  static const int lowHullPercent = 60;
+  /// 상대 해적 체력 합이 이 비율(%) 아래로 내려가면 한 번 말한다 (설계서 §2.7 승패 기준).
+  static const int lowCrewPercent = 60;
 
   List<(int hp, PirateStatus status, int fired)>? _last;
   int _spokenTurn = -1;
@@ -79,8 +79,8 @@ class SpeechDirector {
       }
     }
     if (bark == null && captain) {
-      final enemy = state.sides[1 - me].grid;
-      final low = enemy.totalHp * 100 < enemy.initialTotalHp * lowHullPercent;
+      final enemy = state.sides[1 - me].crew;
+      final low = enemy.hpLeft * 100 < enemy.hpStart * lowCrewPercent;
       if (low && !_lowDone) {
         _lowDone = true;
         bark = pick(BarkKind.tauntLow, -1);

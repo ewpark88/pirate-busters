@@ -42,7 +42,7 @@ void main() {
       expect([bark.kind, bark.slot], [BarkKind.allyDown, 1]);
     });
 
-    test('캠페인에서는 상대 선장이 상대 턴에 한 번 도발하고, 선체가 60% 아래면 한 번 더 말한다', () {
+    test('캠페인에서는 상대 선장이 상대 턴에 한 번 도발하고, 해적 체력이 60% 아래면 한 번 더 말한다', () {
       final m = _match();
       final d = SpeechDirector(me: 0, captain: true)..observe(m.state);
       Bark? next() {
@@ -54,16 +54,12 @@ void main() {
       expect(barks.whereType<Bark>().map((b) => b.kind), [
         BarkKind.tauntStart,
       ]);
-      final grid = m.state.sides[1].grid;
-      for (
-        var i = 0;
-        i < grid.cellCount && grid.totalHp * 100 >= grid.initialTotalHp * 59;
-        i++
-      ) {
-        grid.removeAt(i);
+      // 상대 해적 체력 합을 60% 아래로 (설계서 §2.7 승패 기준).
+      for (final p in m.state.sides[1].crew.pirates) {
+        p.hp = p.hp * 55 ~/ 100;
       }
       expect(next()?.kind, BarkKind.tauntLow);
-      expect(next(), isNull, reason: '선체 낮음은 한 번만');
+      expect(next(), isNull, reason: '체력 낮음은 한 번만');
     });
 
     test('같은 판 흐름이면 같은 줄을 고르고, 모든 줄이 두 언어에 있다', () async {

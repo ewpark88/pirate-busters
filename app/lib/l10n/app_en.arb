@@ -476,7 +476,7 @@
   "sea_1_name": "Tropic Bay",
   "sea_1_faction": "Red Claw Patrol",
   "mission_no_pirate_down": "Win with no pirate knocked out",
-  "mission_hull_above": "Win with hull at {percent}% or more",
+  "mission_crew_hp_above": "Win with crew HP at {percent}% or more",
   "mission_turns_within": "Win within {turns} of your turns",
   "story_t1_enemy": "Patrol recruit: The harbor is closed! Turn back, pirates!",
   "story_t1_ally": "Octo: Pirates? We were just fixing our boat… Fine, have a bomb!",

@@ -137,7 +137,7 @@ class StarRules {
 
   bool missionDone(MissionSpec m, MatchSummary s) => switch (m.type) {
     'no_pirate_down' => s.piratesDown == 0,
-    'hull_above' => s.hullPercent >= m.param('percent'),
+    'crew_hp_above' => s.crewPercent >= m.param('percent'),
     'turns_within' => s.ownTurns <= m.param('turns'),
     _ => false,
   };

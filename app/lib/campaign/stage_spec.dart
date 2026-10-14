@@ -38,7 +38,7 @@ class MissionSpec {
   /// 미션 3종. 판정은 `StarRules`. 침수·격침 미션은 없다 (ADR-111).
   static const Set<String> knownTypes = {
     'no_pirate_down',
-    'hull_above',
+    'crew_hp_above',
     'turns_within',
   };
 

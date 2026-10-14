@@ -168,7 +168,7 @@ class StageResultScreen extends ConsumerWidget {
 
   static String _missionText(AppLocalizations l10n, MissionSpec m) =>
       switch (m.type) {
-        'hull_above' => l10n.mission_hull_above(m.param('percent')),
+        'crew_hp_above' => l10n.mission_crew_hp_above(m.param('percent')),
         'turns_within' => l10n.mission_turns_within(m.param('turns')),
         _ => dataText(l10n, m.textKey),
       };

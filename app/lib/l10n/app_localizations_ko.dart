@@ -823,8 +823,8 @@ class AppLocalizationsKo extends AppLocalizations {
   String get mission_no_pirate_down => '내 해적이 한 명도 쓰러지지 않고 승리';
 
   @override
-  String mission_hull_above(Object percent) {
-    return '내 선체 내구도 $percent% 이상으로 승리';
+  String mission_crew_hp_above(Object percent) {
+    return '내 해적 체력 $percent% 이상 남기고 승리';
   }
 
   @override

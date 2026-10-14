@@ -16,8 +16,7 @@ const int _maxTries = 10;
 /// 해역 1 을 튜토리얼부터 1-12 까지 앱과 같은 경로로 둔다 (계획서 0장 S3 완료 조건
 /// ‘해역 1 을 처음부터 끝까지 할 수 있다’, S5 준비). 판은 `prepareStage` 로 열고(배는
 /// 처음 진행의 기본 설계도, 덱은 시작 덱 + 합류한 해적, 코스트 한도는 레벨), 플레이어
-/// 쪽은 손에 익은 사람 대신 어려움 AI 가 둔다(보통 AI 는 1-3 보통·추격형 상대에게
-/// 40판 중 8~10판만 이긴다. 난이도 곡선은 S5 에서 본다). 판이 끝나면 별 판정·보상(`applyStageResult`)을 진행에 반영하고,
+/// 쪽은 손에 익은 사람 대신 어려움 AI 가 둔다(난이도 곡선 측정은 ADR-114 보강). 판이 끝나면 별 판정·보상(`applyStageResult`)을 진행에 반영하고,
 /// 다음 스테이지가 열리는지 본다. [seedBase] 마다 시드가 다르다.
 ({PlayerProgress progress, int matches, List<String> log}) _playSea1(
   int seedBase,

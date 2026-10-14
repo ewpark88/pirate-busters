@@ -250,7 +250,7 @@
   "sea_1_name": "열대 만",
   "sea_1_faction": "붉은집게 초계대",
   "mission_no_pirate_down": "내 해적이 한 명도 쓰러지지 않고 승리",
-  "mission_hull_above": "내 선체 내구도 {percent}% 이상으로 승리",
+  "mission_crew_hp_above": "내 해적 체력 {percent}% 이상 남기고 승리",
   "mission_turns_within": "내 턴 {turns}번 안에 승리",
   "story_t1_enemy": "초계대 신병: 항구는 봉쇄됐다! 돌아가라, 해적 놈들!",
   "story_t1_ally": "옥토: 해적? 우린 그냥 배를 고치던 중인데… 좋아, 폭탄 맛 좀 봐라!",

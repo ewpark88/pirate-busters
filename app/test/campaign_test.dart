@@ -16,12 +16,14 @@ MatchSummary summary({
   MatchOutcome outcome = MatchOutcome.captainLost,
   int turns = 10,
   int hull = 80,
+  int crew = 80,
   int down = 0,
 }) => MatchSummary(
   won: won,
   outcome: outcome,
   turns: turns,
   hullPercent: hull,
+  crewPercent: crew,
   piratesDown: down,
   shotsFired: 12,
 );
@@ -123,17 +125,14 @@ void main() {
         ),
         isEmpty,
       );
-      expect(campaign.stage('1-3').aiLevel, AiLevel.normal);
       expect(campaign.stage('1-3').personality, Personality.hunter);
     });
 
     test(
-      '일반 모드 해역 1 은 1-3 만 보통이고 나머지(보스 포함)는 쉬움이다 (설계서 §6.1, ADR-094)',
+      '해역 1 은 모든 스테이지(보스 포함)가 쉬움이다 — 1-3 보통은 곡선이 튀어 낮췄다 (ADR-114)',
       () {
-        const later = {'1-3'};
         for (final stage in sea1.stages) {
-          final want = later.contains(stage.id) ? AiLevel.normal : AiLevel.easy;
-          expect(stage.aiLevel, want, reason: stage.id);
+          expect(stage.aiLevel, AiLevel.easy, reason: stage.id);
         }
       },
     );
@@ -221,8 +220,19 @@ void main() {
       MissionSpec m(String type, [Map<String, int> p = const {}]) =>
           MissionSpec(type: type, params: p);
       expect(
-        rules.missionDone(m('hull_above', {'percent': 60}), summary(hull: 59)),
+        rules.missionDone(
+          m('crew_hp_above', {'percent': 60}),
+          summary(crew: 59),
+        ),
         isFalse,
+      );
+      expect(
+        rules.missionDone(
+          m('crew_hp_above', {'percent': 60}),
+          summary(hull: 10, crew: 60),
+        ),
+        isTrue,
+        reason: '선체가 아니라 해적 체력으로 본다',
       );
       expect(
         rules.missionDone(m('turns_within', {'turns': 10}), summary(turns: 21)),
