@@ -14,8 +14,10 @@ abstract class FleetStore {
   /// 옛 확장 단계·재질·모듈로 저장한 설계도는 빈 칸으로 본다.
   Blueprint? blueprint(int slot) {
     final json = draft(slot);
-    if (json == null || Blueprint.problemOfJson(json) != null) return null;
+    if (json == null) return null;
     try {
+      // 옛 모듈·재질 이름은 problemOfJson 에서 FormatException 으로 난다.
+      if (Blueprint.problemOfJson(json) != null) return null;
       return Blueprint.fromJson(json);
     } on FormatException {
       return null;

@@ -1234,3 +1234,10 @@
 - 정리: 파도 구간 번호를 pb_sim `zoneIndexAt` 하나로, 바람 줄이 `WindFeel` 을 따름, `wind_voice.dart` → `wind_loop.dart`, 카메라 칸 숫자 → `cameraShipSpan`·`cameraPanMargin`, `live_grid_test` 발사 순간 단언 보강
 - 남김: 바다 높이 `surface()` 반복 계산은 캐시가 계산보다 싸지 않아 두었다. 구간 물빛은 저사양에서도 같은 띠를 쓴다(구간 경계가 물빛으로 보여야 한다 §2.6, 셰이더 경로 5개라 비용이 작다)
 - 골든 갱신: `crew_*` 4장(세트 아이콘 빠짐)
+
+## 핫픽스: 옛 저장 설계도로 실기기 회색 화면 (2026-10-14, 브랜치 `fix/legacy-save`)
+
+- 증상: 정리 전 버전을 쓰던 기기에 설치하면 항구를 못 그리고 회색 화면(`FormatException: 알 수 없는 모듈: pump`)
+- 원인: `FleetStore.blueprint()` 가 옛 설계도를 빈 칸으로 보려 했지만 `problemOfJson` 호출이 예외 처리 밖에 있었다
+- 고침: 검사도 예외 처리 안으로. 옛 설계도·깨진 JSON·규칙 위반은 빈 칸 → 추천 설계도로 대신. 회귀 테스트 `legacy_save_test.dart` 3개
+- 확인: 옛 저장이 남은 실기기(R3CX90JQLEB)에 덮어 설치해 정상 실행
