@@ -18,7 +18,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   flutter_riverpod: ^3.4.3
-  flutter_soloud: ^4.1.7
+  flutter_soloud: ^5.2.2
   hive_ce: ^2.20.1
   hive_ce_flutter: ^2.4.0
   intl: any
